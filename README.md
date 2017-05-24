@@ -3,8 +3,10 @@ TA assignment and matching application.
 
 ## Starting application
 
-Assuming you have a reasonably recent version of Docker installed, you only
-need to clone this repo, navigate into the cloned directory, and run
+You should have a reasonably recent version of Docker [installed](https://docs.docker.com/engine/installation/).
+
+Once that's out of the way, clone this repo, navigate into the cloned
+directory, and run
 
 ```
 docker-compose up
