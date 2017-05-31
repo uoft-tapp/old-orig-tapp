@@ -1,5 +1,5 @@
 {
-  "name": "MyTAPP",
+  "name": "TAPP",
   "private": true,
   "dependencies": {
     "autoprefixer": "^7.1.1",
