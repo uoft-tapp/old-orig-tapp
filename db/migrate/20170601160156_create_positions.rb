@@ -1,7 +1,7 @@
 class CreatePositions < ActiveRecord::Migration[5.1]
   def change
     create_table :positions do |t|
-      t.references :course, foreign_key: true
+      t.string :course_code, index: true, null: false
       t.text :title
       t.text :duties
       t.text :qualifications
@@ -11,5 +11,7 @@ class CreatePositions < ActiveRecord::Migration[5.1]
 
       t.timestamps
     end
+
+    add_foreign_key :positions, :courses, column: :course_code, primary_key: :code
   end
 end

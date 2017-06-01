@@ -12,20 +12,21 @@
 
 ActiveRecord::Schema.define(version: 20170601160156) do
 
-  create_table "campus", id: false, force: :cascade do |t|
-    t.integer "code"
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
+  create_table "campus", primary_key: "code", id: :serial, force: :cascade do |t|
     t.string "name", null: false
   end
 
-  create_table "courses", id: false, force: :cascade do |t|
-    t.string "course_code"
-    t.integer "campus_id", null: false
-    t.integer "instructor_id"
+  create_table "courses", primary_key: "code", id: :string, force: :cascade do |t|
+    t.integer "campus_code", null: false
+    t.bigint "instructor_id"
     t.text "course_name"
     t.integer "estimated_enrolment"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["campus_id"], name: "index_courses_on_campus_id"
+    t.index ["campus_code"], name: "index_courses_on_campus_code"
     t.index ["instructor_id"], name: "index_courses_on_instructor_id"
   end
 
@@ -38,7 +39,7 @@ ActiveRecord::Schema.define(version: 20170601160156) do
   end
 
   create_table "positions", force: :cascade do |t|
-    t.integer "course_id"
+    t.string "course_code", null: false
     t.text "title"
     t.text "duties"
     t.text "qualifications"
@@ -47,7 +48,10 @@ ActiveRecord::Schema.define(version: 20170601160156) do
     t.integer "estimated_total_hours"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["course_id"], name: "index_positions_on_course_id"
+    t.index ["course_code"], name: "index_positions_on_course_code"
   end
 
+  add_foreign_key "courses", "campus", column: "campus_code", primary_key: "code"
+  add_foreign_key "courses", "instructors"
+  add_foreign_key "positions", "courses", column: "course_code", primary_key: "code"
 end
