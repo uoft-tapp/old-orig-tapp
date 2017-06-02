@@ -10,10 +10,55 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170601160156) do
+ActiveRecord::Schema.define(version: 20170602182226) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "applicants", force: :cascade do |t|
+    t.string "utorid", null: false
+    t.string "student_number"
+    t.string "first_name"
+    t.string "last_name"
+    t.string "email"
+    t.string "phone"
+    t.text "address"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["utorid"], name: "index_applicants_on_utorid", unique: true
+  end
+
+  create_table "applications", force: :cascade do |t|
+    t.bigint "applicant_id"
+    t.string "app_id", null: false
+    t.string "round_id", null: false
+    t.text "ta_experience"
+    t.text "research"
+    t.text "comments"
+    t.text "availability"
+    t.text "degrees"
+    t.text "work_experience"
+    t.integer "hours_owed"
+    t.string "pref_session"
+    t.string "pref_campus"
+    t.text "deferral_status"
+    t.text "deferral_reason"
+    t.integer "appointment_number"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["app_id"], name: "index_applications_on_app_id", unique: true
+    t.index ["applicant_id"], name: "index_applications_on_applicant_id"
+  end
+
+  create_table "assignments", force: :cascade do |t|
+    t.bigint "applicant_id"
+    t.bigint "position_id"
+    t.string "round_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["applicant_id"], name: "index_assignments_on_applicant_id"
+    t.index ["position_id"], name: "index_assignments_on_position_id"
+  end
 
   create_table "campus", primary_key: "code", id: :serial, force: :cascade do |t|
     t.string "name", null: false
@@ -51,7 +96,22 @@ ActiveRecord::Schema.define(version: 20170601160156) do
     t.index ["course_code"], name: "index_positions_on_course_code"
   end
 
+  create_table "preferences", force: :cascade do |t|
+    t.bigint "application_id"
+    t.bigint "position_id"
+    t.integer "rank"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["application_id"], name: "index_preferences_on_application_id"
+    t.index ["position_id"], name: "index_preferences_on_position_id"
+  end
+
+  add_foreign_key "applications", "applicants"
+  add_foreign_key "assignments", "applicants"
+  add_foreign_key "assignments", "positions"
   add_foreign_key "courses", "campus", column: "campus_code", primary_key: "code"
   add_foreign_key "courses", "instructors"
   add_foreign_key "positions", "courses", column: "course_code", primary_key: "code"
+  add_foreign_key "preferences", "applications"
+  add_foreign_key "preferences", "positions"
 end
