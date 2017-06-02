@@ -1,4 +1,4 @@
-[
+{"applicants":  [
   {
     "app_id": 1,
     "utorid": "applicant1",
@@ -12000,3 +12000,4 @@
     "preferences": "CSC363H5S (1st Choice), CSC358H1S (1st Choice), CSC258H5S (2nd Choice), CSC384H1S (Preferred), CSC236H1S (Willing)"
   }
 ]
+}
