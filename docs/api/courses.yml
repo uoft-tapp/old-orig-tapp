@@ -1,0 +1,110 @@
+swagger: "2.0"
+info:
+  description: "This is API for the course endpoint of the DCS-TA app."
+  version: "1.0.0"
+  title: "DCS-TA app"
+basePath: "/v2"
+tags:
+- name: "dcs-ta"
+  description: "DCS-TA application"
+paths:
+  /course:
+    post:
+      tags:
+      - "courses"
+      summary: "Update Course Information"
+      description: ""
+      operationId: "updateCourse"
+      consumes:
+      - "formData"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Course descriptions that needs to be updated"
+        required: true
+        schema:
+          $ref: "#/definitions/Course"
+      responses:
+        405:
+          description: "Invalid input"
+    get:
+      tags:
+      - "courses"
+      summary: "Get Course information"
+      description: ""
+      operationId: "getAllCourses"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Course"
+  /course/sidebar:
+    get:
+      tags:
+      - "courses"
+      summary: "Get Course Sidebar information"
+      description: ""
+      operationId: "getCourseSideBar"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/CourseSidebar"
+definitions:
+  Course:
+    type: "object"
+    properties:
+      course_id:
+        type: "string"
+        example: "CSC148H1S"
+      course_name:
+        type: "string"
+        example: "Intro to Comp Prog -  Advance Prep"
+      semester:
+        type: "string"
+        example: "Summer 2017"
+      campus:
+        type: "integer"
+        example: 1
+      instructor:
+        type: "array"
+        items:
+          type: "string"
+        example: ["Instructor 1", "Instructor 2"]
+      positions:
+        type: "integer"
+        example: 2
+      hr_position:
+        type: "integer"
+        example: 54
+      enrollment:
+        type: "integer"
+        example: 1000
+      qualifications:
+        type: "string"
+        example: "Strong knowledge of Python. Enthusiasm for teaching. Strong writing skills. Must already have, or be enrolled in, a computer science degree (or equivalent). Prior experience working as a TA for CSC148 would be an asset. Strong scripting skills an asset."
+      duties:
+        type: "string"
+        example: "Work with next year's CSC148F instructors to update course materials, including implementing small online exercises, activities for lectures and labs, writing and implementing assignments (including any necessary solution and starter code, autotesting, handouts, and marking schemes). Help create the tests and final exam. "
+  CourseSidebar:
+    type: "object"
+    properties:
+      course_id:
+        type: "string"
+        example: "CSC148H1S"
+      assigned:
+        type: "integer"
+        example: 0
+      positions:
+        type: "integer"
+        example: 40
