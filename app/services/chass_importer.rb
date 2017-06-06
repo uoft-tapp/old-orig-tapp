@@ -3,8 +3,12 @@ class ChassImporter
 
   def initialize(file)
     @data = File.read("#{Rails.root}/db/#{file}.json")
-    @course_data = JSON.parse(@data)["courses"]
-    @applicant_data = JSON.parse(@data)["applicants"]
+    raise JSON::ParserError.new("the source file is empty") if @data.strip.length == 0
+
+    parsed_data = JSON.parse(@data)
+
+    @course_data = parsed_data.fetch("courses")
+    @applicant_data = parsed_data.fetch("applicants")
     @round_id = get_round_id
     insert_data
   end
@@ -20,7 +24,15 @@ class ChassImporter
   end
 
   def get_round_id
-    return @course_data[0]["round_id"]
+    round_ids = @course_data.map { |course_entry| course_entry["round_id"] }.uniq
+    case round_ids.length
+    when 0
+      raise StandardError.new("no round_id found in the file")
+    when 1
+      round_ids.first
+    else
+      raise StandardError.new("too many round_ids found in the file")
+    end
   end
 
   def insertion_helper(model, condition, exists)
