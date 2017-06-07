@@ -184,6 +184,7 @@ describe ChassImporter do
 
       end
 
+      let (:mock_json) { File.read("./spec/support/chass_data/applicant.json") }
       it "does not duplicate applicant records" do
         # IDEA: run the importer a second time, check number of applicants is the same
         expect(Applicant.where(utorid: "applicant478").count).to eq(1)
@@ -247,6 +248,13 @@ describe ChassImporter do
           deferral_reason: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget dignissim sem. Curabitur at semper eros. Aenean nec sem lobortis, scelerisque mi at, aliquam diam. Mauris malesuada elit nibh, sed hendrerit nulla mattis sed. Mauris laoreet imperdiet dictum. Pellentesque risus nulla, varius ut massa ut, venenatis fringilla sapien. Cras eget euismod augue, eget dignissim erat. Cras nec nibh ullamcorper ante rutrum dapibus sed nec tellus. In hac habitasse platea dictumst. Suspendisse semper tellus ac sem tincidunt auctor.",
           appointment_number: nil,
         })
+      end
+
+      let (:mock_json) { File.read("./spec/support/chass_data/applicant.json") }
+      it "does not duplicate application records" do
+        # IDEA: run the importer a second time, check number of application is the same
+        applicant = Applicant.where(utorid: "applicant478").pluck(:id).first
+        expect(Application.where({applicant_id: applicant, app_id: 478}).count).to eq(1)
       end
     end
   end
