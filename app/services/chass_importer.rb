@@ -3,8 +3,11 @@ class ChassImporter
 
   def initialize(file)
     @data = File.read("#{Rails.root}/db/#{file}.json")
-    @course_data = JSON.parse(@data)["courses"]
-    @applicant_data = JSON.parse(@data)["applicants"]
+    raise JSON::ParserError.new("the source file is empty") if @data.strip.length == 0
+
+    parsed_data = JSON.parse(@data)
+    @course_data = parsed_data.fetch("courses")
+    @applicant_data = parsed_data.fetch("applicants")
     @round_id = get_round_id
     insert_data
   end
@@ -15,12 +18,18 @@ class ChassImporter
     insert_positions
     insert_applicant
     insert_application
-    insert_assignment
-    insert_preference
   end
 
   def get_round_id
-    return @course_data[0]["round_id"]
+    round_ids = @course_data.map { |course_entry| course_entry["round_id"] }.uniq
+    case round_ids.length
+    when 0
+      raise StandardError.new("no round_id found in the file")
+    when 1
+      return round_ids.first
+    else
+      raise StandardError.new("too many round_ids found in the file")
+    end
   end
 
   def insertion_helper(model, condition, exists)
@@ -34,7 +43,7 @@ class ChassImporter
   end
 
   def insert_applicant
-    @applicant_data.map do |applicant_entry|
+    @applicant_data.each do |applicant_entry|
       utorid = applicant_entry["utorid"]
       condition = Applicant.where(utorid: utorid).exists?
 
@@ -53,84 +62,50 @@ class ChassImporter
   end
 
     def insert_application
-      @applicant_data.map do |applicant_entry|
-        utorid = applicant_entry["utorid"]
-        check_duplicate = ["app_id = ? and round_id = ?", utorid, @round_id]
+      @applicant_data.each do |applicant_entry|
+        applicant = Applicant.where(utorid: applicant_entry["utorid"]).take!
 
-        condition = Application.where(check_duplicate).exists?
-        application = Application.new(
-          applicant_id: applicant_entry["app_id"].to_i,
-          app_id: utorid,
+        app_id = applicant_entry["app_id"].to_i
+        check_duplicate = {app_id: app_id, round_id: @round_id}
+
+        application = applicant.applications.where(check_duplicate).take
+        application ||= applicant.applications.build(
+          app_id: app_id,
           round_id: @round_id,
-          ta_experience:applicant_entry["ta_experience"],
-          research:applicant_entry["research"],
-          comments:applicant_entry["comments"],
-          availability:applicant_entry["availability"],
-          degrees:applicant_entry["degrees"],
-          work_experience:applicant_entry["work_experience"],
-          hours_owed:applicant_entry["hours_owed"],
-          pref_session:applicant_entry["pref_session"],
-          pref_campus:applicant_entry["pref_campus"],
-          deferral_status:applicant_entry["deferral_status"],
-          deferral_reason:applicant_entry["deferral_reason"],
-          appointment_number:applicant_entry["appointment_no"],
-        )
-        exists = "application #{utorid}, #{round_id} already exists"
-        insertion_helper(application, condition, exists)
-      end
-    end
+          ta_experience: applicant_entry["ta_experience"],
+          research: applicant_entry["research"],
+          comments: applicant_entry["comments"],
+          availability: applicant_entry["availability"],
+          degrees: applicant_entry["degrees"],
+          work_experience: applicant_entry["work_experience"],
+          hours_owed: applicant_entry["hours_owed"],
+          pref_session: applicant_entry["pref_session"],
+          pref_campus: applicant_entry["pref_campus"],
+          deferral_status: applicant_entry["deferral_status"],
+          deferral_reason: applicant_entry["deferral_reason"],
+          appointment_number: applicant_entry["appointment_no"])
 
-    def insert_assignment
-      @applicant_data.map do |applicant_entry|
-        utorid = applicant_entry["utorid"]
-        applicant_id = Applicant.where(utorid: utorid).pluck("id")[0]
+        Rails.logger.debug "application #{app_id}, #{round_id} already exists" unless application.new_record?
+        application.save!
 
-        applicant_entry["courses"].map do |course_entry|
-          position_id = Position.where(title: course_entry).pluck("id")[0]
-          check_duplicate = ["applicant_id = ? and position_id = ? and round_id = ?",
-            applicant_id, position_id, @round_id]
+        parse_preference(applicant_entry["preferences"]).each do |pref|
+          position_id = Position.where(title: pref[:position]).select(:id).take!.id
 
-          condition = Assignment.where(check_duplicate).exists?
-          assignment = Assignment.new(
-            applicant_id: applicant_id,
+          preference_ident = {position_id: position_id}
+          preference = application.preferences.where(preference_ident).take
+          preference ||= application.preferences.build(
             position_id: position_id,
-            round_id: @round_id
-          )
-          exists = "assignment #{utorid}, #{course_entry}, #{round_id} already exists"
-          insertion_helper(assignment, condition, exists)
+            rank: pref[:rank])
+
+          Rails.logger.debug "preference #{position_id}, #{pref[:rank]} already exists" unless preference.new_record?
+          preference.save!
         end
-
       end
     end
-
-  def insert_preference
-    @applicant_data.map do |applicant_entry|
-      utorid = applicant_entry["utorid"]
-      applicant_id = Application.where(app_id: utorid).pluck("id").first
-      preferences = parse_preference(applicant_entry["preferences"])
-
-      preferences.map do |pref|
-        position = pref[:position]
-        rank = pref[:rank]
-        position_id = Position.where(title: position).pluck("id").first
-        check_duplicate = ["application_id = ? and position_id = ? and rank = ?",
-          applicant_id, position_id, rank]
-
-        condition = Preference.where(check_duplicate).exists?
-        preference = Preference.new(
-          application_id: applicant_id,
-          position_id: position_id,
-          rank: rank
-        )
-        exists = "preference #{utorid}, #{position}, #{rank} already exists"
-        insertion_helper(preference, condition, exists)
-      end
-    end
-  end
 
   def parse_preference(pref)
-    @list = pref.split(',')
-    @preferences = @list.map do |pref|
+    list = pref.split(',')
+    preferences = list.map do |pref|
       full = pref.strip
       code = pref.split('(')[0].strip
       rank = (pref.split("(")[1]).split(')')[0]
@@ -158,7 +133,7 @@ class ChassImporter
 
 
   def insert_courses
-    @course = @course_data.map do |course_entry|
+    @course_data.each do |course_entry|
       posting_id  = course_entry["course_id"]
       course_id = posting_id.split("-")[0].strip
 
@@ -176,7 +151,7 @@ class ChassImporter
   end
 
   def insert_positions
-    @position = @course_data.map do |course_entry|
+    @course_data.each do |course_entry|
       posting_id  = course_entry["course_id"]
       course_id = posting_id.split("-")[0].strip
 
