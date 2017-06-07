@@ -135,4 +135,120 @@ describe ChassImporter do
       }.to_not change { Position.all.to_a }
     end
   end
+
+  context "when importing applicants" do
+    context "from a file missing applicants key" do
+      let (:mock_json) {'{"courses" : []}'}
+      it "raises a descriptive error" do
+        expect { subject }.to raise_error(KeyError, /key not found: "applicants"/)
+      end
+    end
+
+    context "from a file with no applicants" do
+      let (:mock_json) {'{"courses": [], applicants": []}'}
+      it "does not raise any errors" do
+        "No reason given"
+      end
+    end
+
+    context "from a file with a non-UtorID applicant" do
+      let (:mock_json) { File.read("./spec/support/chass_data/no_utorid_applicant.json") }
+      it "raises ActiveRecord::NotNullViolation exception" do
+        expect { subject }.to raise_error(ActiveRecord::NotNullViolation,
+          /PG::NotNullViolation: ERROR:  null value in column "utorid" violate/)
+      end
+    end
+
+    context "from an expected file" do
+      let (:mock_json) { File.read("./spec/support/chass_data/applicant.json") }
+      before(:each) do
+        # Sanity checking -- shouldn't ever fail
+        expect(Applicant.all.count).to eq(0)
+      end
+      before(:each) { subject } # Evaluate subject
+
+      it "creates an applicant record" do
+        expect(Applicant.where(utorid: "applicant478").count).to eq(1)
+      end
+
+      it "sets fields on the applicant record" do
+        expect(Applicant.first.attributes.symbolize_keys).to include({
+          utorid: "applicant478",
+          student_number: "1425362850",
+          first_name: "Luklorizur",
+          last_name: "Mrokarczur",
+          email: "luklorizur.mrokarczur@mail.utoronto.ca",
+          phone: "6476879273",
+          address: "478 Karczur St.",
+        })
+
+      end
+
+      it "does not duplicate applicant records" do
+        # IDEA: run the importer a second time, check number of applicants is the same
+        expect(Applicant.where(utorid: "applicant478").count).to eq(1)
+      end
+    end
+  end
+
+  context "when importing applications" do
+    context "from a file with non-existent courses positions" do
+      let (:mock_json) { File.read("./spec/support/chass_data/nonexistent_course_position_applicant.json") }
+      before(:each) do
+        # Sanity checking -- shouldn't ever fail
+        expect(Position.all.count).to eq(0)
+      end
+      before(:each) { subject } # Evaluate subject
+
+      it "raise a descriptive error for courses" do
+        expect(Position.where(title: "CSC100H1S").count).to eq(1)
+        expect(Position.where(title: "CSC108H1S - Head TAs").count).to eq(0)
+        expect { subject }.to raise_error(StandardError, /no such course positions/)
+      end
+    end
+
+    context "from a file with duplicate app_id" do
+      let (:mock_json) { File.read("./spec/support/chass_data/duplicate_app_id_applicant.json") }
+      it "raise a descriptive error" do
+        expect { subject }.to raise_error(ActiveRecord::RecordNotUnique,
+          /PG::UniqueViolation: ERROR:  duplicate key value violates unique con/)
+      end
+    end
+
+    context "from an expected file" do
+      let (:mock_json) { File.read("./spec/support/chass_data/applicant.json") }
+      before(:each) do
+        # Sanity checking -- shouldn't ever fail
+        expect(Application.all.count).to eq(0)
+      end
+      before(:each) { subject } # Evaluate subject
+
+      it "creates an applicant record" do
+        applicant = Applicant.where(utorid: "applicant478").pluck(:id).first
+        expect(Application.where({applicant_id: applicant, app_id: 478}).count).to eq(1)
+      end
+
+      it "sets fields on the applicant record" do
+        applicant = Applicant.where(utorid: "applicant478").pluck(:id).first
+        expect(Application.first.attributes.symbolize_keys).to include({
+          applicant_id: applicant,
+          app_id: "478",
+          round_id: "110",
+          ta_experience: "CSC321H1S (1), CSC258H5S (5), CSC300H1S (3), CSC209H1S (2), CSC148H5S (9)",
+          research: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget dignissim sem. Curabitur at semper eros. Aenean nec sem lobortis, scelerisque mi at, aliquam diam. Mauris malesuada elit nibh, sed hendrerit nulla mattis sed. Mauris laoreet imperdiet dictum. Pellentesque risus nulla, varius ut massa ut, venenatis fringilla sapien. Cras eget euismod augue, eget dignissim erat. Cras nec nibh ullamcorper ante rutrum dapibus sed nec tellus. In hac habitasse platea dictumst. Suspendisse semper tellus ac sem tincidunt auctor.",
+          comments: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget dignissim sem. Curabitur at semper eros. Aenean nec sem lobortis, scelerisque mi at, aliquam diam. Mauris malesuada elit nibh, sed hendrerit nulla mattis sed. Mauris laoreet imperdiet dictum. Pellentesque risus nulla, varius ut massa ut, venenatis fringilla sapien. Cras eget euismod augue, eget dignissim erat. Cras nec nibh ullamcorper ante rutrum dapibus sed nec tellus. In hac habitasse platea dictumst. Suspendisse semper tellus ac sem tincidunt auctor.",
+          availability: "",
+          degrees: "Physics",
+          work_experience: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget dignissim sem. Curabitur at semper eros. Aenean nec sem lobortis, scelerisque mi at, aliquam diam. Mauris malesuada elit nibh, sed hendrerit nulla mattis sed. Mauris laoreet imperdiet dictum. Pellentesque risus nulla, varius ut massa ut, venenatis fringilla sapien. Cras eget euismod augue, eget dignissim erat. Cras nec nibh ullamcorper ante rutrum dapibus sed nec tellus. In hac habitasse platea dictumst. Suspendisse semper tellus ac sem tincidunt auctor.",
+          hours_owed: 7,
+          pref_session: "Y",
+          pref_campus: "St. George",
+          deferral_status: nil,
+          deferral_reason: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget dignissim sem. Curabitur at semper eros. Aenean nec sem lobortis, scelerisque mi at, aliquam diam. Mauris malesuada elit nibh, sed hendrerit nulla mattis sed. Mauris laoreet imperdiet dictum. Pellentesque risus nulla, varius ut massa ut, venenatis fringilla sapien. Cras eget euismod augue, eget dignissim erat. Cras nec nibh ullamcorper ante rutrum dapibus sed nec tellus. In hac habitasse platea dictumst. Suspendisse semper tellus ac sem tincidunt auctor.",
+          appointment_number: nil,
+        })
+      end
+    end
+  end
+
 end
