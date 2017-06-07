@@ -8,7 +8,7 @@ tags:
 - name: "dcs-ta"
   description: "DCS-TA application"
 paths:
-  /course:
+  /courses:
     post:
       tags:
       - "courses"
@@ -44,22 +44,6 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/Course"
-  /course/sidebar:
-    get:
-      tags:
-      - "courses"
-      summary: "Get Course Sidebar information"
-      description: ""
-      operationId: "getCourseSideBar"
-      produces:
-      - "application/json"
-      responses:
-        200:
-          description: "successful operation"
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/CourseSidebar"
 definitions:
   Course:
     type: "object"
@@ -77,10 +61,8 @@ definitions:
         type: "integer"
         example: 1
       instructor:
-        type: "array"
-        items:
-          type: "string"
-        example: ["Instructor 1", "Instructor 2"]
+        type: "integer"
+        example: 13
       positions:
         type: "integer"
         example: 2
@@ -96,15 +78,3 @@ definitions:
       duties:
         type: "string"
         example: "Work with next year's CSC148F instructors to update course materials, including implementing small online exercises, activities for lectures and labs, writing and implementing assignments (including any necessary solution and starter code, autotesting, handouts, and marking schemes). Help create the tests and final exam. "
-  CourseSidebar:
-    type: "object"
-    properties:
-      course_id:
-        type: "string"
-        example: "CSC148H1S"
-      assigned:
-        type: "integer"
-        example: 0
-      positions:
-        type: "integer"
-        example: 40
