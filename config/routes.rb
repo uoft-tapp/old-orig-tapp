@@ -8,4 +8,5 @@ Rails.application.routes.draw do
   end
 
   resources :applications, only: [:index, :show]
+  get "/courses", to: "courses#list"
 end
