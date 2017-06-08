@@ -11,11 +11,29 @@ RSpec.describe ApplicantsController, type: :controller do
 
   describe "GET #show" do
     context "when passed an integer ID" do
+      let(:applicant) do
+        Applicant.create!(
+          utorid: "simps169",
+          student_number: 1234567890,
+          first_name: "Landy",
+          last_name: "Simpson",
+          email: "simps@mail.com",
+          phone: "4165558888",
+          address: "100 Jameson Ave Toronto, ON M65-48H")
+      end
+
+      let(:parsed_body) { JSON.parse(response.body) }
+
       it "returns 200" do
-        pending " Test database not populated yet "
-        get :show, params: { id: 1 }
+        get :show, params: { id: applicant.id }
         expect(response.status).to eq(200)
         expect(response.body).not_to be_empty
+      end
+
+      it "returns 200" do
+        get :show, params: { id: applicant.id }, format: :json
+        expect(parsed_body).not_to be_empty
+        expect(parsed_body).to include(applicant.attributes.except("created_at", "updated_at"))
       end
     end
 
