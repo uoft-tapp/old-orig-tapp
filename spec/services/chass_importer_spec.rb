@@ -145,9 +145,9 @@ describe ChassImporter do
     end
 
     context "from a file with no applicants" do
-      let (:mock_json) {'{"courses": [], applicants": []}'}
+      let (:mock_json) { File.read("./spec/support/chass_data/no_applicant.json") }
       it "does not raise any errors" do
-        "No reason given"
+        expect {subject}.to_not raise_error
       end
     end
 
