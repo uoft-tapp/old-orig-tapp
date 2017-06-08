@@ -6,7 +6,8 @@ Rails.application.routes.draw do
   resources :applicants do
     resources :applications
   end
-
   resources :applications, only: [:index, :show]
-  get "/courses", to: "courses#list"
+  resources :courses, param: :code do
+    resources :positions
+  end
 end
