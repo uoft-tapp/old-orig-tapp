@@ -5,7 +5,7 @@ class ApplicationsController < ApplicationController
   end
 
   def show
-    @applications = Application.where("applicant_id = ?", params[:id])
+    @applications = Application.find(params[:id])
     render json: @applications.to_json
   end
 
