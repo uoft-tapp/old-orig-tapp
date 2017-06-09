@@ -60,9 +60,6 @@ RSpec.describe ApplicationsController, type: :controller do
 
   describe "GET #show" do
     before(:each) do
-      Rails.logger.debug "ALL COURSE CODES #{Course.all.pluck(:code)}"
-      # Position.destroy_all
-      # Course.destroy_all
       Course.create!(
         code: "CSC411",
         campus_code: 1,
