@@ -13,7 +13,7 @@ services:
     ports:
       - "3000:3000"
     command: >
-      ./bin/rails-server-entrypoint -b 0.0.0.0 -p 3000
+      ./bin/rails-server-entrypoint -b 0.0.0.0 -p 3000 -P /dev/null
 
   postgres:
     image: postgres:9.6-alpine
