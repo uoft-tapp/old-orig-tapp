@@ -28,8 +28,8 @@ class CoursesController < ApplicationController
   private
   def update_table(table, condition, data)
     row = table.where(condition)
-#    puts row.to_json()
+    puts row.to_json()
     row.update(data)
-#    puts row.to_json()
+    puts row.to_json()
   end
 end
