@@ -9,10 +9,44 @@ tags:
   description: "DCS-TA application"
 paths:
   /courses:
+    get:
+      tags:
+      - "courses"
+      summary: "Get all Course information along with its corresponding Positions"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Course"
+  /courses/{code}/positions:
+    get:
+      tags:
+      - "courses"
+      summary: "Get all Position informatio for Course with {code}"
+      parameters:
+      - in: path
+        name: code
+        type: string
+        required: true
+        description: "code for a Course in the Course Table"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Position"
+  /courses/{code}/positions/{id}:
     post:
       tags:
       - "courses"
-      summary: "Update Course Information"
+      summary: "Update Position information based on Course {code}"
       consumes:
       - "formData"
       produces:
@@ -23,53 +57,25 @@ paths:
         description: "Course descriptions that needs to be updated"
         required: true
         schema:
-          $ref: "#/definitions/Course"
+          $ref: "#/definitions/Position"
       responses:
         405:
           description: "Invalid input"
-    get:
+    patch:
       tags:
       - "courses"
-      summary: "Get Course information"
-      produces:
-      - "application/json"
-      responses:
-        200:
-          description: "successful operation"
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/Course"
-  /courses/{code}:
-    get:
-      tags:
-      - "courses"
-      summary: "Get Course information"
+      summary: "Updates Position information for Course {code} and Position {id}"
       parameters:
       - in: path
         name: code
         type: string
         required: true
-        description: "code for Course table"
-      produces:
-      - "application/json"
-      responses:
-        200:
-          description: "successful operation"
-          schema:
-            type: "array"
-            items:
-              $ref: "#/definitions/Course"
-    patch:
-      tags:
-      - "courses"
-      summary: "Updates course information base on positions.id"
-      parameters:
-      - in: query
-        name: code
+        description: "code for a Course in the Course Table"
+      - in: path
+        name: id
         type: integer
         required: true
-        description: "id number of Position table"
+        description: "id number in Position table"
       responses:
         500:
           description: "Unable to update course position data"
