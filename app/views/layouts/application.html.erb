@@ -4,11 +4,44 @@
     <title>TAPP</title>
     <%= csrf_meta_tags %>
 
-    <%= stylesheet_link_tag    'application', media: 'all' %>
+    <%= javascript_pack_tag 'application' %>
+    <%= stylesheet_pack_tag 'application' %>
+
+    <%= javascript_include_tag 'jquery/dist/jquery.min' %>
+    <%= javascript_include_tag 'bootstrap/dist/js/bootstrap.min' %>
+
     <%= javascript_include_tag 'application' %>
   </head>
 
-  <body>
+  <header>
+    <!-- navbar with tabs -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container-fluid">
+	<ul class="nav navbar-nav">
+	  <li><a href="#courses">Courses</a></li>
+	  <li><a href="#applicantsbycourse">Applicants by Course</a></li>
+	  <li><a href="#assigned">All Assigned</a></li>
+	  <li><a href="#unassigned">All Unassigned</a></li>
+	  <li><a href="#summary">Assignment Summary</a></li>	
+	</ul>
+
+	<ul class="nav navbar-nav navbar-right">
+	  <li class="dropdown">
+	    <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+	      [role]:[user] <span class="caret"></span>
+	    </a>
+	    <ul class="dropdown-menu">
+	      <li><a href="#">Logout</a></li>
+	    </ul>
+	  </li>
+	</ul>
+	
+      </div>
+    </nav>
+</header>
+
+  <!-- adding fixed padding to keep navbar from overlapping body -->
+  <body style="padding-top:70px;">
     <%= yield %>
   </body>
 </html>
