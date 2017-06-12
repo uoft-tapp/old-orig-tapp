@@ -22,6 +22,21 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/Course"
+  /courses/{code}:
+    patch:
+      tags:
+      - "courses"
+      summary: "Updates Course information for Course {code}"
+      parameters:
+      - in: path
+        name: code
+        type: string
+        required: true
+        description: "code for a Course in the Course Table"
+      responses:
+        500:
+          description: "Unable to update course data"
+
   /courses/{code}/positions:
     get:
       tags:
