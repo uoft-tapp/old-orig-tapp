@@ -8,7 +8,8 @@ class PositionsController < ApplicationController
   end
 
   def update
-    position = Position.find(params[:id])
+    position = Position.find_by!(id: params[:id],
+      course_code: params[:course_code].upcase)
     position.update_attributes!(position_params)
   end
 
@@ -17,6 +18,5 @@ class PositionsController < ApplicationController
     params.permit(:duties, :qualifications, :hours, :estimated_count,
       :estimated_total_hours)
   end
-
 
 end
