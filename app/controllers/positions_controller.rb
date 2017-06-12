@@ -9,16 +9,14 @@ class PositionsController < ApplicationController
 
   def update
     position = Position.find(params[:id])
-    data = {
-      duties: params[:duties],
-      qualifications: params[:qualifications],
-      hours: params[:hours],
-      estimated_count: params[:estimated_count],
-      estimated_total_hours: params[:estimated_total_hours],
-    }
-    puts position.to_json()
-    position.update(data)
-    puts position.to_json()
+    position.update_attributes!(position_params)
   end
+
+  private
+  def position_params
+    params.permit(:duties, :qualifications, :hours, :estimated_count,
+      :estimated_total_hours)
+  end
+
 
 end
