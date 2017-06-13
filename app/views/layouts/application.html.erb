@@ -7,16 +7,15 @@
     <%= javascript_pack_tag 'application' %>
     <%= stylesheet_pack_tag 'application' %>
 
-    <%= javascript_include_tag 'jquery/dist/jquery.min' %>
-    <%= javascript_include_tag 'bootstrap/dist/js/bootstrap.min' %>
-
-    <%= javascript_include_tag 'application' %>
+    <%= javascript_include_tag 'react/dist/react.js' %>
+    <%= javascript_include_tag 'react-dom/dist/react-dom.js' %>
   </head>
 
   <header>
-    <!-- navbar with tabs -->
+    <!-- navbar -->
     <nav class="navbar navbar-default navbar-fixed-top">
       <div class="container-fluid">
+	
 	<ul class="nav navbar-nav">
 	  <li><a href="#courses">Courses</a></li>
 	  <li><a href="#applicantsbycourse">Applicants by Course</a></li>
@@ -38,10 +37,10 @@
 	
       </div>
     </nav>
-</header>
+  </header>
 
-  <!-- adding fixed padding to keep navbar from overlapping body -->
-  <body style="padding-top:70px;">
+  <!-- add fixed padding to keep navbar from overlapping body -->
+  <body class="container-fluid" style="padding-top:70px;">
     <%= yield %>
   </body>
 </html>
