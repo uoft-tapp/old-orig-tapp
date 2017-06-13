@@ -1,4 +1,6 @@
 # tapp
+[![Build Status](https://travis-ci.org/uoft-tapp/tapp.svg?branch=master)](https://travis-ci.org/uoft-tapp/tapp)
+
 TA assignment and matching application.
 
 ## Starting application
