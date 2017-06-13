@@ -55,7 +55,7 @@ RSpec.describe ApplicationsController, type: :controller do
         expect(parsed_body.first).to include(application.attributes.except("created_at", "updated_at"))
       end
 
-      it "list applciations given a non-integer applicant ID" do
+      it "list applications given a non-integer applicant ID" do
         get :index, params: { applicant_id: "poop" }
         expect(response.status).to eq(404)
       end
@@ -122,6 +122,10 @@ RSpec.describe ApplicationsController, type: :controller do
         application.preferences.create!(position_id: position.id, rank: 1 )
       end
 
+      # it "returns the application" do
+      #   pending "in the works"
+      # end
+
       it "returns the application associated to integer ID of an applicant" do
         pending("still in progress")
 
@@ -142,6 +146,10 @@ RSpec.describe ApplicationsController, type: :controller do
         get :show, params: { id: "poop" }
         expect(response.status).to eq(404)
       end
+
+      # it "returns 404, given an applicant ID" do
+      #   pending "in the works"
+      # end
     end
   end
 end

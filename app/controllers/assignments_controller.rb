@@ -3,17 +3,17 @@ class AssignmentsController < ApplicationController
 
  '''
     index #GET
-      /assignments - returns a list of assignments including their applicant data
+      /assignments - returns a list of applicant including their assignment data
       /applicants/:applicant_id/assignments - returns an assignments given an applicant ID
  '''
   def index
-    @assignments = if params[:applicant_id].present?
-        Assignment.includes(:applicant).where(applicant_id: params[:applicant_id])
+    @applicant = if params[:applicant_id].present?
+        Applicant.includes(:assignments).find(params[:applicant_id])
       else
-        Assignment.includes(:applicant).all
+        Applicant.includes(:assignments).all
       end
 
-    render json: @assignments.to_json(include: [:applicant])
+    render json: @applicant.to_json(include: [:assignments])
   end
 
   '''
@@ -24,12 +24,12 @@ class AssignmentsController < ApplicationController
   def show
     # Get all the assignments based off applicant_id and/or ID, include applicants
     @assignments = if params[:applicant_id].present?
-        Assignment.includes(:applicant).where(id: params[:id], applicant_id: params[:applicant_id]).take!
+        Assignment.where(id: params[:id], applicant_id: params[:applicant_id]).take!
       else
-        Assignment.includes(:applicant).find(params[:id])
+        Assignment.find(params[:id])
       end
 
-    render json: @assignments.to_json(include: [:applicant])
+    render json: @assignments.to_json
   end
 
   '''
