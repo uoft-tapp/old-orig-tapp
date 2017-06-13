@@ -1,0 +1,13 @@
+#courseMenu {
+    width: 10%;
+    height: 800px;
+    overflow: auto;
+}
+
+#courseMenu ul {
+    padding: 0;
+}
+
+#courseMenu ul li {
+    display: block;
+}
