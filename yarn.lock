@@ -1947,6 +1947,12 @@ globule@^1.0.0:
     lodash "~4.16.4"
     minimatch "~3.0.2"
 
+golden-layout@^1.5.8:
+  version "1.5.8"
+  resolved "https://registry.yarnpkg.com/golden-layout/-/golden-layout-1.5.8.tgz#320963eabdefec4fe143e2b769af918c7791c83c"
+  dependencies:
+    jquery "*"
+
 gonzales-pe@^4.0.3:
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/gonzales-pe/-/gonzales-pe-4.0.3.tgz#36148e18e267184fbfdc929af28f29ad9fbf9746"
@@ -2324,7 +2330,7 @@ jodid25519@^1.0.0:
   dependencies:
     jsbn "~0.1.0"
 
-jquery@^3.2.1:
+jquery@*, jquery@^3.2.1:
   version "3.2.1"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.2.1.tgz#5c4d9de652af6cd0a770154a631bba12b015c787"
 
