@@ -24,21 +24,16 @@ RSpec.describe ApplicantsController, type: :controller do
 
       let(:parsed_body) { JSON.parse(response.body) }
 
-      it "returns 200" do
-        get :show, params: { id: applicant.id }
-        expect(response.status).to eq(200)
-        expect(response.body).not_to be_empty
-      end
-
-      it "returns 200" do
+      it "returns the applicant associated to the integer ID" do
         get :show, params: { id: applicant.id }, format: :json
+        expect(response.status).to eq(200)
         expect(parsed_body).not_to be_empty
         expect(parsed_body).to include(applicant.attributes.except("created_at", "updated_at"))
       end
     end
 
     context "when passed a non-integer ID" do
-      it "returns 404" do
+      it "it returns 404" do
         get :show, params: { id: "poop" }
         expect(response.status).to eq(404)
       end
