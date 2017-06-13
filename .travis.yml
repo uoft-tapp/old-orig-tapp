@@ -11,6 +11,8 @@ services:
 
 before_install:
   - cp dev.env.default .env
+  - docker-compose up -d
+  - sleep 15
 
 script:
   - docker-compose run -eRAILS_ENV=test rails-app rake db:create db:migrate
