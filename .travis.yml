@@ -9,6 +9,9 @@ notifications:
 services:
   - docker
 
+before_install:
+  - cp dev.env.default .env
+
 script:
   - docker-compose run -eRAILS_ENV=test rails-app rake db:create db:migrate
   - docker-compose run -eRAILS_ENV=test rails-app rake spec
