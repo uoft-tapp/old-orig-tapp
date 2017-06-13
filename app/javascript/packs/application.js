@@ -7,4 +7,10 @@
 // To reference this file, add <%= javascript_pack_tag 'application' %> to the appropriate
 // layout file, like app/views/layouts/application.html.erb
 
-//import '../app-styles'
+import '../app-styles'
+
+import React from 'react'
+import ReactDOM from 'react-dom'
+
+window.React = React;
+window.ReactDOM = ReactDOM;
