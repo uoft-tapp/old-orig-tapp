@@ -6,7 +6,6 @@ Rails.application.routes.draw do
   end
 
   resources :applications, only: [:index, :show]
-  
-  get "/index.html", to: "app#main"
 
+  get "/index.html/(*z)", to: "app#main"
 end
