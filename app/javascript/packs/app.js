@@ -14,7 +14,16 @@ import ReactDOM from 'react-dom'
 import {BrowserRouter as Router, Route, NavLink } from 'react-router-dom'
 import {Navbar, Nav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap'
 
+import {Courses} from '../app/components/courses.js'
+import {ABC} from '../app/components/abc.js'
+import {Assigned} from '../app/components/assigned.js'
+import {Unassigned} from '../app/components/unassigned.js'
+import {Summary} from '../app/components/summary.js'
+
+
 /*** Router ***/
+const Bye = props => <div className="container-fluid" style={{paddingTop: "70px"}}><h1>Bye!</h1></div>;
+
 const RouterInst = props => (
 	<Router basename="index.html">
 	<div>
@@ -71,18 +80,6 @@ const NavbarInst = props => (
     </Navbar>
 );
 
-const Courses = props => <div className="container-fluid" style={{paddingTop: "70px"}}><h1>Courses!</h1></div>;
-
-const ABC = props => <div className="container-fluid" style={{paddingTop: "70px"}}><h1>Applicants by Courses!</h1></div>;
-
-const Assigned = props => <div className="container-fluid" style={{paddingTop: "70px"}}><h1>All Assigned!</h1></div>;
-
-const Unassigned = props => <div className="container-fluid" style={{paddingTop: "70px"}}><h1>All Unassigned!</h1></div>;
-
-const Summary = props => <div className="container-fluid" style={{paddingTop: "70px"}}><h1>Summary!</h1></div>;
-
-const Bye = props => <div className="container-fluid" style={{paddingTop: "70px"}}><h1>Bye!</h1></div>;
-
 
 let AppState = {
     // navbar-related props
@@ -120,7 +117,7 @@ let AppState = {
 	    user: "user",
 	},
 
-	selectedTab: 2,
+	selectedTab: null,
 	
 	handleSelectTab: (eventKey) => (AppState.nav.selectedTab = eventKey),
     },
