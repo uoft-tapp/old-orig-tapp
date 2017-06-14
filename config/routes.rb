@@ -10,5 +10,5 @@ Rails.application.routes.draw do
     resources :positions
   end
   
-  get "/index.html", to: "app#main"
+  get "/index.html/(*z)", to: "app#main"
 end
