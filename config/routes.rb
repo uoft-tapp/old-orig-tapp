@@ -7,14 +7,6 @@ Rails.application.routes.draw do
 
   resources :applications, only: [:index, :show]
   
-  @home = "hello_react"
-  
-  get "/#{@home}", to: "#{@home}#index"
-  get "/#{@home}#courses", to: "#{@home}#courses"
-  get "/#{@home}#applicantsbycourse", to: "#{@home}#applicantsbycourse"
-  get "/#{@home}#assigned", to: "#{@home}#assigned"
-  get "/#{@home}#unassigned", to: "#{@home}#unassigned"
-  get "/#{@home}#summary", to: "#{@home}#summary"
+  get "/index.html", to: "app#main"
 
-  get "/#{@home}#applicant:id", to: "#{@home}#applicant"
 end
