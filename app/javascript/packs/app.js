@@ -11,7 +11,26 @@ import '../app-styles'
 
 import React from 'react'
 import ReactDOM from 'react-dom'
+import {BrowserRouter as Router, Route, NavLink } from 'react-router-dom'
 import {Navbar, Nav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap'
+
+/*** Router ***/
+const RouterInst = props => (
+	<Router basename="index.html">
+	<div>
+	<NavbarInst {...props} />
+
+	<Route path={props.nav.courses.route} component={Courses} />
+	<Route path={props.nav.abc.route} component={ABC} />
+	<Route path={props.nav.assigned.route} component={Assigned} />
+	<Route path={props.nav.unassigned.route} component={Unassigned} />
+	<Route path={props.nav.summary.route} component={Summary} />
+	
+	<Route path={props.nav.logout.route} component={Bye} />
+	
+	</div>
+	</Router>
+);
 
 /*** Navbar ***/
 
@@ -23,47 +42,47 @@ const NavbarInst = props => (
 	</Navbar.Header>
 	
     	<Nav pullLeft onSelect={props.nav.handleSelectTab}>
-	<NavItem eventKey={props.nav.courses.key} href={props.nav.courses.route}>
-	{props.nav.courses.label}
-    </NavItem>
-	<NavItem eventKey={props.nav.abc.key} href={props.nav.abc.route}>
-	{props.nav.abc.label}
-    </NavItem>
-	<NavItem eventKey={props.nav.assigned.key} href={props.nav.assigned.route}>
-	{props.nav.assigned.label}
-    </NavItem>
-	<NavItem eventKey={props.nav.unassigned.key} href={props.nav.unassigned.route}>
-	{props.nav.unassigned.label}
-    </NavItem>
-	<NavItem eventKey={props.nav.summary.key} href={props.nav.summary.route}>
-	{props.nav.summary.label}
-    </NavItem>
+	<NavItem eventKey={props.nav.courses.key}>
+	<NavLink to={props.nav.courses.route}>{props.nav.courses.label}</NavLink>
+	</NavItem>
+	<NavItem eventKey={props.nav.abc.key}>
+	<NavLink to={props.nav.abc.route}>{props.nav.abc.label}</NavLink>
+	</NavItem>
+	<NavItem eventKey={props.nav.assigned.key}>
+	<NavLink to={props.nav.assigned.route}>{props.nav.assigned.label}</NavLink>
+	</NavItem>
+	<NavItem eventKey={props.nav.unassigned.key}>
+	<NavLink to={props.nav.unassigned.route}>{props.nav.unassigned.label}</NavLink>
+	</NavItem>
+	<NavItem eventKey={props.nav.summary.key}>
+	<NavLink to={props.nav.summary.route}>{props.nav.summary.label}</NavLink>
+	</NavItem>
 	</Nav>
 
 	<Nav pullRight>
-	<NavDropdown eventKey={props.nav.logout.key}
-    title={props.nav.logout.role + ":" + props.nav.logout.user} id="nav-dropdown">
-	<MenuItem eventKey={props.nav.logout.key + ".1"} href={props.nav.logout.route}>Logout</MenuItem>
+	<NavDropdown eventKey={props.nav.logout.key} title={props.nav.logout.role + ":" + props.nav.logout.user}
+    id="nav-dropdown">
+	<MenuItem eventKey={props.nav.logout.key + ".1"}>
+	<NavLink to={props.nav.logout.route}>Logout</NavLink>
+	</MenuItem>
 	</NavDropdown>
 	</Nav>
 	
     </Navbar>
 );
 
+const Courses = props => <div className="container-fluid" style={{paddingTop: "70px"}}><h1>Courses!</h1></div>;
 
-const AppView = props => (
-	<NavbarInst {...props} />
-);
+const ABC = props => <div className="container-fluid" style={{paddingTop: "70px"}}><h1>Applicants by Courses!</h1></div>;
 
-function viewRouter(routeKey) {
-    switch (routeKey) {
+const Assigned = props => <div className="container-fluid" style={{paddingTop: "70px"}}><h1>All Assigned!</h1></div>;
 
+const Unassigned = props => <div className="container-fluid" style={{paddingTop: "70px"}}><h1>All Unassigned!</h1></div>;
 
-    case "2":
-	// applicant by course
-	
-    }
-}
+const Summary = props => <div className="container-fluid" style={{paddingTop: "70px"}}><h1>Summary!</h1></div>;
+
+const Bye = props => <div className="container-fluid" style={{paddingTop: "70px"}}><h1>Bye!</h1></div>;
+
 
 let AppState = {
     // navbar-related props
@@ -71,40 +90,42 @@ let AppState = {
 	courses: {
 	    key: "1",
 	    label: "Courses",
-	    route: "#courses",
+	    route: "/courses",
 	},
 	abc: {
 	    key: "2",
 	    label: "Applicants by Course",
-	    route: "#applicantsbycourse",
+	    route: "/applicantsbycourse",
 	},
 	assigned: {
 	    key: "3",
 	    label: "All Assigned",
-	    route: "#assigned",
+	    route: "/assigned",
 	},
 	unassigned: {
 	    key: "4",
 	    label: "All Unassigned",
-	    route: "#unassigned",
+	    route: "/unassigned",
 	},
 	summary: {
 	    key: "5",
 	    label: "Summary",
-	    route: "#summary",
+	    route: "/summary",
 	},
 
 	logout: {
 	    key: "6",
-	    route: "#",
+	    route: "/bye",
 	    role: "role",
 	    user: "user",
 	},
 
-	handleSelectTab: viewRouter,
+	handleSelectTab: (eventKey) => null,
     },
 
 };
+
+const AppView = props => <RouterInst {...props} />;
 
 class App extends React.Component {
     constructor(props) {
@@ -113,7 +134,7 @@ class App extends React.Component {
     }
 
     render() {
-	return <AppView {...this.state} />;
+	return <AppView {...this.state}/>;
     }
 }
 
