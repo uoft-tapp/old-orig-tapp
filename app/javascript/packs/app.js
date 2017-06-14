@@ -11,7 +11,7 @@ import '../app-styles'
 
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {BrowserRouter as Router, Route, NavLink } from 'react-router-dom'
+import {BrowserRouter as Router, Route, Link, Switch} from 'react-router-dom'
 import {Navbar, Nav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap'
 
 import {Courses} from '../app/components/courses.js'
@@ -19,7 +19,7 @@ import {ABC} from '../app/components/abc.js'
 import {Assigned} from '../app/components/assigned.js'
 import {Unassigned} from '../app/components/unassigned.js'
 import {Summary} from '../app/components/summary.js'
-
+import {Applicant} from '../app/components/applicant.js'
 
 /*** Router ***/
 const Bye = props => <div className="container-fluid" style={{paddingTop: "70px"}}><h1>Bye!</h1></div>;
@@ -29,14 +29,18 @@ const RouterInst = props => (
 	<div>
 	<NavbarInst {...props} />
 
+	<Switch>
 	<Route path={props.nav.courses.route} component={Courses} />
 	<Route path={props.nav.abc.route} component={ABC} />
 	<Route path={props.nav.assigned.route} component={Assigned} />
 	<Route path={props.nav.unassigned.route} component={Unassigned} />
 	<Route path={props.nav.summary.route} component={Summary} />
-	
+    
 	<Route path={props.nav.logout.route} component={Bye} />
-	
+
+    	<Route path={props.nav.applicant.route} component={Applicant} />
+	</Switch>
+    
 	</div>
 	</Router>
 );
@@ -51,28 +55,35 @@ const NavbarInst = props => (
 	</Navbar.Header>
 	
     	<Nav pullLeft activeKey={props.nav.selectedTab} onSelect={props.nav.handleSelectTab}>
+
 	<NavItem eventKey={props.nav.courses.key}>
-	<NavLink to={props.nav.courses.route}>{props.nav.courses.label}</NavLink>
+	<Link id={"link" + props.nav.courses.key} to={props.nav.courses.route}>{props.nav.courses.label}</Link>
 	</NavItem>
 	<NavItem eventKey={props.nav.abc.key}>
-	<NavLink to={props.nav.abc.route}>{props.nav.abc.label}</NavLink>
+	<Link id={"link" + props.nav.abc.key} to={props.nav.abc.route}>{props.nav.abc.label}</Link>
 	</NavItem>
 	<NavItem eventKey={props.nav.assigned.key}>
-	<NavLink to={props.nav.assigned.route}>{props.nav.assigned.label}</NavLink>
+	<Link to={props.nav.assigned.route}>{props.nav.assigned.label}</Link>
 	</NavItem>
 	<NavItem eventKey={props.nav.unassigned.key}>
-	<NavLink to={props.nav.unassigned.route}>{props.nav.unassigned.label}</NavLink>
+	<Link to={props.nav.unassigned.route}>{props.nav.unassigned.label}</Link>
 	</NavItem>
 	<NavItem eventKey={props.nav.summary.key}>
-	<NavLink to={props.nav.summary.route}>{props.nav.summary.label}</NavLink>
+	<Link to={props.nav.summary.route}>{props.nav.summary.label}</Link>
 	</NavItem>
 	</Nav>
+
+    {props.nav.applicantSelected &&
+     <Nav>
+     <NavItem eventKey={props.nav.applicant.key}>{props.nav.applicant.label}</NavItem>
+     </Nav>
+    }
 
 	<Nav pullRight>
 	<NavDropdown eventKey={props.nav.logout.key} title={props.nav.logout.role + ":" + props.nav.logout.user}
     id="nav-dropdown">
 	<MenuItem eventKey={props.nav.logout.key + ".1"}>
-	<NavLink to={props.nav.logout.route}>Logout</NavLink>
+	<Link to={props.nav.logout.route}>Logout</Link>
 	</MenuItem>
 	</NavDropdown>
 	</Nav>
@@ -110,16 +121,27 @@ let AppState = {
 	    route: "/summary",
 	},
 
-	logout: {
+	applicant: {
 	    key: "6",
+	    label: "-",
+	    route: "/applicant:id",
+	},
+	
+	logout: {
+	    key: "7",
 	    route: "/bye",
 	    role: "role",
 	    user: "user",
 	},
 
 	selectedTab: null,
+
+	applicantSelected: true,
 	
-	handleSelectTab: (eventKey) => (AppState.nav.selectedTab = eventKey),
+	handleSelectTab: (eventKey) => {
+	    AppState.nav.selectedTab = eventKey;
+	    document.getElementById("link" + eventKey).dispatchEvent(new Event('click'));
+	},
     },
 
 };
