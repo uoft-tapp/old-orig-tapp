@@ -30,15 +30,15 @@ const RouterInst = props => (
 	<NavbarInst {...props} />
 
 	<Switch>
-	<Route path={props.nav.courses.route} component={Courses} />
-	<Route path={props.nav.abc.route} component={ABC} />
-	<Route path={props.nav.assigned.route} component={Assigned} />
-	<Route path={props.nav.unassigned.route} component={Unassigned} />
-	<Route path={props.nav.summary.route} component={Summary} />
+	<Route path={props.nav.courses.route} render={() => <Courses/>} />
+	<Route path={props.nav.abc.route} render={() => <ABC/>} />
+	<Route path={props.nav.assigned.route} render={() => <Assigned/>} />
+	<Route path={props.nav.unassigned.route} render={() => <Unassigned/>} />
+	<Route path={props.nav.summary.route} render={() => <Summary/>} />
     
-	<Route path={props.nav.logout.route} component={Bye} />
+	<Route path={props.nav.logout.route} render={() => <Bye/>} />
 
-    	<Route path={props.nav.applicant.route} component={Applicant} />
+    	<Route path={props.nav.applicant.route} render={() => <Applicant/>} />
 	</Switch>
     
 	</div>
