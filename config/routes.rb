@@ -9,4 +9,6 @@ Rails.application.routes.draw do
   resources :courses, param: :code do
     resources :positions
   end
+  
+  get "/index.html", to: "app#main"
 end
