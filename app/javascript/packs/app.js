@@ -38,7 +38,7 @@ const RouterInst = props => (
     
 	<Route path={props.nav.logout.route} render={() => <Bye/>} />
 
-    	<Route path={props.nav.applicant.route} render={() => <Applicant/>} />
+    	<Route path={props.nav.applicant.route} render={(rprops) => <Applicant {...rprops}/>} />
 	</Switch>
     
 	</div>
@@ -136,7 +136,7 @@ let AppState = {
 
 	selectedTab: null,
 
-	applicantSelected: true,
+	applicantSelected: false,
 	
 	handleSelectTab: (eventKey) => {
 	    AppState.nav.selectedTab = eventKey;
