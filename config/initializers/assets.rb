@@ -12,8 +12,4 @@ Rails.application.config.assets.paths << Rails.root.join('node_modules')
 # application.js, application.css, and all non-JS/CSS in the app/assets
 # folder are already added.
 # Rails.application.config.assets.precompile += %w( admin.js admin.css )
-Rails.application.config.assets.precompile += %w( react/dist/react.js )
-Rails.application.config.assets.precompile += %w( react-dom/dist/react-dom.js )
-Rails.application.config.assets.precompile += %w( jquery/dist/jquery.js )
-Rails.application.config.assets.precompile += %w( bootstrap/dist/js/bootstrap.min.js )
-Rails.application.config.assets.precompile += %w( golden-layout/dist/goldenlayout.js )
+
