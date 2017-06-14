@@ -41,7 +41,7 @@ const NavbarInst = props => (
 	<Navbar.Brand>TAPP</Navbar.Brand>
 	</Navbar.Header>
 	
-    	<Nav pullLeft onSelect={props.nav.handleSelectTab}>
+    	<Nav pullLeft activeKey={props.nav.selectedTab} onSelect={props.nav.handleSelectTab}>
 	<NavItem eventKey={props.nav.courses.key}>
 	<NavLink to={props.nav.courses.route}>{props.nav.courses.label}</NavLink>
 	</NavItem>
@@ -120,7 +120,9 @@ let AppState = {
 	    user: "user",
 	},
 
-	handleSelectTab: (eventKey) => null,
+	selectedTab: 2,
+	
+	handleSelectTab: (eventKey) => (AppState.nav.selectedTab = eventKey),
     },
 
 };
