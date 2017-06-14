@@ -39,13 +39,6 @@ RSpec.describe PositionsController, type: :controller do
         expect(response.status).to eq(404)
       end
     end
-
-    context "when {course_code} is an integer" do
-      it "throws status 404" do
-        get :index, params: {course_code: 2}
-        expect(response.status).to eq(404)
-      end
-    end
   end
 
   describe "PATCH /courses/{course_code}/positions/{id}" do
@@ -66,6 +59,7 @@ RSpec.describe PositionsController, type: :controller do
         position.reload
         expect(position.as_json(:except => [:title, :created_at, :updated_at]))
           .to eq(@params.as_json)
+          expect(response.status).to eq(204)
       end
     end
 

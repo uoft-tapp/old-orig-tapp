@@ -30,19 +30,13 @@ RSpec.describe CoursesController, type: :controller do
       it "updates courses" do
         course.reload
         expect(course[:estimated_enrolment]).to eq(@params[:estimated_enrolment])
+        expect(response.status).to eq(204)
       end
     end
 
     context "when {code} is a non-existent courses code" do
       it "it throws status 404" do
         patch :update, params: {code: "csc103h1s"}
-        expect(response.status).to eq(404)
-      end
-    end
-
-    context "when {code} is an integer" do
-      it "it throws status 404" do
-        patch :update, params: {code: 2}
         expect(response.status).to eq(404)
       end
     end
