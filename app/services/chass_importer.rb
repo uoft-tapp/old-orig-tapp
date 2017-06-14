@@ -88,20 +88,34 @@ class ChassImporter
         Rails.logger.debug "application #{app_id}, #{round_id} already exists" unless application.new_record?
         application.save!
 
-        parse_preference(applicant_entry["preferences"]).each do |pref|
-          position_id = Position.where(title: pref[:position]).select(:id).take!.id
+        applicant_entry["courses"].each do |pref|
+          position_id = Position.where(title: pref).select(:id).take!.id
 
           preference_ident = {position_id: position_id}
           preference = application.preferences.where(preference_ident).take
           preference ||= application.preferences.build(
             position_id: position_id,
-            rank: pref[:rank])
+            rank: 2
+          )
 
           Rails.logger.debug "preference #{position_id}, #{pref[:rank]} already exists" unless preference.new_record?
           preference.save!
         end
+
+        insert_preference(applicant_entry["preferences"], application)
       end
     end
+
+  def insert_preference(preferences, application)
+    parse_preference(preferences).each do |preference|
+      position = Position.where(title: preference[:position]).select(:id).take
+      if position != nil
+        position_id = position.id
+        preference_ident = {position_id: position_id}
+        pref ||= application.preferences.where(preference_ident).update(rank: preference[:rank])
+      end
+    end
+  end
 
   def parse_preference(pref)
     list = pref.split(',')
@@ -130,6 +144,7 @@ class ChassImporter
       return 5
     end
   end
+
 
 
   def insert_courses
