@@ -9,4 +9,6 @@ Rails.application.routes.draw do
   resources :applications, only: [:index, :show]
   resources :positions
   resources :instructors
+  
+  get "/index.html", to: "app#main"
 end
