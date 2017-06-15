@@ -1,27 +1,28 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
-import PropTypes from 'prop-types'
+import {ListGroup, ListGroupItem} from 'react-bootstrap'
 
-function CourseList(props) {
-    const courses = props.courses;
-    courses.sort((a, b) => a.code > b.code);
-    
-    const list = courses.map((course) =>
-        <li key={course.code}><div>
-	  {course.code} {course.assigned} / {course.expected}
-	</div></li>
-    );
-    return <ul>{list}</ul>;
+class CourseMenu extends React.Component {
+    render() {
+	const courses = fake.slice();//this.props.courses.slice();
+	courses.sort((a, b) => a.code > b.code);
+	console.log(this.props.selected);
+	const list = courses.map(
+	    (course) => (
+		this.props.selected.has(course.code) ?
+		    (<ListGroupItem key={course.code} onClick={() => this.props.handleClick(course.code)} active>
+		     <span style={{float: 'left'}}>{course.code}</span>
+		     <span style={{float: 'right'}}>{course.assigned} /{course.expected}</span>
+		     </ListGroupItem>)
+		: (<ListGroupItem key={course.code} onClick={() => this.props.handleClick(course.code)}>
+		   <span style={{float: 'left'}}>{course.code}</span>
+		   <span style={{float: 'right'}}>{course.assigned} /{course.expected}</span>
+		   </ListGroupItem>)
+	    ));
+	
+	return <ListGroup>{list}</ListGroup>;
+    }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    ReactDOM.render(
-      <div id="courseMenu">
-      	   <CourseList courses={fake}/>
-      </div>,
-      document.body.appendChild(document.createElement('div')),
-    )
-})
 
 
 let fake = ([
@@ -80,3 +81,6 @@ let fake = ([
     {code: 'CSC118H1', assigned: 2, expected: 10},
     {code: 'CSC119H1', assigned: 2, expected: 10},    
 ]);
+
+
+export { CourseMenu };
