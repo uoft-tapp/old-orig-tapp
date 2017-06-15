@@ -49,7 +49,7 @@ const RouterInst = props => (
 /*** Navbar ***/
 
 const NavbarInst = props => (
-	<Navbar fixedTop>
+	<Navbar fixedTop fluid>
 	
 	<Navbar.Header>
 	<Navbar.Brand>TAPP</Navbar.Brand>
@@ -152,15 +152,24 @@ let AppState = {
 
 	// toggle the selected state of the course that is clicked
 	handleClick: courseCode => {
-	    if (AppState.courseMenu.selected.has(courseCode))
+	    AppView.forceUpdate();
+	    if (AppState.courseMenu.selected.has(courseCode)) {
 		AppState.courseMenu.selected.delete(courseCode);
-
-	    else
+		
+	    } else {
 		AppState.courseMenu.selected.add(courseCode);
+	    }
 	},
     },
 
     abc: {
+	course1: {
+	    sortFields: ['First Name', 'Dept.', 'Prog.', 'Year', 'Pref', 'Other'],
+	    activeSortFields: ['Prog-down', 'Last Name-up'],
+	},
+    },
+
+    applicants: {
 
     },
 };
