@@ -1,13 +1,10 @@
-#courseMenu {
-    width: 10%;
+.list-group {
+    width: 20ex;
     height: 800px;
     overflow: auto;
 }
 
-#courseMenu ul {
-    padding: 0;
-}
-
-#courseMenu ul li {
-    display: block;
+.list-group-item {
+    height: 2em;
+    padding: 3px;
 }

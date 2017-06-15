@@ -22,6 +22,7 @@ import {Summary} from '../app/components/summary.js'
 import {Applicant} from '../app/components/applicant.js'
 
 /*** Router ***/
+// temporary logout "view"
 const Bye = props => <div className="container-fluid" style={{paddingTop: "70px"}}><h1>Bye!</h1></div>;
 
 const RouterInst = props => (
@@ -30,11 +31,11 @@ const RouterInst = props => (
 	<NavbarInst {...props} />
 
 	<Switch>
-	<Route path={props.nav.courses.route} render={() => <Courses/>} />
-	<Route path={props.nav.abc.route} render={() => <ABC/>} />
-	<Route path={props.nav.assigned.route} render={() => <Assigned/>} />
-	<Route path={props.nav.unassigned.route} render={() => <Unassigned/>} />
-	<Route path={props.nav.summary.route} render={() => <Summary/>} />
+	<Route path={props.nav.courses.route} render={() => <Courses {...props}/>} />
+	<Route path={props.nav.abc.route} render={() => <ABC {...props}/>} />
+	<Route path={props.nav.assigned.route} render={() => <Assigned {...props}/>} />
+	<Route path={props.nav.unassigned.route} render={() => <Unassigned {...props}/>} />
+	<Route path={props.nav.summary.route} render={() => <Summary {...props}/>} />
     
 	<Route path={props.nav.logout.route} render={() => <Bye/>} />
 
@@ -140,10 +141,28 @@ let AppState = {
 	
 	handleSelectTab: (eventKey) => {
 	    AppState.nav.selectedTab = eventKey;
-	    document.getElementById("link" + eventKey).dispatchEvent(new Event('click'));
+//	    document.getElementById("link" + eventKey).dispatchEvent(new Event('click'));
 	},
     },
 
+    courseMenu: {
+	courses: [],
+	
+	selected: new Set(),
+
+	// toggle the selected state of the course that is clicked
+	handleClick: courseCode => {
+	    if (AppState.courseMenu.selected.has(courseCode))
+		AppState.courseMenu.selected.delete(courseCode);
+
+	    else
+		AppState.courseMenu.selected.add(courseCode);
+	},
+    },
+
+    abc: {
+
+    },
 };
 
 const AppView = props => <RouterInst {...props} />;
