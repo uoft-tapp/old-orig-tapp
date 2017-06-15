@@ -5,7 +5,7 @@ class CourseMenu extends React.Component {
     render() {
 	const courses = fake.slice();//this.props.courses.slice();
 	courses.sort((a, b) => a.code > b.code);
-	console.log(this.props.selected);
+
 	const list = courses.map(
 	    (course) => (
 		this.props.selected.has(course.code) ?
@@ -19,7 +19,7 @@ class CourseMenu extends React.Component {
 		   </ListGroupItem>)
 	    ));
 	
-	return <ListGroup>{list}</ListGroup>;
+	return <ListGroup style={{float: "left"}}>{list}</ListGroup>;
     }
 }
 
