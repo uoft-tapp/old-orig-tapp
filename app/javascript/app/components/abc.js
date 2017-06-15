@@ -1,12 +1,15 @@
 import React from 'react'
+import { Grid, Row, Col } from 'react-bootstrap'
 import { CourseMenu } from './courseMenu.js'
+import { CoursePane } from './coursePane.js'
 
 class ABC extends React.Component {
     render() {
 	return (
-		<div className="container-fluid" style={{paddingTop: "70px"}}>
+		<Grid fluid style={{paddingTop: "70px"}}><Row><Col xs={12}>
 		<CourseMenu {...this.props.courseMenu}/>
-		</div>
+		<CoursePane {...this.props}/>
+		</Col></Row></Grid>
 	);
     }
 }
