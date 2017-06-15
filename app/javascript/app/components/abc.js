@@ -1,5 +1,14 @@
 import React from 'react'
+import { CourseMenu } from './courseMenu.js'
 
-const ABC = props => <div className="container-fluid" style={{paddingTop: "70px"}}><h1>Applicants by Courses!</h1></div>;
+class ABC extends React.Component {
+    render() {
+	return (
+		<div className="container-fluid" style={{paddingTop: "70px"}}>
+		<CourseMenu {...this.props.courseMenu}/>
+		</div>
+	);
+    }
+}
 
 export { ABC };
