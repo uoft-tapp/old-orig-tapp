@@ -9,8 +9,13 @@
 
 import '../app-styles'
 
+import _ from 'underscore'
+import Backbone from 'backbone'
+import NestedModel from 'backbone-nested'
+
 import React from 'react'
 import ReactDOM from 'react-dom'
+
 import {BrowserRouter as Router, Route, Link, Switch} from 'react-router-dom'
 import {Navbar, Nav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap'
 
@@ -93,7 +98,7 @@ const NavbarInst = props => (
 );
 
 
-let AppState = {
+let AppState = new Backbone.NestedModel({
     // navbar-related props
     nav: {
 	courses: {
@@ -125,7 +130,7 @@ let AppState = {
 	applicant: {
 	    key: "6",
 	    label: "-",
-	    route: "/applicant:id",
+	    route: "/applicant/:id",
 	},
 	
 	logout: {
@@ -140,24 +145,24 @@ let AppState = {
 	applicantSelected: false,
 	
 	handleSelectTab: (eventKey) => {
-	    AppState.nav.selectedTab = eventKey;
-//	    document.getElementById("link" + eventKey).dispatchEvent(new Event('click'));
+	    AppState.toJSON().nav.selectedTab = eventKey;
 	},
     },
 
     courseMenu: {
 	courses: [],
 	
-	selected: new Set(),
+	selected: [],
 
 	// toggle the selected state of the course that is clicked
 	handleClick: courseCode => {
-	    AppView.forceUpdate();
-	    if (AppState.courseMenu.selected.has(courseCode)) {
-		AppState.courseMenu.selected.delete(courseCode);
+	    let i = AppState.get('courseMenu.selected').indexOf(courseCode);
+	    
+	    if (i == -1) {
+		AppState.add('courseMenu.selected', courseCode);
 		
 	    } else {
-		AppState.courseMenu.selected.add(courseCode);
+		AppState.remove('courseMenu.selected[' + i + ']');
 	    }
 	},
     },
@@ -165,23 +170,51 @@ let AppState = {
     abc: {
 	course1: {
 	    sortFields: ['First Name', 'Dept.', 'Prog.', 'Year', 'Pref', 'Other'],
-	    activeSortFields: ['Prog-down', 'Last Name-up'],
+	    activeSortFields: ['Prog.-down', 'Last Name-up'],
 	},
     },
 
-    applicants: {
+    applicants: fetchHelper('/applicants', i => i),
 
-    },
-};
+    applications: fetchHelper('/applicants', i => i),
+
+    courses: fetchHelper('/courses', i => {
+	AppState.set('courseMenu.courses', i.map(course => (
+	    {code: course.code, expected: course.positions[0].estimated_count, assigned: 0}
+	)));
+	return i;
+    }),
+    
+});
+
+function fetchHelper(URL, next) {
+    fetch(URL).then(function(response) {
+	return response.json();
+    }).then(function(response) {
+	next(response);
+    });
+}
 
 const AppView = props => <RouterInst {...props} />;
 
 class App extends React.Component {
     constructor(props) {
 	super(props);
-	this.state = AppState;
+	this.state = AppState.toJSON();
+
+	this._updateState = this._updateState.bind(this);
+	
+	_.extend(this, Backbone.Events);
     }
 
+    _updateState() {
+	this.setState(AppState.toJSON());
+    }
+
+    componentDidMount() {
+	AppState.bind('change', this._updateState);
+    }
+    
     render() {
 	return <AppView {...this.state}/>;
     }
