@@ -1,19 +1,10 @@
 # tapp
-[![Build Status](https://travis-ci.org/uoft-tapp/tapp.svg?branch=master)](https://travis-ci.org/uoft-tapp/tapp)
-
 TA assignment and matching application.
 
 ## Starting application
 You should have a reasonably recent version of Docker
 [installed](https://docs.docker.com/engine/installation/). Also, check that
 you have Docker Compose installed.
-
-Copy the `dev.env.default` file to `.env`.  This file is where the docker components
-will pickup environment variables such as the postgres username and password.
-
-```
-cp dev.env.default .env
-```
 
 Once that's out of the way, clone this repo, navigate into the cloned
 directory, and run

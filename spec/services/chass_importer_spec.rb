@@ -202,7 +202,6 @@ describe ChassImporter do
       before(:each) { subject } # Evaluate subject
 
       it "raise a descriptive error for courses" do
-        pending "Should be fixed soon"
         expect(Position.where(title: "CSC100H1S").count).to eq(1)
         expect(Position.where(title: "CSC108H1S - Head TAs").count).to eq(0)
         expect { subject }.to raise_error(StandardError, /no such course positions/)
