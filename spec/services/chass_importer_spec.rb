@@ -193,23 +193,6 @@ describe ChassImporter do
   end
 
   context "when importing applications" do
-    context "from a file with non-existent courses positions" do
-      let (:mock_json) { File.read("./spec/support/chass_data/nonexistent_course_position_applicant.json") }
-      before(:each) do
-        # Sanity checking -- shouldn't ever fail
-        expect(Position.all.count).to eq(0)
-      end
-      before(:each) { subject } # Evaluate subject
-
-      it "insert only the existent positions" do
-        applicant = Applicant.where(utorid: "applicant478").take
-        application = applicant.applications.take
-        position_id = Position.where(title: "CSC100H1S").select(:id).take.id
-        preferences ||= application.preferences
-        expect(preferences.count).to eq(1)
-      end
-    end
-
     context "from a file with duplicate app_id" do
       let (:mock_json) { File.read("./spec/support/chass_data/duplicate_app_id_applicant.json") }
       it "raise a descriptive error" do
@@ -257,6 +240,60 @@ describe ChassImporter do
         # IDEA: run the importer a second time, check number of application is the same
         applicant = Applicant.where(utorid: "applicant478").pluck(:id).first
         expect(Application.where({applicant_id: applicant, app_id: 478}).count).to eq(1)
+      end
+    end
+  end
+
+  context "when importing into Preference model" do
+    context "from an expected file" do
+      let (:mock_json) { File.read("./spec/support/chass_data/applicant.json") }
+      before(:each) do
+          # Sanity checking -- shouldn't ever fail
+        expect(Applicant.all.count).to eq(0)
+      end
+      before(:each) { subject } # Evaluate subject
+
+      it "updates the course positions specified in preferences from rank 2 to the described rank" do
+        applicant = Applicant.where(utorid: "applicant478").take
+        application ||= applicant.applications.take
+        position_id = Position.where(title: "CSC100H1S").select(:id).take.id
+        rank ||= application.preferences.select(:rank).take.rank
+        expect(rank).to eq(1)
+      end
+    end
+
+    context "from file with non-existent course positions in courses" do
+      let (:mock_json) { File.read("./spec/support/chass_data/nonexistent_course_position_applicant.json") }
+      before(:each) do
+          # Sanity checking -- shouldn't ever fail
+        expect(Applicant.all.count).to eq(0)
+      end
+      before(:each) { subject } # Evaluate subject
+
+      it "insert only the existent positions to Preference model" do
+        applicant = Applicant.where(utorid: "applicant478").take
+        application = applicant.applications.take
+        position_id = Position.where(title: "CSC100H1S").select(:id).take.id
+        preferences ||= application.preferences
+        expect(preferences.count).to eq(1)
+      end
+
+    end
+
+    context "from file with non-existent course positions in preferences" do
+      let (:mock_json) { File.read("./spec/support/chass_data/nonexistent_course_position_applicant_pref.json") }
+      before(:each) do
+          # Sanity checking -- shouldn't ever fail
+        expect(Applicant.all.count).to eq(0)
+      end
+      before(:each) { subject } # Evaluate subject
+
+      it "insert only the existent positions to Preference model" do
+        applicant = Applicant.where(utorid: "applicant478").take
+        application = applicant.applications.take
+        position_id = Position.where(title: "CSC100H1S").select(:id).take.id
+        preferences ||= application.preferences
+        expect(preferences.count).to eq(1)
       end
     end
   end

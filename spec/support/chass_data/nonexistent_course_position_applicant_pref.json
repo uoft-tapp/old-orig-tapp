@@ -1,0 +1,45 @@
+{ "courses": [
+  {
+    "course_id": "CSC100H1S",
+    "course_name": "First Year Office Hour TA",
+    "round_id": "110",
+    "enrollment": "100",
+    "n_positions": "5",
+    "n_hours": "54",
+    "dates": null,
+    "tutorials": null,
+    "qualifications": "Must be enrolled in or have completed a computer science degree, or equivalent. Must meet the qualifications to TA *ALL* of CSC 108, 148, and 165 (see CSC108H1-B, CSC148H1, CSC165H1 qualifications). Enthusiasm and patience for face-to-face teaching of beginners is required. Experience with CSC 104 or Racket preferred.",
+    "duties": "Hold office hours on a weekly basis to assist students taking 100-level CSC courses.",
+    "total_hours": null,
+    "start_posting": null,
+    "end_posting": null,
+    "status": "1",
+    "end_nominations": null,
+    "last_updated": "2017-05-31 10:55:56"
+  }],
+  "applicants": [
+  {
+    "app_id": 478,
+    "utorid": "applicant478",
+    "first_name": "Luklorizur",
+    "last_name": "Mrokarczur",
+    "email": "luklorizur.mrokarczur@mail.utoronto.ca",
+    "phone": 6476879273,
+    "student_no": 1425362850,
+    "address": "478 Karczur St.",
+    "ta_experience": "CSC321H1S (1), CSC258H5S (5), CSC300H1S (3), CSC209H1S (2), CSC148H5S (9)",
+    "research": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget dignissim sem. Curabitur at semper eros. Aenean nec sem lobortis, scelerisque mi at, aliquam diam. Mauris malesuada elit nibh, sed hendrerit nulla mattis sed. Mauris laoreet imperdiet dictum. Pellentesque risus nulla, varius ut massa ut, venenatis fringilla sapien. Cras eget euismod augue, eget dignissim erat. Cras nec nibh ullamcorper ante rutrum dapibus sed nec tellus. In hac habitasse platea dictumst. Suspendisse semper tellus ac sem tincidunt auctor.",
+    "comments": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget dignissim sem. Curabitur at semper eros. Aenean nec sem lobortis, scelerisque mi at, aliquam diam. Mauris malesuada elit nibh, sed hendrerit nulla mattis sed. Mauris laoreet imperdiet dictum. Pellentesque risus nulla, varius ut massa ut, venenatis fringilla sapien. Cras eget euismod augue, eget dignissim erat. Cras nec nibh ullamcorper ante rutrum dapibus sed nec tellus. In hac habitasse platea dictumst. Suspendisse semper tellus ac sem tincidunt auctor.",
+    "availability": "",
+    "degrees": "Physics",
+    "work_experience": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget dignissim sem. Curabitur at semper eros. Aenean nec sem lobortis, scelerisque mi at, aliquam diam. Mauris malesuada elit nibh, sed hendrerit nulla mattis sed. Mauris laoreet imperdiet dictum. Pellentesque risus nulla, varius ut massa ut, venenatis fringilla sapien. Cras eget euismod augue, eget dignissim erat. Cras nec nibh ullamcorper ante rutrum dapibus sed nec tellus. In hac habitasse platea dictumst. Suspendisse semper tellus ac sem tincidunt auctor.",
+    "hours_owed": 7,
+    "pref_session": "Y",
+    "pref_campus": "St. George",
+    "deferral_status": null,
+    "deferral_reason": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget dignissim sem. Curabitur at semper eros. Aenean nec sem lobortis, scelerisque mi at, aliquam diam. Mauris malesuada elit nibh, sed hendrerit nulla mattis sed. Mauris laoreet imperdiet dictum. Pellentesque risus nulla, varius ut massa ut, venenatis fringilla sapien. Cras eget euismod augue, eget dignissim erat. Cras nec nibh ullamcorper ante rutrum dapibus sed nec tellus. In hac habitasse platea dictumst. Suspendisse semper tellus ac sem tincidunt auctor.",
+    "appointment_no": null,
+    "courses": ["CSC100H1S"],
+    "preferences": "CSC100H1S (1st Choice), CSC108H1S - Head TAs (Willing)"
+  }
+]}
