@@ -1,10 +1,10 @@
 .list-group {
     width: 10%;
-    height: 90vh;
+    height: 88vh;
     overflow: auto;
 }
 
-.list-group-item {
+.course-menu-item.list-group-item {
     height: 2em;
     padding: 3px;
 }

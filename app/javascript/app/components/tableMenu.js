@@ -31,16 +31,15 @@ class TableMenu extends React.Component {
 		{this.props.activeSortFields.map(
 		    (field, index) => (
 			    <DropdownButton
-			title={<span>{field.split('-')[0]} 
-			       <Glyphicon style={{fontSize: '7pt'}} glyph={"menu-" + field.split('-')[1]} />
+			title={<span>{field.split('-')[0]} <Glyphicon style={{fontSize: '7pt'}}
+			       glyph={"menu-" + field.split('-')[1]} />
 			       </span>}
-			id={"sort-" + field} noCaret>
+			id={"sort-" + field} key={"sort-" + field} noCaret>
 			    
-			    <MenuItem>{field.split('-')[0]} 
-			    <Glyphicon style={{fontSize: '7pt'}}
-			glyph={"menu-" + field.split('-')[1] == 'up' ? 'down' : 'up'} />
+			    <MenuItem>{field.split('-')[0]} <Glyphicon style={{fontSize: '7pt'}}
+			glyph={"menu-" + (field.split('-')[1] == 'up' ? 'down' : 'up')} />
 			    </MenuItem>
-			    <MenuItem>Clear</MenuItem>
+			    <MenuItem>Clear field</MenuItem>
 			    </DropdownButton>
 		    )
 		)}
