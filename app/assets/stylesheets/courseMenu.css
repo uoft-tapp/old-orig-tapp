@@ -1,0 +1,10 @@
+.list-group {
+    width: 10%;
+    height: 90vh;
+    overflow: auto;
+}
+
+.list-group-item {
+    height: 2em;
+    padding: 3px;
+}
