@@ -1,0 +1,166 @@
+swagger: "2.0"
+info:
+  description: "This is API for the course endpoint of the DCS-TA app."
+  version: "1.0.0"
+  title: "DCS-TA app"
+basePath: "/v2"
+tags:
+- name: "dcs-ta"
+  description: "DCS-TA application"
+paths:
+  /courses:
+    get:
+      tags:
+      - "courses"
+      summary: "Get all Course information along with its corresponding Positions"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Course"
+  /courses/{code}:
+    patch:
+      tags:
+      - "courses"
+      summary: "Updates Course information for Course {code}"
+      parameters:
+      - in: path
+        name: code
+        type: string
+        required: true
+        description: "code for a Course in the Course Table"
+      responses:
+        500:
+          description: "Unable to update course data"
+        204:
+          description: "Update succeeded"
+
+  /courses/{code}/positions:
+    get:
+      tags:
+      - "courses"
+      summary: "Get all Position informatio for Course with {code}"
+      parameters:
+      - in: path
+        name: code
+        type: string
+        required: true
+        description: "code for a Course in the Course Table"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Position"
+  /courses/{code}/positions/{id}:
+    post:
+      tags:
+      - "courses"
+      summary: "Update Position information based on Course {code}"
+      consumes:
+      - "formData"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Course descriptions that needs to be updated"
+        required: true
+        schema:
+          $ref: "#/definitions/Position"
+      responses:
+        405:
+          description: "Invalid input"
+    patch:
+      tags:
+      - "courses"
+      summary: "Updates Position information for Course {code} and Position {id}"
+      parameters:
+      - in: path
+        name: code
+        type: string
+        required: true
+        description: "code for a Course in the Course Table"
+      - in: path
+        name: id
+        type: integer
+        required: true
+        description: "id number in Position table"
+      responses:
+        500:
+          description: "Unable to update course position data"
+        204:
+          description: "Update succeeded"
+
+definitions:
+  Course:
+    type: "object"
+    properties:
+      code:
+        type: "string"
+        example: "CSC108H1S"
+      campus_code:
+        type: "integer"
+        example: 1
+      instructor_id:
+        type: "integer"
+        example: 13
+      course_name:
+        type: "string"
+        example: "Intro to Comp Prog"
+      estimated_enrollment:
+        type: "integer"
+        example: 1000
+      created_at:
+        type: "string"
+        format: "date-time"
+        example: "2017-06-05T14:26:44.808Z"
+      updated_at:
+        type: "string"
+        format: "date-time"
+        example: "2017-06-05T14:26:44.808Z"
+      positions:
+        type: "array"
+        $ref: "#/definitions/Position"
+  Position:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        example: 4
+      course_code:
+        type: "string"
+        example: "CSC108H1S"
+      title:
+        type: "string"
+        example: "CSC108H1S - Student-Facing TA"
+      duties:
+        type: "string"
+        example: "Attend lectures to assist in classroom activities. Prepare for each week by doing online programming activities. Some TAs may hold office hours or monitor discussion forums."
+      qualifications:
+        type: "string"
+        example: "Experience with programming, such as by completing a 200-level CSC course, or by achieving excellent marks in multiple 100-level CSC courses, or equivalent. Experience with Python, at the level of CSC 148 or equivalent. Must be enrolled in or have completed a computer science degree, or equivalent. Must be interested in teaching beginner programmers. Willing to try different approaches when explaining simple concepts. TAs should be available during at least one of the CSC 108 lecture times (MWF10-11, W6-9)."
+      hours:
+        type: "integer"
+        example: 54
+      estimated_count:
+        type: "integer"
+        example: 2
+      estimated_total_hours:
+        type: "integer"
+        example: 100
+      created_at:
+        type: "string"
+        format: "date-time"
+        example: "2017-06-05T14:26:44.808Z"
+      updated_at:
+        type: "string"
+        format: "date-time"
+        example: "2017-06-05T14:26:44.808Z"
