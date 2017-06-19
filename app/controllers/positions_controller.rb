@@ -2,8 +2,8 @@ class PositionsController < ApplicationController
   protect_from_forgery with: :null_session
 
   def index
-    @positions = Position.all.includes(:instructor)
-    render json: @positions.to_json(include: [:instructor])
+    @positions = Position.all
+    render json: @positions.to_json
   end
 
   def update
