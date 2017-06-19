@@ -86,7 +86,8 @@ class ChassImporter
         application.save!
 
         applicant_entry["courses"].each do |position|
-          position_row = Position.where(position: position, round_id: @round_id).select(:id).take
+          position_ident = {position: position, round_id: @round_id}
+          position_row = Position.where(position_ident).select(:id).take
           Rails.logger.debug position_row
 
           if position_row != nil

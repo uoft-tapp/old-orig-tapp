@@ -49,27 +49,25 @@ describe ChassImporter do
 
       before(:each) do
         # Sanity checking -- shouldn't ever fail
-        expect(Course.all.count).to eq(0)
         expect(Position.all.count).to eq(0)
       end
 
       before(:each) { subject } # Evaluate subject
 
-      it "inserts a course and a default position" do
-        expect(Course.where(code: "CSC100H1S").count).to eq(1)
-        expect(Position.where(course_code: "CSC100H1S", title: "CSC100H1S").count).to eq(1)
+      it "inserts a course" do
+        expect(Position.where(position: "CSC100H1S").count).to eq(1)
       end
 
       it "sets the campus code appropriately" do
-        expect(Course.first.campus_code).to eq(1)
+        expect(Position.first.campus_code).to eq(1)
       end
 
       it "sets the course name appropriately" do
-        expect(Course.first.course_name).to eq("First Year Office Hour TA")
+        expect(Position.first.course_name).to eq("First Year Office Hour TA")
       end
 
       it "sets the estimated enrolment correctly" do
-        expect(Course.first.estimated_enrolment).to eq(100)
+        expect(Position.first.estimated_enrolment).to eq(100)
       end
 
       it "sets the position attributes correctly" do
@@ -78,36 +76,11 @@ describe ChassImporter do
           duties: "Hold office hours on a weekly basis to assist students taking 100-level CSC courses.",
           hours: 54,
           estimated_count: 5,
-          estimated_total_hours: nil
+          estimated_total_hours: 270
           })
       end
     end
 
-    context "with a course listing multiple positions" do
-      let(:mock_json) { File.read("./spec/support/chass_data/two_position_course.json") }
-      before(:each) { subject } # Evaluate subject
-
-      it "inserts the course and the positions" do
-        expect(Course.where(code: "CSC108H1S").count).to eq(1)
-        expect(Position.where(course_code: "CSC108H1S").pluck(:title).sort).to eq(["CSC108H1S - Head TA", "CSC108H1S - Student-Facing TA"])
-      end
-
-      it "correctly sets up the positions" do
-        a_position = Position.where(title: "CSC108H1S - Head TA").take!
-        expect(a_position.attributes.symbolize_keys).to include({
-          estimated_count: 2,
-          duties: "Assist course coordinator with TA management and course administration. Hold marking meetings on Friday afternoons. Mentor and provide feedback to other TAs."
-          })
-
-
-        other_position = Position.where(title: "CSC108H1S - Student-Facing TA").take!
-        expect(other_position.attributes.symbolize_keys).to include({
-          estimated_count: 19,
-          duties: "Attend lectures to assist in classroom activities. Prepare for each week by doing online programming activities. Some TAs may hold office hours or monitor discussion forums."
-          })
-      end
-    end
-  end
 
   context "when run on the same file twice" do
     let(:mock_json) { File.read("./spec/support/chass_data/plain_course.json") }
@@ -117,14 +90,6 @@ describe ChassImporter do
       expect {
         ChassImporter.new(test_filename) # Run the second time
       }.to_not raise_error
-    end
-
-    it "doesn't modify Course records" do
-      ChassImporter.new(test_filename)
-
-      expect { # running importer for the second time to not change courses data
-        ChassImporter.new(test_filename)
-      }.to_not change { Course.all.to_a }
     end
 
     it "doesn't modify Position records" do
@@ -216,23 +181,22 @@ describe ChassImporter do
 
       it "sets fields on the applicant record" do
         applicant = Applicant.where(utorid: "applicant478").pluck(:id).first
-        expect(Application.first.attributes.symbolize_keys).to include({
+        expect(Application.first.attributes.symbolize_keys.as_json(:except => [:id, :created_at, :updated_at])).to include({
           applicant_id: applicant,
           app_id: "478",
-          round_id: "110",
-          ta_experience: "CSC321H1S (1), CSC258H5S (5), CSC300H1S (3), CSC209H1S (2), CSC148H5S (9)",
-          research: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget dignissim sem. Curabitur at semper eros. Aenean nec sem lobortis, scelerisque mi at, aliquam diam. Mauris malesuada elit nibh, sed hendrerit nulla mattis sed. Mauris laoreet imperdiet dictum. Pellentesque risus nulla, varius ut massa ut, venenatis fringilla sapien. Cras eget euismod augue, eget dignissim erat. Cras nec nibh ullamcorper ante rutrum dapibus sed nec tellus. In hac habitasse platea dictumst. Suspendisse semper tellus ac sem tincidunt auctor.",
-          comments: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget dignissim sem. Curabitur at semper eros. Aenean nec sem lobortis, scelerisque mi at, aliquam diam. Mauris malesuada elit nibh, sed hendrerit nulla mattis sed. Mauris laoreet imperdiet dictum. Pellentesque risus nulla, varius ut massa ut, venenatis fringilla sapien. Cras eget euismod augue, eget dignissim erat. Cras nec nibh ullamcorper ante rutrum dapibus sed nec tellus. In hac habitasse platea dictumst. Suspendisse semper tellus ac sem tincidunt auctor.",
-          availability: "",
-          degrees: "Physics",
-          work_experience: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget dignissim sem. Curabitur at semper eros. Aenean nec sem lobortis, scelerisque mi at, aliquam diam. Mauris malesuada elit nibh, sed hendrerit nulla mattis sed. Mauris laoreet imperdiet dictum. Pellentesque risus nulla, varius ut massa ut, venenatis fringilla sapien. Cras eget euismod augue, eget dignissim erat. Cras nec nibh ullamcorper ante rutrum dapibus sed nec tellus. In hac habitasse platea dictumst. Suspendisse semper tellus ac sem tincidunt auctor.",
-          hours_owed: 7,
-          pref_session: "Y",
-          pref_campus: "St. George",
-          deferral_status: nil,
-          deferral_reason: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget dignissim sem. Curabitur at semper eros. Aenean nec sem lobortis, scelerisque mi at, aliquam diam. Mauris malesuada elit nibh, sed hendrerit nulla mattis sed. Mauris laoreet imperdiet dictum. Pellentesque risus nulla, varius ut massa ut, venenatis fringilla sapien. Cras eget euismod augue, eget dignissim erat. Cras nec nibh ullamcorper ante rutrum dapibus sed nec tellus. In hac habitasse platea dictumst. Suspendisse semper tellus ac sem tincidunt auctor.",
-          appointment_number: nil,
-        })
+          app_id: "478",
+          ta_training: "N",
+          access_acad_history: "N",
+          dept: "Physics",
+          program_id: "8UG",
+          yip: 10,
+          ta_experience: "CSC148H5S (9), CSC258H5S (5), CSC300H1S (3), CSC209H1S (2), CSC321H1S (1)",
+          academic_qualifications: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget dignissim sem. Curabitur at semper eros. Aenean nec sem lobortis, scelerisque mi at, aliquam diam. Mauris malesuada elit nibh, sed hendrerit nulla mattis sed. Mauris laoreet imperdiet dictum. Pellentesque risus nulla, varius ut massa ut, venenatis fringilla sapien. Cras eget euismod augue, eget dignissim erat. Cras nec nibh ullamcorper ante rutrum dapibus sed nec tellus. In hac habitasse platea dictumst. Suspendisse semper tellus ac sem tincidunt auctor.",
+          technical_skills: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget dignissim sem. Curabitur at semper eros. Aenean nec sem lobortis, scelerisque mi at, aliquam diam. Mauris malesuada elit nibh, sed hendrerit nulla mattis sed. Mauris laoreet imperdiet dictum. Pellentesque risus nulla, varius ut massa ut, venenatis fringilla sapien. Cras eget euismod augue, eget dignissim erat. Cras nec nibh ullamcorper ante rutrum dapibus sed nec tellus. In hac habitasse platea dictumst. Suspendisse semper tellus ac sem tincidunt auctor.",
+          availability: "Available",
+          other_info: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget dignissim sem. Curabitur at semper eros. Aenean nec sem lobortis, scelerisque mi at, aliquam diam. Mauris malesuada elit nibh, sed hendrerit nulla mattis sed. Mauris laoreet imperdiet dictum. Pellentesque risus nulla, varius ut massa ut, venenatis fringilla sapien. Cras eget euismod augue, eget dignissim erat. Cras nec nibh ullamcorper ante rutrum dapibus sed nec tellus. In hac habitasse platea dictumst. Suspendisse semper tellus ac sem tincidunt auctor.",
+          special_needs: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget dignissim sem. Curabitur at semper eros. Aenean nec sem lobortis, scelerisque mi at, aliquam diam. Mauris malesuada elit nibh, sed hendrerit nulla mattis sed. Mauris laoreet imperdiet dictum. Pellentesque risus nulla, varius ut massa ut, venenatis fringilla sapien. Cras eget euismod augue, eget dignissim erat. Cras nec nibh ullamcorper ante rutrum dapibus sed nec tellus. In hac habitasse platea dictumst. Suspendisse semper tellus ac sem tincidunt auctor."
+      }.as_json)
       end
 
       let (:mock_json) { File.read("./spec/support/chass_data/applicant.json") }
@@ -256,7 +220,8 @@ describe ChassImporter do
       it "updates the course positions specified in preferences from rank 2 to the described rank" do
         applicant = Applicant.where(utorid: "applicant478").take
         application ||= applicant.applications.take
-        position_id = Position.where(title: "CSC100H1S").select(:id).take.id
+        position_ident = {position: "CSC100H1S", round_id: 110}
+        position_id = Position.where(position_ident).select(:id).take.id
         rank ||= application.preferences.select(:rank).take.rank
         expect(rank).to eq(1)
       end
@@ -266,14 +231,13 @@ describe ChassImporter do
       let (:mock_json) { File.read("./spec/support/chass_data/nonexistent_course_position_applicant.json") }
       before(:each) do
           # Sanity checking -- shouldn't ever fail
-        expect(Applicant.all.count).to eq(0)
+          expect(Applicant.all.count).to eq(0)
       end
       before(:each) { subject } # Evaluate subject
 
       it "insert only the existent positions to Preference model" do
         applicant = Applicant.where(utorid: "applicant478").take
         application = applicant.applications.take
-        position_id = Position.where(title: "CSC100H1S").select(:id).take.id
         preferences ||= application.preferences
         expect(preferences.count).to eq(1)
       end
@@ -291,11 +255,10 @@ describe ChassImporter do
       it "insert only the existent positions to Preference model" do
         applicant = Applicant.where(utorid: "applicant478").take
         application = applicant.applications.take
-        position_id = Position.where(title: "CSC100H1S").select(:id).take.id
         preferences ||= application.preferences
         expect(preferences.count).to eq(1)
       end
     end
   end
-
+end
 end
