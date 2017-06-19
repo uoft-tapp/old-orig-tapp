@@ -5,7 +5,6 @@ class CreatePositions < ActiveRecord::Migration[5.1]
       t.integer :round_id, index: true, null: false
       t.boolean :open, index: true, null: false
       t.integer :campus_code, foreign_key: true, index: true, null: false
-      t.references :instructor, foreign_key: true
       t.text :course_name
       t.integer :estimated_enrolment
       t.text :duties

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170602182226) do
+ActiveRecord::Schema.define(version: 20170619134929) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,19 +31,17 @@ ActiveRecord::Schema.define(version: 20170602182226) do
   create_table "applications", force: :cascade do |t|
     t.bigint "applicant_id"
     t.string "app_id", null: false
-    t.string "round_id", null: false
+    t.text "ta_training"
+    t.string "access_acad_history"
+    t.string "dept"
+    t.string "program_id"
+    t.integer "yip"
     t.text "ta_experience"
-    t.text "research"
-    t.text "comments"
+    t.text "academic_qualifications"
+    t.text "technical_skills"
     t.text "availability"
-    t.text "degrees"
-    t.text "work_experience"
-    t.integer "hours_owed"
-    t.string "pref_session"
-    t.string "pref_campus"
-    t.text "deferral_status"
-    t.text "deferral_reason"
-    t.integer "appointment_number"
+    t.text "other_info"
+    t.text "special_needs"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["app_id"], name: "index_applications_on_app_id", unique: true
@@ -77,7 +75,6 @@ ActiveRecord::Schema.define(version: 20170602182226) do
     t.integer "round_id", null: false
     t.boolean "open", null: false
     t.integer "campus_code", null: false
-    t.bigint "instructor_id"
     t.text "course_name"
     t.integer "estimated_enrolment"
     t.text "duties"
@@ -88,7 +85,6 @@ ActiveRecord::Schema.define(version: 20170602182226) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["campus_code"], name: "index_positions_on_campus_code"
-    t.index ["instructor_id"], name: "index_positions_on_instructor_id"
     t.index ["open"], name: "index_positions_on_open"
     t.index ["position"], name: "index_positions_on_position"
     t.index ["round_id"], name: "index_positions_on_round_id"
@@ -104,10 +100,20 @@ ActiveRecord::Schema.define(version: 20170602182226) do
     t.index ["position_id"], name: "index_preferences_on_position_id"
   end
 
+  create_table "teaches", force: :cascade do |t|
+    t.bigint "position_id"
+    t.bigint "instructor_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["instructor_id"], name: "index_teaches_on_instructor_id"
+    t.index ["position_id"], name: "index_teaches_on_position_id"
+  end
+
   add_foreign_key "applications", "applicants"
   add_foreign_key "assignments", "applicants"
   add_foreign_key "assignments", "positions"
-  add_foreign_key "positions", "instructors"
   add_foreign_key "preferences", "applications"
   add_foreign_key "preferences", "positions"
+  add_foreign_key "teaches", "instructors"
+  add_foreign_key "teaches", "positions"
 end
