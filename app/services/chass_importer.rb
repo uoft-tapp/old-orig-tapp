@@ -14,7 +14,6 @@ class ChassImporter
 
   private
   def insert_data
-    insert_courses
     insert_positions
     insert_applicant
     insert_application
@@ -66,30 +65,28 @@ class ChassImporter
         applicant = Applicant.where(utorid: applicant_entry["utorid"]).take!
 
         app_id = applicant_entry["app_id"].to_i
-        check_duplicate = {app_id: app_id, round_id: @round_id}
+        check_duplicate = {app_id: app_id}
 
         application = applicant.applications.where(check_duplicate).take
         application ||= applicant.applications.build(
           app_id: app_id,
-          round_id: @round_id,
+          ta_training: applicant_entry["ta_training"],
+          access_acad_history: applicant_entry["access_acad_history"],
+          dept: applicant_entry["dept"],
+          program_id: applicant_entry["program_id"],
+          yip: applicant_entry["yip"],
           ta_experience: applicant_entry["ta_experience"],
-          research: applicant_entry["research"],
-          comments: applicant_entry["comments"],
+          academic_qualifications: applicant_entry["academic_qualifications"],
+          technical_skills: applicant_entry["technical_skills"],
           availability: applicant_entry["availability"],
-          degrees: applicant_entry["degrees"],
-          work_experience: applicant_entry["work_experience"],
-          hours_owed: applicant_entry["hours_owed"],
-          pref_session: applicant_entry["pref_session"],
-          pref_campus: applicant_entry["pref_campus"],
-          deferral_status: applicant_entry["deferral_status"],
-          deferral_reason: applicant_entry["deferral_reason"],
-          appointment_number: applicant_entry["appointment_no"])
-
-        Rails.logger.debug "application #{app_id}, #{round_id} already exists" unless application.new_record?
+          other_info: applicant_entry["other_info"],
+          special_needs: applicant_entry["special_needs"]
+        )
+        Rails.logger.debug "application #{app_id} already exists" unless application.new_record?
         application.save!
 
         applicant_entry["courses"].each do |position|
-          position_row = Position.where(title: position).select(:id).take
+          position_row = Position.where(position: position, round_id: @round_id).select(:id).take
           Rails.logger.debug position_row
 
           if position_row != nil
@@ -105,78 +102,41 @@ class ChassImporter
           end
         end
 
-        insert_preference(applicant_entry["preferences"], application)
+        insert_preference(applicant_entry["course_preferences"], application)
       end
     end
 
   def insert_preference(preferences, application)
     parse_preference(preferences).each do |preference|
-      position = Position.where(title: preference[:position]).select(:id).take
+      position_ident = {position: preference, round_id: @round_id}
+      position = Position.where(position_ident).select(:id).take
       if position != nil
         position_id = position.id
         preference_ident = {position_id: position_id}
-        pref ||= application.preferences.where(preference_ident).update(rank: preference[:rank])
+        pref ||= application.preferences.where(preference_ident).update(rank: 1)
       end
     end
   end
 
   def parse_preference(pref)
     list = pref.split(',')
-    preferences = list.map do |pref|
-      full = pref.strip
-      code = pref.split('(')[0].strip
-      rank = (pref.split("(")[1]).split(')')[0]
-      {
-        position: code,
-        rank: get_rank(rank)
-      }
-    end
-  end
-
-  def get_rank(rank)
-    case rank
-    when "1st Choice"
-      return 1
-    when "2nd Choice"
-      return 2
-    when "3rd Choice"
-      return 3
-    when "Preferred"
-      return 4
-    when "Willing"
-      return 5
-    end
-  end
-
-
-
-  def insert_courses
-    @course_data.each do |course_entry|
-      posting_id  = course_entry["course_id"]
-      course_id = posting_id.split("-")[0].strip
-
-      condition = Course.exists? course_id
-      course = Course.new(
-        code: course_id,
-        campus_code: course_id[course_id[/[A-Za-z]{3}\d{3,4}/].size+1].to_i,
-        instructor_id: nil,
-        course_name: course_entry["course_name"],
-        estimated_enrolment: course_entry["enrollment"]
-      )
-      exists= "Course #{course_id} already exists"
-      insertion_helper(course, condition, exists)
-    end
+    return list
   end
 
   def insert_positions
     @course_data.each do |course_entry|
       posting_id  = course_entry["course_id"]
       course_id = posting_id.split("-")[0].strip
+      round_id = course_entry["round_id"]
 
-      condition = Position.where(title: posting_id).exists?
+      condition = Position.where(position: posting_id, round_id: round_id).exists?
       position = Position.new(
-        course_code: course_id,
-        title: posting_id,
+        position: course_id,
+        round_id: round_id,
+        open: true,
+        campus_code: course_id[course_id[/[A-Za-z]{3}\d{3,4}/].size+1].to_i,
+        course_name: course_entry["course_name"],
+        estimated_enrolment: course_entry["enrollment"],
         duties: course_entry["duties"],
         qualifications: course_entry["qualifications"],
         hours: course_entry["n_hours"],
@@ -185,6 +145,16 @@ class ChassImporter
       )
       exists = "Position #{posting_id} already exists"
       insertion_helper(position, condition, exists)
+
+      course_entry["instructors"].each do |instructor|
+        instructor_ident = Instructor.find_by(name: instructor)
+        if instructor_ident != nil
+          instructor_id = instructor_ident.id
+          teach ||= position.teaches.build(instructor_id: instructor_id)
+        end
+      end
+
     end
   end
+
 end

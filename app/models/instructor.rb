@@ -1,4 +1,5 @@
 class Instructor < ApplicationRecord
   has_many :courses
-  validates :email, uniqueness: true
+  has_many :teaches
+  
 end
