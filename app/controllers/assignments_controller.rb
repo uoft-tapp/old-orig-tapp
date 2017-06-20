@@ -38,18 +38,22 @@ class AssignmentsController < ApplicationController
       round_id, hours, position_id
 
       creates an assignment between an applicant and a position.
-      returns status 209 if tries to create a duplicate
+      returns status 409 if tries to create a duplicate
   '''
   def create
     has_assignment = Assignment.where(round_id: params[:round_id], position_id: params[:position_id]).exists?
 
     unless has_assignment
       @applicant = Applicant.find(params[:applicant_id])
-      @applicant.assignments.create!(assignment_params)
+      assignment = @applicant.assignments.build(assignment_params)
 
-      render json: @applicant.to_json(include: [:assignments])
+      if assignment.save
+        render json: assignment.to_json
+      else
+        render json: assignment.errors.to_hash(true), status: :unprocessable_entity
+      end
     else
-      render json: { status: 209 } # conflict
+      head :conflict
     end
   end
 
@@ -62,11 +66,13 @@ class AssignmentsController < ApplicationController
   '''
   def update
     @applicant = Applicant.find(params[:applicant_id])
-    @assignment = @applicant.assignments.find(params[:id])
+    assignment = @applicant.assignments.find(params[:id])
 
-    @assignment.update!(hours: params[:hours])
-
-    render json: @assignment.to_json(include: [:applicant])
+    if assignment.update_attributes(hours: params[:hours])
+      render json: assignment.to_json
+    else
+      render json: assignment.errors.to_hash(true), status: :unprocessable_entity
+    end
   end
 
 
