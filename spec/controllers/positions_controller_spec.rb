@@ -1,52 +1,60 @@
 require 'rails_helper'
 
 RSpec.describe PositionsController, type: :controller do
-  let(:course) do
-    Course.create!(
-      code: "CSC104H1S",
-      campus_code: 1,
-      instructor_id: nil,
-      course_name: "Computational Thinking",
-      estimated_enrolment: nil
-    )
-  end
 
   let(:position) do
-    course.positions.create!(
-      id: 2,
-      course_code: "CSC104H1S",
-      title: "CSC104H1S",
+    Position.create!(
+      position: "CSC104H1S",
+      round_id: 110,
+      open: true,
+      campus_code: 1,
+      course_name: "Computational Thinking",
+      estimated_enrolment: nil,
       duties: "TA duties may include marking, leading skills development tutorials, Q&A/Exam/Assignment/Test Review sessions, and laboratories where noted.",
       qualifications: "Must be enrolled in, or have completed, an undergraduate program in computer science or education (or equivalent). Demonstrated excellent English communication skills. Patience teaching technical concepts to students with a wide variety of non-technical backgrounds. Must have completed or be in the process of completing a course involving functional programming. Must be able to write code in the Intermediate Student Language of Racket, and trace it in the same manner as the Intermediate Student Language Stepper of the DrRacket development environment.",
       hours: 54,
       estimated_count: 17,
-      estimated_total_hours: nil
+      estimated_total_hours: 918
     )
   end
 
-  describe "GET /courses/{course_code}/positions" do
-    context "when {course_code} exists" do
-      it "lists all positions of {course_code}" do
-        get :index, params: {course_code: position.course_code}
+  describe "GET /positions/" do
+    context "when expected" do
+      it "lists all positions" do
+        get :index
         expect(response.status).to eq(200)
         expect(response.body).not_to be_empty
       end
     end
 
-    context "when {course_code} is a non-existent courses code" do
+    context "when /positions/{id} exists" do
+      it "lists positions with {id}" do
+        get :show, params: {id: position[:id]}
+        expect(Position.all.count).to eq(1)
+        expect(response.status).to eq(200)
+        expect(response.body).not_to be_empty
+      end
+    end
+
+    context "when {id} is a non-existent id" do
       it "throws status 404" do
-        get :index, params: {course_code: "csc103h1s"}
+        get :show, params: {id: 5}
         expect(response.status).to eq(404)
       end
     end
   end
 
-  describe "PATCH /courses/{course_code}/positions/{id}" do
-    context "when {id} is valid for {course_code}" do
+  describe "PATCH /positions/{id}" do
+    context "when {id} is valid for Position" do
       before(:each) do
         @params = {
           id: position.id,
-          course_code: position.course_code,
+          position: position.position,
+          round_id: 110,
+          open: true,
+          campus_code: 1,
+          course_name: "Computational Thinking",
+          estimated_enrolment: nil,
           duties: "simplified duties",
           qualifications: "qualifications",
           hours: 20,
@@ -63,11 +71,16 @@ RSpec.describe PositionsController, type: :controller do
       end
     end
 
-    context "when {id} is not valid for {course_code}" do
+    context "when {id} is not valid for Position" do
       before(:each) do
         @params = {
-          id: 12,
-          course_code: position.course_code,
+          id: 8,
+          position: position.position,
+          round_id: 110,
+          open: true,
+          campus_code: 1,
+          course_name: "Computational Thinking",
+          estimated_enrolment: nil,
           duties: "simplified duties",
           qualifications: "qualifications",
           hours: 20,
