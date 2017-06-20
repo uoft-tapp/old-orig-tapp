@@ -7,13 +7,13 @@ class AssignmentsController < ApplicationController
       /applicants/:applicant_id/assignments - returns an assignments given an applicant ID
  '''
   def index
-    @applicant = if params[:applicant_id].present?
-        Applicant.includes(:assignments).find(params[:applicant_id])
+      @assignments = if params[:applicant_id].present?
+        Applicant.find(params[:applicant_id]).assignments
       else
-        Applicant.includes(:assignments).all
+        Assignment.all
       end
 
-    render json: @applicant.to_json(include: [:assignments])
+    render json: @assignments.to_json
   end
 
   '''
@@ -34,16 +34,19 @@ class AssignmentsController < ApplicationController
 
   '''
     create #POST
-      /applicants/:applicant_id/assignments
-      round_id, hours, position_id
+        /applicants/:applicant_id/assignments
+      hours, position_id
 
       creates an assignment between an applicant and a position.
       returns status 409 if tries to create a duplicate
   '''
   def create
-    has_assignment = Assignment.where(round_id: params[:round_id], position_id: params[:position_id]).exists?
+    # check if the position is open
+    is_open = Position.where(id: params[:position_id], open: false).exists?
+    has_assignment = Assignment.where(position_id: params[:position_id]).exists?
 
-    unless has_assignment
+    # if an assignment exists on the current position, and position is open
+    unless has_assignment && is_open
       @applicant = Applicant.find(params[:applicant_id])
       assignment = @applicant.assignments.build(assignment_params)
 
@@ -59,7 +62,7 @@ class AssignmentsController < ApplicationController
 
   '''
     update #PATCH
-    /applicants/:applicant_id/assignment/:id
+    /applicants/:applicant_id/assignments/:id
     hours
 
     updates the hours column for an applicant given assignment ID and applicant ID
@@ -78,7 +81,7 @@ class AssignmentsController < ApplicationController
 
   '''
     destroy #DELETE
-    /applicants/:applicant_id/assignment/:id
+    /applicants/:applicant_id/assignments/:id
 
     removes (unassigns) an assignment record give an applicant ID and assignment ID
   '''
@@ -94,6 +97,6 @@ class AssignmentsController < ApplicationController
 
   private
     def assignment_params
-      params.permit(:position_id, :round_id, :hours)
+      params.permit(:position_id, :hours)
     end
 end
