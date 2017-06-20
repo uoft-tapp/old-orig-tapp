@@ -51,7 +51,6 @@ ActiveRecord::Schema.define(version: 20170621180840) do
   create_table "assignments", force: :cascade do |t|
     t.bigint "applicant_id"
     t.bigint "position_id"
-    t.string "round_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "hours"
