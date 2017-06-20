@@ -7,12 +7,12 @@ class PositionsController < ApplicationController
   end
 
   def show
-    position = Position.find_by!(id: params[:id])
+    position = Position.find(params[:id])
     render json: position.to_json
   end
 
   def update
-    position = Position.find_by!(id: params[:id])
+    position = Position.find(params[:id])
     position.update_attributes!(position_params)
   end
 
