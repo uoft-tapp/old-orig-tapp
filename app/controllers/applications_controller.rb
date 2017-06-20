@@ -13,17 +13,14 @@ class ApplicationsController < ApplicationController
   end
 
   def show
-    @application = if params[:applicant_id].present?
-      # finds the preferences for each application - does grunt work beforehand -
-      Application.includes(:preferences).where(
-        applicant_id: params[:applicant_id],
-        id: params[:id]).take! # take! - no order, takes the first off returned results
+    if params[:applicant_id].present?
+      # it's redundant if this also looks for the application based on ID
+      head :no_content
     else
-      Application.includes(:preferences).find(params[:id])
+      @application = Application.includes(:preferences).find(params[:id])
+      # convert preferences into json - since we did the grunt work before this will be easy -
+      render json: @application.to_json(include: [:preferences])
     end
-
-    # convert preferences into json - since we did the grunt work before this will be easy -
-    render json: @application.to_json(include: [:preferences])
   end
 
 end
