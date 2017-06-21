@@ -112,16 +112,14 @@ class ChassImporter
       position_ident = {position: preference, round_id: @round_id}
       position = Position.where(position_ident).select(:id).take
       if position != nil
-        position_id = position.id
-        preference_ident = {position_id: position_id}
-        pref ||= application.preferences.where(preference_ident).update(rank: 1)
+        preference_ident = {position_id: position.id}
+        application.preferences.where(preference_ident).update(rank: 1)
       end
     end
   end
 
   def parse_preference(pref)
     list = pref.split(',')
-    return list
   end
 
   def insert_positions
@@ -151,7 +149,7 @@ class ChassImporter
         instructor_ident = Instructor.find_by(name: instructor)
         if instructor_ident != nil
           instructor_id = instructor_ident.id
-          teach ||= position.teaches.build(instructor_id: instructor_id)
+          position.teaches.build(instructor_id: instructor_id)
         end
       end
 
