@@ -35,7 +35,7 @@ paths:
         description: "id for a Position in the Position Table"
       responses:
         404:
-          description: "Unable to update course data"
+          description: "Unable to update course data because there was no Position with {id}"
         204:
           description: "Update succeeded"
     get:
@@ -87,9 +87,11 @@ definitions:
       hours:
         type: "integer"
         example: 54
+        description: "number of assigned to each TA for this position"
       estimated_count:
         type: "integer"
         example: 2
+        description: "estimated amount of TA's needed for this position"
       estimated_total_hours:
         type: "integer"
         example: 100
