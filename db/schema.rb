@@ -86,7 +86,7 @@ ActiveRecord::Schema.define(version: 20170619134929) do
     t.datetime "updated_at", null: false
     t.index ["campus_code"], name: "index_positions_on_campus_code"
     t.index ["open"], name: "index_positions_on_open"
-    t.index ["position"], name: "index_positions_on_position"
+    t.index ["position"], name: "index_positions_on_position", unique: true
     t.index ["round_id"], name: "index_positions_on_round_id"
   end
 
