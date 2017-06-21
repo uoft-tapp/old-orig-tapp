@@ -90,7 +90,7 @@ class ChassImporter
           position_row = Position.where(position_ident).select(:id).take
           Rails.logger.debug position_row
 
-          if position_row != nil
+          if position_row
             position_id = position_row.id
             preference_ident = {position_id: position_id}
             preference = application.preferences.where(preference_ident).take
@@ -111,7 +111,7 @@ class ChassImporter
     parse_preference(preferences).each do |preference|
       position_ident = {position: preference, round_id: @round_id}
       position = Position.where(position_ident).select(:id).take
-      if position != nil
+      if position
         preference_ident = {position_id: position.id}
         application.preferences.where(preference_ident).update(rank: 1)
       end
@@ -147,7 +147,7 @@ class ChassImporter
 
       course_entry["instructors"].each do |instructor|
         instructor_ident = Instructor.find_by(name: instructor)
-        if instructor_ident != nil
+        if instructor_ident
           instructor_id = instructor_ident.id
           position.teaches.build(instructor_id: instructor_id)
         end
