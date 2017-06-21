@@ -184,7 +184,6 @@ describe ChassImporter do
         expect(Application.first.attributes.symbolize_keys.as_json(:except => [:id, :created_at, :updated_at])).to include({
           applicant_id: applicant,
           app_id: "478",
-          app_id: "478",
           ta_training: "N",
           access_acad_history: "N",
           dept: "Physics",

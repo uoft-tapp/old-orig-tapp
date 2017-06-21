@@ -6,5 +6,6 @@ class CreateTeaches < ActiveRecord::Migration[5.1]
 
       t.timestamps
     end
+    drop_table :teaches
   end
 end
