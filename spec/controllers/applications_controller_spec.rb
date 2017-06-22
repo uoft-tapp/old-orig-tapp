@@ -33,7 +33,6 @@ RSpec.describe ApplicationsController, type: :controller do
 
   describe "GET #index" do
     context "when not passed an applicant ID" do
-      pending("still in progress")
       it "list applications" do
         get :index
         expect(response.status).to eq(200)
@@ -43,7 +42,6 @@ RSpec.describe ApplicationsController, type: :controller do
 
     context "when passed an applicant ID" do
       it "list applications given an integer applicant ID " do
-        pending("still in progress")
         get :index, params: { applicant_id: application.applicant.id }, format: :json
         expect(response.status).to eq(200)
         expect(parsed_body).to be_kind_of(Array)
