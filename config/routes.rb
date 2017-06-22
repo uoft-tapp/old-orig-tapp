@@ -8,4 +8,5 @@ Rails.application.routes.draw do
   end
   resources :applications, only: [:index, :show]
   resources :positions
+  resources :instructors
 end
