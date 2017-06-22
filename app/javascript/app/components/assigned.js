@@ -1,5 +1,27 @@
 import React from 'react'
+import { Grid, Row, Col } from 'react-bootstrap'
+import { TableMenu } from './tableMenu.js'
+import { AssignedApplicantTable } from './assignedApplicantTable.js'
 
-const Assigned = props => <div className="container-fluid" style={{paddingTop: "70px"}}><h1>All Assigned!</h1></div>;
+class Assigned extends React.Component {
+    render() {
+	return <Grid fluid><Row><Col xs={12}>
+	    <TableMenu/>
+	    <AssignedApplicantTable applicants={this.props.applicants.assigned} assigned={false}/>
+	    </Col></Row></Grid>
+    }
+
+    selectThisTab() {
+	this.props.nav.selectTab(this.props.nav.assigned.key);
+    }
+    
+    componentDidMount() {
+	this.selectThisTab();
+    }
+
+    componentDidUpdate() {	
+	this.selectThisTab();
+    }
+}
 
 export { Assigned };
