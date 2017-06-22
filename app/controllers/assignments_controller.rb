@@ -42,21 +42,29 @@ class AssignmentsController < ApplicationController
   '''
   def create
     # check if the position is open
-    is_open = Position.where(id: params[:position_id], open: false).exists?
-    has_assignment = Assignment.where(position_id: params[:position_id]).exists?
+    is_open = Position.where({id: params[:position_id], open: true}).exists?
 
-    # if an assignment exists on the current position, and position is open
-    unless has_assignment && is_open
-      @applicant = Applicant.find(params[:applicant_id])
-      assignment = @applicant.assignments.build(assignment_params)
+    if is_open
+      # check if the current applicant has already been assigned to this position
+      has_no_assignment = Assignment.where({applicant_id: params[:applicant_id], position_id: params[:position_id]}).exists?
 
-      if assignment.save
-        render json: assignment.to_json
+      unless has_no_assignment
+        @applicant = Applicant.find(params[:applicant_id])
+        assignment = @applicant.assignments.build(assignment_params)
+
+        # error checking save
+        if assignment.save
+          render json: assignment.to_json
+        else
+          render json: assignment.errors.to_hash(true), status: :unprocessable_entity
+        end
       else
-        render json: assignment.errors.to_hash(true), status: :unprocessable_entity
+        # throw conflict if user tries to create duplicate assignments
+        head :conflict
       end
     else
-      head :conflict
+      # throw unprocessable_entity if position CLOSED
+      head :unprocessable_entity
     end
   end
 
