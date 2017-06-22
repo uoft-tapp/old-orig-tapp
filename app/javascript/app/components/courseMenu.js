@@ -3,10 +3,8 @@ import {ListGroup, ListGroupItem} from 'react-bootstrap'
 
 class CourseMenu extends React.Component {
     render() {
-	const courses = this.props.courses.slice();
-	courses.sort((a, b) => a.code > b.code);
-
-	const list = courses.map(
+	
+	const list = this.props.courses.map(
 	    (course) => {
 		return (<ListGroupItem className="course-menu-item" key={course.code}
 			onClick={() => {

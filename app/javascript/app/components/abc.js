@@ -7,7 +7,8 @@ import SplitPane from 'react-split-pane/lib/SplitPane'
 
 class ABC extends React.Component {
     mapLayoutToPanes() {
-	let activeCount = this.props.courseMenu.selected.length;
+	let active = this.props.courseMenu.selected;
+	let activeCount = active.length;
 	let layout = this.props.abcView.layout;
 
 	switch (activeCount) {
@@ -19,47 +20,115 @@ class ABC extends React.Component {
 	    return (<div><CoursePane key={layout[0]} course={layout[0]} {...this.props}/></div>);
 	
 	case 2:
+	    let course1, course2;
+	    if (layout.length == 1)
+		course1 = layout[0][0], course2 = layout[0][1];
+	    else
+		course1 = layout[0], course2 = layout[1];
+	    
 	    return (
 		    <SplitPane split={layout.length == 1 ? "horizontal" : "vertical"} defaultSize="50%"
 		resizerStyle={{background:'red',width:'3px'}}>
-		    {this.props.courseMenu.selected.map(
-			courseCode => <CoursePane key={courseCode} course={courseCode} {...this.props}/>
-		    )}
+		    <CoursePane key={course1} course={course1} {...this.props}/>
+		    <CoursePane key={course2} course={course2} {...this.props}/>
 		</SplitPane>
 	    );
 
 	case 3:
-	    return null;
+	    if (layout.length == 1)
+		return (
+			<SplitPane split="horizontal" defaultSize="50%" resizerStyle={{background:'red',width:'3px'}}>
+			<CoursePane key={layout[0][0]} course={layout[0][0]} {...this.props}/>
+			<SplitPane split="horizontal" defaultSize="50%" resizerStyle={{background:'red',width:'3px'}}>
+			<CoursePane key={layout[0][1]} course={layout[0][1]} {...this.props}/>
+			<CoursePane key={layout[0][2]} course={layout[0][2]} {...this.props}/>
+			</SplitPane>
+			</SplitPane>
+		);
+
+	    if (layout.length == 2) {
+		if (layout[0].length == 1)
+		    return (
+			    <SplitPane split="vertical" defaultSize="50%" resizerStyle={{background:'red',width:'3px'}}>
+			    <CoursePane key={layout[0]} course={layout[0]} {...this.props}/>
+			    <SplitPane split="horizontal" defaultSize="50%" resizerStyle={{background:'red',width:'3px'}}>
+			    <CoursePane key={layout[1][0]} course={layout[1][0]} {...this.props}/>
+			    <CoursePane key={layout[1][1]} course={layout[1][1]} {...this.props}/>
+			    </SplitPane>
+			    </SplitPane>
+		    );
+
+		if (layout[1].length == 1)
+		    return (
+			    <SplitPane split="vertical" defaultSize="50%" resizerStyle={{background:'red',width:'3px'}}>
+			    <SplitPane split="horizontal" defaultSize="50%" resizerStyle={{background:'red',width:'3px'}}>
+			    <CoursePane key={layout[0][0]} course={layout[0][0]} {...this.props}/>
+			    <CoursePane key={layout[0][1]} course={layout[0][1]} {...this.props}/>
+			    </SplitPane>
+			    <CoursePane key={layout[1]} course={layout[1]} {...this.props}/>
+			    </SplitPane>
+		    );
+
+		if (layout[0][0] == layout[1][0])
+		    return (
+			    <SplitPane split="horizontal" defaultSize="50%" resizerStyle={{background:'red',width:'3px'}}>
+			    <CoursePane key={layout[0][0]} course={layout[0][0]} {...this.props}/>
+			    <SplitPane split="vertical" defaultSize="50%" resizerStyle={{background:'red',width:'3px'}}>
+			    <CoursePane key={layout[0][1]} course={layout[0][1]} {...this.props}/>
+			    <CoursePane key={layout[1][1]} course={layout[1][1]} {...this.props}/>
+			    </SplitPane>
+			    </SplitPane>
+		    );
+
+		if (layout[0][1] == layout[1][1])
+		    return (
+			    <SplitPane split="horizontal" defaultSize="50%" resizerStyle={{background:'red',width:'3px'}}>
+			    <SplitPane split="vertical" defaultSize="50%" resizerStyle={{background:'red',width:'3px'}}>
+			    <CoursePane key={layout[0][0]} course={layout[0][0]} {...this.props}/>
+			    <CoursePane key={layout[1][0]} course={layout[1][0]} {...this.props}/>
+			    </SplitPane>
+			    <CoursePane key={layout[0][1]} course={layout[0][1]} {...this.props}/>
+			    </SplitPane>
+		    );
+
+	    }
+
+	    if (layout.length == 3){
+		return (
+			<SplitPane split="vertical" defaultSize="50%" resizerStyle={{background:'red',width:'3px'}}>
+			<CoursePane key={layout[0]} course={layout[0]} {...this.props}/>
+			<SplitPane split="vertical" defaultSize="50%" resizerStyle={{background:'red',width:'3px'}}>
+			<CoursePane key={layout[1]} course={layout[1]} {...this.props}/>
+			<CoursePane key={layout[2]} course={layout[2]} {...this.props}/>
+			</SplitPane>
+			</SplitPane>
+		);}
+	
 	    break;
 
 	case 4:
 	    return (
-		    <SplitPane split="horizontal" defaultSize="50%"
-		resizerStyle={{background:'red',width:'3px'}}>
+		    <SplitPane split="horizontal" defaultSize="50%" resizerStyle={{background:'red',width:'3px'}}>
 		    
-		    <SplitPane split="vertical" defaultSize="50%"
-		resizerStyle={{background:'red',width:'3px'}}>
-		    {this.props.abcView.layout[0].map(
-			courseCode => <CoursePane key={courseCode} course={courseCode} {...this.props}/>
-		    )}
-		</SplitPane>
+		    <SplitPane split="vertical" defaultSize="50%" resizerStyle={{background:'red',width:'3px'}}>
+		    <CoursePane key={layout[0][0]} course={layout[0][0]} {...this.props}/>
+		    <CoursePane key={layout[0][1]} course={layout[0][1]} {...this.props}/>
+		    </SplitPane>
 
-		    <SplitPane split="vertical" defaultSize="50%"
-		resizerStyle={{background:'red',width:'3px'}}>
-		    {this.props.abcView.layout[1].map(
-			courseCode => <CoursePane key={courseCode} course={courseCode} {...this.props}/>
-		    )}
-		</SplitPane>
+		    <SplitPane split="vertical" defaultSize="50%" resizerStyle={{background:'red',width:'3px'}}>
+		    <CoursePane key={layout[1][0]} course={layout[1][0]} {...this.props}/>
+		    <CoursePane key={layout[1][1]} course={layout[1][1]} {...this.props}/>
+		    </SplitPane>
 		    
 		</SplitPane>
 	    );
 	}
     }
 
-    render() {	
+    render() {
 	return (
 		<div>
-		<SplitPane split="vertical" defaultSize="13em">
+		<SplitPane split="vertical" defaultSize="14em">
 		<CourseMenu key={"courseMenu"} toggleCoursePanel={this.props.abcView.toggleCoursePanel}
 		  {...this.props.courseMenu}/>
 		{this.mapLayoutToPanes()}
@@ -82,15 +151,3 @@ class ABC extends React.Component {
 }
 
 export { ABC };
-/*
-		<Grid fluid><Row>
-		<Col xs={2}>
-		<CourseMenu key={"courseMenu"} toggleCoursePanel={this.props.abcView.toggleCoursePanel}
-	    {...this.props.courseMenu}/>
-		</Col>
-		<Col xs={10}>
-
-<CoursePane key={courseCode} course={courseCode} {...this.props}/>
-		</Col>
-		</Row></Grid>
-*/
