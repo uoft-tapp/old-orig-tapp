@@ -4,7 +4,7 @@ import { ButtonGroup, Button, DropdownButton, MenuItem, Glyphicon } from 'react-
 class TableMenu extends React.Component {
     render() {
 	return (
-		<div>
+		<div style={{marginBottom: '1vh'}}>
 		<ButtonGroup>
 		<Button>Clear filters</Button>
 		

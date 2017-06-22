@@ -1,7 +1,23 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-const Courses = props => <div className="container-fluid" style={{paddingTop: "70px"}}><h1>Courses!</h1></div>;
+class Courses extends React.Component {
+    render() {
+	return <div className="container-fluid" style={{paddingTop: "70px"}}><h1>Courses!</h1></div>;
+    }
+
+    selectThisTab() {
+	this.props.nav.selectTab(this.props.nav.courses.key);
+    }
+    
+    componentDidMount() {
+	this.selectThisTab();
+    }
+
+    componentDidUpdate() {	
+	this.selectThisTab();
+    }
+}
 
 export { Courses };
 

@@ -8,17 +8,15 @@ class CourseMenu extends React.Component {
 
 	const list = courses.map(
 	    (course) => {
-		return this.props.selected.includes(course.code) ?
-		    (<ListGroupItem className="course-menu-item" key={course.code}
-		     onClick={() => this.props.handleClick(course.code)} active>
-		     <span style={{float: 'left'}}>{course.code}</span>
-		     <span style={{float: 'right'}}>{course.assigned} /{course.expected}</span>
-		     </ListGroupItem>)
-		: (<ListGroupItem className="course-menu-item" key={course.code}
-		   onClick={() => this.props.handleClick(course.code)}>
-		   <span style={{float: 'left'}}>{course.code}</span>
-		   <span style={{float: 'right'}}>{course.assigned} /{course.expected}</span>
-		   </ListGroupItem>);
+		return (<ListGroupItem className="course-menu-item" key={course.code}
+			onClick={() => {
+			    this.props.toggleSelected(course.code);
+			    this.props.toggleCoursePanel(course.code);
+			}}
+			active={this.props.isSelected(course.code)}>
+			<span style={{float: 'left'}}>{course.code}</span>
+			<span style={{float: 'right'}}>{course.assigned} /{course.expected}</span>
+			</ListGroupItem>);
 	    });
 	
 	return <ListGroup style={{float: "left"}}>{list}</ListGroup>;
