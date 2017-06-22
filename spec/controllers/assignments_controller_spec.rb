@@ -209,7 +209,7 @@ RSpec.describe AssignmentsController, type: :controller do
       context "& passed an applicant ID and position ID," do
         it "given a non-integer applicant ID and non-integer position ID" do
            post :create, params: { applicant_id: "poops", position_id: "poops", hours: 40 }
-           expect(response.status).to eq(422)
+           expect(response.status).to eq(404) # 404 because of the .find query
         end
 
         it "given an integer applicant ID and non-integer position ID" do
@@ -236,14 +236,6 @@ RSpec.describe AssignmentsController, type: :controller do
         end
       end
     end
-
-    context "when position is closed" do
-      it "throws a 404 status" do
-        post :create, params: { applicant_id: @applicant.id, position_id: @closed.id, hours: 40 }
-        expect(response.status).to eq(422)
-      end
-    end
-
   end
 
   describe "PATCH #update" do

@@ -41,30 +41,21 @@ class AssignmentsController < ApplicationController
       returns status 409 if tries to create a duplicate
   '''
   def create
-    # check if the position is open
-    is_open = Position.where({id: params[:position_id], open: true}).exists?
+    has_no_assignment = Assignment.where({applicant_id: params[:applicant_id], position_id: params[:position_id]}).exists?
 
-    if is_open
-      # check if the current applicant has already been assigned to this position
-      has_no_assignment = Assignment.where({applicant_id: params[:applicant_id], position_id: params[:position_id]}).exists?
+    unless has_no_assignment
+      @applicant = Applicant.find(params[:applicant_id])
+      assignment = @applicant.assignments.build(assignment_params)
 
-      unless has_no_assignment
-        @applicant = Applicant.find(params[:applicant_id])
-        assignment = @applicant.assignments.build(assignment_params)
-
-        # error checking save
-        if assignment.save
-          render json: assignment.to_json
-        else
-          render json: assignment.errors.to_hash(true), status: :unprocessable_entity
-        end
+      # error checking save
+      if assignment.save
+        render json: assignment.to_json
       else
-        # throw conflict if user tries to create duplicate assignments
-        head :conflict
+        render json: assignment.errors.to_hash(true), status: :unprocessable_entity
       end
     else
-      # throw unprocessable_entity if position CLOSED
-      head :unprocessable_entity
+      # throw conflict if user tries to create duplicate assignments
+      head :conflict
     end
   end
 
