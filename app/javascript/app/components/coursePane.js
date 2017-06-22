@@ -18,7 +18,7 @@ class CoursePane extends React.Component {
 		<div>
 		<ABCApplicantTable tableHeaders={this.tableHeaders} tableFields={this.tableFields}
 	    applicants={this.props.applicants.assigned} assigned={true}/>
-		
+
 		<ABCApplicantTable tableHeaders={this.tableHeaders} tableFields={this.tableFields}
 	    applicants={this.props.applicants.unassigned} assigned={false}/>
 		</div>
@@ -27,3 +27,5 @@ class CoursePane extends React.Component {
 }
 
 export { CoursePane };
+
+// 		<TableMenu {...this.props.panels[this.props.course]}/>

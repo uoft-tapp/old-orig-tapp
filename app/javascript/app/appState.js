@@ -62,7 +62,14 @@ let appState = new Backbone.NestedModel({
 	},
     },
 
-    // course menu component (at most one per view)
+    // course list component
+    courseList: {
+	courses: [],
+
+	selected: null,
+    },
+    
+    // course menu component
     courseMenu: {
 	// will be populated with course codes and assigned/expected applicant counts
 	courses: [],
@@ -74,8 +81,9 @@ let appState = new Backbone.NestedModel({
 	    let selected = appState.get('courseMenu.selected');
 	    let i = selected.indexOf(courseCode);
 	    
-	    if (i == -1 && selected.length < 4) {
-		appState.add('courseMenu.selected', courseCode);	
+	    if (i == -1) {
+		if (selected.length < 4)
+		    appState.add('courseMenu.selected', courseCode);	
 	    } else {
 		appState.remove('courseMenu.selected[' + i + ']');
 	    }
@@ -89,6 +97,8 @@ let appState = new Backbone.NestedModel({
     abcView: {
 	layout: [],
 
+	panels: {},
+
 	addCoursePanel: (courseCode, activeCount) => {
 	    let layout = appState.get('abcView.layout');
 	    appState.unset('abcView.layout', {silent: true});
@@ -101,14 +111,12 @@ let appState = new Backbone.NestedModel({
 
 	    case 2:
 		// layout is now [ course1, course2 ]
-		// need to be able to toggle switch to [ [course1, course2] ]
 		layout.push(courseCode);
 		break;
 
 	    case 3:
-		// need to be able to toggle between 3-layouts
 		if (layout.length == 2)
-		    // layout was [ course1, course2 ], is now [ course1, course2, course3]
+		    // layout was [ course1, course2 ], is now [ course1, course2, course3 ]
 		    layout.push(courseCode);
 		
 		else
@@ -119,22 +127,33 @@ let appState = new Backbone.NestedModel({
 
 	    case 4:
 		// layout is now [ [course1, course2], [course3, course4] ]
+		let course1, course2, course3;
 		
-		if (layout[0].length == 1)
+		if (layout.length == 3)
+		    // layout was [ course1, course2, course3 ]
+		    [course1, course2, course3] = layout;
+
+		else if (layout.length == 1)
+		    // layout was [ [course1, course2, course3] ]
+		    [course1, course2, course3] = layout[0];
+		
+		else if (layout[0].length == 1)
 		    // layout was [ course1, [course2, course3] ]
-		    layout[0].push(courseCode);
+		    course1 = layout[0], [course2, course3] = layout[1];
 		
 		else if (layout[1].length == 1)
 		    // layout was [ [course1, course2], course3 ]
-		    layout[1].push(courseCode);
+		    [course1, course2] = layout[0], course3 = layout[1];
 		
 		else if (layout[0][0] == layout[1][0])
 		    // layout was [ [course1, course2] [course1, course3] ]
-		    layout[1][0] = courseCode;
+		    [course1, course2] = layout[0], course3 = layout[1][1];
 
 		else
 		    // layout was [ [course1, course2] [course3, course2] ]
-		    layout[1][1] = courseCode;		    
+		    [course1, course2] = layout[0], course3 = layout[1][0];
+
+		layout = [[course1, course2], [course3, courseCode]];
 		
 		break;
 	    }
@@ -144,6 +163,7 @@ let appState = new Backbone.NestedModel({
 
 	removeCoursePanel: (courseCode, activeCount) => {
 	    let layout = appState.get('abcView.layout');
+	    let layoutLen = layout.length;
 	    appState.unset('abcView.layout', {silent: true});
 	    
 	    switch (activeCount) {
@@ -151,20 +171,51 @@ let appState = new Backbone.NestedModel({
 		layout = [];
 		break;
 
-	    case 1:
-		// layout is now [ course ]
-		if (layout[0] == courseCode)
-		    layout.splice(0, 1);
+	    case 1: // layout is now [ course ]
+		
+		if (layoutLen == 2)
+		    // layout was [ course1, course2 ]
+		    layout = (layout[0] == courseCode) ? layout[1] : layout[0];
 		else
-		    layout.splice(1, 1);
+		    // layout was [ [course1, course2] ]
+		    layout = (layout[0][0] == courseCode) ? layout[0][1] : layout[0][0];
+		
 		break;
 
-	    case 2:
-		// layout is now [ course1, course2 ]
+	    case 2: // layout is now [ course1, course2 ]
+		
+		if (layoutLen == 1) {
+		    // layout was [ [course1, course2, course3] ]
+		    layout[0].splice(layout.indexOf(courseCode), 1);
+		    layout = layout[0];
+
+		} else if (layoutLen == 2) {
+		    layout = [].concat(layout[0]).concat(layout[1]);
+
+		    if (layout.length == 3) {
+			// layout was [ course1, [course2, course3] ] or [ [course1, course2], course3 ]
+			layout.splice(layout.indexOf(courseCode), 1);
+
+		    } else {
+			// layout was [ [course1, course2], [course1, course3] ] or
+			// [ [course1, course2], [course3, course2] ]
+			layout.splice(layout.indexOf(courseCode), 1);
+
+			let i = layout.indexOf(courseCode);
+			if (i != -1)
+			    layout.splice(i, 1);
+		    }
+		
+		} else if (layoutLen == 3) {
+		    // layout was [ course1, course2, course3 ]
+		    layout.splice(layout.indexOf(courseCode), 1);
+		}
+			   
 		break;
-
-	    case 3:
-
+		
+	    case 3: // layout is now [ course1, course2, course3 ]
+		layout = layout[0].concat(layout[1]);
+		layout.splice(layout.indexOf(courseCode), 1);
 		break;
 	    }
 
@@ -173,7 +224,7 @@ let appState = new Backbone.NestedModel({
 	
 	toggleCoursePanel: (courseCode) => {
 	    let active = appState.get('courseMenu.selected');
-	    
+
 	    if (active.includes(courseCode)) {
 		// add course to layout
 		appState.set('abcView.layout', appState.get('abcView.addCoursePanel')(courseCode, active.length));
@@ -194,10 +245,14 @@ let appState = new Backbone.NestedModel({
 	resourceRoute: '/courses',
 	
 	onceFetched: resp => {
+	    // populate the course menu with course codes and assigned/expected applicant counts
+	    let courseMenu = resp.map(course => (
+		{code: course.code, expected: course.positions[0].estimated_count, assigned: 0}));
+	    courseMenu.sort((a, b) => (a.code < b.code) ? -1 : 1);
+	    
 	    appState.set({'courses.list': resp,
-			  // populate the course menu with course codes and assigned/expected applicant counts
-			  'courseMenu.courses': resp.map(course => (
-			      {code: course.code, expected: course.positions[0].estimated_count, assigned: 0})),
+			  'courseList.courses': resp.map(course => course.code),
+			  'courseMenu.courses': courseMenu,
 			  'courses.fetched': true});
 	    return resp;
 	},
@@ -231,9 +286,9 @@ let appState = new Backbone.NestedModel({
 	
 	list: fakeApplicants,
 
-	unassigned: fakeApplicants.slice(50),
+	unassigned: fakeApplicants.slice(0,50),
 
-	assigned: fakeApplicants.slice(0,50),
+	assigned: fakeApplicants.slice(50),
     },
 
     // application data
