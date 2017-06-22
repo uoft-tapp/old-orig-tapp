@@ -3,19 +3,17 @@ class CreateApplications < ActiveRecord::Migration[5.1]
     create_table :applications do |t|
       t.references :applicant, foreign_key: true
       t.string :app_id, null: false
-      t.string :round_id, null: false
+      t.text :ta_training
+      t.string :access_acad_history
+      t.string :dept
+      t.string :program_id
+      t.integer :yip
       t.text :ta_experience
-      t.text :research
-      t.text :comments
+      t.text :academic_qualifications
+      t.text :technical_skills
       t.text :availability
-      t.text :degrees
-      t.text :work_experience
-      t.integer :hours_owed
-      t.string :pref_session
-      t.string :pref_campus
-      t.text :deferral_status
-      t.text :deferral_reason
-      t.integer :appointment_number
+      t.text :other_info
+      t.text :special_needs
 
       t.timestamps
     end

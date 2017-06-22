@@ -1,7 +1,7 @@
 class Position < ApplicationRecord
-  belongs_to :course, foreign_key: 'course_code'
   has_many :assignments
   has_many :preferences
+  has_and_belongs_to_many :instructors
 
-  validates :title, uniqueness: true
+  validates_uniqueness_of :position, scope: :round_id
 end

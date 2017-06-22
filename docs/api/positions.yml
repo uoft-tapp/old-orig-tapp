@@ -1,0 +1,136 @@
+swagger: "2.0"
+info:
+  description: "This is API for the course endpoint of the DCS-TA app."
+  version: "1.0.0"
+  title: "DCS-TA app"
+basePath: "/v2"
+tags:
+- name: "dcs-ta"
+  description: "DCS-TA application"
+paths:
+  /positions:
+    get:
+      tags:
+      - "positions"
+      summary: "Get all Positions"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Position"
+  /positions/{id}:
+    patch:
+      tags:
+      - "positions"
+      summary: "Updates Position information for Position {id}"
+      consumes:
+        - "application/json"
+      parameters:
+      - in: path
+        name: id
+        type: integer
+        required: true
+        description: "id for a Position in the Position Table"
+      - in: body
+        name: position
+        required: true
+        description: "json for attributes to update in Position model"
+        schema:
+          $ref: "#/definitions/Position_Update"
+      responses:
+        404:
+          description: "Unable to update course data because there was no Position with {id}"
+        204:
+          description: "Update succeeded"
+    get:
+      tags:
+       - "positions"
+      summary: "Get Position {id} Information"
+      parameters:
+      - in: path
+        name: id
+        type: integer
+        required: true
+        description: "id for a Position in the Position Table"
+      produces:
+      - "application/json"
+      responses:
+        404:
+          description: "No Position with {id}"
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Position"
+definitions:
+  Position:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        example: 4
+      position:
+        type: "string"
+        example: "CSC108H1S - Student-Facing TA"
+      campus_code:
+        type: "integer"
+        example: 1
+      course_name:
+        type: "string"
+        example: "Intro to Comp Prog"
+      estimated_enrollment:
+        type: "integer"
+        example: 1000
+      duties:
+        type: "string"
+        example: "Attend lectures to assist in classroom activities. Prepare for each week by doing online programming activities. Some TAs may hold office hours or monitor discussion forums."
+      qualifications:
+        type: "string"
+        example: "Experience with programming, such as by completing a 200-level CSC course, or by achieving excellent marks in multiple 100-level CSC courses, or equivalent. Experience with Python, at the level of CSC 148 or equivalent. Must be enrolled in or have completed a computer science degree, or equivalent. Must be interested in teaching beginner programmers. Willing to try different approaches when explaining simple concepts. TAs should be available during at least one of the CSC 108 lecture times (MWF10-11, W6-9)."
+      hours:
+        type: "integer"
+        example: 54
+        description: "number of assigned to each TA for this position"
+      estimated_count:
+        type: "integer"
+        example: 2
+        description: "estimated amount of TA's needed for this position"
+      estimated_total_hours:
+        type: "integer"
+        example: 100
+      created_at:
+        type: "string"
+        format: "date-time"
+        example: "2017-06-05T14:26:44.808Z"
+      updated_at:
+        type: "string"
+        format: "date-time"
+        example: "2017-06-05T14:26:44.808Z"
+  Position_Update:
+    type: "object"
+    properties:
+      estimated_enrollment:
+        type: "integer"
+        example: 1000
+      duties:
+        type: "string"
+        example: "Attend lectures to assist in classroom activities. Prepare for each week by doing online programming activities. Some TAs may hold office hours or monitor discussion forums."
+      qualifications:
+        type: "string"
+        example: "Experience with programming, such as by completing a 200-level CSC course, or by achieving excellent marks in multiple 100-level CSC courses, or equivalent. Experience with Python, at the level of CSC 148 or equivalent. Must be enrolled in or have completed a computer science degree, or equivalent. Must be interested in teaching beginner programmers. Willing to try different approaches when explaining simple concepts. TAs should be available during at least one of the CSC 108 lecture times (MWF10-11, W6-9)."
+      hours:
+        type: "integer"
+        example: 54
+        description: "number of assigned to each TA for this position"
+      estimated_count:
+        type: "integer"
+        example: 2
+        description: "estimated amount of TA's needed for this position"
+      estimated_total_hours:
+        type: "integer"
+        example: 100

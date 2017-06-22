@@ -7,7 +7,5 @@ Rails.application.routes.draw do
     resources :applications
   end
   resources :applications, only: [:index, :show]
-  resources :courses, param: :code do
-    resources :positions
-  end
+  resources :positions
 end
