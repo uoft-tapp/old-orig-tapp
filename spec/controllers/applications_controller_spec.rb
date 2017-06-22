@@ -72,18 +72,5 @@ RSpec.describe ApplicationsController, type: :controller do
         expect(response.status).to eq(404)
       end
     end
-
-    context "when passed an applicant ID" do
-      it "given a non-integer ID, returns 204 status" do
-        get :show, params: { applicant_id: application.applicant.id, id: "poops" }
-        expect(response.status).to eq(204)
-      end
-
-      it "given an integer ID, returns 204 status" do
-        get :show, params: { applicant_id: application.applicant.id, id: application.id }
-        expect(response.status).to eq(204)
-      end
-
-    end
   end
 end
