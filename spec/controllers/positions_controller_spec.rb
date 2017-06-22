@@ -59,14 +59,18 @@ RSpec.describe PositionsController, type: :controller do
           qualifications: "qualifications",
           hours: 20,
           estimated_count: 15,
-          estimated_total_hours: 300}
+          estimated_total_hours: 300,
+          instructors: "[2, 4]"
+        }
+        expect(position.instructor_ids).to eq([])
         put :update, params: @params
       end
 
       it "updates position with {id}" do
         position.reload
-        expect(position.as_json(:except => [:title, :created_at, :updated_at]))
-          .to eq(@params.as_json)
+        expect(position.as_json(:except => [:title, :created_at, :updated_at, :instructors]))
+          .to eq(@params.as_json(:except => [:instructors]))
+        expect(position.instructor_ids).to eq([2,4])
           expect(response.status).to eq(204)
       end
     end
