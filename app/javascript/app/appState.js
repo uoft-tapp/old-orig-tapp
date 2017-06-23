@@ -21,7 +21,7 @@ const initialState = {
     courseMenu: {
         selected: [],
     },
-    
+
     // abc view
     abcView: {
         layout: [],
@@ -34,13 +34,60 @@ const initialState = {
 
     // unassigned view
     unassignedView: null,
-    
+
     /** DB data **/
-    
+
     applicants: { fetching: false, list: null, },
     applications: { fetching: false, list: null, },
     courses: { fetching: false, list: null, },
     assignments: { fetching: false, list: null, },
+
+    assignment_panels: {
+      personal: {
+        label: "Personal Information",
+        collapsed: false,
+      },
+      status: {
+        label: "Current Status",
+        collapsed: false,
+      },
+      program: {
+        label: "Current Program Information",
+        collapsed: false,
+      },
+      assignment_status: {
+        label: "Current Assignment Status",
+        collapsed: false,
+      },
+      preferences: {
+        label: "Course Preferences",
+        collapsed: false,
+      },
+      teaching_experiences: {
+        label: "Teaching Experiences",
+        collapsed: false,
+      },
+      academic_qualifications: {
+        label: "Academic Qualifications",
+        collapsed: false,
+      },
+      technical_skills: {
+        label: "Technical Skills",
+        collapsed: false,
+      },
+      availability: {
+        label: "Availability",
+        collapsed: false,
+      },
+      other_information: {
+        label: "Other Information",
+        collapsed: false,
+      },
+      special_needs: {
+        label: "Special Need Issues",
+        collapsed: false,
+      },
+    }
 };
 
 class AppState {
@@ -56,13 +103,13 @@ class AppState {
     toJSO() {
         return this._data.toJSON();
     }
-    
+
     // select a navbar tab
     selectNavTab(eventKey, applicant) {
         this._data.set({'nav.selectedTab': eventKey,
                         'nav.selectedApplicant': applicant ? applicant : null});
     }
-    
+
     // toggle the selected state of the course that is clicked
     toggleSelectedCourse(course) {
         let selected = this._data.get('courseMenu.selected');
@@ -353,6 +400,12 @@ class AppState {
 	return this._data.get('applications.list');
     }
 
+    /** data setters **/
+
+    setFetchingApplicantList(fetching) {
+	    this._data.set('applicants.fetching', fetching);
+    }
+
     getAssignmentsByApplicant(applicant) {
 	let assignments = this.getAssignmentsList()[applicant];
 
@@ -407,16 +460,16 @@ class AppState {
     }
 
     setApplicationRounds(courses) {
-        let applications = this.getApplicationsList();
+      let applications = this.getApplicationsList();
         
-        // assumes that all courses in a single application will be part of the same round, and that all applicants
-        // have applied to at least one course
-        let applicant;
-        for (applicant in applications) {
-            applications[applicant].forEach((app, index) => {
-                applications[applicant][index].round = courses[app.prefs[0].positionId].round;
-            });
-        }
+      // assumes that all courses in a single application will be part of the same round, and that all applicants
+      // have applied to at least one course
+      let applicant;
+      for (applicant in applications) {
+          applications[applicant].forEach((app, index) => {
+            applications[applicant][index].round = courses[app.prefs[0].positionId].round;
+          });
+      }
 
         this.setApplicationList(applications);
     }
@@ -456,6 +509,11 @@ class AppState {
     
     setFetchingCourseList(fetching) {
         this._data.set('courses.fetching', fetching);
+    }
+
+    setAssignmentList(list) {
+      this._data.unset('assignment.list', {silent: true});
+      this._data.set('assignments.list', list);
     }
 }
 

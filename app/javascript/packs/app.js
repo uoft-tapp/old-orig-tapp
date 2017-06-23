@@ -43,7 +43,7 @@ class App extends React.Component {
     componentDidMount() {
 	appState.subscribe(this._updateState.bind(this));
     }
-    
+
     render() {
 	return <RouterInst func={appState} {...this.state}/>;
     }
@@ -100,13 +100,13 @@ const RouterInst = props => (
     render={() => <Unassigned navKey={navConfig.unassigned.key} {...props}/>} />
 	<Route path={navConfig.summary.route}
     render={() => <Summary navKey={navConfig.summary.key} {...props}/>} />
-    
+
 	<Route path={navConfig.logout.route} render={() => <Bye/>} />
 
     	<Route path={navConfig.applicant.route}
     render={({ match }) => <Applicant navKey={navConfig.applicant.key} match={match} {...props}/>} />
 	</Switch>
-    
+
 	</div>
 	</Router>
 );
@@ -115,11 +115,11 @@ const RouterInst = props => (
 
 const NavbarInst = props => (
 	<Navbar fixedTop fluid>
-	
+
 	<Navbar.Header>
 	<Navbar.Brand>TAPP</Navbar.Brand>
 	</Navbar.Header>
-	
+
     	<Nav pullLeft activeKey={props.nav.selectedTab} onSelect={props.nav.handleSelectTab}>
 
 	<NavItem eventKey={navConfig.courses.key}><Link to={navConfig.courses.route}>Courses</Link></NavItem>
@@ -139,7 +139,7 @@ const NavbarInst = props => (
 	</MenuItem>
 	</NavDropdown>
 	</Nav>
-	
+
     </Navbar>
 );
 
