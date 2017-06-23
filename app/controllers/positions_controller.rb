@@ -15,10 +15,7 @@ class PositionsController < ApplicationController
     position = Position.find(params[:id])
     position.update_attributes!(position_params)
     if params[:instructors]
-      puts 'not null'
-      position.instructor_ids = JSON.parse params[:instructors]
-    else
-      puts 'null'
+      position.instructor_ids = params[:instructors]
     end
   end
 
