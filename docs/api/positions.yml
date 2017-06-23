@@ -137,7 +137,12 @@ definitions:
         description: "estimated amount of TA's needed for this position"
       estimated_total_hours:
         type: "integer"
-        example: 100
+        example: 10
+      instructors:
+        type: array
+        example: "[2, 4]"
+        items:
+          type: integer
   Instructor:
     type: object
     properties:
