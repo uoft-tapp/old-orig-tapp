@@ -25,5 +25,7 @@ footer div p {
 }
 
 #root nav+div {
-    padding-top: 70px;
+    margin-top: 70px;
+    position: absolute;
+    height: 92vh;
 }
