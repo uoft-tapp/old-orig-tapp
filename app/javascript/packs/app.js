@@ -16,17 +16,17 @@ import NestedModel from 'backbone-nested'
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import {BrowserRouter as Router, Route, Link, Switch} from 'react-router-dom'
-import {Navbar, Nav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap'
+import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
+import { Navbar, Nav, NavItem, NavDropdown, MenuItem } from 'react-bootstrap'
 
-import {appState, fetchAll} from '../app/appState.js'
+import { appState, fetchAll } from '../app/appState.js'
 
-import {Courses} from '../app/components/courses.js'
-import {ABC} from '../app/components/abc.js'
-import {Assigned} from '../app/components/assigned.js'
-import {Unassigned} from '../app/components/unassigned.js'
-import {Summary} from '../app/components/summary.js'
-import {Applicant} from '../app/components/applicant.js'
+import { Courses } from '../app/components/courses.js'
+import { ABC } from '../app/components/abc.js'
+import { Assigned } from '../app/components/assigned.js'
+import { Unassigned } from '../app/components/unassigned.js'
+import { Summary } from '../app/components/summary.js'
+import { Applicant } from '../app/components/applicant.js'
 
 /*** Main app component ***/
 
