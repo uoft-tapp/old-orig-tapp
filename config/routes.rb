@@ -10,4 +10,5 @@ Rails.application.routes.draw do
   resources :assignments, only: [:index, :show]
   resources :applications, only: [:index, :show]
   resources :positions
+  resources :instructors
 end

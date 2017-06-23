@@ -111,6 +111,10 @@ definitions:
         type: "string"
         format: "date-time"
         example: "2017-06-05T14:26:44.808Z"
+      instructors:
+        type: array
+        items:
+          $ref: "#/definitions/Instructor"
   Position_Update:
     type: "object"
     properties:
@@ -133,4 +137,29 @@ definitions:
         description: "estimated amount of TA's needed for this position"
       estimated_total_hours:
         type: "integer"
-        example: 100
+        example: 10
+      instructors:
+        type: array
+        example: "[2, 4]"
+        items:
+          type: integer
+  Instructor:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1
+      name:
+        type: string
+        example: "Instructor Name"
+      email:
+        type: string
+        example: "email@example.com"
+      created_at:
+        type: string
+        format: date-time
+        example: "2017-06-22T15:43:02.952Z"
+      updated_at:
+        type: string
+        format: date-time
+        example: "2017-06-22T15:43:02.952Z"

@@ -1,0 +1,67 @@
+swagger: "2.0"
+info:
+  description: "This is API for the course endpoint of the DCS-TA app."
+  version: "1.0.0"
+  title: "DCS-TA app"
+basePath: "/v2"
+tags:
+- name: "dcs-ta"
+  description: "DCS-TA application"
+paths:
+  /instructors:
+    get:
+      tags:
+      - "instructors"
+      summary: "Get all Instructors"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Instructor"
+  /instructors/{id}:
+    get:
+      tags:
+       - "instructors"
+      summary: "Get Instructor {id} Information"
+      parameters:
+      - in: path
+        name: id
+        type: integer
+        required: true
+        description: "id for an Instructor in the Instructor Table"
+      produces:
+      - "application/json"
+      responses:
+        404:
+          description: "No Instructor with {id}"
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Instructor"
+definitions:
+  Instructor:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1
+      name:
+        type: string
+        example: "Instructor Name"
+      email:
+        type: string
+        example: "email@example.com"
+      created_at:
+        type: string
+        format: date-time
+        example: "2017-06-22T15:43:02.952Z"
+      updated_at:
+        type: string
+        format: date-time
+        example: "2017-06-22T15:43:02.952Z"
