@@ -60,7 +60,7 @@ RSpec.describe PositionsController, type: :controller do
           hours: 20,
           estimated_count: 15,
           estimated_total_hours: 300,
-          instructors: "[2, 4]"
+          instructors: [2, 4]
         }
         expect(position.instructor_ids).to eq([])
         put :update, params: @params
