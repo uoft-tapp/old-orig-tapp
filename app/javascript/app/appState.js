@@ -42,52 +42,54 @@ const initialState = {
     courses: { fetching: false, list: null, },
     assignments: { fetching: false, list: null, },
 
-    assignment_panels: {
-      personal: {
-        label: "Personal Information",
-        collapsed: false,
-      },
-      status: {
-        label: "Current Status",
-        collapsed: false,
-      },
-      program: {
-        label: "Current Program Information",
-        collapsed: false,
-      },
-      assignment_status: {
-        label: "Current Assignment Status",
-        collapsed: false,
-      },
-      preferences: {
-        label: "Course Preferences",
-        collapsed: false,
-      },
-      teaching_experiences: {
-        label: "Teaching Experiences",
-        collapsed: false,
-      },
-      academic_qualifications: {
-        label: "Academic Qualifications",
-        collapsed: false,
-      },
-      technical_skills: {
-        label: "Technical Skills",
-        collapsed: false,
-      },
-      availability: {
-        label: "Availability",
-        collapsed: false,
-      },
-      other_information: {
-        label: "Other Information",
-        collapsed: false,
-      },
-      special_needs: {
-        label: "Special Need Issues",
-        collapsed: false,
-      },
-    }
+    assignment_form: {
+      panels: [
+        {
+          label: "Personal Information",
+          collapsed: false,
+        },
+        {
+          label: "Current Status",
+          collapsed: false,
+        },
+        {
+          label: "Current Program Information",
+          collapsed: false,
+        },
+        {
+          label: "Current Assignment Status",
+          collapsed: false,
+        },
+        {
+          label: "Course Preferences",
+          collapsed: false,
+        },
+        {
+          label: "Teaching Experiences",
+          collapsed: false,
+        },
+        {
+          label: "Academic Qualifications",
+          collapsed: false,
+        },
+        {
+          label: "Technical Skills",
+          collapsed: false,
+        },
+        {
+          label: "Availability",
+          collapsed: false,
+        },
+        {
+          label: "Other Information",
+          collapsed: false,
+        },
+        {
+          label: "Special Need Issues",
+          collapsed: false,
+        }
+      ]
+    },
 };
 
 class AppState {
