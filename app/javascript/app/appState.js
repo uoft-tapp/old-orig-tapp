@@ -45,50 +45,64 @@ const initialState = {
     assignment_form: {
       panels: [
         {
+          index: 0,
           label: "Personal Information",
-          collapsed: false,
+          expanded: true,
         },
         {
+          index: 1,
           label: "Current Status",
-          collapsed: false,
+          expanded: true,
         },
         {
+          index: 2,
           label: "Current Program Information",
-          collapsed: false,
+          expanded: true,
         },
         {
+          index: 3,
           label: "Current Assignment Status",
-          collapsed: false,
+          expanded: true,
         },
         {
+          index: 4,
           label: "Course Preferences",
-          collapsed: false,
+          expanded: true,
         },
         {
+          index: 5,
           label: "Teaching Experiences",
-          collapsed: false,
+          expanded: true,
         },
         {
+          index: 6,
           label: "Academic Qualifications",
-          collapsed: false,
+          expanded: true,
         },
         {
+          index: 7,
           label: "Technical Skills",
-          collapsed: false,
+          expanded: true,
         },
         {
+          index: 8,
           label: "Availability",
-          collapsed: false,
+          expanded: true,
         },
         {
+          index: 9,
           label: "Other Information",
-          collapsed: false,
+          expanded: true,
         },
         {
+          index: 10,
           label: "Special Need Issues",
-          collapsed: false,
+          expanded: true,
         }
-      ]
+      ],
+      set_expanded: (index) =>(
+        appState.set('assignment_form.panels['+index+'].expanded', !appState.get('assignment_form.panels['+index+'].expanded'))
+      ),
     },
 };
 
