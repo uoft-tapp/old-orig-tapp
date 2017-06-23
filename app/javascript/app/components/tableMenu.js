@@ -46,7 +46,8 @@ class TableMenu extends React.Component {
 		<DropdownButton title="Add sort field" id="sort-dropdown" bsStyle="info" noCaret>
 		{this.props.sortFields.map(
 		    (field, index) => (
-			    <MenuItem key={"sort-" + field} eventKey={"4."+(index+1)}>
+			    <MenuItem key={"sort-" + field} eventKey={'sort-' + field}
+			onSelect={(eventKey) => this.props.sort(eventKey.split('-')[1])}>
 			    {field}
 			</MenuItem>
 		    )
