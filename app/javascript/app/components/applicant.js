@@ -14,7 +14,7 @@ class Applicant extends React.Component {
     }
 
     render() {
-	return <div className="container-fluid" style={{paddingTop: "70px"}}><h1>Applicant {props.match.params.id}!</h1></div>
+	return <div className="container-fluid" style={{paddingTop: "70px"}}><h1>Applicant {this.props.match.params.id}!</h1></div>
     }
 }
 

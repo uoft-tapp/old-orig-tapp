@@ -78,7 +78,7 @@ const RouterInst = props => (
     
 	<Route path={props.nav.logout.route} render={() => <Bye/>} />
 
-    	<Route path={props.nav.applicant.route} render={(rprops) => <Applicant {...rprops}/>} />
+    	<Route path={props.nav.applicant.route} render={({ match }) => <Applicant {...props} match={match}/>} />
 	</Switch>
     
 	</div>
@@ -111,13 +111,10 @@ const NavbarInst = props => (
 	<NavItem eventKey={props.nav.summary.key}>
 	<Link to={props.nav.summary.route}>{props.nav.summary.label}</Link>
 	</NavItem>
-	</Nav>
-
     {props.nav.applicantSelected &&
-     <Nav>
      <NavItem eventKey={props.nav.applicant.key}>{props.nav.applicant.label}</NavItem>
-     </Nav>
     }
+    </Nav>
 
 	<Nav pullRight>
 	<NavDropdown eventKey={props.nav.logout.key} title={props.nav.logout.role + ":" + props.nav.logout.user}
