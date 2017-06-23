@@ -1,12 +1,13 @@
 import React from 'react'
-import {ListGroup, ListGroupItem} from 'react-bootstrap'
+import { ListGroup, ListGroupItem, Panel } from 'react-bootstrap'
 
 class CourseMenu extends React.Component {
     render() {
+	let itemStyle = {height: '2em', padding: '3px'};
 	
 	const list = this.props.courses.map(
 	    (course) => {
-		return (<ListGroupItem className="course-menu-item" key={course.code}
+		return (<ListGroupItem className="course-menu-item" key={course.code} style={itemStyle}
 			onClick={() => {
 			    this.props.toggleSelected(course.code);
 			    this.props.toggleCoursePanel(course.code);
@@ -17,7 +18,11 @@ class CourseMenu extends React.Component {
 			</ListGroupItem>);
 	    });
 	
-	return <ListGroup style={{float: "left"}}>{list}</ListGroup>;
+	return (
+		<Panel header="Courses" style={{height: '100%', overflow: 'auto'}}>
+		<ListGroup fill>{list}</ListGroup>
+		</Panel>
+	);
     }
 }
 
