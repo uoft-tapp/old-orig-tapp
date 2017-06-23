@@ -15,9 +15,7 @@ class Applicant extends React.Component {
     }
 
     render() {
-	return (<div className="container-fluid">
-            <AssignmentForm {...this.props}/>
-          </div>);
+	return (<AssignmentForm {...this.props}/>);
     }
 }
 
