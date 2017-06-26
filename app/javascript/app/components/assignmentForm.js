@@ -1,6 +1,77 @@
 import React from 'react'
 import { Panel } from 'react-bootstrap'
 
+const applicant_data = {
+  lastName: 'Last Name',
+  firstName: 'First Name',
+  utorid: 'applicant utorid',
+  email: 'example@mail.utoronto.ca',
+  phone: '647-XXX-XXX',
+  studentNumber: 'XXXXXXXXXX',
+  address: '123 Random Street\r\nToronto, ON\r\nZIP CODE',
+  dept: 'Computer Science',
+  program: 'MSc',
+  year: '3'
+};
+
+const application_data = {
+  taTraining: true,
+  academicAccess: true,
+  round: '110',
+  prefs: [
+    {
+      positionId: 1,
+      preferred: true
+    },
+    {
+      positionId: 2,
+      preferred: false
+    },
+    {
+      positionId: 3,
+      preferred: true
+    },
+    {
+      positionId: 4,
+      preferred: false
+    },
+    {
+      positionId: 5,
+      preferred: false
+    },
+    {
+      positionId: 6,
+      preferred: false
+    },
+  ],
+  exp: 'Teaching Experience',
+  qual: 'Academic Qualifications',
+  skills: 'Technical Skills',
+  avail: 'Availability',
+  other: 'Other Information',
+  special_needs: 'Special Needs'
+}
+
+const course_data = {
+  1:{
+    code: 'CSC108H1'
+  },
+  2:{
+    code: 'CSC165H1'
+  },
+  3:{
+    code: 'CSC148H1'
+  },
+  4:{
+    code: 'CSC209H1'
+  },
+  5:{
+    code: 'CSC108H1-A'
+  },
+  6:{
+    code: 'CSC207H1'
+  },
+}
 
 const CollapsablePanel = props =>(
   <div className="container-fluid"
@@ -13,55 +84,134 @@ const CollapsablePanel = props =>(
             onClick={()=>props.set_expanded(panel.index)}>
             {panel.label}
           </div>}>
-        {props.content(props.applicant, panel.index)}
+        {props.assignment_form.addPanelContent(props.applicant, props.application, props.course,
+          props.assignments, props.temp_assignments, panel.index, props.assignment_form)}
       </Panel>
     ))}
   </div>
 );
 
 class AssignmentForm extends React.Component {
-  getApplicant(applicants, id){
-    let applicant = {};
-    for(let i=0; i < applicants.length; i++){
-      if(applicants[i]["id"]==id){
-        applicant = applicants[i];
-      }
-    }
-    return applicant;
+
+  setAddress(address){
+    let parts = address.split("\r\n");
+    return(
+      parts.map(part=>(
+        <p>{part}</p>
+      ))
+    )
   }
-  addPanelContent(data, index){
+
+  setCourses(courses){
+    return(
+      Object.entries(courses).map((key, val) => (
+        <option value={key[1].code}></option>
+      ))
+    );
+  }
+
+  setAssignments(assignments,courses){
+    if(assignments.length==0)
+      return (<td><p>No Assignments</p></td>);
+    else
+      return(
+        assignments.map(assignment=>(
+          <tr>
+            <td>{courses[assignment.positionId].code}</td>
+            <td><input type="number" style={{width: '50px'}} value={assignment.hour}/></td>
+            <td></td>
+            <td>
+              <button onClick={()=>alert("Delete assignment with positionId "+assignment.positionId)}
+                style={{border: 'none', background: 'none'}}>
+                <i className="fa fa-times-circle-o" style={{color: 'red', fontSize: '20px'}}>
+                </i>
+              </button>
+            </td>
+          </tr>
+        ))
+      );
+  }
+
+  setTempAssignments(temp_assignments,courses){
+    return(
+      temp_assignments.map(assignment=>(
+        <tr>
+          <td>{courses[assignment.positionId].code}</td>
+          <td><input type="number" style={{width: '50px'}} value={assignment.hour}/></td>
+          <td>
+            <button onClick={()=>alert("Add assignment with positionId "+assignment.positionId)}
+              style={{border: 'none', background: 'none'}}>
+              <i className="fa fa-check-circle-o" style={{color: 'green', fontSize: '20px'}}>
+              </i>
+            </button>
+          </td>
+          <td>
+            <button onClick={()=>alert("Delete assignment with positionId "+assignment.positionId)}
+              style={{border: 'none', background: 'none'}}>
+              <i className="fa fa-times-circle-o" style={{color: 'red', fontSize: '20px'}}>
+              </i>
+            </button>
+          </td>
+        </tr>
+      ))
+    );
+  }
+
+  setPrefs(pref, course){
+    let j = 0, columns=[],size = 4;
+    for (let i = 0; i < Math.ceil(pref.length / size); i++) {
+      columns[i] = pref.slice(j, j + size);
+      j = j + size;
+    }
+    return (
+      columns.map(column=>(
+        <td>
+          {column.map(item =>(
+            <p>
+              {course[item.positionId].code}
+              {item.preferred?<i className="fa fa-star-o" style={{color:'orange'}}></i>:''}
+            </p>
+          ))}
+        </td>
+      ))
+    );
+  }
+  addPanelContent(applicant, application, courses, assignments, temp_assignments, index, assignment_form){
     switch(index){
       case 0:
         return (
           <table className="panel_table">
             <td>
-              <p><b>Last Name: </b>{data.last_name}</p>
-              <p><b>UTORIid: </b>{data.utorid}</p>
-              <p><b>Email address: </b>{data.email}</p>
-              <p><b>Phone Number: </b>{data.phone}</p>
+              <p><b>Last Name: </b>{applicant.lastName}</p>
+              <p><b>UTORIid: </b>{applicant.utorid}</p>
+              <p><b>Email address: </b>{applicant.email}</p>
+              <p><b>Phone Number: </b>{applicant.phone}</p>
             </td>
             <td>
-              <p><b>First Name: </b>{data.first_name}</p>
-              <p><b>Student ID: </b>{data.student_number}</p>
+              <p><b>First Name: </b>{applicant.firstName}</p>
+              <p><b>Student ID: </b>{applicant.studentNumber}</p>
             </td>
             <td>
-              <p><b>Address: </b>{data.address}</p>
+              <p><b>Address: </b></p>
+            </td>
+            <td>
+              {assignment_form.setAddress(applicant.address)}
             </td>
           </table>
         );
       case 1:
         return (
           <table className="panel_table">
-            <td><b>Enrolled as a U of T graduate student for the TA session? </b>(Yes/No)</td>
-            <td><b>Completed a U of T TA training session? </b>(Yes/No)</td>
+            <td><b>Enrolled as a U of T graduate student for the TA session? </b>{application.academicAccess?"Yes":"No"}</td>
+            <td><b>Completed a U of T TA training session? </b>{application.taTraining?"Yes":"No"}</td>
           </table>
         );
       case 2:
         return (
           <table className="panel_table">
-            <td><b>Department: </b>DCS</td>
-            <td><b>Program: </b>MSc</td>
-            <td><b>Year: </b>3</td>
+            <td><b>Department: </b>{applicant.dept}</td>
+            <td><b>Program: </b>{applicant.program}</td>
+            <td><b>Year: </b>{applicant.year}</td>
           </table>
         );
       case 3:
@@ -69,72 +219,48 @@ class AssignmentForm extends React.Component {
           <div>
             <p><b>Application round: </b>110</p>
             <table className="panel_table">
-            <tr>
-              <td>Course</td>
-              <td><input type="number" style={{width: '50px'}}/></td>
-              <td><i className="fa fa-check-circle-o" style={{color: 'green', fontSize: '20px'}}></i></td>
-              <td><i className="fa fa-times-circle-o" style={{color: 'red', fontSize: '20px'}}></i></td>
-            </tr>
-            <tr>
-              <td>Course</td>
-              <td><input type="number" style={{width: '50px'}}/></td>
-              <td><i className="fa fa-check-circle-o" style={{color: 'green', fontSize: '20px'}}></i></td>
-              <td><i className="fa fa-times-circle-o" style={{color: 'red', fontSize: '20px'}}></i></td>
-            </tr>
-            <tr>
-              <td>Course</td>
-              <td><input type="number" style={{width: '50px'}}/></td>
-              <td><i className="fa fa-check-circle-o" style={{color: 'green', fontSize: '20px'}}></i></td>
-              <td><i className="fa fa-times-circle-o" style={{color: 'red', fontSize: '20px'}}></i></td>
-            </tr>
+            {assignment_form.setAssignments(assignments, courses)}
+            {assignment_form.setTempAssignments(temp_assignments, courses)}
             </table>
-            <p style={{marginTop: '10px'}}><b>Add assignment: </b><input type="text"/></p>
+            <p style={{marginTop: '10px'}}><b>Add assignment: </b>
+              <input type="text" list="courses"/>
+            </p>
+            <datalist id="courses">
+            {assignment_form.setCourses(courses)}
+            </datalist>
           </div>
         );
       case 4:
         return(
           <table className="panel_table">
-            <td>
-              <p>CSC108H1</p>
-              <p>CSC165H1</p>
-              <p>CSC148H1</p>
-              <p>CSC209H1</p>
-            </td>
-            <td>
-              <p><i className="fa fa-star-o"></i></p>
-              <p></p>
-              <p><i className="fa fa-star-o"></i></p>
-              <p></p>
-            </td>
-            <td>
-              <p>CSC108H1-A</p>
-              <p>CSC165H1</p>
-              <p></p>
-              <p></p>
-            </td>
+            {assignment_form.setPrefs(application.prefs, courses)}
           </table>
         );
       case 5:
-        return(<p>Teaching Experience</p>);
+        return(<p>{application.exp}</p>);
       case 6:
-        return(<p>Qualifications</p>);
+        return(<p>{application.qual}</p>);
       case 7:
-        return(<p>Qualifications</p>);
+        return(<p>{application.skills}</p>);
       case 8:
-        return(<p>Technical Skills</p>);
+        return(<p>{application.avail}</p>);
       case 9:
-        return(<p>Availability</p>);
+        return(<p>{application.other}</p>);
       case 10:
-        return(<p>Special Need Issues</p>);
+        return(<p>{application.special_needs}</p>);
     }
   }
   render() {
     return (
       <CollapsablePanel id={this.props.match.params.id}
         panels={this.props.assignment_form.panels}
-        applicant={this.getApplicant(this.props.applicants.list, this.props.match.params.id)}
+        applicant={applicant_data}
+        application={application_data}
+        course={course_data}
+        assignments={this.props.assignment_form.assignments[this.props.match.params.id]}
+        temp_assignments={this.props.assignment_form.temp_assignments[this.props.match.params.id]}
         set_expanded={this.props.assignment_form.set_expanded}
-        content={this.addPanelContent}/>
+        assignment_form={this}/>
     );
   }
 }
