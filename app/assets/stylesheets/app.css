@@ -29,3 +29,6 @@ footer div p {
     position: absolute;
     height: 92vh;
 }
+.panel_table td{
+  padding-right: 50px;
+}
