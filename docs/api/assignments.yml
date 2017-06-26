@@ -1,0 +1,72 @@
+swagger: "2.0"
+info:
+  description: "This is API for the course endpoint of the DCS-TA app."
+  version: "1.0.0"
+  title: "DCS-TA app"
+basePath: "/v2"
+tags:
+- name: "dcs-ta"
+  description: "DCS-TA application"
+paths:
+  /assignments?{positionid}:
+    get:
+      tags:
+      - "assignments"
+      summary: "Get all assignments information"
+      description: "Returns a list of assignments"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "positionid"
+        in: "path"
+        description: "Filters assignments by a position id"
+        type: "integer"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/defintions/Assignment"
+  /assignment/{id}:
+      get:
+        tags:
+          - "assignment"
+        summary: "Find assignment by ID"
+        description: "Returns a single assignment"
+        produces:
+        - "application/json"
+        parameters:
+        - name: "id"
+          in: "path"
+          description: "ID of assignment to return"
+          required: true
+          type: "integer"
+        responses:
+          200:
+            description: "successful operation"
+            schema:
+              $ref: "#/definitions/Assignment"
+          404:
+            description: "invalid ID supplied"
+
+definitions:
+  Assignment:
+    type: "object"
+      properties:
+        id:
+          type: "integer"
+        applicant_id:
+          type: "integer"
+        position_id:
+          type: "integer"
+        created_at:
+          type: "string"
+          format: "date-time"
+          example: "2017-06-05T14:26:44.808Z"
+        updated_at:
+          type: "string"
+          format: "date-time"
+          example: "2017-06-05T14:26:44.808Z"
+        hours:
+          type: "integer"
