@@ -100,6 +100,29 @@ const initialState = {
           expanded: true,
         }
       ],
+      assignments:{
+        1:[
+          {
+            positionId: 1,
+            hour: 54
+          },
+          {
+            positionId: 6,
+            hour: 20
+          }
+        ]
+      },
+      temp_assignments: {
+        1:[
+          {
+            positionId: 2,
+            hour: 30
+          }
+        ]
+      },
+      add_temp_assignment: (applicantId, positionId, hour) =>(
+        appState.set('assignment_form.temp_assignments['+applicantId+']', {positionId: positionId, hour: hour})
+      ),
       set_expanded: (index) =>(
         appState.set('assignment_form.panels['+index+'].expanded', !appState.get('assignment_form.panels['+index+'].expanded'))
       ),
