@@ -4,11 +4,14 @@ class AssignmentsController < ApplicationController
  '''
     index #GET
       /assignments - returns a list of applicant including their assignment data
+      /assignments?position_id - returns a list of applicants for a specific position
       /applicants/:applicant_id/assignments - returns an assignments given an applicant ID
  '''
   def index
       @assignments = if params[:applicant_id].present?
         Applicant.find(params[:applicant_id]).assignments
+      elsif params[:position_id].present?
+        Position.find(params[:position_id]).assignments
       else
         Assignment.all
       end
@@ -19,15 +22,10 @@ class AssignmentsController < ApplicationController
   '''
     show #GET
       /assignments/:id - returns an assignment given an assignment ID
-      /applicants/:applicant_id/assignments/:id - returns an assignment given an ID, for a given applicant ID
   '''
   def show
     # Get all the assignments based off applicant_id and/or ID, include applicants
-    @assignments = if params[:applicant_id].present?
-        Assignment.where(id: params[:id], applicant_id: params[:applicant_id]).take!
-      else
-        Assignment.find(params[:id])
-      end
+    @assignments = Assignment.find(params[:id])
 
     render json: @assignments.to_json
   end
