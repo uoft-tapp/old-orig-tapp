@@ -1,0 +1,104 @@
+swagger: "2.0"
+info:
+  description: "This is API for the course endpoint of the DCS-TA app."
+  version: "1.0.0"
+  title: "DCS-TA app"
+basePath: "/v2"
+tags:
+- name: "dcs-ta"
+  description: "DCS-TA application"
+paths:
+  /applications:
+    get:
+      tags:
+      - "applications"
+      summary: "Get all application information"
+      description: "Returns a list of applications"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/defintions/Application"
+  /applications/{id}:
+    get:
+      tags:
+      - "applicant"
+      summary: "Find application by ID"
+      description: "Returns a single application"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID of application to return"
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Application"
+        404:
+          description: "invalid ID supplied"
+definitions:
+  Applications:
+    type: "object"
+      properties:
+        id:
+          type: "integer"
+        applicant_id:
+          type: "integer"
+        app_id:
+          type: "string"
+          description: "id coming from CHASS"
+        ta_training:
+          type: "string"
+          example: "N"
+        access_acad_history:
+          type: "string"
+          example: "Y"
+        ta_experience:
+          type: "string"
+          example: "CSC100H1S (0), CSC108H1S-Marking_TA (0), CSC104H1S (0), CSC108H1S-Head_TA (0), CSC108H1S-Student-Facing_TA (0), HLP101H1S (0)"
+        academic_qualifications:
+          type: "string"
+        technical_skills:
+          type: "string"
+        availability:
+            type: "string"
+            example: "M-W:10-5, RF: 1-6"
+        other_info:
+            type: "string"
+        special_needs:
+            type: "string"
+        created_at:
+          type: "string"
+          format: "date-time"
+          example: "2017-06-05T14:26:44.808Z"
+        updated_at:
+          type: "string"
+          format: "date-time"
+          example: "2017-06-05T14:26:44.808Z"
+        preferences:
+          type: "list of json"
+          example:  [
+            {
+                "id": 6,
+                "application_id": 1,
+                "position_id": 57,
+                "rank": 2,
+                "created_at": "2017-06-22T17:43:25.577Z",
+                "updated_at": "2017-06-22T17:43:25.577Z"
+            },
+            {
+                "id": 5,
+                "application_id": 1,
+                "position_id": 4,
+                "rank": 2,
+                "created_at": "2017-06-22T17:43:25.570Z",
+                "updated_at": "2017-06-22T17:43:25.570Z"
+            }]

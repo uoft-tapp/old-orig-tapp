@@ -1,0 +1,304 @@
+swagger: "2.0"
+info:
+  description: "This is API for the course endpoint of the DCS-TA app."
+  version: "1.0.0"
+  title: "DCS-TA app"
+basePath: "/v2"
+tags:
+- name: "dcs-ta"
+  description: "DCS-TA application"
+paths:
+  /applicants:
+    get:
+      tags:
+      - "applicants"
+      summary: "Get all applicant information"
+      description: "Returns a list of applicants"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/defintions/Applicant"
+  /applicants/{id}:
+    get:
+      tags:
+      - "applicant"
+      summary: "Find applicant by ID"
+      description: "Returns a single applicant"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID of applicant to return"
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Applicant"
+        404:
+          description: "invalid ID supplied"
+  /applicants/{id}/applications:
+    get:
+      tags:
+      - "applicant"
+      summary: "Find application by applicant ID"
+      description: "Returns a single application for an applicant"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID of applicant to return application"
+        required: true
+        type: "integer"
+      responses:
+        200:
+            description: "successful operation"
+            schema:
+              $ref: "#/definitions/Application"
+        404:
+          description: "invalid ID supplied"
+  /applicants/{id}/assignments:
+    get:
+      tags:
+      - "applicant, assignments"
+      summary:  "Find assignment by applicant ID"
+      description: "Returns assignments made to applicant"
+      produces:
+      - "applications/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "ID of applicant to return assignments"
+        required: true
+        type: "integer"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Assignee"
+        404:
+          description: "invalid ID supplied"
+  /applicants/{id}/assignment:
+    post:
+      tags:
+      - "applicant, assignments"
+      summary: "Create an assignment for given applicant"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "id"
+        description: "An applicant ID to be assigned"
+      - in: "body"
+        name: "body"
+        description: "Position and number of hours assigned to applicant"
+        required: true
+        schema:
+          $ref: "#/definitions/Assignment"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Assignee"
+        404:
+          description: "applicant ID not found"
+        409:
+          description: "assignment already exists"
+        422:
+          description: "server unable to process instructions to save record"
+
+  /applicants/{id}/assignments/{assignmentid}:
+    patch:
+      tags:
+      - "applicant, assignments"
+      summary: "Update the number of hours for a given assignment"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "id"
+        description: "An applicant id"
+        required: true
+      - in: "path"
+        name: "assignmentid"
+        description: "An assignment to be updated"
+        required: true
+      - in: "body"
+        name: "hours"
+        description: "Number of hours to update assignee"
+        required: true
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Assignee"
+        404:
+          description: "applicant id or assignment id not found"
+  /applicants/{id}/assignments/{assignmentid}:
+    delete:
+      tags:
+      - "applicant, assignments"
+      summary: "Update the number of hours for a given assignment"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "id"
+        description: "An applicant id"
+        required: true
+      - in: "path"
+        name: "assignmentid"
+        description: "An assignment id to be deleted"
+        required: true
+      responses:
+        204:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Assignee"
+        404:
+          description: "applicant id or assignment id not found"
+
+definitions:
+  Assignment:
+    type: "object"
+    properties:
+      position_id:
+        type: "integer"
+      hours:
+        type: "integer"
+
+  Assignee:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+      applicant_id:
+        type: "integer"
+      position_id:
+        type: "integer"
+      created_at:
+        type: "string"
+        format: "date-time"
+        example: "2017-06-05T14:26:44.808Z"
+      updated_at:
+        type: "string"
+        format: "date-time"
+        example: "2017-06-05T14:26:44.808Z"
+      hours:
+        type: "integer"
+  Application:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+      applicant_id:
+        type: "integer"
+      app_id:
+        type: "string"
+        description: "id coming from CHASS"
+      ta_training:
+        type: "string"
+        example: "N"
+      access_acad_history:
+        type: "string"
+        example: "Y"
+      ta_experience:
+        type: "string"
+        example: "CSC100H1S (0), CSC108H1S-Marking_TA (0), CSC104H1S (0), CSC108H1S-Head_TA (0), CSC108H1S-Student-Facing_TA (0), HLP101H1S (0)"
+      academic_qualifications:
+        type: "string"
+      technical_skills:
+        type: "string"
+      availability:
+          type: "string"
+          example: "M-W:10-5, RF: 1-6"
+      other_info:
+          type: "string"
+      special_needs:
+          type: "string"
+      created_at:
+        type: "string"
+        format: "date-time"
+        example: "2017-06-05T14:26:44.808Z"
+      updated_at:
+        type: "string"
+        format: "date-time"
+        example: "2017-06-05T14:26:44.808Z"
+      preferences:
+        type: "object"
+        example:  [
+          {
+              "id": 6,
+              "application_id": 1,
+              "position_id": 57,
+              "rank": 2,
+              "created_at": "2017-06-22T17:43:25.577Z",
+              "updated_at": "2017-06-22T17:43:25.577Z"
+          },
+          {
+              "id": 5,
+              "application_id": 1,
+              "position_id": 4,
+              "rank": 2,
+              "created_at": "2017-06-22T17:43:25.570Z",
+              "updated_at": "2017-06-22T17:43:25.570Z"
+          }]
+
+  Applicant:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+      utorid:
+        type: "string"
+        example: "johndoe5"
+      student_number:
+        type: "string"
+        example: "1110237485"
+      first_name:
+        type: "string"
+        example: "John"
+      last_name:
+        type: "string"
+        example: "Doe"
+      email:
+        type: "string"
+        example: "johndoe@mail.utoronto.ca"
+      phone:
+        type: "string"
+        example: "4152234447"
+      address:
+        type: "string"
+        example: "700 Pickette Rd. Toronto ON. K6L 2J9"
+      dept:
+        type: "string"
+        example: "Computer Science"
+      program_id:
+        type: "string"
+        example: "8UG"
+      yip:
+        type: "integer"
+        description: "year  program"
+        example: 1
+      created_at:
+        type: "string"
+        format: "date-time"
+        example: "2017-06-05T14:26:44.808Z"
+      updated_at:
+        type: "string"
+        format: "date-time"
+        example: "2017-06-05T14:26:44.808Z"
