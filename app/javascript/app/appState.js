@@ -120,12 +120,16 @@ const initialState = {
           }
         ]
       },
-      add_temp_assignment: (applicantId, positionId, hour) =>(
-        appState.set('assignment_form.temp_assignments['+applicantId+']', {positionId: positionId, hour: hour})
-      ),
       set_expanded: (index) =>(
         appState.set('assignment_form.panels['+index+'].expanded', !appState.get('assignment_form.panels['+index+'].expanded'))
       ),
+      add_temp_assignment: (applicantId, positionId, hour) =>(
+        appState.get('assignment_form.temp_assignments['+applicantId+']').push({positionId: positionId, hour: hour});
+        appState.set('assignment_form.temp_assignments['+applicantId+']', appState.get('assignment_form.temp_assignments['+applicantId+']'));
+      ),
+      delete_temp_assignment: (applicantId, index) => (
+        appState.unset('assignment_form.temp_assignments['+applicantId+']['+index+']');
+      )
     },
 };
 
