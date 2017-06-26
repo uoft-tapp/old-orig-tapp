@@ -84,7 +84,7 @@ const CollapsablePanel = props =>(
             onClick={()=>props.set_expanded(panel.index)}>
             {panel.label}
           </div>}>
-        {props.assignment_form.addPanelContent(props.applicant, props.application, props.course,
+        {props.assignment_form.addPanelContent(props.id, props.applicant, props.application, props.course,
           props.assignments, props.temp_assignments, panel.index, props.assignment_form)}
       </Panel>
     ))}
@@ -176,7 +176,7 @@ class AssignmentForm extends React.Component {
       ))
     );
   }
-  addPanelContent(applicant, application, courses, assignments, temp_assignments, index, assignment_form){
+  addPanelContent(id, applicant, application, courses, assignments, temp_assignments, index, assignment_form){
     switch(index){
       case 0:
         return (
