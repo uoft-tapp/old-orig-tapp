@@ -19,7 +19,8 @@ import ReactDOM from 'react-dom'
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom'
 import { Navbar, Nav, NavItem, NavDropdown, MenuItem } from 'react-bootstrap'
 
-import { appState, fetchAll } from '../app/appState.js'
+import { appState } from '../app/appState.js'
+import { fetchAll } from '../app/fetch.js'
 
 import { Courses } from '../app/components/courses.js'
 import { ABC } from '../app/components/abc.js'
