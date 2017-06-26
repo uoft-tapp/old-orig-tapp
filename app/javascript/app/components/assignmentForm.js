@@ -75,7 +75,7 @@ const course_data = {
 
 const CollapsablePanel = props =>(
   <div className="container-fluid"
-    style={{height: '88vh', width: '100vw', overflow: 'auto'}}>
+    style={{height: '90vh', width: '100vw', overflow: 'auto'}}>
     {props.panels.map(panel => (
       <Panel style={{width: '98vw', float: 'left', margin: '0'}}
         collapsible expanded={panel.expanded}
