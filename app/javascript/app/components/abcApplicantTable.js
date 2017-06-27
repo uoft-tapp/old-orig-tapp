@@ -19,7 +19,7 @@ const ApplicantRow = props => (
 
 class ABCApplicantTable extends React.Component {
     render() {
-	      return (
+	return (
 		<Table striped bordered condensed hover>
 		<THeader fields={this.props.tableHeaders}/>
 		<tbody>
