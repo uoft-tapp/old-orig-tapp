@@ -2,7 +2,7 @@ import React from 'react'
 
 class Applicant extends React.Component {
     selectThisTab() {
-	this.props.nav.selectTab(this.props.nav.applicant.key);
+	this.props.nav.selectTab(this.props.navKey, this.props.match.params.id);
     }
     
     componentDidMount() {

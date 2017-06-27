@@ -12,7 +12,7 @@ class Assigned extends React.Component {
     }
 
     selectThisTab() {
-	this.props.nav.selectTab(this.props.nav.assigned.key);
+	this.props.nav.selectTab(this.props.navKey);
     }
     
     componentDidMount() {
