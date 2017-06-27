@@ -81,11 +81,10 @@ const CollapsablePanel = props =>(
         collapsible expanded={panel.expanded}
         header={
           <div style={{width: '100%', height: '100%', margin: '0', cursor: "pointer"}}
-            onClick={()=>props.set_expanded(panel.index)}>
+            onClick={()=>(props.set_expanded(panel.index))}>
             {panel.label}
           </div>}>
-        {props.assignment_form.addPanelContent(props.id, props.applicant, props.application, props.course,
-          props.assignments, props.temp_assignments, panel.index, props.assignment_form)}
+        {props.assignment_form.addPanelContent(panel.index, props)}
       </Panel>
     ))}
   </div>
@@ -157,7 +156,7 @@ class AssignmentForm extends React.Component {
     );
   }
 
-  setPrefs(pref, course){
+  setPrefs(pref, courses){
     let j = 0, columns=[],size = 4;
     for (let i = 0; i < Math.ceil(pref.length / size); i++) {
       columns[i] = pref.slice(j, j + size);
@@ -168,7 +167,7 @@ class AssignmentForm extends React.Component {
         <td>
           {column.map(item =>(
             <p>
-              {course[item.positionId].code}
+              {courses[item.positionId].code}
               {item.preferred?<i className="fa fa-star-o" style={{color:'orange'}}></i>:''}
             </p>
           ))}
@@ -176,42 +175,48 @@ class AssignmentForm extends React.Component {
       ))
     );
   }
-  addPanelContent(id, applicant, application, courses, assignments, temp_assignments, index, assignment_form){
+  addPanelContent(index, props){
     switch(index){
       case 0:
         return (
           <table className="panel_table">
             <td>
-              <p><b>Last Name: </b>{applicant.lastName}</p>
-              <p><b>UTORIid: </b>{applicant.utorid}</p>
-              <p><b>Email address: </b>{applicant.email}</p>
-              <p><b>Phone Number: </b>{applicant.phone}</p>
+              <p><b>Last Name: </b>{props.applicant.lastName}</p>
+              <p><b>UTORIid: </b>{props.applicant.utorid}</p>
+              <p><b>Email address: </b>{props.applicant.email}</p>
+              <p><b>Phone Number: </b>{props.applicant.phone}</p>
             </td>
             <td>
-              <p><b>First Name: </b>{applicant.firstName}</p>
-              <p><b>Student ID: </b>{applicant.studentNumber}</p>
+              <p><b>First Name: </b>{props.applicant.firstName}</p>
+              <p><b>Student ID: </b>{props.applicant.studentNumber}</p>
             </td>
             <td>
               <p><b>Address: </b></p>
             </td>
             <td>
-              {assignment_form.setAddress(applicant.address)}
+              {props.assignment_form.setAddress(props.applicant.address)}
             </td>
           </table>
         );
       case 1:
         return (
           <table className="panel_table">
-            <td><b>Enrolled as a U of T graduate student for the TA session? </b>{application.academicAccess?"Yes":"No"}</td>
-            <td><b>Completed a U of T TA training session? </b>{application.taTraining?"Yes":"No"}</td>
+            <td>
+              <b>Enrolled as a U of T graduate student for the TA session? </b>
+              {props.application.academicAccess?"Yes":"No"}
+            </td>
+            <td>
+              <b>Completed a U of T TA training session? </b>
+              {props.application.taTraining?"Yes":"No"}
+            </td>
           </table>
         );
       case 2:
         return (
           <table className="panel_table">
-            <td><b>Department: </b>{applicant.dept}</td>
-            <td><b>Program: </b>{applicant.program}</td>
-            <td><b>Year: </b>{applicant.year}</td>
+            <td><b>Department: </b>{props.applicant.dept}</td>
+            <td><b>Program: </b>{props.applicant.program}</td>
+            <td><b>Year: </b>{props.applicant.year}</td>
           </table>
         );
       case 3:
@@ -219,44 +224,46 @@ class AssignmentForm extends React.Component {
           <div>
             <p><b>Application round: </b>110</p>
             <table className="panel_table">
-            {assignment_form.setAssignments(assignments, courses)}
-            {assignment_form.setTempAssignments(temp_assignments, courses)}
+            <tbody>
+            {props.assignment_form.setAssignments(props.assignments, props.courses)}
+            {props.assignment_form.setTempAssignments(props.temp_assignments, props.courses)}
+            </tbody>
             </table>
             <p style={{marginTop: '10px'}}><b>Add assignment: </b>
               <input type="text" list="courses"/>
             </p>
             <datalist id="courses">
-            {assignment_form.setCourses(courses)}
+            {props.assignment_form.setCourses(props.courses)}
             </datalist>
           </div>
         );
       case 4:
         return(
           <table className="panel_table">
-            {assignment_form.setPrefs(application.prefs, courses)}
+            {props.assignment_form.setPrefs(props.application.prefs, props.courses)}
           </table>
         );
       case 5:
-        return(<p>{application.exp}</p>);
+        return(<p>{props.application.exp}</p>);
       case 6:
-        return(<p>{application.qual}</p>);
+        return(<p>{props.application.qual}</p>);
       case 7:
-        return(<p>{application.skills}</p>);
+        return(<p>{props.application.skills}</p>);
       case 8:
-        return(<p>{application.avail}</p>);
+        return(<p>{props.application.avail}</p>);
       case 9:
-        return(<p>{application.other}</p>);
+        return(<p>{props.application.other}</p>);
       case 10:
-        return(<p>{application.special_needs}</p>);
+        return(<p>{props.application.special_needs}</p>);
+      }
     }
-  }
   render() {
     return (
       <CollapsablePanel id={this.props.match.params.id}
         panels={this.props.assignment_form.panels}
         applicant={applicant_data}
         application={application_data}
-        course={course_data}
+        courses={course_data}
         assignments={this.props.assignment_form.assignments[this.props.match.params.id]}
         temp_assignments={this.props.assignment_form.temp_assignments[this.props.match.params.id]}
         set_expanded={this.props.assignment_form.set_expanded}
