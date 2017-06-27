@@ -12,7 +12,7 @@ class Unassigned extends React.Component {
     }
 
     selectThisTab() {
-	this.props.nav.selectTab(this.props.nav.unassigned.key);
+	this.props.nav.selectTab(this.props.navKey);
     }
     
     componentDidMount() {
