@@ -53,13 +53,40 @@ class App extends React.Component {
     }
     
     render() {
-	return <AppView {...this.state}/>;
+	return <RouterInst {...this.state}/>;
     }
 }
 
-/*** Main app view component ***/
-
-const AppView = props => <RouterInst {...props} />;
+const navConfig = {
+    courses: {
+	route: "/courses",
+	key: 1,
+    },
+    abc: {
+	route: "/applicantsbycourse",
+	key: 2,
+    },
+    assigned: {
+	route: "/assigned",
+	key: 3,
+    },
+    unassigned: {
+	route: "/unassigned",
+	key: 4,
+    },
+    summary: {
+	route: "/summary",
+	key: 5,
+    },
+    applicant: {
+	route: "/applicant/:id",
+	key: 6,
+    },
+    logout: {
+	route: "/bye",
+	key: 7,
+    }
+};
 
 /*** Router ***/
 // temporary logout "view"
@@ -71,15 +98,21 @@ const RouterInst = props => (
 	<NavbarInst {...props} />
 
 	<Switch>
-	<Route path={props.nav.courses.route} render={() => <Courses {...props}/>} />
-	<Route path={props.nav.abc.route} render={() => <ABC {...props}/>} />
-	<Route path={props.nav.assigned.route} render={() => <Assigned {...props}/>} />
-	<Route path={props.nav.unassigned.route} render={() => <Unassigned {...props}/>} />
-	<Route path={props.nav.summary.route} render={() => <Summary {...props}/>} />
+	<Route path={navConfig.courses.route}
+    render={() => <Courses navKey={navConfig.courses.key} {...props}/>} />
+	<Route path={navConfig.abc.route}
+    render={() => <ABC navKey={navConfig.abc.key} {...props}/>} />
+	<Route path={navConfig.assigned.route}
+    render={() => <Assigned navKey={navConfig.assigned.key} {...props}/>} />
+	<Route path={navConfig.unassigned.route}
+    render={() => <Unassigned navKey={navConfig.unassigned.key} {...props}/>} />
+	<Route path={navConfig.summary.route}
+    render={() => <Summary navKey={navConfig.summary.key} {...props}/>} />
     
-	<Route path={props.nav.logout.route} render={() => <Bye/>} />
+	<Route path={navConfig.logout.route} render={() => <Bye/>} />
 
-    	<Route path={props.nav.applicant.route} render={({ match }) => <Applicant {...props} match={match}/>} />
+    	<Route path={navConfig.applicant.route}
+    render={({ match }) => <Applicant navKey={navConfig.applicant.key} match={match} {...props}/>} />
 	</Switch>
     
 	</div>
@@ -97,31 +130,20 @@ const NavbarInst = props => (
 	
     	<Nav pullLeft activeKey={props.nav.selectedTab} onSelect={props.nav.handleSelectTab}>
 
-	<NavItem eventKey={props.nav.courses.key}>
-	<Link id={"link" + props.nav.courses.key} to={props.nav.courses.route}>{props.nav.courses.label}</Link>
-	</NavItem>
-	<NavItem eventKey={props.nav.abc.key}>
-	<Link id={"link" + props.nav.abc.key} to={props.nav.abc.route}>{props.nav.abc.label}</Link>
-	</NavItem>
-	<NavItem eventKey={props.nav.assigned.key}>
-	<Link to={props.nav.assigned.route}>{props.nav.assigned.label}</Link>
-	</NavItem>
-	<NavItem eventKey={props.nav.unassigned.key}>
-	<Link to={props.nav.unassigned.route}>{props.nav.unassigned.label}</Link>
-	</NavItem>
-	<NavItem eventKey={props.nav.summary.key}>
-	<Link to={props.nav.summary.route}>{props.nav.summary.label}</Link>
-	</NavItem>
-    {props.nav.applicantSelected &&
-     <NavItem eventKey={props.nav.applicant.key}>{props.nav.applicant.label}</NavItem>
-    }
+	<NavItem eventKey={navConfig.courses.key}><Link to={navConfig.courses.route}>Courses</Link></NavItem>
+	<NavItem eventKey={navConfig.abc.key}><Link to={navConfig.abc.route}>Applicants by Course</Link></NavItem>
+	<NavItem eventKey={navConfig.assigned.key}><Link to={navConfig.assigned.route}>All Assigned</Link></NavItem>
+	<NavItem eventKey={navConfig.unassigned.key}><Link to={navConfig.unassigned.route}>All Unassigned</Link></NavItem>
+	<NavItem eventKey={navConfig.summary.key}><Link to={navConfig.summary.route}>Summary</Link></NavItem>
+	{props.nav.selectedApplicant &&
+	 <NavItem eventKey={navConfig.applicant.key}>{props.nav.selectedApplicant}</NavItem>
+	}
     </Nav>
 
 	<Nav pullRight>
-	<NavDropdown eventKey={props.nav.logout.key} title={props.nav.logout.role + ":" + props.nav.logout.user}
-    id="nav-dropdown">
-	<MenuItem eventKey={props.nav.logout.key + ".1"}>
-	<Link to={props.nav.logout.route}>Logout</Link>
+	<NavDropdown eventKey={navConfig.logout.key} title={props.nav.role + ":" + props.nav.user} id="nav-dropdown">
+	<MenuItem eventKey={navConfig.logout.key + '.1'}>
+	<Link to={navConfig.logout.route}>Logout</Link>
 	</MenuItem>
 	</NavDropdown>
 	</Nav>

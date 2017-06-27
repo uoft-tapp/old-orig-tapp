@@ -8,54 +8,19 @@ window.React = React;
 window.ReactDOM = ReactDOM;
 
 let appState = new Backbone.NestedModel({
+    
     // navbar component
     nav: {
-	courses: {
-	    key: "1",
-	    label: "Courses",
-	    route: "/courses",
-	},
-	abc: {
-	    key: "2",
-	    label: "Applicants by Course",
-	    route: "/applicantsbycourse",
-	},
-	assigned: {
-	    key: "3",
-	    label: "All Assigned",
-	    route: "/assigned",
-	},
-	unassigned: {
-	    key: "4",
-	    label: "All Unassigned",
-	    route: "/unassigned",
-	},
-	summary: {
-	    key: "5",
-	    label: "Summary",
-	    route: "/summary",
-	},
-
-	applicant: {
-	    key: "6",
-	    label: "-",
-	    route: "/applicant/:id",
-	},
-	
-	logout: {
-	    key: "7",
-	    route: "/bye",
-	    role: "role",
-	    user: "user",
-	},
+	role: "role",
+	user: "user",
 
 	selectedTab: null,
 
-	applicantSelected: false,
+	selectedApplicant: null,
 	
-	selectTab: (eventKey) => {
+	selectTab: (eventKey, applicant) => {
 	    appState.set({'nav.selectedTab': eventKey,
-			  'nav.applicantSelected': (eventKey == appState.get('nav.applicant.key'))});
+			  'nav.selectedApplicant': applicant ? applicant : null});
 	},
     },
 

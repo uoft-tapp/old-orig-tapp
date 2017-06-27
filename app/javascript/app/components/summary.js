@@ -6,7 +6,7 @@ class Summary extends React.Component {
     }
 
     selectThisTab() {
-	this.props.nav.selectTab(this.props.nav.summary.key);
+	this.props.nav.selectTab(this.props.navKey);
     }
     
     componentDidMount() {
