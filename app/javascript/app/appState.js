@@ -101,24 +101,8 @@ const initialState = {
         }
       ],
       assignments:{
-        1:[
-          {
-            positionId: 1,
-            hour: 54
-          },
-          {
-            positionId: 6,
-            hour: 20
-          }
-        ]
       },
       temp_assignments: {
-        1:[
-          {
-            positionId: 2,
-            hour: 30
-          }
-        ]
       },
       assignment_input: "",
       set_input: (value) =>(
@@ -128,6 +112,8 @@ const initialState = {
         appState.set('assignment_form.panels['+index+'].expanded', !appState.get('assignment_form.panels['+index+'].expanded'))
       ),
       add_temp_assignment: (applicantId, positionId, hour) =>{
+        if(appState.get('assignment_form.temp_assignments['+applicantId+']')===undefined)
+          appState.set('assignment_form.temp_assignments['+applicantId+']', []);
         appState.get('assignment_form.temp_assignments['+applicantId+']').push({positionId: positionId, hour: hour});
         appState.set('assignment_form.temp_assignments['+applicantId+']', appState.get('assignment_form.temp_assignments['+applicantId+']'));
       },
@@ -135,6 +121,8 @@ const initialState = {
         appState.unset('assignment_form.temp_assignments['+applicantId+']['+index+']')
       ),
       add_assignment: (applicantId, index) => {
+        if(appState.get('assignment_form.assignments['+applicantId+']')===undefined)
+          appState.set('assignment_form.assignments['+applicantId+']', []);
         appState.get('assignment_form.assignments['+applicantId+']').push(appState.get('assignment_form.temp_assignments['+applicantId+']['+index+']'));
         appState.unset('assignment_form.temp_assignments['+applicantId+']['+index+']');
       },
