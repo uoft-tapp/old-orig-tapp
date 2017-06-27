@@ -31,15 +31,17 @@ class App extends React.Component {
     constructor(props) {
 	super(props);
 	this.state = appState.toJSO();
-
-	appState.subscribe(this._updateState.bind(this));	
-
+	
 	// start fetching data
 	fetchAll();
     }
 
     _updateState() {
 	this.setState(appState.toJSO());
+    }
+
+    componentDidMount() {
+	appState.subscribe(this._updateState.bind(this));
     }
     
     render() {
