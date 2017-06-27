@@ -44,6 +44,8 @@ function onFetchApplicantsSuccess(resp) {
 }
 
 function fetchApplicants() {
+    appState.setFetchingApplicantList(true);
+    
     return fetchHelper('/applicants', onFetchApplicantsSuccess, (error) => {console.log(error);});
 }
 
@@ -77,6 +79,8 @@ function onFetchApplicationsSuccess(resp) {
 }
 
 function fetchApplications() {
+    appState.setFetchingApplicationList(true);
+    
     return fetchHelper('/applications', onFetchApplicationsSuccess, (error) => {console.log(error);});
 }
 
@@ -123,6 +127,8 @@ function onFetchCoursesSuccess(resp, applicationPromise) {
 }
 
 function fetchCourses(applicationPromise) {
+    appState.setFetchingCourseList(true);
+    
     return fetchHelper('/positions',
 		       (resp) => onFetchCoursesSuccess(resp, applicationPromise),
 		       (error) => {console.log(error);});
@@ -155,22 +161,20 @@ function onFetchAssignmentsSuccess(resp, coursePromise) {
 }
 
 function fetchAssignments(coursePromise) {
+    appState.setFetchingAssignmentList(true);
+    
     return fetchHelper('/assignments',
 		       (resp) => onFetchAssignmentsSuccess(resp, coursePromise),
 		       (error) => {console.log(error);});
 }
 
 function fetchAll() {
-    appState.setFetchingApplicantList(true);
     let applicantPromise = fetchApplicants();
 
-    appState.setFetchingApplicationList(true);
     let applicationPromise = fetchApplications();
 
-    appState.setFetchingCourseList(true);
     let coursePromise = fetchCourses(applicationPromise);
 
-    appState.setFetchingAssignmentList(true);
     let assignmentPromise = fetchAssignments(coursePromise);
 }
 
