@@ -7,235 +7,264 @@ import ReactDOM from 'react-dom'
 window.React = React;
 window.ReactDOM = ReactDOM;
 
-let appState = new Backbone.NestedModel({
-    
+const initialState = {
     // navbar component
     nav: {
 	role: "role",
 	user: "user",
 
 	selectedTab: null,
-
 	selectedApplicant: null,
-	
-	selectTab: (eventKey, applicant) => {
-	    appState.set({'nav.selectedTab': eventKey,
-			  'nav.selectedApplicant': applicant ? applicant : null});
-	},
     },
 
     // course list component
     courseList: {
 	selected: null,
     },
-    
+
     // course menu component
     courseMenu: {
 	selected: [],
-
-	// toggle the selected state of the course that is clicked
-	toggleSelected: courseCode => {
-	    let selected = appState.get('courseMenu.selected');
-	    let i = selected.indexOf(courseCode);
-	    
-	    if (i == -1) {
-		if (selected.length < 4)
-		    appState.add('courseMenu.selected', courseCode);	
-	    } else {
-		appState.remove('courseMenu.selected[' + i + ']');
-	    }
-	},
-
-	isSelected: courseCode => appState.get('courseMenu.selected').includes(courseCode),
-	
     },
-
+    
     // abc view
     abcView: {
 	layout: [],
-
 	// will be populated with mappings of active courses to their active sort and filter fields
 	panelFields: {},
-
-	addCoursePanel: (courseCode, activeCount) => {
-	    let layout = appState.get('abcView.layout');
-	    appState.unset('abcView.layout', {silent: true});
-	    
-	    switch (activeCount) {
-	    case 1:
-		// layout is now [ course ]
-		layout = [courseCode];
-		break;
-
-	    case 2:
-		// layout is now [ course1, course2 ]
-		layout.push(courseCode);
-		break;
-
-	    case 3:
-		if (layout.length == 2)
-		    // layout was [ course1, course2 ], is now [ course1, course2, course3 ]
-		    layout.push(courseCode);
-		
-		else
-		    // layout was [ [course1, course2] ], is now [ course3, [course1, course2] ]
-		    layout = [courseCode, layout];
-
-		break;
-
-	    case 4:
-		// layout is now [ [course1, course2], [course3, course4] ]
-		let course1, course2, course3;
-		
-		if (layout.length == 3)
-		    // layout was [ course1, course2, course3 ]
-		    [course1, course2, course3] = layout;
-
-		else if (layout.length == 1)
-		    // layout was [ [course1, course2, course3] ]
-		    [course1, course2, course3] = layout[0];
-		
-		else if (layout[0].length == 1)
-		    // layout was [ course1, [course2, course3] ]
-		    course1 = layout[0], [course2, course3] = layout[1];
-		
-		else if (layout[1].length == 1)
-		    // layout was [ [course1, course2], course3 ]
-		    [course1, course2] = layout[0], course3 = layout[1];
-		
-		else if (layout[0][0] == layout[1][0])
-		    // layout was [ [course1, course2] [course1, course3] ]
-		    [course1, course2] = layout[0], course3 = layout[1][1];
-
-		else
-		    // layout was [ [course1, course2] [course3, course2] ]
-		    [course1, course2] = layout[0], course3 = layout[1][0];
-
-		layout = [[course1, course2], [course3, courseCode]];
-		
-		break;
-	    }
-
-	    return layout;
-	},
-
-	removeCoursePanel: (courseCode, activeCount) => {
-	    let layout = appState.get('abcView.layout');
-	    let layoutLen = layout.length;
-	    appState.unset('abcView.layout', {silent: true});
-	    
-	    switch (activeCount) {
-	    case 0:
-		layout = [];
-		break;
-
-	    case 1: // layout is now [ course ]
-
-		if (layoutLen == 2)
-		    // layout was [ course1, course2 ]
-		    layout = [(layout[0] == courseCode) ? layout[1] : layout[0]];
-		else
-		    // layout was [ [course1, course2] ]
-		    layout = [(layout[0][0] == courseCode) ? layout[0][1] : layout[0][0]];
-
-		break;
-
-	    case 2: // layout is now [ course1, course2 ]
-		
-		if (layoutLen == 1) {
-		    // layout was [ [course1, course2, course3] ]
-		    layout[0].splice(layout.indexOf(courseCode), 1);
-		    layout = layout[0];
-
-		} else if (layoutLen == 2) {
-		    layout = [].concat(layout[0]).concat(layout[1]);
-
-		    if (layout.length == 3) {
-			// layout was [ course1, [course2, course3] ] or [ [course1, course2], course3 ]
-			layout.splice(layout.indexOf(courseCode), 1);
-
-		    } else {
-			// layout was [ [course1, course2], [course1, course3] ] or
-			// [ [course1, course2], [course3, course2] ]
-			layout.splice(layout.indexOf(courseCode), 1);
-
-			let i = layout.indexOf(courseCode);
-			if (i != -1)
-			    layout.splice(i, 1);
-		    }
-		
-		} else if (layoutLen == 3) {
-		    // layout was [ course1, course2, course3 ]
-		    layout.splice(layout.indexOf(courseCode), 1);
-		}
-			   
-		break;
-		
-	    case 3: // layout is now [ course1, course2, course3 ]
-		layout = layout[0].concat(layout[1]);
-		layout.splice(layout.indexOf(courseCode), 1);
-		break;
-	    }
-
-	    return layout;
-	},
-	
-	toggleCoursePanel: (courseCode) => {
-	    let active = appState.get('courseMenu.selected');
-	    
-	    let panelFields = appState.get('abcView.panelFields');
-
-	    if (active.includes(courseCode)) {
-		// add course to layout
-		appState.set('abcView.layout', appState.get('abcView.addCoursePanel')(courseCode, active.length));
-
-		// add panel to panel state tracker
-		appState.set('abcView.panelFields['+courseCode+']', {activeSortFields: [], activeFilters: []});
-		    
-	    } else {
-		// remove course from layout
-		appState.set('abcView.layout', appState.get('abcView.removeCoursePanel')(courseCode, active.length));
-	    }
-	},
-
-	filter: (courseCode, field) => {
-	    if (!appState.get('abcView.panelFields['+courseCode+'].activeFilters').includes(field))
-		appState.add('abcView.panelFields['+courseCode+'].activeFilters', field);
-	},
-	
-	sort: (courseCode, field) => {
-	    if (!appState.get('abcView.panelFields['+courseCode+'].activeSortFields').includes(field))
-		// sorted up by default
-		appState.add('abcView.panelFields['+courseCode+'].activeSortFields', field + '-up');
-	},
     },
 
+    // assigned view
     assignedView: null,
 
+    // unassigned view
     unassignedView: null,
+    
+    /** DB data **/
+    
+    applicants: { fetching: false, list: null, },
+    applications: { fetching: false, list: null, },
+    courses: { fetching: false,	list: null, },
+    assignments: { fetching: false, list: null, },
+};
+
+class AppState {
+    constructor() {
+	this._data = new Backbone.NestedModel(initialState);
+    }
+
+    // subscribe listener to change events on this model
+    subscribe(listener) {
+	this._data.on('change', listener);
+    }
+
+    toJSO() {
+	return this._data.toJSON();
+    }
+    
+    // select a navbar tab
+    selectNavTab(eventKey, applicant) {
+	this._data.set({'nav.selectedTab': eventKey,
+			'nav.selectedApplicant': applicant ? applicant : null});
+    }
+    
+    // toggle the selected state of the course that is clicked
+    toggleSelectedCourse(courseCode) {
+	let selected = this._data.get('courseMenu.selected');
+	let i = selected.indexOf(courseCode);
+	
+	if (i == -1) {
+	    if (selected.length < 4)
+		this._data.add('courseMenu.selected', courseCode);	
+	} else {
+	    this._data.remove('courseMenu.selected[' + i + ']');
+	}
+    }
+
+    // check whether a course in the course menu is selected
+    isCourseSelected(courseCode) {
+	return this._data.get('courseMenu.selected').includes(courseCode);
+    }
+
+    // add a course panel to the ABC view
+    addCoursePanel(courseCode, activeCount) {
+	let layout = this._data.get('abcView.layout');
+	this._data.unset('abcView.layout', {silent: true});
+	
+	switch (activeCount) {
+	case 1:
+	    // layout is now [ course ]
+	    layout = [courseCode];
+	    break;
+
+	case 2:
+	    // layout is now [ course1, course2 ]
+	    layout.push(courseCode);
+	    break;
+
+	case 3:
+	    if (layout.length == 2)
+		// layout was [ course1, course2 ], is now [ course1, course2, course3 ]
+		layout.push(courseCode);
+	    
+	    else
+		// layout was [ [course1, course2] ], is now [ course3, [course1, course2] ]
+		layout = [courseCode, layout];
+
+	    break;
+
+	case 4:
+	    // layout is now [ [course1, course2], [course3, course4] ]
+	    let course1, course2, course3;
+	    
+	    if (layout.length == 3)
+		// layout was [ course1, course2, course3 ]
+		[course1, course2, course3] = layout;
+
+	    else if (layout.length == 1)
+		// layout was [ [course1, course2, course3] ]
+		[course1, course2, course3] = layout[0];
+	    
+	    else if (layout[0].length == 1)
+		// layout was [ course1, [course2, course3] ]
+		course1 = layout[0], [course2, course3] = layout[1];
+	    
+	    else if (layout[1].length == 1)
+		// layout was [ [course1, course2], course3 ]
+		[course1, course2] = layout[0], course3 = layout[1];
+	    
+	    else if (layout[0][0] == layout[1][0])
+		// layout was [ [course1, course2] [course1, course3] ]
+		[course1, course2] = layout[0], course3 = layout[1][1];
+
+	    else
+		// layout was [ [course1, course2] [course3, course2] ]
+		[course1, course2] = layout[0], course3 = layout[1][0];
+
+	    layout = [[course1, course2], [course3, courseCode]];
+	    
+	    break;
+	}
+
+	return layout;
+    }
+
+    // remove a course panel from the ABC view
+    removeCoursePanel(courseCode, activeCount) {
+	let layout = this._data.get('abcView.layout');
+	let layoutLen = layout.length;
+	this._data.unset('abcView.layout', {silent: true});
+	
+	switch (activeCount) {
+	case 0:
+	    layout = [];
+	    break;
+
+	case 1: // layout is now [ course ]
+
+	    if (layoutLen == 2)
+		// layout was [ course1, course2 ]
+		layout = [(layout[0] == courseCode) ? layout[1] : layout[0]];
+	    else
+		// layout was [ [course1, course2] ]
+		layout = [(layout[0][0] == courseCode) ? layout[0][1] : layout[0][0]];
+
+	    break;
+
+	case 2: // layout is now [ course1, course2 ]
+	    
+	    if (layoutLen == 1) {
+		// layout was [ [course1, course2, course3] ]
+		layout[0].splice(layout.indexOf(courseCode), 1);
+		layout = layout[0];
+
+	    } else if (layoutLen == 2) {
+		layout = [].concat(layout[0]).concat(layout[1]);
+
+		if (layout.length == 3) {
+		    // layout was [ course1, [course2, course3] ] or [ [course1, course2], course3 ]
+		    layout.splice(layout.indexOf(courseCode), 1);
+
+		} else {
+		    // layout was [ [course1, course2], [course1, course3] ] or
+		    // [ [course1, course2], [course3, course2] ]
+		    layout.splice(layout.indexOf(courseCode), 1);
+
+		    let i = layout.indexOf(courseCode);
+		    if (i != -1)
+			layout.splice(i, 1);
+		}
+		
+	    } else if (layoutLen == 3) {
+		// layout was [ course1, course2, course3 ]
+		layout.splice(layout.indexOf(courseCode), 1);
+	    }
+	    
+	    break;
+	    
+	case 3: // layout is now [ course1, course2, course3 ]
+	    layout = layout[0].concat(layout[1]);
+	    layout.splice(layout.indexOf(courseCode), 1);
+	    break;
+	}
+
+	return layout;
+    }
+
+    // toggle the visibility of a course panel in the ABC view
+    toggleCoursePanel(courseCode) {
+	let active = this._data.get('courseMenu.selected');
+	
+	let panelFields = this._data.get('abcView.panelFields');
+
+	if (active.includes(courseCode)) {
+	    // add course to layout
+	    this._data.set('abcView.layout', this._data.get('abcView.addCoursePanel')(courseCode, active.length));
+
+	    // add panel to panel state tracker
+	    this._data.set('abcView.panelFields['+courseCode+']', {activeSortFields: [], activeFilters: []});
+	    
+	} else {
+	    // remove course from layout
+	    this._data.set('abcView.layout', this._data.get('abcView.removeCoursePanel')(courseCode, active.length));
+	}
+    }
+
+    // apply a filter to the applicant table
+    filterApplicants(courseCode, field) {
+	if (!this._data.get('abcView.panelFields['+courseCode+'].activeFilters').includes(field))
+	    this._data.add('abcView.panelFields['+courseCode+'].activeFilters', field);
+    }
+
+    // apply a sort to the applicant table
+    sortApplicants(courseCode, field) {
+	if (!this._data.get('abcView.panelFields['+courseCode+'].activeSortFields').includes(field))
+	    // sorted up by default
+	    this._data.add('abcView.panelFields['+courseCode+'].activeSortFields', field + '-up');
+    }
 
     /** data setters **/
     
-    setFetchingApplicantList: (fetching) => {
-	appState.set('applicants.fetching', fetching);
-    },
+    setFetchingApplicantList(fetching) {
+	this._data.set('applicants.fetching', fetching);
+    }
 
-    setApplicantList: (list) => {
-	appState.unset('applicants.list', {silent: true});
-	appState.set('applicants.list', list);
-    },
+    setApplicantList(list) {
+	this._data.unset('applicants.list', {silent: true});
+	this._data.set('applicants.list', list);
+    }
 
-    setFetchingApplicationList: (fetching) => {
-	appState.set('applications.fetching', fetching);
-    },
+    setFetchingApplicationList(fetching) {
+	this._data.set('applications.fetching', fetching);
+    }
 
-    setApplicationList: (list) => {
-	appState.unset('applications.list', {silent: true});
-	appState.set('applications.list', list);
-    },
+    setApplicationList(list) {
+	this._data.unset('applications.list', {silent: true});
+	this._data.set('applications.list', list);
+    }
 
-    setApplicationRounds: (courses) => {
-	let applications = appState.get('applications.list');
+    setApplicationRounds(courses) {
+	let applications = this._data.get('applications.list');
 	
 	// assumes that all courses in a single application will be part of the same round, and that all applicants
 	// have applied to at least one course
@@ -246,64 +275,38 @@ let appState = new Backbone.NestedModel({
 	    });
 	}
 
-	appState.get('setApplicationList')(applications);
-    },
+	this.setApplicationList(applications);
+    }
 
-    setFetchingCourseList: (fetching) => {
-	appState.set('courses.fetching', fetching);
-    },
+    setFetchingCourseList(fetching) {
+	this._data.set('courses.fetching', fetching);
+    }
 
-    setCourseList: (list) => {
-	appState.unset('courses.list', {silent: true});
-	appState.set('courses.list', list);
-    },
+    setCourseList(list) {
+	this._data.unset('courses.list', {silent: true});
+	this._data.set('courses.list', list);
+    }
 
-    setCourseAssignmentCounts: (counts) => {
-	let courses = appState.get('courses.list');
+    setCourseAssignmentCounts(counts) {
+	let courses = this._data.get('courses.list');
 
 	let course;
 	for (course in counts) {
 	    courses[course].assignmentCount = counts[course];
 	}
 	
-	appState.get('setCourseList')(courses);
-    },
+	this.setCourseList(courses);
+    }
 
-    setFetchingAssignmentList: (fetching) => {
-	appState.set('assignments.fetching', fetching);
-    },
+    setFetchingAssignmentList(fetching) {
+	this._data.set('assignments.fetching', fetching);
+    }
 
-    setAssignmentList: (list) => {
-	appState.unset('assignment.list', {silent: true});
-	appState.set('assignments.list', list);
-    },    
+    setAssignmentList(list) {
+	this._data.unset('assignment.list', {silent: true});
+	this._data.set('assignments.list', list);
+    }    
+}
 
-    /** data **/
-    
-    // applicant data
-    applicants: {
-	fetching: false,	
-	list: null,
-    },
-
-    // application data
-    applications: {
-	fetching: false,
-	list: null,
-    },
-
-    // courses data
-    courses: {
-	fetching: false,
-	list: null,
-    },
-
-    // assignments data
-    assignments: {
-	fetching: false,
-	list: null,
-    },
-});
-
-
+let appState = new AppState();
 export {appState};

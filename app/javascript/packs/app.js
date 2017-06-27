@@ -9,10 +9,6 @@
 
 import '../app-styles'
 
-import _ from 'underscore'
-import Backbone from 'backbone'
-import NestedModel from 'backbone-nested'
-
 import React from 'react'
 import ReactDOM from 'react-dom'
 
@@ -34,66 +30,60 @@ import { Applicant } from '../app/components/applicant.js'
 class App extends React.Component {
     constructor(props) {
 	super(props);
-	this.state = appState.toJSON();
+	this.state = appState.toJSO();
 
-	this._updateState = this._updateState.bind(this);
-	
-	_.extend(this, Backbone.Events);
+	appState.subscribe(this._updateState.bind(this));	
 
 	// start fetching data
 	fetchAll();
     }
 
     _updateState() {
-	this.setState(appState.toJSON());
-    }
-
-    componentDidMount() {
-	appState.bind('change', this._updateState);
+	this.setState(appState.toJSO());
     }
     
     render() {
-	return <RouterInst {...this.state}/>;
+	return <RouterInst func={appState} {...this.state}/>;
     }
 }
 
 const navConfig = {
     courses: {
-	route: "/courses",
-	key: 1,
+	route: '/courses',
+	key: '1',
     },
     abc: {
-	route: "/applicantsbycourse",
-	key: 2,
+	route: '/applicantsbycourse',
+	key: '2',
     },
     assigned: {
-	route: "/assigned",
-	key: 3,
+	route: '/assigned',
+	key: '3',
     },
     unassigned: {
-	route: "/unassigned",
-	key: 4,
+	route: '/unassigned',
+	key: '4',
     },
     summary: {
-	route: "/summary",
-	key: 5,
+	route: '/summary',
+	key: '5',
     },
     applicant: {
-	route: "/applicant/:id",
-	key: 6,
+	route: '/applicant/:id',
+	key: '6',
     },
     logout: {
-	route: "/bye",
-	key: 7,
+	route: '/bye',
+	key: '7',
     }
 };
 
 /*** Router ***/
-// temporary logout "view"
-const Bye = props => <div className="container-fluid" style={{paddingTop: "70px"}}><h1>Bye!</h1></div>;
+// temporary logout 'view'
+const Bye = props => <div className='container-fluid' style={{paddingTop: '70px'}}><h1>Bye!</h1></div>;
 
 const RouterInst = props => (
-	<Router basename="index.html">
+	<Router basename='index.html'>
 	<div>
 	<NavbarInst {...props} />
 
@@ -141,7 +131,7 @@ const NavbarInst = props => (
     </Nav>
 
 	<Nav pullRight>
-	<NavDropdown eventKey={navConfig.logout.key} title={props.nav.role + ":" + props.nav.user} id="nav-dropdown">
+	<NavDropdown eventKey={navConfig.logout.key} title={props.nav.role + ':' + props.nav.user} id='nav-dropdown'>
 	<MenuItem eventKey={navConfig.logout.key + '.1'}>
 	<Link to={navConfig.logout.route}>Logout</Link>
 	</MenuItem>

@@ -37,8 +37,8 @@ function onFetchApplicantsSuccess(resp) {
 	}
     });
 
-    appState.get('setApplicantList')(applicants);
-    appState.get('setFetchingApplicantList')(false);
+    appState.setApplicantList(applicants);
+    appState.setFetchingApplicantList(false);
 
     return resp;
 }
@@ -71,7 +71,7 @@ function onFetchApplicationsSuccess(resp) {
 	applications[app.applicant_id] = prev;
     });
     
-    appState.get('setApplicationList')(applications);
+    appState.setApplicationList(applications);
 
     return resp;
 }
@@ -110,12 +110,12 @@ function onFetchCoursesSuccess(resp, applicationPromise) {
 	rounds[course.id] = course.round_id;
     });
 
-    appState.get('setCourseList')(courses);
+    appState.setCourseList(courses);
 
     applicationPromise.then(
 	() => {
-	    appState.get('setApplicationRounds')(courses);
-	    appState.get('setFetchingApplicationList')(false);
+	    appState.setApplicationRounds(courses);
+	    appState.setFetchingApplicationList(false);
 	}
     );
 
@@ -141,13 +141,13 @@ function onFetchAssignmentsSuccess(resp, coursePromise) {
 	assignmentCounts[ass.position_id] = count ? count+1 : 1;
     });
 
-    appState.get('setAssignmentList')(assignments);
-    appState.get('setFetchingAssignmentList')(false);
+    appState.setAssignmentList(assignments);
+    appState.setFetchingAssignmentList(false);
 
     coursePromise.then(
 	() => {
-	    appState.get('setCourseAssignmentCounts')(assignmentCounts);
-	    appState.get('setFetchingCourseList')(false);
+	    appState.setCourseAssignmentCounts(assignmentCounts);
+	    appState.setFetchingCourseList(false);
 	}
     );
 
@@ -161,16 +161,16 @@ function fetchAssignments(coursePromise) {
 }
 
 function fetchAll() {
-    appState.get('setFetchingApplicantList')(true);
+    appState.setFetchingApplicantList(true);
     let applicantPromise = fetchApplicants();
 
-    appState.get('setFetchingApplicationList')(true);
+    appState.setFetchingApplicationList(true);
     let applicationPromise = fetchApplications();
 
-    appState.get('setFetchingCourseList')(true);
+    appState.setFetchingCourseList(true);
     let coursePromise = fetchCourses(applicationPromise);
 
-    appState.get('setFetchingAssignmentList')(true);
+    appState.setFetchingAssignmentList(true);
     let assignmentPromise = fetchAssignments(coursePromise);
 }
 

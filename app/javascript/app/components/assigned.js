@@ -7,12 +7,12 @@ class Assigned extends React.Component {
     render() {
 	return <Grid fluid><Row><Col xs={12}>
 	    <TableMenu/>
-	    <AssignedApplicantTable applicants={this.props.applicants.assigned} assigned={false}/>
+	    <AssignedApplicantTable applicants={this.props.applicants} assigned={false}/>
 	    </Col></Row></Grid>
     }
 
     selectThisTab() {
-	this.props.nav.selectTab(this.props.navKey);
+	this.props.func.selectNavTab(this.props.navKey);
     }
     
     componentDidMount() {
