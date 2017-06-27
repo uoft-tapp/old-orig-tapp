@@ -1,7 +1,7 @@
 import React from 'react'
 import { ButtonGroup, Button, DropdownButton, MenuItem, Glyphicon } from 'react-bootstrap'
 
-class TableMenu extends React.Component {
+class UnassignedTableMenu extends React.Component {
     render() {
 	return (
 		<div style={{marginBottom: '1vh'}}>
@@ -60,4 +60,4 @@ class TableMenu extends React.Component {
     }
 }
 
-export { TableMenu };
+export { UnassignedTableMenu };

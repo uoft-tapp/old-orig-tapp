@@ -1,6 +1,6 @@
 import React from 'react'
 import { Panel } from 'react-bootstrap'
-import { TableMenu } from './tableMenu.js'
+import { ABCTableMenu } from './abcTableMenu.js'
 import { ABCApplicantTable } from './abcApplicantTable.js'
 
 class CoursePane extends React.Component {
@@ -8,7 +8,7 @@ class CoursePane extends React.Component {
 	super(props);
 	this.tableHeaders = ['', 'Last Name', 'First Name', 'Dept.', 'Prog.', 'Year', 'Pref.', 'Other'];
 	// fields from applicant list corresponding to headers above (ordered)
-	this.tableFields = ['assigned', 'last_name', 'first_name', 'dept', 'program_id', 'yip', 'utorid', 'phone'];
+	this.tableFields = ['assigned', 'last_name', 'first_name', 'phone', 'phone', 'phone', 'phone', 'phone'];
     }
     
     render() {
@@ -24,14 +24,14 @@ class CoursePane extends React.Component {
 		    }}></i>
 		    </span>}>
 		<ABCApplicantTable tableHeaders={this.tableHeaders} tableFields={this.tableFields}
-	    applicants={this.props.applicants.assigned} assigned={true}/>
+	    applicants={[]} assigned={true}/>
 		
-		<TableMenu sortFields={this.tableHeaders} filter={this.props.abcView.filter}
-	    sort={(field) => {console.log(field);this.props.abcView.sort(this.props.course, field);}}
+		<ABCTableMenu sortFields={this.tableHeaders} filter={this.props.abcView.filter}
+	    sort={(field) => { this.props.abcView.sort(this.props.course, field); }}
 	    {...this.props.abcView.panelFields[this.props.course]}/>
 		
 		<ABCApplicantTable tableHeaders={this.tableHeaders} tableFields={this.tableFields}
-	    applicants={this.props.applicants.unassigned} assigned={false}/>
+	    applicants={this.props.applicants.list} assigned={false}/>
 		</Panel>
 	);
     }
