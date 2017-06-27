@@ -124,7 +124,13 @@ class AssignmentForm extends React.Component {
           props.assignments.map((assignment,index)=>(
             <tr>
               <td>{props.courses[assignment.positionId].code}</td>
-              <td><input type="number" style={{width: '50px'}} value={assignment.hour}/></td>
+              <td>
+                <input type="number" style={{width: '50px'}}
+                  onChange={(eventKey)=>(
+                    props.assignment_form.detectAssigmentHour(eventKey, index, props)
+                  )}
+                  value={assignment.hour}/>
+              </td>
               <td></td>
               <td>
                 <button onClick={()=>props.state.delete_assignment(props.id, index)}
@@ -146,7 +152,13 @@ class AssignmentForm extends React.Component {
         props.temp_assignments.map((assignment,index)=>(
           <tr>
             <td>{props.courses[assignment.positionId].code}</td>
-            <td><input type="number" style={{width: '50px'}} value={assignment.hour}/></td>
+            <td>
+              <input type="number" style={{width: '50px'}}
+                onChange={(eventKey)=>(
+                  props.assignment_form.detectTempAssigmentHour(eventKey, index, props)
+                )}
+                value={assignment.hour}/>
+            </td>
             <td>
               <button onClick={()=>props.state.add_assignment(props.id, index)}
                 style={{border: 'none', background: 'none'}}>
@@ -201,6 +213,14 @@ class AssignmentForm extends React.Component {
         }
       }
     }
+  }
+
+  detectAssigmentHour(evt, index, props){
+    props.state.update_assignment(props.id, index, evt.target.value);
+  }
+
+  detectTempAssigmentHour(evt, index, props){
+    props.state.update_temp_assignment(props.id, index, evt.target.value);
   }
 
   existingAssignment(props, positionId){
