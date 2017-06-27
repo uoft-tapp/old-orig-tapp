@@ -82,15 +82,15 @@ const course_data = {
 const CollapsablePanel = props =>(
   <div className="container-fluid"
     style={{height: '90vh', width: '100vw', overflow: 'auto'}}>
-    {props.state.panels.map(panel => (
+    {props.state.panels.map((panel, index) => (
       <Panel style={{width: '98vw', float: 'left', margin: '0'}}
         collapsible expanded={panel.expanded}
         header={
           <div style={{width: '100%', height: '100%', margin: '0', cursor: "pointer"}}
-            onClick={()=>(props.state.set_expanded(panel.index))}>
+            onClick={()=>(props.state.set_expanded(index))}>
             {panel.label}
           </div>}>
-        {props.assignment_form.addPanelContent(panel.index, props)}
+        {props.assignment_form.addPanelContent(index, props)}
       </Panel>
     ))}
   </div>
@@ -109,7 +109,7 @@ class AssignmentForm extends React.Component {
 
   setCourses(courses){
     return(
-      Object.entries(courses).map((key, val) => (
+      Object.entries(courses).map(key => (
         <option value={key[1].code}></option>
       ))
     );

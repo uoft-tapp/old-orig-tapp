@@ -45,57 +45,46 @@ const initialState = {
     assignment_form: {
       panels: [
         {
-          index: 0,
           label: "Personal Information",
           expanded: true,
         },
         {
-          index: 1,
           label: "Current Status",
           expanded: true,
         },
         {
-          index: 2,
           label: "Current Program Information",
           expanded: true,
         },
         {
-          index: 3,
           label: "Current Assignment Status",
           expanded: true,
         },
         {
-          index: 4,
           label: "Course Preferences",
           expanded: true,
         },
         {
-          index: 5,
           label: "Teaching Experiences",
           expanded: true,
         },
         {
-          index: 6,
           label: "Academic Qualifications",
           expanded: true,
         },
         {
-          index: 7,
           label: "Technical Skills",
           expanded: true,
         },
         {
-          index: 8,
           label: "Availability",
           expanded: true,
         },
         {
-          index: 9,
           label: "Other Information",
           expanded: true,
         },
         {
-          index: 10,
           label: "Special Need Issues",
           expanded: true,
         }
