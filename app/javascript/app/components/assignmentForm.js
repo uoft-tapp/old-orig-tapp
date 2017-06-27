@@ -115,18 +115,18 @@ class AssignmentForm extends React.Component {
     );
   }
 
-  setAssignments(assignments,courses){
-    if(assignments.length==0)
+  setAssignments(props){
+    if((props.assignments.length+props.temp_assignments.length)==0)
       return (<td><p>No Assignments</p></td>);
     else
       return(
-        assignments.map(assignment=>(
+        props.assignments.map((assignment,index)=>(
           <tr>
-            <td>{courses[assignment.positionId].code}</td>
+            <td>{props.courses[assignment.positionId].code}</td>
             <td><input type="number" style={{width: '50px'}} value={assignment.hour}/></td>
             <td></td>
             <td>
-              <button onClick={()=>alert("Delete assignment with positionId "+assignment.positionId)}
+              <button onClick={()=>props.state.delete_assignment(props.id, index)}
                 style={{border: 'none', background: 'none'}}>
                 <i className="fa fa-times-circle-o" style={{color: 'red', fontSize: '20px'}}>
                 </i>
@@ -137,21 +137,21 @@ class AssignmentForm extends React.Component {
       );
   }
 
-  setTempAssignments(temp_assignments,courses){
+  setTempAssignments(props){
     return(
-      temp_assignments.map(assignment=>(
+      props.temp_assignments.map((assignment,index)=>(
         <tr>
-          <td>{courses[assignment.positionId].code}</td>
+          <td>{props.courses[assignment.positionId].code}</td>
           <td><input type="number" style={{width: '50px'}} value={assignment.hour}/></td>
           <td>
-            <button onClick={()=>alert("Add assignment with positionId "+assignment.positionId)}
+            <button onClick={()=>props.state.add_assignment(props.id, index)}
               style={{border: 'none', background: 'none'}}>
               <i className="fa fa-check-circle-o" style={{color: 'green', fontSize: '20px'}}>
               </i>
             </button>
           </td>
           <td>
-            <button onClick={()=>alert("Delete assignment with positionId "+assignment.positionId)}
+            <button onClick={()=>props.state.delete_temp_assignment(props.id, index)}
               style={{border: 'none', background: 'none'}}>
               <i className="fa fa-times-circle-o" style={{color: 'red', fontSize: '20px'}}>
               </i>
@@ -260,8 +260,8 @@ class AssignmentForm extends React.Component {
             <p><b>Application round: </b>110</p>
             <table className="panel_table">
             <tbody>
-            {props.assignment_form.setAssignments(props.assignments, props.courses)}
-            {props.assignment_form.setTempAssignments(props.temp_assignments, props.courses)}
+            {props.assignment_form.setAssignments(props)}
+            {props.assignment_form.setTempAssignments(props)}
             </tbody>
             </table>
             <p style={{marginTop: '10px'}}><b>Add assignment: </b>
