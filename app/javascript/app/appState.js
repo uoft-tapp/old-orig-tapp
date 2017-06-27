@@ -219,14 +219,14 @@ class AppState {
 
       if (active.includes(courseCode)) {
           // add course to layout
-          this._data.set('abcView.layout', this._data.get('abcView.addCoursePanel')(courseCode, active.length));
+          this._data.set('abcView.layout', this.addCoursePanel(courseCode, active.length));
 
           // add panel to panel state tracker
           this._data.set('abcView.panelFields['+courseCode+']', {activeSortFields: [], activeFilters: []});
 
       } else {
           // remove course from layout
-          this._data.set('abcView.layout', this._data.get('abcView.removeCoursePanel')(courseCode, active.length));
+          this._data.set('abcView.layout', this.removeCoursePanel(courseCode, active.length));
       }
     }
 
