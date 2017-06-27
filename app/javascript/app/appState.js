@@ -133,6 +133,13 @@ const initialState = {
       },
       delete_temp_assignment: (applicantId, index) => (
         appState.unset('assignment_form.temp_assignments['+applicantId+']['+index+']')
+      ),
+      add_assignment: (applicantId, index) => {
+        appState.get('assignment_form.assignments['+applicantId+']').push(appState.get('assignment_form.temp_assignments['+applicantId+']['+index+']'));
+        appState.unset('assignment_form.temp_assignments['+applicantId+']['+index+']');
+      },
+      delete_assignment: (applicantId, index) => (
+        appState.unset('assignment_form.assignments['+applicantId+']['+index+']')
       )
     },
 };
