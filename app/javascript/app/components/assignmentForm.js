@@ -54,34 +54,40 @@ const application_data = {
 
 const course_data = {
   1:{
-    code: 'CSC108H1'
+    code: 'CSC108H1',
+    hour: 54
   },
   2:{
-    code: 'CSC165H1'
+    code: 'CSC165H1',
+    hour: 55
   },
   3:{
-    code: 'CSC148H1'
+    code: 'CSC148H1',
+    hour: 56
   },
   4:{
-    code: 'CSC209H1'
+    code: 'CSC209H1',
+    hour: 57
   },
   5:{
-    code: 'CSC108H1-A'
+    code: 'CSC108H1-A',
+    hour: 58
   },
   6:{
-    code: 'CSC207H1'
+    code: 'CSC207H1',
+    hour: 59
   },
 }
 
 const CollapsablePanel = props =>(
   <div className="container-fluid"
     style={{height: '90vh', width: '100vw', overflow: 'auto'}}>
-    {props.panels.map(panel => (
+    {props.state.panels.map(panel => (
       <Panel style={{width: '98vw', float: 'left', margin: '0'}}
         collapsible expanded={panel.expanded}
         header={
           <div style={{width: '100%', height: '100%', margin: '0', cursor: "pointer"}}
-            onClick={()=>(props.set_expanded(panel.index))}>
+            onClick={()=>(props.state.set_expanded(panel.index))}>
             {panel.label}
           </div>}>
         {props.assignment_form.addPanelContent(panel.index, props)}
@@ -175,6 +181,35 @@ class AssignmentForm extends React.Component {
       ))
     );
   }
+
+  detectCourse(evt, props){
+    props.state.set_input(evt.target.value);
+    for(let course in props.courses){
+      if(props.courses[course].code==evt.target.value){
+        if(!this.existingAssignment(props, course)){
+          props.state.add_temp_assignment(props.id, course, props.courses[course].hour);
+          props.state.set_input("");
+        }
+        else{
+          props.state.set_input("");
+          alert(props.courses[course].code+" has already been assigned.");
+        }
+      }
+    }
+  }
+
+  existingAssignment(props, positionId){
+    for(let assignment in props.assignments){
+      if(props.assignments[assignment].positionId==positionId)
+        return true;
+    }
+    for(let assignment in props.temp_assignments){
+      if(props.temp_assignments[assignment].positionId==positionId)
+        return true;
+    }
+    return false;
+  }
+
   addPanelContent(index, props){
     switch(index){
       case 0:
@@ -230,7 +265,8 @@ class AssignmentForm extends React.Component {
             </tbody>
             </table>
             <p style={{marginTop: '10px'}}><b>Add assignment: </b>
-              <input type="text" list="courses"/>
+              <input type="text" list="courses" value={props.state.assignment_input}
+                onChange={(eventKey)=>(props.assignment_form.detectCourse(eventKey,props))}/>
             </p>
             <datalist id="courses">
             {props.assignment_form.setCourses(props.courses)}
@@ -260,13 +296,12 @@ class AssignmentForm extends React.Component {
   render() {
     return (
       <CollapsablePanel id={this.props.match.params.id}
-        panels={this.props.assignment_form.panels}
         applicant={applicant_data}
         application={application_data}
         courses={course_data}
         assignments={this.props.assignment_form.assignments[this.props.match.params.id]}
         temp_assignments={this.props.assignment_form.temp_assignments[this.props.match.params.id]}
-        set_expanded={this.props.assignment_form.set_expanded}
+        state={this.props.assignment_form}
         assignment_form={this}/>
     );
   }
