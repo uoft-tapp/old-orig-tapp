@@ -29,11 +29,11 @@ import { Applicant } from '../app/components/applicant.js'
 
 class App extends React.Component {
     constructor(props) {
-	super(props);
-	this.state = appState.toJSO();
-	
-	// start fetching data
-	fetchAll();
+      super(props);
+      this.state = appState.toJSO();
+
+      // start fetching data
+      fetchAll();
     }
 
     _updateState() {

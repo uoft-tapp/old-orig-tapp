@@ -141,15 +141,15 @@ class ABC extends React.Component {
     }
 
     selectThisTab() {
-	this.props.func.selectNavTab(this.props.navKey);
+    	this.props.func.selectNavTab(this.props.navKey);
     }
     
     componentDidMount() {
-	this.selectThisTab();
+	    this.selectThisTab();
     }
 
     componentDidUpdate() {	
-	this.selectThisTab();
+	    this.selectThisTab();
     }
 }
 

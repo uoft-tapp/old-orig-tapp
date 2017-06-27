@@ -5,22 +5,22 @@ import { AssignedApplicantTable } from './assignedApplicantTable.js'
 
 class Assigned extends React.Component {
     render() {
-	return <Grid fluid><Row><Col xs={12}>
-	    <TableMenu/>
-	    <AssignedApplicantTable applicants={this.props.applicants} assigned={false}/>
-	    </Col></Row></Grid>
+      return <Grid fluid><Row><Col xs={12}>
+          <TableMenu/>
+          <AssignedApplicantTable applicants={this.props.applicants} assigned={false}/>
+          </Col></Row></Grid>
     }
 
     selectThisTab() {
-	this.props.func.selectNavTab(this.props.navKey);
+    	this.props.func.selectNavTab(this.props.navKey);
     }
     
     componentDidMount() {
-	this.selectThisTab();
+	    this.selectThisTab();
     }
 
     componentDidUpdate() {	
-	this.selectThisTab();
+	    this.selectThisTab();
     }
 }
 
