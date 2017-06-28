@@ -2,13 +2,32 @@ import React from 'react'
 import { ListGroup, ListGroupItem, Panel } from 'react-bootstrap'
 
 class CourseMenu extends React.Component {
+    constructor(props) {
+	super(props);
+	
+	// sort the courses in order of course code
+	this.courses = null;
+	if (props.courses.list) {
+	    this.courses = Object.entries(props.courses.list);
+	    this.courses.sort(([A, valA], [B, valB]) => valA.code < valB.code ? -1 : 1);
+	}
+    }
+    
+    componentWillUpdate() {
+	// sort the courses in order of course code, if they were not already sorted in the constructor
+	if (!this.courses && this.props.courses.list) {
+	    this.courses = Object.entries(this.props.courses.list);
+	    this.courses.sort(([A, valA], [B, valB]) => valA.code < valB.code ? -1 : 1);
+	}
+    }
+    
     render() {
-	if (!this.props.courses.list)
+	if (!this.courses)
 	    return null;
 	
 	let itemStyle = {height: '2em', padding: '3px'};
-
-	const list = Object.entries(this.props.courses.list).map(
+	
+	const list = this.courses.map(
 	    ([key, val]) => {
 		return (<ListGroupItem className='course-menu-item' key={'course-' + key} style={itemStyle}
 			onClick={() => {
