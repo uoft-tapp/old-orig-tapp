@@ -15,7 +15,6 @@ class Applicant extends React.Component {
     }
 
     render() {
-      console.log("hello")
   	  return (<AssignmentForm {...this.props}/>);
     }
 }
