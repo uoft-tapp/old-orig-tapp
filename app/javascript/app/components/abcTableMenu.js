@@ -2,6 +2,13 @@ import React from 'react'
 import { ButtonGroup, Button, DropdownButton, MenuItem, Glyphicon } from 'react-bootstrap'
 
 class ABCTableMenu extends React.Component {
+    constructor(props) {
+	super(props);
+
+	this.up = <Glyphicon style={{fontSize: '7pt'}} glyph={'menu-up'}/>;
+	this.down = <Glyphicon style={{fontSize: '7pt'}} glyph={'menu-down'}/>;
+    }
+    
     render() {
 	// style the dropdown if any of its items are active
 	let dropStyle = (fields) => this.props.func.anyFilterActive(this.props.course, fields) ? 'primary' : 'default';
@@ -35,28 +42,28 @@ class ABCTableMenu extends React.Component {
 
 		<ButtonGroup style={{paddingLeft: "1vw"}}>
 		{this.props.activeSortFields.map(
-		    (field, index) => (
-			    <DropdownButton
-			title={<span>{field.split('-')[0]} <Glyphicon style={{fontSize: '7pt'}}
-			       glyph={"menu-" + field.split('-')[1]} />
-			       </span>}
-			id={"sort-" + field} key={"sort-" + field} noCaret>
-			    
-			    <MenuItem>{field.split('-')[0]} <Glyphicon style={{fontSize: '7pt'}}
-			glyph={"menu-" + (field.split('-')[1] == 'up' ? 'down' : 'up')} />
-			    </MenuItem>
-			    <MenuItem>Clear field</MenuItem>
-			    </DropdownButton>
-		    )
-		)}
+		    (field, index) => {
+			let [name, dir] = field.split('-');
+			
+			return (
+				<DropdownButton title={<span>{name} {this[dir]}</span>} key={"sort-" + field}
+			    id={"sort-" + field} noCaret>
+				
+				<MenuItem onSelect={() => this.props.func.toggleSortDir(this.props.course, field)}>
+				{name} {this[dir == 'up' ? 'down' : 'up']}</MenuItem>
+				
+				<MenuItem onSelect={() => this.props.func.clearSort(this.props.course, field)}>
+				Clear field</MenuItem>
+				
+				</DropdownButton>
+			);
+		    })}
 		<DropdownButton title="Add sort field" id="sort-dropdown" bsStyle="info" noCaret>
 		{this.props.sortFields.map(
-		    (field, index) => (
-			    <MenuItem key={"sort-" + field} eventKey={'sort-' + field}
-			onSelect={(eventKey) => this.props.sort(eventKey.split('-')[1])}>
-			    {field}
-			</MenuItem>
-		    )
+		    field => (<MenuItem key={"sort-" + field}
+			      onSelect={() => this.props.func.addSort(this.props.course, field)}>
+			      {field}
+			      </MenuItem>)
 		)}
 		</DropdownButton>
 		</ButtonGroup>
