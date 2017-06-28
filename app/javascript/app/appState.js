@@ -89,41 +89,11 @@ const initialState = {
           expanded: true,
         }
       ],
-      assignments:{
-      },
       temp_assignments: {
       },
-      assignment_input: "",
-      set_input: (value) =>(
-        appState.set('assignment_form.assignment_input', value)
-      ),
-      set_expanded: (index) =>(
-        appState.set('assignment_form.panels['+index+'].expanded', !appState.get('assignment_form.panels['+index+'].expanded'))
-      ),
-      add_temp_assignment: (applicantId, positionId, hour) =>{
-        if(appState.get('assignment_form.temp_assignments['+applicantId+']')===undefined)
-          appState.set('assignment_form.temp_assignments['+applicantId+']', []);
-        appState.get('assignment_form.temp_assignments['+applicantId+']').push({positionId: positionId, hour: hour});
-        appState.set('assignment_form.temp_assignments['+applicantId+']', appState.get('assignment_form.temp_assignments['+applicantId+']'));
+      assignments: {
       },
-      delete_temp_assignment: (applicantId, index) => (
-        appState.unset('assignment_form.temp_assignments['+applicantId+']['+index+']')
-      ),
-      update_temp_assignment: (applicantId, index, hour) => (
-        appState.set('assignment_form.temp_assignments['+applicantId+']['+index+'].hour', hour)
-      ),
-      add_assignment: (applicantId, index) => {
-        if(appState.get('assignment_form.assignments['+applicantId+']')===undefined)
-          appState.set('assignment_form.assignments['+applicantId+']', []);
-        appState.get('assignment_form.assignments['+applicantId+']').push(appState.get('assignment_form.temp_assignments['+applicantId+']['+index+']'));
-        appState.unset('assignment_form.temp_assignments['+applicantId+']['+index+']');
-      },
-      delete_assignment: (applicantId, index) => (
-        appState.unset('assignment_form.assignments['+applicantId+']['+index+']')
-      ),
-      update_assignment: (applicantId, index, hour) => (
-        appState.set('assignment_form.assignments['+applicantId+']['+index+'].hour', hour)
-      )
+      assignment_input: ""
     },
 };
 
@@ -552,6 +522,52 @@ class AppState {
       this._data.unset('assignment.list', {silent: true});
       this._data.set('assignments.list', list);
     }
+
+    /*For Assignment Form*/
+    isFetching(){
+      let course_fetch = this._data.get('courses.fetching');
+      let applicant_fetch = this._data.get('applicants.fetching');
+      let application_fetch = this._data.get('applications.fetching');
+      let assignment_fetch = this._data.get('assignments.fetching');
+      return course_fetch || applicant_fetch || application_fetch || assignment_fetch;
+    }
+    setInput(value){
+      this._data.set('assignment_form.assignment_input', value)
+    }
+    setExpanded(index){
+      this._data.set('assignment_form.panels['+index+'].expanded',
+        !this._data.get('assignment_form.panels['+index+'].expanded'));
+    }
+    addTempAssignment(applicantId, positionId, hours){
+      if(this._data.get('assignment_form.temp_assignments['+applicantId+']')===undefined)
+        this._data.set('assignment_form.temp_assignments['+applicantId+']', []);
+
+      this._data.get('assignment_form.temp_assignments['+applicantId+']').push(
+          {positionId: positionId, hours: hours});
+      this._data.set('assignment_form.temp_assignments['+applicantId+']',
+        this._data.get('assignment_form.temp_assignments['+applicantId+']'));
+    }
+    deleteTempAssignment(applicantId, index){
+      this._data.unset('assignment_form.temp_assignments['+applicantId+']['+index+']')
+    }
+    updateTempAssignment(applicantId, index, hours){
+      this._data.set('assignment_form.temp_assignments['+applicantId+']['+index+'].hours', hours)
+    }
+    addAssignment(applicantId, index){
+      if(this._data.get('assignment_form.assignments['+applicantId+']')===undefined)
+        this._data.set('assignment_form.assignments['+applicantId+']', []);
+
+      this._data.get('assignment_form.assignments['+applicantId+']').push(
+        this._data.get('assignment_form.temp_assignments['+applicantId+']['+index+']'));
+      this._data.unset('assignment_form.temp_assignments['+applicantId+']['+index+']');
+    }
+    deleteAssignment(applicantId, index){
+      this._data.unset('assignment_form.assignments['+applicantId+']['+index+']')
+    }
+    updateAssignment(applicantId, index, hours) {
+      this._data.set('assignment_form.assignments['+applicantId+']['+index+'].hours', hours)
+    }
+
 }
 
 let appState = new AppState();
