@@ -12,22 +12,24 @@ class CoursePane extends React.Component {
     }
     
     render() {
-	if (!this.props.applicants.fetched)
+	if (!this.props.courses.list)
 	    return null;
-
+	
+	let course = this.props.courses.list[this.props.course];
+	
 	return (
 		<Panel style={{height: '100%', maxHeight: '88vh', overflow: 'auto'}}
-	    header={<span>{this.props.course}
+	    header={<span>{course.code}&emsp;{course.assignmentCount} /{course.estimatedPositions}
 		    <i className="fa fa-close" style={{float: 'right'}} onClick={() => {
-			this.props.courseMenu.toggleSelected(this.props.course);
-			this.props.abcView.toggleCoursePanel(this.props.course);
+			this.props.func.toggleSelectedCourse(this.props.course);
+			this.props.func.toggleCoursePanel(this.props.course);
 		    }}></i>
 		    </span>}>
 		<ABCApplicantTable tableHeaders={this.tableHeaders} tableFields={this.tableFields}
 	    applicants={[]} assigned={true}/>
 		
-		<ABCTableMenu sortFields={this.tableHeaders} filter={this.props.abcView.filter}
-	    sort={(field) => { this.props.abcView.sort(this.props.course, field); }}
+		<ABCTableMenu sortFields={this.tableHeaders} filter={this.props.func.filter}
+	    sort={(field) => { this.props.func.sort(this.props.course, field); }}
 	    {...this.props.abcView.panelFields[this.props.course]}/>
 		
 		<ABCApplicantTable tableHeaders={this.tableHeaders} tableFields={this.tableFields}

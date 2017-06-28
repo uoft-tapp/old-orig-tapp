@@ -133,9 +133,8 @@ class ABC extends React.Component {
 	return (
 		<SplitPane split='vertical' defaultSize='14em' allowResize={false} pane1Style={{margin: '0 1vw'}}
 	    pane2Style={{marginRight: '1vw'}} resizerStyle={{display: 'none'}}>
-		<CourseMenu key={'courseMenu'} toggleCoursePanel={this.props.abcView.toggleCoursePanel}
-	    {...this.props.courseMenu}/>
-		{this.mapLayoutToPanes()}
+		<CourseMenu key={'courseMenu'} {...this.props}/>
+		{this.mapLayoutToPanes()}		
 	    </SplitPane>
 	);
     }
