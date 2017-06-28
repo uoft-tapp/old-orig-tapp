@@ -9,7 +9,7 @@ class Courses extends React.Component {
     selectThisTab() {
 	this.props.func.selectNavTab(this.props.navKey);
     }
-    
+
     componentDidMount() {
 	this.selectThisTab();
     }
@@ -20,4 +20,3 @@ class Courses extends React.Component {
 }
 
 export { Courses };
-
