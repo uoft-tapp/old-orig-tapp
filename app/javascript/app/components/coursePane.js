@@ -28,9 +28,8 @@ class CoursePane extends React.Component {
 		<ABCApplicantTable tableHeaders={this.tableHeaders} tableFields={this.tableFields}
 	    applicants={[]} assigned={true}/>
 		
-		<ABCTableMenu sortFields={this.tableHeaders} course={this.props.course}
-	    sort={(field) => { this.props.func.sortApplicants(this.props.course, field); }}
-	    {...this.props.abcView.panelFields[this.props.course]} func={this.props.func}/>
+		<ABCTableMenu sortFields={this.tableHeaders} course={this.props.course} func={this.props.func}
+	    {...this.props.abcView.panelFields[this.props.course]} />
 		
 		<ABCApplicantTable tableHeaders={this.tableHeaders} tableFields={this.tableFields}
 	    applicants={this.props.applicants} assigned={false}/>
