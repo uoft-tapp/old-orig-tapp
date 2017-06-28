@@ -264,7 +264,7 @@ class AppState {
 	const sortFields = this._data.get('abcView.panelFields['+course+'].activeSortFields');
 	
 	if (!sortFields.includes(newSort)) {
-	    this._data.unset('abcView.panelFields['+course+'].activeSortFields');
+	    this._data.unset('abcView.panelFields['+course+'].activeSortFields', {silent: true});
 	
 	    sortFields[sortFields.indexOf(field)] = newSort;
 	    this._data.set('abcView.panelFields['+course+'].activeSortFields', sortFields);
