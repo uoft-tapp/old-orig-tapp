@@ -6,16 +6,18 @@ import { ABCApplicantTable } from './abcApplicantTable.js'
 class CoursePane extends React.Component {
     constructor(props) {
 	super(props);
+	
 	this.tableHeaders = ['', 'Last Name', 'First Name', 'Dept.', 'Prog.', 'Year', 'Pref.', 'Other'];
 	// fields from applicant list corresponding to headers above (ordered)
 	this.tableFields = ['?', 'lastName', 'firstName', 'dept', 'program', 'year', '??', '???'];
     }
     
     render() {
-	if (!this.props.courses.list)
+	const courses = this.props.func.getCourseList();
+	if (!courses)
 	    return null;
 
-	let course = this.props.courses.list[this.props.course];
+	let course = courses[this.props.course];
 	
 	return (
 		<Panel style={{height: '100%', maxHeight: '88vh', overflow: 'auto'}}
@@ -26,13 +28,13 @@ class CoursePane extends React.Component {
 		    }}></i>
 		    </span>}>
 		<ABCApplicantTable tableHeaders={this.tableHeaders} tableFields={this.tableFields}
-	    applicants={[]} assigned={true}/>
+	    applicants={[]} course={this.props.course} assigned={true} {...this.props}/>
 		
 		<ABCTableMenu sortFields={this.tableHeaders} course={this.props.course} func={this.props.func}
 	    {...this.props.abcView.panelFields[this.props.course]} />
 		
 		<ABCApplicantTable tableHeaders={this.tableHeaders} tableFields={this.tableFields}
-	    applicants={this.props.applicants} assigned={false}/>
+	    applicants={this.props.applicants} course={this.props.course} assigned={false} {...this.props}/>
 		</Panel>
 	);
     }
