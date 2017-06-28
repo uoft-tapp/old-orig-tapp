@@ -225,17 +225,36 @@ class AppState {
         }
     }
 
-    // apply a filter to the applicant table
-    filterApplicants(courseCode, field) {
-        if (!this._data.get('abcView.panelFields['+courseCode+'].activeFilters').includes(field))
-            this._data.add('abcView.panelFields['+courseCode+'].activeFilters', field);
+    // toggle a filter on the applicant table
+    toggleFilter(course, field) {
+	let i = this._data.get('abcView.panelFields['+course+'].activeFilters').indexOf(field);
+	
+        if (i != -1)
+	    this._data.remove('abcView.panelFields['+course+'].activeFilters['+i+']');
+	else
+            this._data.add('abcView.panelFields['+course+'].activeFilters', field);
+    }
+
+    // check whether a filter is active on the applicant table
+    isFilterActive(course, field) {
+	return this._data.get('abcView.panelFields['+course+'].activeFilters').includes(field);
+    }
+
+    // check whether any of the given filters are active on the applicant table
+    anyFilterActive(course, fields) {
+	return fields.some((field) => this.isFilterActive(course, field));
+    }
+
+    // remove all active filters on the applicant table
+    clearFilters(course) {
+	this._data.set('abcView.panelFields['+course+'].activeFilters', []);
     }
 
     // apply a sort to the applicant table
-    sortApplicants(courseCode, field) {
-        if (!this._data.get('abcView.panelFields['+courseCode+'].activeSortFields').includes(field))
+    sortApplicants(course, field) {
+        if (!this._data.get('abcView.panelFields['+course+'].activeSortFields').includes(field))
             // sorted up by default
-            this._data.add('abcView.panelFields['+courseCode+'].activeSortFields', field + '-up');
+            this._data.add('abcView.panelFields['+course+'].activeSortFields', field + '-up');
     }
 
     /** data setters **/

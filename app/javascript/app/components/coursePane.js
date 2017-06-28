@@ -8,13 +8,13 @@ class CoursePane extends React.Component {
 	super(props);
 	this.tableHeaders = ['', 'Last Name', 'First Name', 'Dept.', 'Prog.', 'Year', 'Pref.', 'Other'];
 	// fields from applicant list corresponding to headers above (ordered)
-	this.tableFields = ['assigned', 'last_name', 'first_name', 'phone', 'phone', 'phone', 'phone', 'phone'];
+	this.tableFields = ['?', 'lastName', 'firstName', 'dept', 'program', 'year', '??', '???'];
     }
     
     render() {
 	if (!this.props.courses.list)
 	    return null;
-	
+
 	let course = this.props.courses.list[this.props.course];
 	
 	return (
@@ -28,12 +28,12 @@ class CoursePane extends React.Component {
 		<ABCApplicantTable tableHeaders={this.tableHeaders} tableFields={this.tableFields}
 	    applicants={[]} assigned={true}/>
 		
-		<ABCTableMenu sortFields={this.tableHeaders} filter={this.props.func.filter}
-	    sort={(field) => { this.props.func.sort(this.props.course, field); }}
-	    {...this.props.abcView.panelFields[this.props.course]}/>
+		<ABCTableMenu sortFields={this.tableHeaders} course={this.props.course}
+	    sort={(field) => { this.props.func.sortApplicants(this.props.course, field); }}
+	    {...this.props.abcView.panelFields[this.props.course]} func={this.props.func}/>
 		
 		<ABCApplicantTable tableHeaders={this.tableHeaders} tableFields={this.tableFields}
-	    applicants={this.props.applicants.list} assigned={false}/>
+	    applicants={this.props.applicants} assigned={false}/>
 		</Panel>
 	);
     }
