@@ -7,15 +7,15 @@ class Applicant extends React.Component {
     }
 
     componentDidMount() {
-	this.selectThisTab();
+	     this.selectThisTab();
     }
 
     componentDidUpdate() {
-	this.selectThisTab();
+	     this.selectThisTab();
     }
 
     render() {
-	return (<AssignmentForm {...this.props}/>);
+  	  return (<AssignmentForm {...this.props}/>);
     }
 }
 
