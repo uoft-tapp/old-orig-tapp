@@ -8,13 +8,13 @@ class Summary extends React.Component {
     selectThisTab() {
 	this.props.func.selectNavTab(this.props.navKey);
     }
-    
+
     componentDidMount() {
 	this.selectThisTab();
     }
 
-    componentDidUpdate() {	
-	this.selectThisTab();
+    componentDidUpdate() {
+    	this.selectThisTab();
     }
 }
 

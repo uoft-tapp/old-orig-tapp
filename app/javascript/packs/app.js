@@ -28,64 +28,67 @@ import { Applicant } from '../app/components/applicant.js'
 /*** Main app component ***/
 
 class App extends React.Component {
-    constructor(props) {
-	super(props);
-	this.state = appState.toJSO();
-	
-	// start fetching data
-	fetchAll();
-    }
+  constructor(props) {
+    super(props);
+    this.state = appState.toJSO();
 
-    _updateState() {
-	this.setState(appState.toJSO());
-    }
+    // start fetching data
+    fetchAll();
+  }
 
-    componentDidMount() {
-	appState.subscribe(this._updateState.bind(this));
-    }
+  _updateState() {
+    this.setState(appState.toJSO());
+  }
 
-    render() {
-	return <RouterInst func={appState} {...this.state}/>;
-    }
+  componentDidMount() {
+    appState.subscribe(this._updateState.bind(this));
+  }
+
+  render() {
+    return <RouterInst func={appState} {...this.state}/>;
+  }
 }
 
-const navConfig = {
-    courses: {
-	route: '/courses',
-	key: '1',
-    },
-    abc: {
-	route: '/applicantsbycourse',
-	key: '2',
-    },
-    assigned: {
-	route: '/assigned',
-	key: '3',
-    },
-    unassigned: {
-	route: '/unassigned',
-	key: '4',
-    },
-    summary: {
-	route: '/summary',
-	key: '5',
-    },
-    applicant: {
-	route: '/applicant/:id',
-	key: '6',
-    },
-    logout: {
-	route: '/bye',
-	key: '7',
-    }
-};
+  const navConfig = {
+      courses: {
+  	route: '/courses',
+  	key: '1',
+      },
+      abc: {
+  	route: '/applicantsbycourse',
+  	key: '2',
+      },
+      assigned: {
+  	route: '/assigned',
+  	key: '3',
+      },
+      unassigned: {
+  	route: '/unassigned',
+  	key: '4',
+      },
+      summary: {
+  	route: '/summary',
+  	key: '5',
+      },
+      applicant: {
+  	route: '/applicant/:id',
+  	key: '6',
+      },
+      logout: {
+  	route: '/bye',
+  	key: '7',
+      }
+  };
+/*** Main app view component ***/
+
+const AppView = props => <RouterInst {...props} />;
 
 /*** Router ***/
-// temporary logout 'view'
-const Bye = props => <div className='container-fluid' style={{paddingTop: '70px'}}><h1>Bye!</h1></div>;
+// temporary logout "view"
+const Bye = props => <div className="container-fluid" style={{paddingTop: "70px"}}><h1>Bye!</h1></div>;
 
 const RouterInst = props => (
-	<Router basename='index.html'>
+	<Router basename="index.html">
 	<div>
 	<NavbarInst {...props} />
 
