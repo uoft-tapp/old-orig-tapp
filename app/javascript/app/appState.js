@@ -1,11 +1,6 @@
 import _ from 'underscore'
 import Backbone from 'backbone'
 import NestedModel from 'backbone-nested'
-import React from 'react'
-import ReactDOM from 'react-dom'
-
-window.React = React;
-window.ReactDOM = ReactDOM;
 
 const initialState = {
     // navbar component
