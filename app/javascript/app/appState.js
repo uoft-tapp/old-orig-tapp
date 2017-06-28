@@ -548,24 +548,24 @@ class AppState {
         this._data.get('assignment_form.temp_assignments['+applicantId+']'));
     }
     deleteTempAssignment(applicantId, index){
-      this._data.unset('assignment_form.temp_assignments['+applicantId+']['+index+']')
+      this._data.remove('assignment_form.temp_assignments['+applicantId+']['+index+']')
     }
     updateTempAssignment(applicantId, index, hours){
       this._data.set('assignment_form.temp_assignments['+applicantId+']['+index+'].hours', hours)
     }
     addAssignment(applicantId, index){
-      if(this._data.get('assignment_form.assignments['+applicantId+']')===undefined)
-        this._data.set('assignment_form.assignments['+applicantId+']', []);
+      if(this._data.get('assignments.list['+applicantId+']')===undefined)
+        this._data.set('assignments.list['+applicantId+']', []);
 
-      this._data.get('assignment_form.assignments['+applicantId+']').push(
+      this._data.get('assignments.list['+applicantId+']').push(
         this._data.get('assignment_form.temp_assignments['+applicantId+']['+index+']'));
-      this._data.unset('assignment_form.temp_assignments['+applicantId+']['+index+']');
+      this._data.remove('assignment_form.temp_assignments['+applicantId+']['+index+']');
     }
     deleteAssignment(applicantId, index){
-      this._data.unset('assignment_form.assignments['+applicantId+']['+index+']')
+      this._data.remove('assignments.list['+applicantId+']['+index+']')
     }
     updateAssignment(applicantId, index, hours) {
-      this._data.set('assignment_form.assignments['+applicantId+']['+index+'].hours', hours)
+      this._data.set('assignments.list['+applicantId+']['+index+'].hours', hours)
     }
 
 }

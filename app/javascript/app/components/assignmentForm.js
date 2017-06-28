@@ -51,7 +51,7 @@ class AssignmentForm extends React.Component {
                   onChange={(eventKey)=>(
                     props.self.detectAssigmentHour(eventKey, index, props)
                   )}
-                  value={assignment.hour}/>
+                  value={assignment.hours}/>
               </td>
               <td></td>
               <td>
@@ -79,7 +79,7 @@ class AssignmentForm extends React.Component {
                 onChange={(eventKey)=>(
                   props.self.detectTempAssigmentHour(eventKey, index, props)
                 )}
-                value={assignment.hour}/>
+                value={assignment.hours}/>
             </td>
             <td>
               <button onClick={()=>props.state.addAssignment(props.id, index)}
