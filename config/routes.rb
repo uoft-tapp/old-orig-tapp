@@ -4,8 +4,11 @@ Rails.application.routes.draw do
 
   # /applicants/:applicant_id/applications/:id
   resources :applicants do
-    resources :applications
+    resources :assignments
+    resources :applications, only: [:index]
   end
+  resources :assignments, only: [:index, :show]
   resources :applications, only: [:index, :show]
   resources :positions
+  resources :instructors
 end

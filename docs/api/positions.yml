@@ -27,15 +27,23 @@ paths:
       tags:
       - "positions"
       summary: "Updates Position information for Position {id}"
+      consumes:
+        - "application/json"
       parameters:
       - in: path
         name: id
         type: integer
         required: true
         description: "id for a Position in the Position Table"
+      - in: body
+        name: position
+        required: true
+        description: "json for attributes to update in Position model"
+        schema:
+          $ref: "#/definitions/Position_Update"
       responses:
         404:
-          description: "Unable to update course data"
+          description: "Unable to update course data because there was no Position with {id}"
         204:
           description: "Update succeeded"
     get:
@@ -87,9 +95,11 @@ definitions:
       hours:
         type: "integer"
         example: 54
+        description: "number of assigned to each TA for this position"
       estimated_count:
         type: "integer"
         example: 2
+        description: "estimated amount of TA's needed for this position"
       estimated_total_hours:
         type: "integer"
         example: 100
@@ -101,3 +111,55 @@ definitions:
         type: "string"
         format: "date-time"
         example: "2017-06-05T14:26:44.808Z"
+      instructors:
+        type: array
+        items:
+          $ref: "#/definitions/Instructor"
+  Position_Update:
+    type: "object"
+    properties:
+      estimated_enrollment:
+        type: "integer"
+        example: 1000
+      duties:
+        type: "string"
+        example: "Attend lectures to assist in classroom activities. Prepare for each week by doing online programming activities. Some TAs may hold office hours or monitor discussion forums."
+      qualifications:
+        type: "string"
+        example: "Experience with programming, such as by completing a 200-level CSC course, or by achieving excellent marks in multiple 100-level CSC courses, or equivalent. Experience with Python, at the level of CSC 148 or equivalent. Must be enrolled in or have completed a computer science degree, or equivalent. Must be interested in teaching beginner programmers. Willing to try different approaches when explaining simple concepts. TAs should be available during at least one of the CSC 108 lecture times (MWF10-11, W6-9)."
+      hours:
+        type: "integer"
+        example: 54
+        description: "number of assigned to each TA for this position"
+      estimated_count:
+        type: "integer"
+        example: 2
+        description: "estimated amount of TA's needed for this position"
+      estimated_total_hours:
+        type: "integer"
+        example: 10
+      instructors:
+        type: array
+        example: "[2, 4]"
+        items:
+          type: integer
+  Instructor:
+    type: object
+    properties:
+      id:
+        type: integer
+        example: 1
+      name:
+        type: string
+        example: "Instructor Name"
+      email:
+        type: string
+        example: "email@example.com"
+      created_at:
+        type: string
+        format: date-time
+        example: "2017-06-22T15:43:02.952Z"
+      updated_at:
+        type: string
+        format: date-time
+        example: "2017-06-22T15:43:02.952Z"

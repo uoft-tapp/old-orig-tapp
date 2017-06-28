@@ -54,7 +54,7 @@
     "status": "1",
     "end_nominations": null,
     "last_updated": "2017-05-31 10:55:56",
-    "instructors": ["Tom Fairgrieve', 'Paul Gries"]
+    "instructors": ["Tom Fairgrieve", "Paul Gries"]
   },
   {
     "course_id": "CSC108H1S-Student-Facing_TA",
@@ -73,7 +73,7 @@
     "status": "1",
     "end_nominations": null,
     "last_updated": "2017-05-31 10:55:56",
-    "instructors": ["Tom Fairgrieve', 'Paul Gries"]
+    "instructors": ["Tom Fairgrieve", "Paul Gries"]
   },
   {
     "course_id": "CSC108H1S-Marking_TA",
@@ -92,7 +92,7 @@
     "status": "1",
     "end_nominations": null,
     "last_updated": "2017-05-31 10:55:56",
-    "instructors": ["Tom Fairgrieve', 'Paul Gries"]
+    "instructors": ["Tom Fairgrieve", "Paul Gries"]
   },
   {
     "course_id": "CSC108H5S",
@@ -149,7 +149,7 @@
     "status": "1",
     "end_nominations": null,
     "last_updated": "2017-05-31 10:55:56",
-    "instructors": ["Bogdan Simion', 'Danny Heap', 'Jacqueline Smith"]
+    "instructors": ["Bogdan Simion", "Danny Heap", "Jacqueline Smith"]
   },
   {
     "course_id": "CSC148H5S",
@@ -187,7 +187,7 @@
     "status": "1",
     "end_nominations": null,
     "last_updated": "2017-05-31 10:55:56",
-    "instructors": ["David Liu', 'Toniann Pitassi"]
+    "instructors": ["David Liu", "Toniann Pitassi"]
   },
   {
     "course_id": "CSC207H1S",
@@ -301,7 +301,7 @@
     "status": "1",
     "end_nominations": null,
     "last_updated": "2017-05-31 10:55:56",
-    "instructors": ["Sajad Shirali-Shahreza', 'Steve Engels"]
+    "instructors": ["Sajad Shirali-Shahreza", "Steve Engels"]
   },
   {
     "course_id": "CSC258H5S",
@@ -339,7 +339,7 @@
     "status": "1",
     "end_nominations": null,
     "last_updated": "2017-05-31 10:55:56",
-    "instructors": ["Francois Pitt', 'Sam Toueg', 'Sasa Milic"]
+    "instructors": ["Francois Pitt", "Sam Toueg", "Sasa Milic"]
   },
   {
     "course_id": "CSC300H1S",
@@ -795,7 +795,7 @@
     "status": "1",
     "end_nominations": null,
     "last_updated": "2017-05-31 10:55:56",
-    "instructors": ["David Levin', 'Edy Garfinkiel"]
+    "instructors": ["David Levin", "Edy Garfinkiel"]
   },
   {
     "course_id": "CSC420H5S",

@@ -130,7 +130,7 @@ class ChassImporter
 
       condition = Position.where(position: posting_id, round_id: round_id).exists?
       position = Position.new(
-        position: course_id,
+        position: posting_id,
         round_id: round_id,
         open: true,
         campus_code: course_id[course_id[/[A-Za-z]{3}\d{3,4}/].size+1].to_i,
@@ -145,11 +145,12 @@ class ChassImporter
       exists = "Position #{posting_id} already exists"
       insertion_helper(position, condition, exists)
 
+      Rails.logger.debug "#{position.new_record?} #{position.valid?} #{position.attributes.inspect}"
+
       course_entry["instructors"].each do |instructor|
         instructor_ident = Instructor.find_by(name: instructor)
         if instructor_ident
-          instructor_id = instructor_ident.id
-          position.teaches.build(instructor_id: instructor_id)
+          position.instructors << [instructor_ident]
         end
       end
 
