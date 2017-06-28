@@ -5,20 +5,21 @@ class CourseMenu extends React.Component {
     constructor(props) {
 	super(props);
 	
-	// sort the courses in order of course code
-	this.courses = null;
-	if (props.courses.list) {
-	    this.courses = Object.entries(props.courses.list);
+	this.sortCourses();
+    }
+
+    // acquire and sort courses in order of course code
+    sortCourses() {
+	if ((this.courses = this.props.func.getCourseList())) {
+	    this.courses = Object.entries(this.courses);
 	    this.courses.sort(([A, valA], [B, valB]) => valA.code < valB.code ? -1 : 1);
 	}
     }
     
     componentWillUpdate() {
-	// sort the courses in order of course code, if they were not already sorted in the constructor
-	if (!this.courses && this.props.courses.list) {
-	    this.courses = Object.entries(this.props.courses.list);
-	    this.courses.sort(([A, valA], [B, valB]) => valA.code < valB.code ? -1 : 1);
-	}
+	// sort courses if they were not already acquired and sorted in the constructor
+	if (!this.courses) 
+	    this.sortCourses();
     }
     
     render() {

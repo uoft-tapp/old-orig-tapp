@@ -1,4 +1,4 @@
-import _ from 'underscore'
+//import _ from 'underscore'
 import Backbone from 'backbone'
 import NestedModel from 'backbone-nested'
 
@@ -277,7 +277,7 @@ class AppState {
         this._data.remove('abcView.panelFields['+course+'].activeSortFields['+i+']');
     }
 
-    /** data setters **/
+    /** data getters and setters **/
     
     setFetchingApplicantList(fetching) {
         this._data.set('applicants.fetching', fetching);
@@ -288,6 +288,45 @@ class AppState {
         this._data.set('applicants.list', list);
     }
 
+    getApplicantList() {
+	return this._data.get('applicants.list');
+    }
+
+    // get applicants who have applied to course; returns a list of [applicantID, applicantData]
+    getApplicantsToCourse(course) {
+	let applications = Object.entries(this.getApplicationList()).filter(
+	    ([key, val]) => val[0].prefs.some(pref => pref.positionId == course));
+
+	let applicants = this.getApplicantList(), filteredApplicants = [];
+
+	applications.forEach(
+	    ([key, val]) => filteredApplicants.push([key, applicants[key]]));
+
+	return filteredApplicants;
+    }
+
+    // get applicants who are assigned to course
+    getApplicantsAssignedToCourse(course) {
+	let assignments = this.getAssignmentList(), applicants = this.getApplicantList(), filteredApplicants = [];
+
+	let ass;
+	for (ass in assignments) {
+	    if (assignments[ass].positionId == course)
+		filteredApplicants.push([ass, applicants[ass]]);
+	}
+
+	return filteredApplicants;
+    }
+
+    // get applicants to course who are not assigned to it
+    getApplicantsToCourseUnassigned(course) {
+	let applicants = this.getApplicantsToCourse(course);
+	let assignments = this.getAssignmentList();
+
+	return applicants.filter(
+	    ([key, val]) => !assignments[key] || !(assignments[key].some(ass => ass.positionId == course)));
+    }
+    
     setFetchingApplicationList(fetching) {
         this._data.set('applications.fetching', fetching);
     }
@@ -295,6 +334,10 @@ class AppState {
     setApplicationList(list) {
         this._data.unset('applications.list', {silent: true});
         this._data.set('applications.list', list);
+    }
+
+    getApplicationList() {
+	return this._data.get('applications.list');
     }
 
     setApplicationRounds(courses) {
@@ -314,6 +357,10 @@ class AppState {
 
     setFetchingCourseList(fetching) {
         this._data.set('courses.fetching', fetching);
+    }
+
+    getCourseList() {
+	return this._data.get('courses.list');
     }
 
     setCourseList(list) {
@@ -339,7 +386,11 @@ class AppState {
     setAssignmentList(list) {
         this._data.unset('assignment.list', {silent: true});
         this._data.set('assignments.list', list);
-    }    
+    }
+
+    getAssignmentList() {
+	return this._data.get('assignments.list');
+    }
 }
 
 let appState = new AppState();

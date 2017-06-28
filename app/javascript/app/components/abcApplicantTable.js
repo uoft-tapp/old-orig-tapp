@@ -18,15 +18,33 @@ const ApplicantRow = props => (
 );
 
 class ABCApplicantTable extends React.Component {
+    constructor(props) {
+	super(props);
+
+	this.filterApplicants();
+    }
+
+    // acquire list of applicants
+    filterApplicants() {
+	if (this.props.assigned)
+	    this.applicants = this.props.func.getApplicantsAssignedToCourse(this.props.course);
+	else
+	    this.applicants = this.props.func.getApplicantsToCourseUnassigned(this.props.course);
+    }
+
+    componentWillUpdate() {
+	this.filterApplicants();
+    }
+    
     render() {
-	if (!this.props.applicants.list)
+	if (!this.applicants)
 	    return null;
 
 	return (
 		<Table striped bordered condensed hover>
 		<THeader fields={this.props.tableHeaders}/>
 		<tbody>
-		{Object.entries(this.props.applicants.list).map(
+		{this.applicants.map(
 		    ([key, val]) => (
 			    <ApplicantRow key={'applicant-'+key} applicant={val} id={'applicant-'+key}
 			assigned={this.props.assigned} fields={this.props.tableFields}/>
