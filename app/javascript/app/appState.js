@@ -479,6 +479,7 @@ class AppState {
       let assignment_fetch = this._data.get('assignments.fetching');
       return course_fetch || applicant_fetch || application_fetch || assignment_fetch;
     }
+
     createAssignmentForm(panels){
       if(this._data.get('assignment_form.panels').length==0){
         for(let i=0; i< panels.length; i++){

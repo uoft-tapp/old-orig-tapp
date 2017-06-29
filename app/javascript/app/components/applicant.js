@@ -147,7 +147,7 @@ const CollapsablePanel = props =>(
         collapsible expanded={panel.expanded}
         header={
           <div style={{width: '100%', height: '100%', margin: '0', cursor: "pointer"}}
-            onClick={()=>(props.state.setExpanded(index))}>
+            onClick={()=>(props.state.func.setExpanded(index))}>
             {panel.label}
           </div>}>
         {props.self.addPanelContent(index)}
