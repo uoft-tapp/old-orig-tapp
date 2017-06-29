@@ -123,14 +123,21 @@ class Applicant extends React.Component {
         }
     }
     render() {
+      let panels = ["Personal Information", "Current Status",
+        "Current Program Information", "Current Assignment Status",
+        "Course Preferences", "Teaching Experiences", "Academic Qualifications",
+        "Technical Skills", "Availability", "Other Information",
+        "Special Need Issues"];
+      this.props.func.createAssignmentForm(panels);
   	  return (
         <CollapsablePanel
           assignment_form={this.props.assignment_form}
-          state={this.props.func}
+          state={this.props}
           self={this}/>
       );
     }
 }
+
 
 const CollapsablePanel = props =>(
   <div className="container-fluid"
