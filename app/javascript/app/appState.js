@@ -488,6 +488,41 @@ class AppState {
       return course_fetch || applicant_fetch || application_fetch || assignment_fetch;
     }
 
+    jsonToURI(json){
+      let i = 0;
+      let uri = '';
+      for(let key in json){
+        if(i!=0)
+          uri+='&';
+        uri+=key+"="+encodeURIComponent(json[key]);
+        i++;
+      }
+      return uri;
+    }
+
+    routeAction(url, method, body, msg, func){
+      fetch(url,{
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+        },
+        method: method,
+        body: this.jsonToURI(body)
+      }).then(function(response) {
+          if(response.status==404||response.status==422){
+            alert("Action Failed: "+msg);
+            return null;
+          }
+          else if (response.status==204)
+            return {};
+          else
+            return response.json();
+      }).then(function(response) {
+          if(response!=null)
+            func(response);
+      });
+    }
+
     createAssignmentForm(panels){
       if(this._data.get('assignment_form.panels').length==0){
         for(let i=0; i< panels.length; i++){
@@ -521,15 +556,34 @@ class AppState {
       if(this._data.get('assignments.list['+applicantId+']')===undefined)
         this._data.set('assignments.list['+applicantId+']', []);
 
-      this._data.get('assignments.list['+applicantId+']').push(
-        this._data.get('assignment_form.temp_assignments['+applicantId+']['+index+']'));
-      this._data.remove('assignment_form.temp_assignments['+applicantId+']['+index+']');
+      let temp_assignment = this._data.get('assignment_form.temp_assignments['
+        +applicantId+']['+index+']');
+
+      this.routeAction('/applicants/'+applicantId+'/assignments', 'post',
+        {position_id: temp_assignment.positionId, hours: temp_assignment.hours},
+          "could not add Assignment", (res)=>{
+
+          temp_assignment["id"]= res.id;
+          this._data.get('assignments.list['+applicantId+']').push(temp_assignment);
+          this._data.remove('assignment_form.temp_assignments['+applicantId+']['+index+']');
+        });
+
     }
     deleteAssignment(applicantId, index){
-      this._data.remove('assignments.list['+applicantId+']['+index+']')
+      let assignment = this._data.get('assignments.list['+applicantId+']['+index+']');
+      this.routeAction('/applicants/'+applicantId+'/assignments/'+assignment.id, 'delete',
+        {}, "could not delete Assignment", (res)=>{
+
+        this._data.remove('assignments.list['+applicantId+']['+index+']');
+      });
     }
     updateAssignment(applicantId, index, hours) {
-      this._data.set('assignments.list['+applicantId+']['+index+'].hours', hours)
+      let assignment = this._data.get('assignments.list['+applicantId+']['+index+']');
+      this.routeAction('/applicants/'+applicantId+'/assignments/'+assignment.id, 'put',
+        {hours: hours}, "could not update Assignment hours", (res)=>{
+
+          this._data.set('assignments.list['+applicantId+']['+index+'].hours', hours)
+      });
     }
 
 }
