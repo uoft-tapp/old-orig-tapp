@@ -3,7 +3,6 @@ import { Table } from 'react-bootstrap'
 
 const THeader = props => (
 	<thead><tr>
-	<th></th>
 	{props.fields.map((field, i) => <th key={'header-'+i}>{field}</th>)}
     </tr></thead>
 );

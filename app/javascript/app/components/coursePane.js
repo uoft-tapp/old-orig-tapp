@@ -7,12 +7,13 @@ class CoursePane extends React.Component {
     constructor(props) {
 	super(props);
 	
-	this.tableHeaders = ['Last Name', 'First Name', 'Dept.', 'Prog.', 'Year', 'Pref.', 'Other'];
+	this.tableHeaders = ['','Last Name', 'First Name', 'Dept.', 'Prog.', 'Year', 'Pref.', 'Other'];
 	// fields from applicant list corresponding to headers above (ordered)
+	// note that not all headers map directly to applicant list fields
 	this.tableFields = ['lastName', 'firstName', 'dept', 'program', 'year'];
     }
     
-    render() {
+    render() {console.log('rerendering course pane with',this.props.courses);
 	let course = this.props.func.getCourseById(this.props.course);
 	if (!course)
 	    return null;
@@ -25,14 +26,14 @@ class CoursePane extends React.Component {
 			this.props.func.toggleCoursePanel(this.props.course);
 		    }}></i>
 		    </span>}>
-		<ABCApplicantTable tableHeaders={this.tableHeaders} tableFields={this.tableFields}
-	    applicants={[]} course={this.props.course} assigned={true} {...this.props}/>
+		<ABCApplicantTable tableHeaders={this.tableHeaders} tableFields={this.tableFields} assigned={true}
+	    {...this.props}/>
 		
-		<ABCTableMenu sortFields={this.tableHeaders} course={this.props.course} func={this.props.func}
-	    {...this.props.abcView.panelFields[this.props.course]} />
+		<ABCTableMenu sortFields={this.tableHeaders} {...this.props.abcView.panelFields[this.props.course]}
+	    {...this.props}/>
 		
-		<ABCApplicantTable tableHeaders={this.tableHeaders} tableFields={this.tableFields}
-	    applicants={this.props.applicants} course={this.props.course} assigned={false} {...this.props}/>
+		<ABCApplicantTable tableHeaders={this.tableHeaders} tableFields={this.tableFields} assigned={false}
+	    {...this.props}/>
 		</Panel>
 	);
     }

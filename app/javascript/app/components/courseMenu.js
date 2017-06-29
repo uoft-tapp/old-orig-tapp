@@ -17,9 +17,7 @@ class CourseMenu extends React.Component {
     }
     
     componentWillUpdate() {
-	// sort courses if they were not already acquired and sorted in the constructor
-	if (!this.courses) 
-	    this.sortCourses();
+	this.sortCourses();
     }
     
     render() {
@@ -40,7 +38,7 @@ class CourseMenu extends React.Component {
 			<span style={{float: 'right'}}>{val.assignmentCount} /{val.estimatedPositions}</span>
 			</ListGroupItem>);
 	    });
-	
+	console.log('rerendering menu with',this.courses);	
 	return (
 		<Panel header='Courses' style={{height: '100%', overflow: 'auto'}}>
 		<ListGroup fill>{list}</ListGroup>
