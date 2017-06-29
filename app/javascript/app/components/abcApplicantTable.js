@@ -3,18 +3,28 @@ import { Table } from 'react-bootstrap'
 
 const THeader = props => (
 	<thead><tr>
+	<th key='header-assigned'></th>
 	{props.fields.map((field, i) => <th key={'header-'+i}>{field}</th>)}
     </tr></thead>
 );
 
-const ApplicantRow = props => (
+const UnassignedApplicantRow = props => (
 	<tr key={props.id+'-row'}>
-	{props.fields.map(field => (
-		<td key={props.id+field}>
-		{field == 'assigned' ? <input type='checkbox' defaultChecked={props.assigned}/> : props.applicant[field]}
-	    </td>
-	))}
-	</tr>
+	<td><input type='checkbox' defaultChecked={false}
+    onClick={() => props.func.addAssignment(props.id.split('-')[1], props.course,
+					    props.func.getCourseById(props.course).positionHours)}/></td>
+	
+    {props.fields.map(field => <td key={props.id+field}>{props.applicant[field]}</td>)}
+    </tr>
+);
+
+const AssignedApplicantRow = props => (
+	<tr key={props.id+'-row'}>
+	<td><input type='checkbox' defaultChecked={true}
+    onClick={() => props.func.removeAssignment(props.id.split('-')[1], props.course)}/></td>
+
+    {props.fields.map(field => <td key={props.id+field}>{props.applicant[field]}</td>)}
+    </tr>
 );
 
 class ABCApplicantTable extends React.Component {
@@ -46,9 +56,13 @@ class ABCApplicantTable extends React.Component {
 		<tbody>
 		{this.applicants.map(
 		    ([key, val]) => (
-			    <ApplicantRow key={'applicant-'+key} applicant={val} id={'applicant-'+key}
-			assigned={this.props.assigned} fields={this.props.tableFields}/>
-		))}
+			this.props.assigned ?
+			    <AssignedApplicantRow key={'applicant-'+key} id={'applicant-'+key} applicant={val}
+			fields={this.props.tableFields} {...this.props}/> :
+			    <UnassignedApplicantRow key={'applicant-'+key} id={'applicant-'+key} applicant={val}
+			fields={this.props.tableFields} {...this.props}/>
+
+		    ))}
 	    </tbody>
 	    </Table>
 	);
