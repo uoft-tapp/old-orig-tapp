@@ -9,7 +9,7 @@ class CoursePane extends React.Component {
 	
 	this.tableHeaders = ['Last Name', 'First Name', 'Dept.', 'Prog.', 'Year', 'Pref.', 'Other'];
 	// fields from applicant list corresponding to headers above (ordered)
-	this.tableFields = ['lastName', 'firstName', 'dept', 'program', 'year', '??', '???'];
+	this.tableFields = ['lastName', 'firstName', 'dept', 'program', 'year'];
     }
     
     render() {

@@ -3,27 +3,47 @@ import { Table } from 'react-bootstrap'
 
 const THeader = props => (
 	<thead><tr>
-	<th key='header-assigned'></th>
+	<th></th>
 	{props.fields.map((field, i) => <th key={'header-'+i}>{field}</th>)}
     </tr></thead>
 );
 
 const UnassignedApplicantRow = props => (
-	<tr key={props.id+'-row'}>
+	<tr key={'applicant-'+props.id+'-row'}>
 	<td><input type='checkbox' defaultChecked={false}
-    onClick={() => props.func.addAssignment(props.id.split('-')[1], props.course,
+    onClick={() => props.func.addAssignment(props.id, props.course,
 					    props.func.getCourseById(props.course).positionHours)}/></td>
 	
-    {props.fields.map(field => <td key={props.id+field}>{props.applicant[field]}</td>)}
+    {props.fields.map(field => <td key={'applicant-'+props.id+field}>{props.applicant[field]}</td>)}
+
+	<td key='applicant-pref'>
+	{props.func.getApplicationPreference(props.id, props.course) && <i className='fa fa-check'/>}
+    </td>
+
+    <td key='applicant-other'>
+	{props.func.getAssignmentsByApplicant(props.id).map(
+	    ass => (ass.positionId == props.course) ? '' : props.func.getCourseCodeById(ass.positionId)
+	).join(' ')}
+    </td>    
     </tr>
 );
 
 const AssignedApplicantRow = props => (
-	<tr key={props.id+'-row'}>
+	<tr key={'applicant-'+props.id+'-row'}>
 	<td><input type='checkbox' defaultChecked={true}
-    onClick={() => props.func.removeAssignment(props.id.split('-')[1], props.course)}/></td>
+    onClick={() => props.func.removeAssignment(props.id, props.course)}/></td>
 
-    {props.fields.map(field => <td key={props.id+field}>{props.applicant[field]}</td>)}
+    {props.fields.map(field => <td key={'applicant-'+props.id+field}>{props.applicant[field]}</td>)}
+
+    	<td key='applicant-pref'>
+	{props.func.getApplicationPreference(props.id, props.course) && <i className='fa fa-check'/>}
+    </td>
+
+    <td key='applicant-other'>
+	{props.func.getAssignmentsByApplicant(props.id).map(
+	    ass => (ass.positionId == props.course) ? '' : props.func.getCourseCodeById(ass.positionId)
+	).join(' ')}
+    </td>
     </tr>
 );
 
@@ -40,6 +60,8 @@ class ABCApplicantTable extends React.Component {
 	    this.applicants = this.props.func.getApplicantsAssignedToCourse(this.props.course);
 	else
 	    this.applicants = this.props.func.getApplicantsToCourseUnassigned(this.props.course);
+
+//	this.props.func.applyApplicantFilters(
     }
 
     componentWillUpdate() {
@@ -57,9 +79,9 @@ class ABCApplicantTable extends React.Component {
 		{this.applicants.map(
 		    ([key, val]) => (
 			this.props.assigned ?
-			    <AssignedApplicantRow key={'applicant-'+key} id={'applicant-'+key} applicant={val}
+			    <AssignedApplicantRow key={'applicant-'+key} id={key} applicant={val}
 			fields={this.props.tableFields} {...this.props}/> :
-			    <UnassignedApplicantRow key={'applicant-'+key} id={'applicant-'+key} applicant={val}
+			    <UnassignedApplicantRow key={'applicant-'+key} id={key} applicant={val}
 			fields={this.props.tableFields} {...this.props}/>
 
 		    ))}
