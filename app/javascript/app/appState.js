@@ -290,6 +290,10 @@ class AppState {
 
 	this.setAssignmentList(assignments);
     }
+
+    getApplicationById(applicant) {
+	return this.getApplicationsList()[applicant][0];
+    }
     
     // get applicants who are assigned to course
     getApplicantsAssignedToCourse(course) {
@@ -329,11 +333,27 @@ class AppState {
 	return applicants.filter(
 	    ([key, val]) => !assignments[key] || !(assignments[key].some(ass => ass.positionId == course)));
     }
+
+    // check whether this course is a preference for this applicant
+    getApplicationPreference(applicant, course) {
+	let prefs = this.getApplicationById(applicant).prefs;
+	
+	return prefs.some(pref => (pref.positionId == course) && pref.preferred);
+    }
     
     getApplicationsList() {
 	return this._data.get('applications.list');
     }
 
+    getAssignmentsByApplicant(applicant) {
+	let assignments = this.getAssignmentsList()[applicant];
+
+	if (assignments)
+	    return assignments;
+	else
+	    return [];
+    }
+	
     getAssignmentsList() {
 	return this._data.get('assignments.list');
     }
@@ -342,8 +362,12 @@ class AppState {
 	return this._data.get('courses.list');
     }
 
-    getCourseById(id) {
-	return this.getCoursesList()[id];
+    getCourseById(course) {
+	return this.getCoursesList()[course];
+    }
+
+    getCourseCodeById(course) {
+	return this.getCourseById(course).code;
     }
 
     // remove an assignment (faked - doesn't propagate to db for now)
