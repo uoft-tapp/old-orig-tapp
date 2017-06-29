@@ -21,7 +21,7 @@ const initialState = {
     courseMenu: {
         selected: [],
     },
-    
+
     // abc view
     abcView: {
         layout: [],
@@ -34,13 +34,15 @@ const initialState = {
 
     // unassigned view
     unassignedView: null,
-    
+
     /** DB data **/
-    
+
     applicants: { fetching: false, list: null, },
     applications: { fetching: false, list: null, },
     courses: { fetching: false, list: null, },
     assignments: { fetching: false, list: null, },
+
+    assignment_form: {panels: [], temp_assignments: {}, assignment_input: ""}
 };
 
 class AppState {
@@ -56,13 +58,21 @@ class AppState {
     toJSO() {
         return this._data.toJSON();
     }
-    
+
     // select a navbar tab
-    selectNavTab(eventKey, applicant) {
+    selectNavTab(eventKey, applicant_id) {
+      if(!this.isFetching()){
+        let applicant = this._data.get('applicants.list['+applicant_id+']');
+        let applicant_name = applicant.firstName+' '+applicant.lastName;
+  	    this._data.set({'nav.selectedTab': eventKey,
+  			    'nav.selectedApplicant': applicant_id ? applicant_name : null});
+      }
+      else {
         this._data.set({'nav.selectedTab': eventKey,
-                        'nav.selectedApplicant': applicant ? applicant : null});
+  			    'nav.selectedApplicant': applicant_id ? '-' : null});
+      }
     }
-    
+
     // toggle the selected state of the course that is clicked
     toggleSelectedCourse(course) {
         let selected = this._data.get('courseMenu.selected');
@@ -353,6 +363,12 @@ class AppState {
 	return this._data.get('applications.list');
     }
 
+    /** data setters **/
+
+    setFetchingApplicantList(fetching) {
+	    this._data.set('applicants.fetching', fetching);
+    }
+
     getAssignmentsByApplicant(applicant) {
 	let assignments = this.getAssignmentsList()[applicant];
 
@@ -407,16 +423,16 @@ class AppState {
     }
 
     setApplicationRounds(courses) {
-        let applications = this.getApplicationsList();
+      let applications = this.getApplicationsList();
         
-        // assumes that all courses in a single application will be part of the same round, and that all applicants
-        // have applied to at least one course
-        let applicant;
-        for (applicant in applications) {
-            applications[applicant].forEach((app, index) => {
-                applications[applicant][index].round = courses[app.prefs[0].positionId].round;
-            });
-        }
+      // assumes that all courses in a single application will be part of the same round, and that all applicants
+      // have applied to at least one course
+      let applicant;
+      for (applicant in applications) {
+          applications[applicant].forEach((app, index) => {
+            applications[applicant][index].round = courses[app.prefs[0].positionId].round;
+          });
+      }
 
         this.setApplicationList(applications);
     }
@@ -457,6 +473,119 @@ class AppState {
     setFetchingCourseList(fetching) {
         this._data.set('courses.fetching', fetching);
     }
+
+    setAssignmentList(list) {
+      this._data.unset('assignment.list', {silent: true});
+      this._data.set('assignments.list', list);
+    }
+
+    /*For Assignment Form*/
+    isFetching(){
+      let course_fetch = this._data.get('courses.fetching');
+      let applicant_fetch = this._data.get('applicants.fetching');
+      let application_fetch = this._data.get('applications.fetching');
+      let assignment_fetch = this._data.get('assignments.fetching');
+      return course_fetch || applicant_fetch || application_fetch || assignment_fetch;
+    }
+
+    jsonToURI(json){
+      let i = 0;
+      let uri = '';
+      for(let key in json){
+        if(i!=0)
+          uri+='&';
+        uri+=key+"="+encodeURIComponent(json[key]);
+        i++;
+      }
+      return uri;
+    }
+
+    routeAction(url, method, body, msg, func){
+      fetch(url,{
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+        },
+        method: method,
+        body: this.jsonToURI(body)
+      }).then(function(response) {
+          if(response.status==404||response.status==422){
+            alert("Action Failed: "+msg);
+            return null;
+          }
+          else if (response.status==204)
+            return {};
+          else
+            return response.json();
+      }).then(function(response) {
+          if(response!=null)
+            func(response);
+      });
+    }
+
+    createAssignmentForm(panels){
+      if(this._data.get('assignment_form.panels').length==0){
+        for(let i=0; i< panels.length; i++){
+          this._data.set('assignment_form.panels['+i+']', {label: panels[i], expanded: true});
+        }
+      }
+    }
+    setInput(value){
+      this._data.set('assignment_form.assignment_input', value)
+    }
+    setExpanded(index){
+      this._data.set('assignment_form.panels['+index+'].expanded',
+        !this._data.get('assignment_form.panels['+index+'].expanded'));
+    }
+    addTempAssignment(applicantId, positionId, hours){
+      if(this._data.get('assignment_form.temp_assignments['+applicantId+']')===undefined)
+        this._data.set('assignment_form.temp_assignments['+applicantId+']', []);
+
+      this._data.get('assignment_form.temp_assignments['+applicantId+']').push(
+          {positionId: positionId, hours: hours});
+      this._data.set('assignment_form.temp_assignments['+applicantId+']',
+        this._data.get('assignment_form.temp_assignments['+applicantId+']'));
+    }
+    deleteTempAssignment(applicantId, index){
+      this._data.remove('assignment_form.temp_assignments['+applicantId+']['+index+']')
+    }
+    updateTempAssignment(applicantId, index, hours){
+      this._data.set('assignment_form.temp_assignments['+applicantId+']['+index+'].hours', hours)
+    }
+    addAssignment(applicantId, index){
+      if(this._data.get('assignments.list['+applicantId+']')===undefined)
+        this._data.set('assignments.list['+applicantId+']', []);
+
+      let temp_assignment = this._data.get('assignment_form.temp_assignments['
+        +applicantId+']['+index+']');
+
+      this.routeAction('/applicants/'+applicantId+'/assignments', 'post',
+        {position_id: temp_assignment.positionId, hours: temp_assignment.hours},
+          "could not add Assignment", (res)=>{
+
+          temp_assignment["id"]= res.id;
+          this._data.get('assignments.list['+applicantId+']').push(temp_assignment);
+          this._data.remove('assignment_form.temp_assignments['+applicantId+']['+index+']');
+        });
+
+    }
+    deleteAssignment(applicantId, index){
+      let assignment = this._data.get('assignments.list['+applicantId+']['+index+']');
+      this.routeAction('/applicants/'+applicantId+'/assignments/'+assignment.id, 'delete',
+        {}, "could not delete Assignment", (res)=>{
+
+        this._data.remove('assignments.list['+applicantId+']['+index+']');
+      });
+    }
+    updateAssignment(applicantId, index, hours) {
+      let assignment = this._data.get('assignments.list['+applicantId+']['+index+']');
+      this.routeAction('/applicants/'+applicantId+'/assignments/'+assignment.id, 'put',
+        {hours: hours}, "could not update Assignment hours", (res)=>{
+
+          this._data.set('assignments.list['+applicantId+']['+index+'].hours', hours)
+      });
+    }
+
 }
 
 let appState = new AppState();

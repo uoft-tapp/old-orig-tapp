@@ -12,7 +12,7 @@ function fetchHelper(URL, success, failure) {
 
 function onFetchApplicantsSuccess(resp) {
     let applicants = {};
-    
+
     resp.forEach(app => {
 	applicants[app.id] = {
 	    lastName: app.last_name,
@@ -45,13 +45,13 @@ function onFetchApplicantsSuccess(resp) {
 
 function fetchApplicants() {
     appState.setFetchingApplicantList(true);
-    
+
     return fetchHelper('/applicants', onFetchApplicantsSuccess, (error) => {console.log(error);});
 }
 
 function onFetchApplicationsSuccess(resp) {
     let applications = {};
-    
+
     resp.forEach(app => {
 	let prev = applications[app.applicant_id] ? applications[app.applicant_id] : [];
 	prev.push({
@@ -72,7 +72,7 @@ function onFetchApplicationsSuccess(resp) {
 
 	applications[app.applicant_id] = prev;
     });
-    
+
     appState.setApplicationList(applications);
 
     return resp;
@@ -80,13 +80,13 @@ function onFetchApplicationsSuccess(resp) {
 
 function fetchApplications() {
     appState.setFetchingApplicationList(true);
-    
+
     return fetchHelper('/applications', onFetchApplicationsSuccess, (error) => {console.log(error);});
 }
 
 function onFetchCoursesSuccess(resp, applicationPromise) {
     let courses = {}, rounds = {};
-    
+
     resp.forEach(course => {
 	courses[course.id] = {
 	    round: course.round_id,
@@ -128,7 +128,7 @@ function onFetchCoursesSuccess(resp, applicationPromise) {
 
 function fetchCourses(applicationPromise) {
     appState.setFetchingCourseList(true);
-    
+
     return fetchHelper('/positions',
 		       (resp) => onFetchCoursesSuccess(resp, applicationPromise),
 		       (error) => {console.log(error);});
@@ -138,13 +138,18 @@ function onFetchAssignmentsSuccess(resp, coursePromise) {
     let assignments = {}, assignmentCounts = {}, count;
 
     resp.forEach(ass => {
-	assignments[ass.applicant_id] = {
-	    positionId: ass.position_id,
-	    hours: ass.hours,
-	};
+      if(assignments[ass.applicant_id]==undefined){
+        assignments[ass.applicant_id]=[];
+      }
+    	assignments[ass.applicant_id].push({
+          id: ass.id,
+    	    positionId: ass.position_id,
+    	    hours: ass.hours,
+    	});
 
-	count = assignmentCounts[ass.position_id].assignmentCount;
-	assignmentCounts[ass.position_id] = count ? count+1 : 1;
+      assignmentCounts[ass.position_id]= {assignmentCount: 0};
+    	count = assignmentCounts[ass.position_id].assignmentCount;
+    	assignmentCounts[ass.position_id] = count ? count+1 : 1;
     });
 
     appState.setAssignmentList(assignments);
@@ -162,7 +167,7 @@ function onFetchAssignmentsSuccess(resp, coursePromise) {
 
 function fetchAssignments(coursePromise) {
     appState.setFetchingAssignmentList(true);
-    
+
     return fetchHelper('/assignments',
 		       (resp) => onFetchAssignmentsSuccess(resp, coursePromise),
 		       (error) => {console.log(error);});
