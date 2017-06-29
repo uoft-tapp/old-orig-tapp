@@ -7,17 +7,15 @@ class CoursePane extends React.Component {
     constructor(props) {
 	super(props);
 	
-	this.tableHeaders = ['', 'Last Name', 'First Name', 'Dept.', 'Prog.', 'Year', 'Pref.', 'Other'];
+	this.tableHeaders = ['Last Name', 'First Name', 'Dept.', 'Prog.', 'Year', 'Pref.', 'Other'];
 	// fields from applicant list corresponding to headers above (ordered)
-	this.tableFields = ['?', 'lastName', 'firstName', 'dept', 'program', 'year', '??', '???'];
+	this.tableFields = ['lastName', 'firstName', 'dept', 'program', 'year', '??', '???'];
     }
     
     render() {
-	const courses = this.props.func.getCourseList();
-	if (!courses)
+	let course = this.props.func.getCourseById(this.props.course);
+	if (!course)
 	    return null;
-
-	let course = courses[this.props.course];
 	
 	return (
 		<Panel style={{height: '100%', maxHeight: '88vh', overflow: 'auto'}}

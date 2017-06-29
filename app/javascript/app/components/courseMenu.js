@@ -10,7 +10,7 @@ class CourseMenu extends React.Component {
 
     // acquire and sort courses in order of course code
     sortCourses() {
-	if ((this.courses = this.props.func.getCourseList())) {
+	if ((this.courses = this.props.func.getCoursesList())) {
 	    this.courses = Object.entries(this.courses);
 	    this.courses.sort(([A, valA], [B, valB]) => valA.code < valB.code ? -1 : 1);
 	}

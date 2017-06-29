@@ -279,25 +279,41 @@ class AppState {
 
     /** data getters and setters **/
     
-    setFetchingApplicantList(fetching) {
-        this._data.set('applicants.fetching', fetching);
+    // create a new assignment (faked - doesn't propagate to db for now)
+    addAssignment(applicant, course, hours) {
+	let assignments = this.getAssignmentsList();
+
+	if (assignments[applicant])
+	    assignments[applicant].push({ positionId: course, hours: hours });
+	else
+	    assignments[applicant] = [{ positionId: course, hours: hours }];
+
+	this.setAssignmentList(assignments);
+    }
+    
+    // get applicants who are assigned to course
+    getApplicantsAssignedToCourse(course) {
+	let assignments = this.getAssignmentsList(), applicants = this.getApplicantsList(), filteredApplicants = [];
+
+	let applicant;
+	for (applicant in assignments) {
+	    if (assignments[applicant].some(ass => ass.positionId == course))
+		filteredApplicants.push([applicant, applicants[applicant]]);
+	}
+
+	return filteredApplicants;
     }
 
-    setApplicantList(list) {
-        this._data.unset('applicants.list', {silent: true});
-        this._data.set('applicants.list', list);
-    }
-
-    getApplicantList() {
+    getApplicantsList() {
 	return this._data.get('applicants.list');
     }
 
     // get applicants who have applied to course; returns a list of [applicantID, applicantData]
     getApplicantsToCourse(course) {
-	let applications = Object.entries(this.getApplicationList()).filter(
+	let applications = Object.entries(this.getApplicationsList()).filter(
 	    ([key, val]) => val[0].prefs.some(pref => pref.positionId == course));
 
-	let applicants = this.getApplicantList(), filteredApplicants = [];
+	let applicants = this.getApplicantsList(), filteredApplicants = [];
 
 	applications.forEach(
 	    ([key, val]) => filteredApplicants.push([key, applicants[key]]));
@@ -305,30 +321,44 @@ class AppState {
 	return filteredApplicants;
     }
 
-    // get applicants who are assigned to course
-    getApplicantsAssignedToCourse(course) {
-	let assignments = this.getAssignmentList(), applicants = this.getApplicantList(), filteredApplicants = [];
-
-	let ass;
-	for (ass in assignments) {
-	    if (assignments[ass].positionId == course)
-		filteredApplicants.push([ass, applicants[ass]]);
-	}
-
-	return filteredApplicants;
-    }
-
     // get applicants to course who are not assigned to it
     getApplicantsToCourseUnassigned(course) {
 	let applicants = this.getApplicantsToCourse(course);
-	let assignments = this.getAssignmentList();
+	let assignments = this.getAssignmentsList();
 
 	return applicants.filter(
 	    ([key, val]) => !assignments[key] || !(assignments[key].some(ass => ass.positionId == course)));
     }
     
-    setFetchingApplicationList(fetching) {
-        this._data.set('applications.fetching', fetching);
+    getApplicationsList() {
+	return this._data.get('applications.list');
+    }
+
+    getAssignmentsList() {
+	return this._data.get('assignments.list');
+    }
+
+    getCoursesList() {
+	return this._data.get('courses.list');
+    }
+
+    getCourseById(id) {
+	return this.getCoursesList()[id];
+    }
+
+    // remove an assignment (faked - doesn't propagate to db for now)
+    removeAssignment(applicant, course) {
+	let assignments = this.getAssignmentsList();
+
+	let i = assignments[applicant].findIndex(ass => ass.positionId == course);
+	assignments[applicant].splice(i, 1);
+
+	this.setAssignmentList(assignments);
+    }
+    
+    setApplicantList(list) {
+        this._data.unset('applicants.list', {silent: true});
+        this._data.set('applicants.list', list);
     }
 
     setApplicationList(list) {
@@ -336,12 +366,8 @@ class AppState {
         this._data.set('applications.list', list);
     }
 
-    getApplicationList() {
-	return this._data.get('applications.list');
-    }
-
     setApplicationRounds(courses) {
-        let applications = this._data.get('applications.list');
+        let applications = this.getApplicationsList();
         
         // assumes that all courses in a single application will be part of the same round, and that all applicants
         // have applied to at least one course
@@ -355,21 +381,13 @@ class AppState {
         this.setApplicationList(applications);
     }
 
-    setFetchingCourseList(fetching) {
-        this._data.set('courses.fetching', fetching);
-    }
-
-    getCourseList() {
-	return this._data.get('courses.list');
-    }
-
-    setCourseList(list) {
-        this._data.unset('courses.list', {silent: true});
-        this._data.set('courses.list', list);
+    setAssignmentList(list) {
+        this._data.unset('assignments.list', {silent: true});
+        this._data.set('assignments.list', list);
     }
 
     setCourseAssignmentCounts(counts) {
-        let courses = this._data.get('courses.list');
+        let courses = this.getCoursesList();
 
         let course;
         for (course in counts) {
@@ -379,17 +397,25 @@ class AppState {
         this.setCourseList(courses);
     }
 
+    setCourseList(list) {
+        this._data.unset('courses.list', {silent: true});
+        this._data.set('courses.list', list);
+    }
+
+    setFetchingApplicantList(fetching) {
+        this._data.set('applicants.fetching', fetching);
+    }
+    
+    setFetchingApplicationList(fetching) {
+        this._data.set('applications.fetching', fetching);
+    }
+
     setFetchingAssignmentList(fetching) {
         this._data.set('assignments.fetching', fetching);
     }
-
-    setAssignmentList(list) {
-        this._data.unset('assignment.list', {silent: true});
-        this._data.set('assignments.list', list);
-    }
-
-    getAssignmentList() {
-	return this._data.get('assignments.list');
+    
+    setFetchingCourseList(fetching) {
+        this._data.set('courses.fetching', fetching);
     }
 }
 
