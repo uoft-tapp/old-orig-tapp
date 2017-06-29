@@ -28,57 +28,58 @@ import { Applicant } from '../app/components/applicant.js'
 /*** Main app component ***/
 
 class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = appState.toJSO();
+    constructor(props) {
+      super(props);
+      this.state = appState.toJSO();
 
-    // start fetching data
-    fetchAll();
-  }
+      // start fetching data
+      fetchAll();
+    }
 
-  _updateState() {
-    this.setState(appState.toJSO());
-  }
+    _updateState() {
+	this.setState(appState.toJSO());
+    }
 
-  componentDidMount() {
-    appState.subscribe(this._updateState.bind(this));
-  }
-
-  render() {
-    return <RouterInst func={appState} {...this.state}/>;
-  }
+    componentDidMount() {
+	appState.subscribe(this._updateState.bind(this));
+    }
+    
+    render() {
+	return <RouterInst func={appState}/>;
+    }
 }
 
-  const navConfig = {
-      courses: {
+const navConfig = {
+    courses: {
   	route: '/courses',
   	key: '1',
-      },
-      abc: {
+    },
+    abc: {
   	route: '/applicantsbycourse',
   	key: '2',
-      },
-      assigned: {
+    },
+    assigned: {
   	route: '/assigned',
   	key: '3',
-      },
-      unassigned: {
+    },
+    unassigned: {
   	route: '/unassigned',
   	key: '4',
-      },
-      summary: {
+    },
+    summary: {
   	route: '/summary',
   	key: '5',
-      },
-      applicant: {
+    },
+    applicant: {
   	route: '/applicant/:id',
   	key: '6',
-      },
-      logout: {
+    },
+    logout: {
   	route: '/bye',
   	key: '7',
-      }
-  };
+    }
+};
+
 /*** Main app view component ***/
 
 const AppView = props => <RouterInst {...props} />;
@@ -122,21 +123,21 @@ const NavbarInst = props => (
 	<Navbar.Header>
 	<Navbar.Brand>TAPP</Navbar.Brand>
 	</Navbar.Header>
-
-    	<Nav pullLeft activeKey={props.nav.selectedTab} onSelect={props.nav.handleSelectTab}>
+    	<Nav pullLeft activeKey={props.func.getSelectedNavTab()} onSelect={props.func.selectNavTab}>
 
 	<NavItem eventKey={navConfig.courses.key}><Link to={navConfig.courses.route}>Courses</Link></NavItem>
 	<NavItem eventKey={navConfig.abc.key}><Link to={navConfig.abc.route}>Applicants by Course</Link></NavItem>
 	<NavItem eventKey={navConfig.assigned.key}><Link to={navConfig.assigned.route}>All Assigned</Link></NavItem>
 	<NavItem eventKey={navConfig.unassigned.key}><Link to={navConfig.unassigned.route}>All Unassigned</Link></NavItem>
 	<NavItem eventKey={navConfig.summary.key}><Link to={navConfig.summary.route}>Summary</Link></NavItem>
-	{props.nav.selectedApplicant &&
-	 <NavItem eventKey={navConfig.applicant.key}>{props.nav.selectedApplicant}</NavItem>
+	{props.func.getSelectedApplicant() &&
+	 <NavItem eventKey={navConfig.applicant.key}>{props.func.getSelectedApplicant()}</NavItem>
 	}
     </Nav>
 
 	<Nav pullRight>
-	<NavDropdown eventKey={navConfig.logout.key} title={props.nav.role + ':' + props.nav.user} id='nav-dropdown'>
+	<NavDropdown eventKey={navConfig.logout.key}
+    title={props.func.getCurrentUserRole() + ':' + props.func.getCurrentUserName()} id='nav-dropdown'>
 	<MenuItem eventKey={navConfig.logout.key + '.1'}>
 	<Link to={navConfig.logout.route}>Logout</Link>
 	</MenuItem>

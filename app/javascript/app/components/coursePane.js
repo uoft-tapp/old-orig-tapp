@@ -13,7 +13,7 @@ class CoursePane extends React.Component {
 	this.tableFields = ['lastName', 'firstName', 'dept', 'program', 'year'];
     }
     
-    render() {console.log('rerendering course pane with',this.props.courses);
+    render() {
 	let course = this.props.func.getCourseById(this.props.course);
 	if (!course)
 	    return null;
@@ -29,8 +29,8 @@ class CoursePane extends React.Component {
 		<ABCApplicantTable tableHeaders={this.tableHeaders} tableFields={this.tableFields} assigned={true}
 	    {...this.props}/>
 		
-		<ABCTableMenu sortFields={this.tableHeaders} {...this.props.abcView.panelFields[this.props.course]}
-	    {...this.props}/>
+		<ABCTableMenu sortFields={this.tableHeaders}
+	    {...this.props.func.getCoursePanelFields(this.props.course)} {...this.props}/>
 		
 		<ABCApplicantTable tableHeaders={this.tableHeaders} tableFields={this.tableFields} assigned={false}
 	    {...this.props}/>

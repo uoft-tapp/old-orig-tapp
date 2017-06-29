@@ -47,6 +47,7 @@ const initialState = {
 
 class AppState {
     constructor() {
+	// container for application state
         this._data = new Backbone.NestedModel(initialState);
     }
 
@@ -59,6 +60,10 @@ class AppState {
         return this._data.toJSON();
     }
 
+    /************************************
+     ** view state getters and setters **
+     ************************************/
+    
     // select a navbar tab
     selectNavTab(eventKey, applicant_id) {
       if(!this.isFetching()){
@@ -73,6 +78,22 @@ class AppState {
       }
     }
 
+    getSelectedNavTab() {
+	return this._data.get('nav.selectedTab');
+    }
+
+    getSelectedApplicant() {
+	return this._data.get('nav.selectedApplicant');
+    }
+
+    getCurrentUserName() {
+	return this._data.get('nav.user');
+    }
+
+    getCurrentUserRole() {
+	return this._data.get('nav.role');
+    }
+    
     // toggle the selected state of the course that is clicked
     toggleSelectedCourse(course) {
         let selected = this._data.get('courseMenu.selected');
@@ -88,7 +109,11 @@ class AppState {
 
     // check whether a course in the course menu is selected
     isCourseSelected(course) {
-        return this._data.get('courseMenu.selected').includes(course);
+        return this.getSelectedCourses().includes(course);
+    }
+
+    getSelectedCourses() {
+	return this._data.get('courseMenu.selected');
     }
 
     // add a course panel to the ABC view
@@ -218,9 +243,9 @@ class AppState {
 
     // toggle the visibility of a course panel in the ABC view
     toggleCoursePanel(course) {
-        let active = this._data.get('courseMenu.selected');
+        let active = this.getSelectedCourses();
 
-        let panelFields = this._data.get('abcView.panelFields');
+        let panelFields = this.getCoursePanelFields();
 
         if (active.includes(course)) {
             // add course to layout
@@ -235,10 +260,14 @@ class AppState {
         }
     }
 
+    getCoursePanelLayout() {
+	return this._data.get('abcView.layout');
+    }
+
     // toggle a filter on the applicant table
     toggleFilter(course, field) {
-	let i = this._data.get('abcView.panelFields['+course+'].activeFilters').indexOf(field);
-
+	let i = this.getCoursePanelFiltersByCourse(course).indexOf(field);
+	
         if (i != -1)
 	    this._data.remove('abcView.panelFields['+course+'].activeFilters['+i+']');
 	else
@@ -247,7 +276,7 @@ class AppState {
 
     // check whether a filter is active on the applicant table
     isFilterActive(course, field) {
-	return this._data.get('abcView.panelFields['+course+'].activeFilters').includes(field);
+	return this.getCoursePanelFiltersByCourse(course).includes(field);
     }
 
     // check whether any of the given filters are active on the applicant table
@@ -259,10 +288,10 @@ class AppState {
     clearFilters(course) {
 	this._data.set('abcView.panelFields['+course+'].activeFilters', []);
     }
-
+    
     // apply a sort to the applicant table (sorted up initially)
     addSort(course, field) {
-	if (!this._data.get('abcView.panelFields['+course+'].activeSortFields').includes(field + '-up'))
+	if (!this.getCoursePanelSortsByCourse(course).includes(field + '-up'))
             this._data.add('abcView.panelFields['+course+'].activeSortFields', field + '-up');
     }
 
@@ -270,9 +299,9 @@ class AppState {
     toggleSortDir(course, field) {
 	let [name, dir] = field.split('-');
 	let newSort = name + '-' + (dir == 'up' ? 'down' : 'up');
-
-	const sortFields = this._data.get('abcView.panelFields['+course+'].activeSortFields');
-
+	
+	const sortFields = this.getCoursePanelSortsByCourse(course);
+	
 	if (!sortFields.includes(newSort)) {
 	    this._data.unset('abcView.panelFields['+course+'].activeSortFields', {silent: true});
 
@@ -283,12 +312,35 @@ class AppState {
 
     // remove a sort from the applicant table
     clearSort(course, field) {
-	let i = this._data.get('abcView.panelFields['+course+'].activeSortFields').indexOf(field);
+	let i = this.getCoursePanelSortsByCourse(course).indexOf(field);
         this._data.remove('abcView.panelFields['+course+'].activeSortFields['+i+']');
     }
 
-    /** data getters and setters **/
+    isSortActive(course, field) {
+	return this.getCoursePanelSortsByCourse(course).includes(field);
+    }
 
+    getCoursePanelFields() {
+	return this._data.get('abcView.panelFields');
+    }
+    
+    getCoursePanelFieldsByCourse(course) {
+	return this.getCoursePanelFields()[course];
+    }
+
+    getCoursePanelFiltersByCourse(course) {
+	return this.getCoursePanelFieldsByCourse(course).activeFilters;
+    }
+
+    getCoursePanelSortsByCourse(course) {
+	return this.getCoursePanelFieldsByCourse(course).activeSortFields;
+    }
+
+
+    /******************************
+     ** data getters and setters **
+     ******************************/
+    
     // create a new assignment (faked - doesn't propagate to db for now)
     addAssignment(applicant, course, hours) {
 	let assignments = this.getAssignmentsList();
