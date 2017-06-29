@@ -38,7 +38,7 @@ class CourseMenu extends React.Component {
 			<span style={{float: 'right'}}>{val.assignmentCount} /{val.estimatedPositions}</span>
 			</ListGroupItem>);
 	    });
-	console.log('rerendering menu with',this.courses);	
+
 	return (
 		<Panel header='Courses' style={{height: '100%', overflow: 'auto'}}>
 		<ListGroup fill>{list}</ListGroup>

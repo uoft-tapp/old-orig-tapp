@@ -41,7 +41,7 @@ class ABCTableMenu extends React.Component {
 		</ButtonGroup>
 
 		<ButtonGroup style={{paddingLeft: "1vw"}}>
-		{this.props.activeSortFields.map(
+		{this.props.func.getCoursePanelSortsByCourse(this.props.course).map(
 		    (field, index) => {
 			let [name, dir] = field.split('-');
 			
