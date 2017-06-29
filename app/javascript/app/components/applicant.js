@@ -58,6 +58,7 @@ class Applicant extends React.Component {
           case 0:
             return (
               <table className="panel_table">
+                <tbody><tr>
                 <td>
                   <p><b>Last Name: </b>{applicant.lastName}</p>
                   <p><b>UTORIid: </b>{applicant.utorid}</p>
@@ -74,11 +75,13 @@ class Applicant extends React.Component {
                 <td>
                   {this.setAddress(applicant.address)}
                 </td>
+                </tr></tbody>
               </table>
             );
           case 1:
             return (
               <table className="panel_table">
+                <tbody><tr>
                 <td>
                   <b>Enrolled as a U of T graduate student for the TA session? </b>
                   {application.academicAccess?"Yes":"No"}
@@ -87,14 +90,17 @@ class Applicant extends React.Component {
                   <b>Completed a U of T TA training session? </b>
                   {application.taTraining?"Yes":"No"}
                 </td>
+                </tr></tbody>
               </table>
             );
           case 2:
             return (
               <table className="panel_table">
+                <tbody><tr>
                 <td><b>Department: </b>{applicant.dept}</td>
                 <td><b>Program: </b>{applicant.program}</td>
                 <td><b>Year: </b>{applicant.year}</td>
+                </tr></tbody>
               </table>
             );
           case 3:
@@ -104,7 +110,9 @@ class Applicant extends React.Component {
           case 4:
             return(
               <table className="panel_table">
+                <tbody><tr>
                 {this.setPrefs(application.prefs, courses)}
+                </tr></tbody>
               </table>
             );
           case 5:

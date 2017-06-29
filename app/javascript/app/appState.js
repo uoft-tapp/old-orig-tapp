@@ -60,9 +60,17 @@ class AppState {
     }
 
     // select a navbar tab
-    selectNavTab(eventKey, applicant) {
+    selectNavTab(eventKey, applicant_id) {
+      if(!this.isFetching()){
+        let applicant = this._data.get('applicants.list['+applicant_id+']');
+        let applicant_name = applicant.firstName+' '+applicant.lastName;
+  	    this._data.set({'nav.selectedTab': eventKey,
+  			    'nav.selectedApplicant': applicant_id ? applicant_name : null});
+      }
+      else {
         this._data.set({'nav.selectedTab': eventKey,
-                        'nav.selectedApplicant': applicant ? applicant : null});
+  			    'nav.selectedApplicant': applicant_id ? '-' : null});
+      }
     }
 
     // toggle the selected state of the course that is clicked

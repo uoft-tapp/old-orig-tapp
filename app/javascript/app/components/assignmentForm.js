@@ -14,7 +14,7 @@ class AssignmentForm extends React.Component {
   setAssignments(id, assignments, temp_assignments, courses){
 
     if((assignments===undefined)&&(temp_assignments===undefined))
-      return (<td><p>No Assignments</p></td>);
+      return (<tr><td>No Assignments</td></tr>);
     else{
       if(assignments!==undefined){
         return(
@@ -22,7 +22,7 @@ class AssignmentForm extends React.Component {
             <tr>
               <td>{courses[assignment.positionId].code}</td>
               <td>
-                <input type="number" style={{width: '50px'}}
+                <input type="number" style={{width: '50px'}} min="0"
                   onChange={(eventKey)=>(
                     this.detectAssignmentHour(eventKey, index, id)
                   )}
@@ -50,7 +50,7 @@ class AssignmentForm extends React.Component {
           <tr>
             <td>{courses[assignment.positionId].code}</td>
             <td>
-              <input type="number" style={{width: '50px'}}
+              <input type="number" style={{width: '50px'}} min="0"
                 onChange={(eventKey)=>(
                   this.detectTempAssignmentHour(eventKey, index, id)
                 )}
