@@ -31,4 +31,6 @@ footer div p {
 }
 .panel_table td{
   padding-right: 50px;
+  margin-top: 0;
+  vertical-align: top;
 }
