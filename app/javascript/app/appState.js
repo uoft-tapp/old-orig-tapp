@@ -42,59 +42,7 @@ const initialState = {
     courses: { fetching: false, list: null, },
     assignments: { fetching: false, list: null, },
 
-    assignment_form: {
-      panels: [
-        {
-          label: "Personal Information",
-          expanded: true,
-        },
-        {
-          label: "Current Status",
-          expanded: true,
-        },
-        {
-          label: "Current Program Information",
-          expanded: true,
-        },
-        {
-          label: "Current Assignment Status",
-          expanded: true,
-        },
-        {
-          label: "Course Preferences",
-          expanded: true,
-        },
-        {
-          label: "Teaching Experiences",
-          expanded: true,
-        },
-        {
-          label: "Academic Qualifications",
-          expanded: true,
-        },
-        {
-          label: "Technical Skills",
-          expanded: true,
-        },
-        {
-          label: "Availability",
-          expanded: true,
-        },
-        {
-          label: "Other Information",
-          expanded: true,
-        },
-        {
-          label: "Special Need Issues",
-          expanded: true,
-        }
-      ],
-      temp_assignments: {
-      },
-      assignments: {
-      },
-      assignment_input: ""
-    },
+    assignment_form: {panels: [], temp_assignments: {}, assignment_input: ""}
 };
 
 class AppState {
@@ -530,6 +478,13 @@ class AppState {
       let application_fetch = this._data.get('applications.fetching');
       let assignment_fetch = this._data.get('assignments.fetching');
       return course_fetch || applicant_fetch || application_fetch || assignment_fetch;
+    }
+    createAssignmentForm(panels){
+      if(this._data.get('assignment_form.panels').length==0){
+        for(let i=0; i< panels.length; i++){
+          this._data.set('assignment_form.panels['+i+']', {label: panels[i], expanded: true});
+        }
+      }
     }
     setInput(value){
       this._data.set('assignment_form.assignment_input', value)

@@ -1,6 +1,9 @@
 import React from 'react'
 import { Panel } from 'react-bootstrap'
 
+const check = "fa fa-check-circle-o";
+const cross = "fa fa-times-circle-o";
+
 
 class AssignmentForm extends React.Component {
 
@@ -21,7 +24,7 @@ class AssignmentForm extends React.Component {
               <td>
                 <input type="number" style={{width: '50px'}}
                   onChange={(eventKey)=>(
-                    this.detectAssigmentHour(eventKey, index, id)
+                    this.detectAssignmentHour(eventKey, index, id)
                   )}
                   value={assignment.hours}/>
               </td>
@@ -49,7 +52,7 @@ class AssignmentForm extends React.Component {
             <td>
               <input type="number" style={{width: '50px'}}
                 onChange={(eventKey)=>(
-                  this.detectTempAssigmentHour(eventKey, index, id)
+                  this.detectTempAssignmentHour(eventKey, index, id)
                 )}
                 value={assignment.hours}/>
             </td>
@@ -89,11 +92,11 @@ class AssignmentForm extends React.Component {
     }
   }
 
-  detectAssigmentHour(evt, index, id){
+  detectAssignmentHour(evt, index, id){
     this.props.func.updateAssignment(id, index, evt.target.value);
   }
 
-  detectTempAssigmentHour(evt, index, id){
+  detectTempAssignmentHour(evt, index, id){
     this.props.func.updateTempAssignment(id, index, evt.target.value);
   }
 
@@ -122,10 +125,11 @@ class AssignmentForm extends React.Component {
     let assignments = this.props.assignments.list[id];
     let temp_assignments=this.props.assignment_form.temp_assignments[id];
     let courses = this.props.courses.list;
+    let application = this.props.applications.list[id][0];
 
     return (
       <div>
-        <p><b>Application round: </b>110</p>
+        <p><b>Application round: </b>{application.round}</p>
         <table className="panel_table">
           <tbody>
             {this.setAssignments(id, assignments, temp_assignments, courses)}
