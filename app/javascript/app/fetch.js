@@ -152,7 +152,7 @@ function onFetchAssignmentsSuccess(resp, coursePromise) {
 
     coursePromise.then(
 	() => {
-	    appState.setCourseAssignmentCounts(assignmentCounts);
+	    appState.setCoursesAssignmentCount(assignmentCounts);
 	    appState.setFetchingCourseList(false);
 	}
     );

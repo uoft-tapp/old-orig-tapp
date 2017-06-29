@@ -289,8 +289,16 @@ class AppState {
 	    assignments[applicant] = [{ positionId: course, hours: hours }];
 
 	this.setAssignmentList(assignments);
+	this.incrementCourseAssignmentCount(course);
     }
 
+    decrementCourseAssignmentCount(course) {
+	let courses = this.getCoursesList();
+	courses[course].assignmentCount--;
+
+        this.setCourseList(courses);
+    }
+    
     getApplicationById(applicant) {
 	return this.getApplicationsList()[applicant][0];
     }
@@ -369,7 +377,14 @@ class AppState {
     getCourseCodeById(course) {
 	return this.getCourseById(course).code;
     }
+    
+    incrementCourseAssignmentCount(course) {
+	let courses = this.getCoursesList();
+	courses[course].assignmentCount++;
 
+        this.setCourseList(courses);
+    }
+    
     // remove an assignment (faked - doesn't propagate to db for now)
     removeAssignment(applicant, course) {
 	let assignments = this.getAssignmentsList();
@@ -378,6 +393,7 @@ class AppState {
 	assignments[applicant].splice(i, 1);
 
 	this.setAssignmentList(assignments);
+	this.decrementCourseAssignmentCount(course);
     }
     
     setApplicantList(list) {
@@ -409,8 +425,8 @@ class AppState {
         this._data.unset('assignments.list', {silent: true});
         this._data.set('assignments.list', list);
     }
-
-    setCourseAssignmentCounts(counts) {
+    
+    setCoursesAssignmentCount(counts) {
         let courses = this.getCoursesList();
 
         let course;
