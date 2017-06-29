@@ -12,7 +12,6 @@ class AssignmentForm extends React.Component {
   }
 
   setAssignments(id, assignments, temp_assignments, courses){
-
     if((assignments===undefined)&&(temp_assignments===undefined))
       return (<tr><td>No Assignments</td></tr>);
     else{
