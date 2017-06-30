@@ -5,8 +5,10 @@ class ABCTableMenu extends React.Component {
     constructor(props) {
 	super(props);
 
-	this.up = <Glyphicon style={{fontSize: '7pt'}} glyph={'menu-up'}/>;
-	this.down = <Glyphicon style={{fontSize: '7pt'}} glyph={'menu-down'}/>;
+	this.icon = {
+	    '1': <Glyphicon style={{fontSize: '7pt'}} glyph={'menu-up'}/>,
+	    '-1': <Glyphicon style={{fontSize: '7pt'}} glyph={'menu-down'}/>
+	};
     }
     
     render() {
@@ -43,14 +45,15 @@ class ABCTableMenu extends React.Component {
 		<ButtonGroup style={{paddingLeft: "1vw"}}>
 		{this.props.func.getCoursePanelSortsByCourse(this.props.course).map(
 		    (field, index) => {
-			let [name, dir] = field.split('-');
+			let dir = field > 0 ? 1 : -1;
+			let name = this.props.config[field * dir].header;
 			
 			return (
-				<DropdownButton title={<span>{name} {this[dir]}</span>} key={"sort-" + field}
+				<DropdownButton title={<span>{name} {this.icon[dir]}</span>} key={"sort-" + field}
 			    id={"sort-" + field} noCaret>
 				
 				<MenuItem onSelect={() => this.props.func.toggleSortDir(this.props.course, field)}>
-				{name} {this[dir == 'up' ? 'down' : 'up']}</MenuItem>
+				{name} {this.icon[-dir]}</MenuItem>
 				
 				<MenuItem onSelect={() => this.props.func.clearSort(this.props.course, field)}>
 				Clear field</MenuItem>
@@ -58,12 +61,13 @@ class ABCTableMenu extends React.Component {
 				</DropdownButton>
 			);
 		    })}
+
 		<DropdownButton title="Add sort field" id="sort-dropdown" bsStyle="info" noCaret>
-		{this.props.config.map(
-		    field => (<MenuItem key={"sort-" + field.header}
-			      onSelect={() => this.props.func.addSort(this.props.course, field.header)}>
-			      {field.header}
-			      </MenuItem>)
+		{this.props.config.slice(1).map(
+		    (field, index) => (<MenuItem key={"sort-" + field.header}
+				       onSelect={() => this.props.func.addSort(this.props.course, index+1)}>
+				       {field.header}
+				       </MenuItem>)
 		)}
 		</DropdownButton>
 		</ButtonGroup>
