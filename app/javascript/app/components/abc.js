@@ -20,7 +20,7 @@ class ABC extends React.Component {
 
 	case 1:
 	    return (<div><CoursePane key={layout[0]} course={layout[0]} {...this.props}/></div>);
-	
+
 	case 2:
 	    let course1, course2, orient;
 	    if (layout.length == 1) {
@@ -107,13 +107,13 @@ class ABC extends React.Component {
 			</SplitPane>
 			</SplitPane>
 		);}
-	
+
 	    break;
 
 	case 4:
 	    return (
 		    <SplitPane split='horizontal' {...paneProps}>
-		    
+
 		    <SplitPane split='vertical' {...paneProps}>
 		    <CoursePane key={layout[0][0]} course={layout[0][0]} {...this.props}/>
 		    <CoursePane key={layout[0][1]} course={layout[0][1]} {...this.props}/>
@@ -123,7 +123,7 @@ class ABC extends React.Component {
 		    <CoursePane key={layout[1][0]} course={layout[1][0]} {...this.props}/>
 		    <CoursePane key={layout[1][1]} course={layout[1][1]} {...this.props}/>
 		    </SplitPane>
-		    
+
 		</SplitPane>
 	    );
 	}
@@ -142,7 +142,7 @@ class ABC extends React.Component {
     selectThisTab() {
 	this.props.func.selectNavTab(this.props.navKey);
     }
-    
+
     componentDidMount() {
 	this.selectThisTab();
     }
