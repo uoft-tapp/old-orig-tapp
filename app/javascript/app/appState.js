@@ -238,7 +238,7 @@ class AppState {
     // toggle a filter on the applicant table
     toggleFilter(course, field) {
 	let i = this._data.get('abcView.panelFields['+course+'].activeFilters').indexOf(field);
-	
+
         if (i != -1)
 	    this._data.remove('abcView.panelFields['+course+'].activeFilters['+i+']');
 	else
@@ -270,12 +270,12 @@ class AppState {
     toggleSortDir(course, field) {
 	let [name, dir] = field.split('-');
 	let newSort = name + '-' + (dir == 'up' ? 'down' : 'up');
-	
+
 	const sortFields = this._data.get('abcView.panelFields['+course+'].activeSortFields');
-	
+
 	if (!sortFields.includes(newSort)) {
 	    this._data.unset('abcView.panelFields['+course+'].activeSortFields', {silent: true});
-	
+
 	    sortFields[sortFields.indexOf(field)] = newSort;
 	    this._data.set('abcView.panelFields['+course+'].activeSortFields', sortFields);
 	}
@@ -288,7 +288,7 @@ class AppState {
     }
 
     /** data getters and setters **/
-    
+
     // create a new assignment (faked - doesn't propagate to db for now)
     addAssignment(applicant, course, hours) {
 	let assignments = this.getAssignmentsList();
@@ -308,11 +308,11 @@ class AppState {
 
         this.setCourseList(courses);
     }
-    
+
     getApplicationById(applicant) {
 	return this.getApplicationsList()[applicant][0];
     }
-    
+
     // get applicants who are assigned to course
     getApplicantsAssignedToCourse(course) {
 	let assignments = this.getAssignmentsList(), applicants = this.getApplicantsList(), filteredApplicants = [];
@@ -355,10 +355,10 @@ class AppState {
     // check whether this course is a preference for this applicant
     getApplicationPreference(applicant, course) {
 	let prefs = this.getApplicationById(applicant).prefs;
-	
+
 	return prefs.some(pref => (pref.positionId == course) && pref.preferred);
     }
-    
+
     getApplicationsList() {
 	return this._data.get('applications.list');
     }
@@ -377,7 +377,7 @@ class AppState {
 	else
 	    return [];
     }
-	
+
     getAssignmentsList() {
 	return this._data.get('assignments.list');
     }
@@ -393,14 +393,14 @@ class AppState {
     getCourseCodeById(course) {
 	return this.getCourseById(course).code;
     }
-    
+
     incrementCourseAssignmentCount(course) {
 	let courses = this.getCoursesList();
 	courses[course].assignmentCount++;
 
         this.setCourseList(courses);
     }
-    
+
     // remove an assignment (faked - doesn't propagate to db for now)
     removeAssignment(applicant, course) {
 	let assignments = this.getAssignmentsList();
@@ -411,7 +411,7 @@ class AppState {
 	this.setAssignmentList(assignments);
 	this.decrementCourseAssignmentCount(course);
     }
-    
+
     setApplicantList(list) {
         this._data.unset('applicants.list', {silent: true});
         this._data.set('applicants.list', list);
@@ -424,7 +424,7 @@ class AppState {
 
     setApplicationRounds(courses) {
       let applications = this.getApplicationsList();
-        
+
       // assumes that all courses in a single application will be part of the same round, and that all applicants
       // have applied to at least one course
       let applicant;
@@ -441,7 +441,7 @@ class AppState {
         this._data.unset('assignments.list', {silent: true});
         this._data.set('assignments.list', list);
     }
-    
+
     setCoursesAssignmentCount(counts) {
         let courses = this.getCoursesList();
 
@@ -461,7 +461,7 @@ class AppState {
     setFetchingApplicantList(fetching) {
         this._data.set('applicants.fetching', fetching);
     }
-    
+
     setFetchingApplicationList(fetching) {
         this._data.set('applications.fetching', fetching);
     }
@@ -469,7 +469,7 @@ class AppState {
     setFetchingAssignmentList(fetching) {
         this._data.set('assignments.fetching', fetching);
     }
-    
+
     setFetchingCourseList(fetching) {
         this._data.set('courses.fetching', fetching);
     }
