@@ -37,14 +37,14 @@ function onFetchApplicantsSuccess(resp) {
 	}
     });
 
-    appState.setApplicantList(applicants);
-    appState.setFetchingApplicantList(false);
+    appState.setApplicantsList(applicants);
+    appState.setFetchingApplicantsList(false);
 
     return resp;
 }
 
 function fetchApplicants() {
-    appState.setFetchingApplicantList(true);
+    appState.setFetchingApplicantsList(true);
 
     return fetchHelper('/applicants', onFetchApplicantsSuccess, (error) => {console.log(error);});
 }
@@ -75,13 +75,13 @@ function onFetchApplicationsSuccess(resp) {
 	    applications[app.applicant_id] = [newApp];
     });
 
-    appState.setApplicationList(applications);
+    appState.setApplicationsList(applications);
 
     return resp;
 }
 
 function fetchApplications() {
-    appState.setFetchingApplicationList(true);
+    appState.setFetchingApplicationsList(true);
 
     return fetchHelper('/applications', onFetchApplicationsSuccess, (error) => {console.log(error);});
 }
@@ -102,9 +102,7 @@ function onFetchCoursesSuccess(resp) {
 		default: return 'Other';
 		}
 	    })(course.campus_code),
-	    instructors: course.instructors.map(instr => ({
-		id: instr.id, name: instr.name
-	    })),
+	    instructors: course.instructors.map(instr => instr.id),
 	    estimatedPositions: course.estimated_count,
 	    estimatedEnrol: course.estimated_enrolment,
 	    positionHours: course.hours,
@@ -116,13 +114,13 @@ function onFetchCoursesSuccess(resp) {
 	rounds[course.id] = course.round_id;
     });
 
-    appState.setCourseList(courses);
+    appState.setCoursesList(courses);
 
     return courses;
 }
 
 function fetchCourses() {
-    appState.setFetchingCourseList(true);
+    appState.setFetchingCoursesList(true);
 
     return fetchHelper('/positions',
 		       (resp) => onFetchCoursesSuccess(resp),
@@ -148,18 +146,39 @@ function onFetchAssignmentsSuccess(resp) {
 	assignmentCounts[ass.position_id] = count ? count+1 : 1;
     });
 
-    appState.setAssignmentList(assignments);
-    appState.setFetchingAssignmentList(false);
+    appState.setAssignmentsList(assignments);
+    appState.setFetchingAssignmentsList(false);
 
     // return assignmentCounts, to be used to populate the corresponding courses field
     return assignmentCounts;
 }
 
 function fetchAssignments() {
-    appState.setFetchingAssignmentList(true);
+    appState.setFetchingAssignmentsList(true);
 
     return fetchHelper('/assignments',
 		       (resp) => onFetchAssignmentsSuccess(resp),
+		       (error) => {console.log(error);});
+}
+
+function onFetchInstructorsSuccess(resp) {
+    let instructors = {};
+
+    resp.forEach(instr => {
+	instructors[instr.id] = {name: instr.name, email: instr.email};
+    });
+
+    appState.setInstructorsList(instructors);
+    appState.setFetchingInstructorsList(false);
+
+    return resp;
+}
+
+function fetchInstructors() {
+    appState.setFetchingInstructorsList(true);
+
+    return fetchHelper('/instructors',
+		       (resp) => onFetchInstructorsSuccess(resp),
 		       (error) => {console.log(error);});
 }
 
@@ -168,12 +187,13 @@ function fetchAll() {
     let applicationPromise = fetchApplications();
     let coursePromise = fetchCourses();
     let assignmentPromise = fetchAssignments();
+    let instructorsPromise = fetchInstructors();
 
     // add rounds to applications from courses, once both have been fetched
     Promise.all([applicationPromise, coursePromise]).then(
 	([_, courses]) => {
 	    appState.setApplicationRounds(courses);
-	    appState.setFetchingApplicationList(false);
+	    appState.setFetchingApplicationsList(false);
 	}
     );
 
@@ -181,7 +201,7 @@ function fetchAll() {
     Promise.all([coursePromise, assignmentPromise]).then(
 	([_, assignmentCounts]) => {
 	    appState.setCoursesAssignmentCount(assignmentCounts);
-	    appState.setFetchingCourseList(false);
+	    appState.setFetchingCoursesList(false);
 	}
     );
 }

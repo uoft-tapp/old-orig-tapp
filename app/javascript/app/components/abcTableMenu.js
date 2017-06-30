@@ -55,7 +55,7 @@ class ABCTableMenu extends React.Component {
 				<MenuItem onSelect={() => this.props.func.toggleSortDir(this.props.course, field)}>
 				{name} {this.icon[-dir]}</MenuItem>
 				
-				<MenuItem onSelect={() => this.props.func.clearSort(this.props.course, field)}>
+				<MenuItem onSelect={() => this.props.func.removeSort(this.props.course, field)}>
 				Clear field</MenuItem>
 				
 				</DropdownButton>
