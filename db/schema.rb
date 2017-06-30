@@ -62,17 +62,6 @@ ActiveRecord::Schema.define(version: 20170626185602) do
     t.string "name", null: false
   end
 
-  create_table "courses", primary_key: "code", id: :string, force: :cascade do |t|
-    t.integer "campus_code", null: false
-    t.bigint "instructor_id"
-    t.text "course_name"
-    t.integer "estimated_enrolment"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["campus_code"], name: "index_courses_on_campus_code"
-    t.index ["instructor_id"], name: "index_courses_on_instructor_id"
-  end
-
   create_table "instructors", force: :cascade do |t|
     t.string "name"
     t.string "email"
@@ -120,8 +109,6 @@ ActiveRecord::Schema.define(version: 20170626185602) do
   add_foreign_key "applications", "applicants"
   add_foreign_key "assignments", "applicants"
   add_foreign_key "assignments", "positions"
-  add_foreign_key "courses", "campus", column: "campus_code", primary_key: "code"
-  add_foreign_key "courses", "instructors"
   add_foreign_key "preferences", "applications"
   add_foreign_key "preferences", "positions"
 end
