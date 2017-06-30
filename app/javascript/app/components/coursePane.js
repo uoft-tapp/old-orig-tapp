@@ -6,11 +6,51 @@ import { ABCApplicantTable } from './abcApplicantTable.js'
 class CoursePane extends React.Component {
     constructor(props) {
 	super(props);
-	
-	this.tableHeaders = ['','Last Name', 'First Name', 'Dept.', 'Prog.', 'Year', 'Pref.', 'Other'];
-	// fields from applicant list corresponding to headers above (ordered)
-	// note that not all headers map directly to applicant list fields
-	this.tableFields = ['lastName', 'firstName', 'dept', 'program', 'year'];
+
+	// table/menu configuration
+	this.fields = [
+	    {
+		header: '',
+		data: p => (
+			<input type='checkbox' defaultChecked={p.assigned} onClick={() => props.func.addAssignment(
+			    p.applicantId, p.course, props.func.getCourseById(p.course).positionHours)}/>
+		),
+	    },
+	    {
+		header: 'Last Name',
+		data: p => p.applicant.lastName,
+	    },
+	    {
+		header: 'First Name',
+		data: p => p.applicant.firstName,
+	    },
+	    {
+		header: 'Dept.',
+		data: p => p.applicant.dept,
+	    },
+	    {
+		header: 'Prog.',
+		data: p => p.applicant.program,
+	    },
+	    {
+		header: 'Year',
+		data: p => p.applicant.year,
+	    },
+	    {
+		header: 'Pref.',
+		data: p => (props.func.getApplicationPreference(p.applicantId, p.course) ?
+			    <i className='fa fa-check'/> : ''
+			   ),
+	    },
+	    {
+		header: 'Other',
+		data: p => (
+		    props.func.getAssignmentsByApplicant(p.applicantId).map(
+			ass => (ass.positionId == p.course) ? '' : props.func.getCourseCodeById(ass.positionId)
+		    ).join(' ')
+		),
+	    }
+	];
     }
     
     render() {
@@ -26,14 +66,12 @@ class CoursePane extends React.Component {
 			this.props.func.toggleCoursePanel(this.props.course);
 		    }}></i>
 		    </span>}>
-		<ABCApplicantTable tableHeaders={this.tableHeaders} tableFields={this.tableFields} assigned={true}
-	    {...this.props}/>
+		<ABCApplicantTable config={this.fields} assigned={true} {...this.props}/>
 		
-		<ABCTableMenu sortFields={this.tableHeaders}
-	    {...this.props.func.getCoursePanelFields(this.props.course)} {...this.props}/>
+	    	<ABCTableMenu config={this.fields}
+	    {...this.props.func.getCoursePanelFieldsByCourse(this.props.course)} {...this.props}/>	
 		
-		<ABCApplicantTable tableHeaders={this.tableHeaders} tableFields={this.tableFields} assigned={false}
-	    {...this.props}/>
+		<ABCApplicantTable config={this.fields} assigned={false} {...this.props}/>
 		</Panel>
 	);
     }

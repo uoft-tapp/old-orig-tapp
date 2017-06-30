@@ -15,7 +15,7 @@ class ABCTableMenu extends React.Component {
 	
 	let dropSelect = (eventKey) => this.props.func.toggleFilter(this.props.course, eventKey);
 	let isActive = (eventKey) => this.props.func.isFilterActive(this.props.course, eventKey);
-	
+
 	return (
 		<div style={{marginBottom: '1vh'}}>
 		<ButtonGroup>
@@ -59,10 +59,10 @@ class ABCTableMenu extends React.Component {
 			);
 		    })}
 		<DropdownButton title="Add sort field" id="sort-dropdown" bsStyle="info" noCaret>
-		{this.props.sortFields.map(
-		    field => (<MenuItem key={"sort-" + field}
-			      onSelect={() => this.props.func.addSort(this.props.course, field)}>
-			      {field}
+		{this.props.config.map(
+		    field => (<MenuItem key={"sort-" + field.header}
+			      onSelect={() => this.props.func.addSort(this.props.course, field.header)}>
+			      {field.header}
 			      </MenuItem>)
 		)}
 		</DropdownButton>
