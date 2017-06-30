@@ -1,4 +1,3 @@
-//import _ from 'underscore'
 import Backbone from 'backbone'
 import NestedModel from 'backbone-nested'
 
@@ -35,14 +34,20 @@ const initialState = {
     // unassigned view
     unassignedView: null,
 
+    // assignment form used by applicant view
+    assignmentForm: {
+	panels: [],
+	tempAssignments: {},
+	assignmentInput: "",
+    },
+
     /** DB data **/
 
     applicants: { fetching: false, list: null, },
     applications: { fetching: false, list: null, },
-    courses: { fetching: false, list: null, },
     assignments: { fetching: false, list: null, },
-
-    assignment_form: {panels: [], temp_assignments: {}, assignment_input: ""}
+    courses: { fetching: false, list: null, },
+    instructors: { fetching: false, list: null, },
 };
 
 class AppState {
@@ -64,50 +69,6 @@ class AppState {
      ** view state getters and setters **
      ************************************/
     
-    // select a navbar tab
-    selectNavTab(eventKey, applicant) {
-        this._data.set({'nav.selectedTab': eventKey,
-  			'nav.selectedApplicant': applicant ? applicant : null});
-    }
-
-    getSelectedNavTab() {
-	return this._data.get('nav.selectedTab');
-    }
-
-    getSelectedApplicant() {
-	return this._data.get('nav.selectedApplicant');
-    }
-
-    getCurrentUserName() {
-	return this._data.get('nav.user');
-    }
-
-    getCurrentUserRole() {
-	return this._data.get('nav.role');
-    }
-    
-    // toggle the selected state of the course that is clicked
-    toggleSelectedCourse(course) {
-        let selected = this._data.get('courseMenu.selected');
-        let i = selected.indexOf(course);
-
-        if (i == -1) {
-            if (selected.length < 4)
-                this._data.add('courseMenu.selected', course);
-        } else {
-            this._data.remove('courseMenu.selected[' + i + ']');
-        };
-    }
-
-    // check whether a course in the course menu is selected
-    isCourseSelected(course) {
-        return this.getSelectedCourses().includes(course);
-    }
-
-    getSelectedCourses() {
-	return this._data.get('courseMenu.selected');
-    }
-
     // add a course panel to the ABC view
     addCoursePanel(course, activeCount) {
         let layout = this._data.get('abcView.layout');
@@ -169,6 +130,91 @@ class AppState {
         }
 
         return layout;
+    }
+
+    // apply a sort to the applicant table (sorted up initially)
+    addSort(course, field) {
+	if (!this.getCoursePanelSortsByCourse(course).includes(field))
+            this._data.add('abcView.panelFields['+course+'].activeSortFields', field);
+    }
+
+    // check whether any of the given filters are active on the applicant table
+    anyFilterActive(course, fields) {
+	return fields.some((field) => this.isFilterActive(course, field));
+    }
+
+    // remove all active filters on the applicant table
+    clearFilters(course) {
+	this._data.set('abcView.panelFields['+course+'].activeFilters', []);
+    }
+
+    createAssignmentForm(panels) {
+	if (this.getAssignmentForm().panels.length == 0)
+            this._data.set('assignmentForm.panels', panels.map(panel => ({label: panel, expanded: true})));
+    }
+
+    getAssignmentForm() {
+	return this._data.get('assignmentForm');
+    }
+
+    getCoursePanelFields() {
+	return this._data.get('abcView.panelFields');
+    }
+    
+    getCoursePanelFieldsByCourse(course) {
+	return this.getCoursePanelFields()[course];
+    }
+
+    getCoursePanelFiltersByCourse(course) {
+	return this.getCoursePanelFieldsByCourse(course).activeFilters;
+    }
+    
+    getCoursePanelLayout() {
+	return this._data.get('abcView.layout');
+    }
+
+    getCoursePanelSortsByCourse(course) {
+	return this.getCoursePanelFieldsByCourse(course).activeSortFields;
+    }
+
+    getCurrentUserName() {
+	return this._data.get('nav.user');
+    }
+
+    getCurrentUserRole() {
+	return this._data.get('nav.role');
+    }
+
+    getSelectedCourses() {
+	return this._data.get('courseMenu.selected');
+    }
+
+    getSelectedNavTab() {
+	return this._data.get('nav.selectedTab');
+    }
+
+    getSelectedApplicant() {
+	return this._data.get('nav.selectedApplicant');
+    }
+
+    // check whether a course in the course menu is selected
+    isCourseSelected(course) {
+        return this.getSelectedCourses().includes(course);
+    }
+
+    // check whether a filter is active on the applicant table
+    isFilterActive(course, field) {
+	return this.getCoursePanelFiltersByCourse(course).includes(field);
+    }
+
+    // check whether a panel is expanded in the applicant view
+    isPanelExpanded(index) {
+	return this._data.get('assignmentForm.panels['+index+'].expanded')
+    }
+    
+    // check whether a sort is active on the applicant table
+    isSortActive(course, field) {
+	return this.getCoursePanelSortsByCourse(course).includes(field);
     }
 
     // remove a course panel from the ABC view
@@ -233,6 +279,22 @@ class AppState {
         return layout;
     }
 
+    // remove a sort from the applicant table
+    removeSort(course, field) {
+	let i = this.getCoursePanelSortsByCourse(course).indexOf(field);
+        this._data.remove('abcView.panelFields['+course+'].activeSortFields['+i+']');
+    }
+
+    setInput(value){
+	this._data.set('assignmentForm.assignmentInput', value);
+    }
+
+    // select a navbar tab
+    selectNavTab(eventKey, applicant) {
+        this._data.set({'nav.selectedTab': eventKey,
+  			'nav.selectedApplicant': applicant ? applicant : null});
+    }
+    
     // toggle the visibility of a course panel in the ABC view
     toggleCoursePanel(course) {
         let active = this.getSelectedCourses();
@@ -252,10 +314,11 @@ class AppState {
         }
     }
 
-    getCoursePanelLayout() {
-	return this._data.get('abcView.layout');
+    // toggle the expanded state of a panel in the applicant assignment form component
+    togglePanelExpanded(index){
+	this._data.set('assignmentForm.panels['+index+'].expanded', !this.isPanelExpanded(index));
     }
-
+    
     // toggle a filter on the applicant table
     toggleFilter(course, field) {
 	let i = this.getCoursePanelFiltersByCourse(course).indexOf(field);
@@ -266,26 +329,17 @@ class AppState {
             this._data.add('abcView.panelFields['+course+'].activeFilters', field);
     }
 
-    // check whether a filter is active on the applicant table
-    isFilterActive(course, field) {
-	return this.getCoursePanelFiltersByCourse(course).includes(field);
-    }
+    // toggle the selected state of the course that is clicked
+    toggleSelectedCourse(course) {
+        let selected = this._data.get('courseMenu.selected');
+        let i = selected.indexOf(course);
 
-    // check whether any of the given filters are active on the applicant table
-    anyFilterActive(course, fields) {
-	return fields.some((field) => this.isFilterActive(course, field));
-    }
-
-    // remove all active filters on the applicant table
-    clearFilters(course) {
-	this._data.set('abcView.panelFields['+course+'].activeFilters', []);
-    }
-    
-    // apply a sort to the applicant table (sorted up initially)
-    addSort(course, field) {
-	if (!this.getCoursePanelSortsByCourse(course).includes(field))
-            this._data.add('abcView.panelFields['+course+'].activeSortFields', field);
-	console.log(this.getCoursePanelSortsByCourse(course));
+        if (i == -1) {
+            if (selected.length < 4)
+                this._data.add('courseMenu.selected', course);
+        } else {
+            this._data.remove('courseMenu.selected[' + i + ']');
+        };
     }
 
     // toggle the sort direction of the sort currently applied to the applicant table
@@ -298,32 +352,6 @@ class AppState {
 	    sortFields[sortFields.indexOf(field)] = -field;
 	    this._data.set('abcView.panelFields['+course+'].activeSortFields', sortFields);
 	}
-    }
-
-    // remove a sort from the applicant table
-    clearSort(course, field) {
-	let i = this.getCoursePanelSortsByCourse(course).indexOf(field);
-        this._data.remove('abcView.panelFields['+course+'].activeSortFields['+i+']');
-    }
-
-    isSortActive(course, field) {
-	return this.getCoursePanelSortsByCourse(course).includes(field);
-    }
-
-    getCoursePanelFields() {
-	return this._data.get('abcView.panelFields');
-    }
-    
-    getCoursePanelFieldsByCourse(course) {
-	return this.getCoursePanelFields()[course];
-    }
-
-    getCoursePanelFiltersByCourse(course) {
-	return this.getCoursePanelFieldsByCourse(course).activeFilters;
-    }
-
-    getCoursePanelSortsByCourse(course) {
-	return this.getCoursePanelFieldsByCourse(course).activeSortFields;
     }
 
 
@@ -344,6 +372,17 @@ class AppState {
 	this.incrementCourseAssignmentCount(course);
     }
 
+    // check if any data is still being fetched
+    anyFetching(){
+	return [
+	    this.getCoursesList() == null, this.fetchingCourses(),
+	    this.getInstructorsList() == null, this.fetchingInstructors(),
+	    this.getApplicantsList() == null, this.fetchingApplicants(),
+	    this.getApplicationsList() == null, this.fetchingApplications(),
+	    this.getAssignmentsList() == null, this.fetchingAssignments()
+	].some(val => val);
+    }
+
     decrementCourseAssignmentCount(course) {
 	let courses = this.getCoursesList();
 	courses[course].assignmentCount--;
@@ -351,8 +390,29 @@ class AppState {
         this.setCourseList(courses);
     }
 
-    getApplicationById(applicant) {
-	return this.getApplicationsList()[applicant][0];
+    // check if applicants are being fetched
+    fetchingApplicants() {
+	return this._data.get('applicants.fetching');
+    }
+    
+    // check if applications are being fetched
+    fetchingApplications() {
+	return this._data.get('applications.fetching');
+    }
+    
+    // check if assignments are being fetched
+    fetchingAssignments() {
+	return this._data.get('assignments.fetching');
+    }
+    
+    // check if courses are being fetched
+    fetchingCourses() {
+	return this._data.get('courses.fetching');
+    }
+
+    // check if instructors are being fetched
+    fetchingInstructors() {
+	return this._data.get('instructors.fetching');
     }
 
     // get applicants who are assigned to course
@@ -368,6 +428,10 @@ class AppState {
 	return filteredApplicants;
     }
 
+    getApplicantById(applicant) {
+	return this.getApplicantsList()[applicant];
+    }
+    
     getApplicantsList() {
 	return this._data.get('applicants.list');
     }
@@ -394,6 +458,10 @@ class AppState {
 	    ([key, val]) => !assignments[key] || !(assignments[key].some(ass => ass.positionId == course)));
     }
 
+    getApplicationById(applicant) {
+	return this.getApplicationsList()[applicant][0];
+    }
+
     // check whether this course is a preference for this applicant
     getApplicationPreference(applicant, course) {
 	let prefs = this.getApplicationById(applicant).prefs;
@@ -403,12 +471,6 @@ class AppState {
 
     getApplicationsList() {
 	return this._data.get('applications.list');
-    }
-
-    /** data setters **/
-
-    setFetchingApplicantList(fetching) {
-	    this._data.set('applicants.fetching', fetching);
     }
 
     getAssignmentsByApplicant(applicant) {
@@ -436,6 +498,10 @@ class AppState {
 	return this.getCourseById(course).code;
     }
 
+    getInstructorsList() {
+	return this._data.get('instructors.list');
+    }
+
     incrementCourseAssignmentCount(course) {
 	let courses = this.getCoursesList();
 	courses[course].assignmentCount++;
@@ -454,32 +520,32 @@ class AppState {
 	this.decrementCourseAssignmentCount(course);
     }
 
-    setApplicantList(list) {
+    setApplicantsList(list) {
         this._data.unset('applicants.list', {silent: true});
         this._data.set('applicants.list', list);
     }
 
-    setApplicationList(list) {
+    setApplicationsList(list) {
         this._data.unset('applications.list', {silent: true});
         this._data.set('applications.list', list);
     }
 
     setApplicationRounds(courses) {
-      let applications = this.getApplicationsList();
+	let applications = this.getApplicationsList();
 
-      // assumes that all courses in a single application will be part of the same round, and that all applicants
-      // have applied to at least one course
-      let applicant;
-      for (applicant in applications) {
-          applications[applicant].forEach((app, index) => {
-            applications[applicant][index].round = courses[app.prefs[0].positionId].round;
-          });
-      }
-
-        this.setApplicationList(applications);
+	// assumes that all courses in a single application will be part of the same round, and that all applicants
+	// have applied to at least one course
+	let applicant;
+	for (applicant in applications) {
+            applications[applicant].forEach((app, index) => {
+		applications[applicant][index].round = courses[app.prefs[0].positionId].round;
+            });
+	}
+	
+	this.setApplicationsList(applications);
     }
 
-    setAssignmentList(list) {
+    setAssignmentsList(list) {
         this._data.unset('assignments.list', {silent: true});
         this._data.set('assignments.list', list);
     }
@@ -492,43 +558,41 @@ class AppState {
             courses[course].assignmentCount = counts[course];
         }
 
-        this.setCourseList(courses);
+        this.setCoursesList(courses);
     }
 
-    setCourseList(list) {
+    setCoursesList(list) {
         this._data.unset('courses.list', {silent: true});
         this._data.set('courses.list', list);
     }
 
-    setFetchingApplicantList(fetching) {
+    setFetchingApplicantsList(fetching) {
         this._data.set('applicants.fetching', fetching);
     }
 
-    setFetchingApplicationList(fetching) {
+    setFetchingApplicationsList(fetching) {
         this._data.set('applications.fetching', fetching);
     }
 
-    setFetchingAssignmentList(fetching) {
+    setFetchingAssignmentsList(fetching) {
         this._data.set('assignments.fetching', fetching);
     }
 
-    setFetchingCourseList(fetching) {
+    setFetchingCoursesList(fetching) {
         this._data.set('courses.fetching', fetching);
     }
-
-    setAssignmentList(list) {
-      this._data.unset('assignment.list', {silent: true});
-      this._data.set('assignments.list', list);
+    
+    setFetchingInstructorsList(fetching) {
+        this._data.set('instructors.fetching', fetching);
     }
+    
+    setInstructorsList(list) {
+        this._data.unset('instructors.list', {silent: true});
+        this._data.set('instructors.list', list);
+    }
+
 
     /*For Assignment Form*/
-    isFetching(){
-      let course_fetch = this._data.get('courses.fetching');
-      let applicant_fetch = this._data.get('applicants.fetching');
-      let application_fetch = this._data.get('applications.fetching');
-      let assignment_fetch = this._data.get('assignments.fetching');
-      return course_fetch || applicant_fetch || application_fetch || assignment_fetch;
-    }
 
     jsonToURI(json){
       let i = 0;
@@ -565,49 +629,35 @@ class AppState {
       });
     }
 
-    createAssignmentForm(panels){
-      if(this._data.get('assignment_form.panels').length==0){
-        for(let i=0; i< panels.length; i++){
-          this._data.set('assignment_form.panels['+i+']', {label: panels[i], expanded: true});
-        }
-      }
-    }
-    setInput(value){
-      this._data.set('assignment_form.assignment_input', value)
-    }
-    setExpanded(index){
-      this._data.set('assignment_form.panels['+index+'].expanded',
-        !this._data.get('assignment_form.panels['+index+'].expanded'));
-    }
     addTempAssignment(applicantId, positionId, hours){
-      if(this._data.get('assignment_form.temp_assignments['+applicantId+']')===undefined)
-        this._data.set('assignment_form.temp_assignments['+applicantId+']', []);
+      if(this._data.get('assignmentForm.tempAssignments['+applicantId+']')===undefined)
+        this._data.set('assignmentForm.tempAssignments['+applicantId+']', []);
 
-      this._data.get('assignment_form.temp_assignments['+applicantId+']').push(
+      this._data.get('assignmentForm.tempAssignments['+applicantId+']').push(
           {positionId: positionId, hours: hours});
-      this._data.set('assignment_form.temp_assignments['+applicantId+']',
-        this._data.get('assignment_form.temp_assignments['+applicantId+']'));
+      this._data.set('assignmentForm.tempAssignments['+applicantId+']',
+        this._data.get('assignmentForm.tempAssignments['+applicantId+']'));
     }
     deleteTempAssignment(applicantId, index){
-      this._data.remove('assignment_form.temp_assignments['+applicantId+']['+index+']')
+      this._data.remove('assignmentForm.tempAssignments['+applicantId+']['+index+']')
     }
     updateTempAssignment(applicantId, index, hours){
-      this._data.set('assignment_form.temp_assignments['+applicantId+']['+index+'].hours', hours)
+      this._data.set('assignmentForm.tempAssignments['+applicantId+']['+index+'].hours', hours)
     }
     addAssignment(applicantId, index){
       if(this._data.get('assignments.list['+applicantId+']')===undefined)
         this._data.set('assignments.list['+applicantId+']', []);
 
-      let temp_assignment = this._data.get('assignment_form.temp_assignments['
+      let tempAssignment = this._data.get('assignmentForm.tempAssignments['
         +applicantId+']['+index+']');
 
       this.routeAction('/applicants/'+applicantId+'/assignments', 'post',
-        {position_id: temp_assignment.positionId, hours: temp_assignment.hours},
+        {position_id: tempAssignment.positionId, hours: tempAssignment.hours},
           "could not add Assignment", (res)=>{
 
-          temp_assignment["id"]= res.id;
-          this._data.get('assignments.list['+applicantId+']').push(temp_assignment);
-          this._data.remove('assignment_form.temp_assignments['+applicantId+']['+index+']');
+          tempAssignment["id"]= res.id;
+          this._data.get('assignments.list['+applicantId+']').push(tempAssignment);
+          this._data.remove('assignmentForm.tempAssignments['+applicantId+']['+index+']');
         });
 
     }
