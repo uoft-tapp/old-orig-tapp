@@ -3,47 +3,14 @@ import { Table } from 'react-bootstrap'
 
 const THeader = props => (
 	<thead><tr>
-	{props.fields.map((field, i) => <th key={'header-'+i}>{field}</th>)}
+	{props.config.map((field, i) => <th key={'header-'+i}>{field.header}</th>)}
     </tr></thead>
 );
 
-const UnassignedApplicantRow = props => (
+const ApplicantRow = props => (
 	<tr key={'applicant-'+props.id+'-row'}>
-	<td><input type='checkbox' defaultChecked={false}
-    onClick={() => props.func.addAssignment(props.id, props.course,
-					    props.func.getCourseById(props.course).positionHours)}/></td>
-	
-    {props.fields.map(field => <td key={'applicant-'+props.id+field}>{props.applicant[field]}</td>)}
-
-	<td key='applicant-pref'>
-	{props.func.getApplicationPreference(props.id, props.course) && <i className='fa fa-check'/>}
-    </td>
-
-    <td key='applicant-other'>
-	{props.func.getAssignmentsByApplicant(props.id).map(
-	    ass => (ass.positionId == props.course) ? '' : props.func.getCourseCodeById(ass.positionId)
-	).join(' ')}
-    </td>    
-    </tr>
-);
-
-const AssignedApplicantRow = props => (
-	<tr key={'applicant-'+props.id+'-row'}>
-	<td><input type='checkbox' defaultChecked={true}
-    onClick={() => props.func.removeAssignment(props.id, props.course)}/></td>
-
-    {props.fields.map(field => <td key={'applicant-'+props.id+field}>{props.applicant[field]}</td>)}
-
-    	<td key='applicant-pref'>
-	{props.func.getApplicationPreference(props.id, props.course) && <i className='fa fa-check'/>}
-    </td>
-
-    <td key='applicant-other'>
-	{props.func.getAssignmentsByApplicant(props.id).map(
-	    ass => (ass.positionId == props.course) ? '' : props.func.getCourseCodeById(ass.positionId)
-	).join(' ')}
-    </td>
-    </tr>
+	{props.config.map((field, i) => <td key={'applicant-'+props.id+'-row-'+i}>{field.data(props)}</td>)}
+	 </tr>
 );
 
 class ABCApplicantTable extends React.Component {
@@ -73,17 +40,11 @@ class ABCApplicantTable extends React.Component {
 
 	return (
 		<Table striped bordered condensed hover>
-		<THeader fields={this.props.tableHeaders}/>
+		<THeader config={this.props.config}/>
 		<tbody>
-		{this.applicants.map(
-		    ([key, val]) => (
-			this.props.assigned ?
-			    <AssignedApplicantRow key={'applicant-'+key} id={key} applicant={val}
-			fields={this.props.tableFields} {...this.props}/> :
-			    <UnassignedApplicantRow key={'applicant-'+key} id={key} applicant={val}
-			fields={this.props.tableFields} {...this.props}/>
-
-		    ))}
+		{this.applicants.map(([key, val]) => (
+			<ApplicantRow key={'applicant-'+key} applicantId={key} applicant={val} {...this.props}/>
+		))}
 	    </tbody>
 	    </Table>
 	);
