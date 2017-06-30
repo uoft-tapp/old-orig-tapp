@@ -53,6 +53,9 @@ class ChassImporter
           last_name: applicant_entry["last_name"],
           email:applicant_entry["email"],
           phone: applicant_entry["phone"],
+          dept: applicant_entry["dept"],
+          program_id: applicant_entry["program_id"],
+          yip: applicant_entry["yip"],
           address:applicant_entry["address"]
       )
       exists = "applicant #{utorid} already exists"
@@ -72,9 +75,6 @@ class ChassImporter
           app_id: app_id,
           ta_training: applicant_entry["ta_training"],
           access_acad_history: applicant_entry["access_acad_history"],
-          dept: applicant_entry["dept"],
-          program_id: applicant_entry["program_id"],
-          yip: applicant_entry["yip"],
           ta_experience: applicant_entry["ta_experience"],
           academic_qualifications: applicant_entry["academic_qualifications"],
           technical_skills: applicant_entry["technical_skills"],

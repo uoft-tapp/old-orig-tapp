@@ -127,7 +127,6 @@ describe ChassImporter do
     context "from an expected file" do
       let (:mock_json) { File.read("./spec/support/chass_data/applicant.json") }
       before(:each) do
-        pending("... needs to be fixed ...")
 
         # Sanity checking -- shouldn't ever fail
         expect(Applicant.all.count).to eq(0)
@@ -166,7 +165,6 @@ describe ChassImporter do
     context "from a file with duplicate app_id" do
       let (:mock_json) { File.read("./spec/support/chass_data/duplicate_app_id_applicant.json") }
       it "raise a descriptive error" do
-        pending("... needs to be fixed ...")
         expect { subject }.to raise_error(ActiveRecord::RecordNotUnique,
           /PG::UniqueViolation: ERROR:  duplicate key value violates unique con/)
       end
@@ -175,7 +173,6 @@ describe ChassImporter do
     context "from an expected file" do
       let (:mock_json) { File.read("./spec/support/chass_data/applicant.json") }
       before(:each) do
-        pending("... needs to be fixed ...")
         # Sanity checking -- shouldn't ever fail
         expect(Application.all.count).to eq(0)
       end
@@ -218,7 +215,6 @@ describe ChassImporter do
     context "from an expected file" do
       let (:mock_json) { File.read("./spec/support/chass_data/applicant.json") }
       before(:each) do
-        pending("... needs to be fixed ...")
           # Sanity checking -- shouldn't ever fail
         expect(Applicant.all.count).to eq(0)
       end
@@ -237,7 +233,6 @@ describe ChassImporter do
     context "from file with non-existent course positions in courses" do
       let (:mock_json) { File.read("./spec/support/chass_data/nonexistent_course_position_applicant.json") }
       before(:each) do
-        pending("... needs to be fixed ...")
 
           # Sanity checking -- shouldn't ever fail
           expect(Applicant.all.count).to eq(0)
@@ -245,7 +240,6 @@ describe ChassImporter do
       before(:each) { subject } # Evaluate subject
 
       it "insert only the existent positions to Preference model" do
-        pending("... needs to be fixed ...")
         applicant = Applicant.where(utorid: "applicant478").take
         application = applicant.applications.take
         preferences ||= application.preferences
@@ -257,7 +251,6 @@ describe ChassImporter do
     context "from file with non-existent course positions in preferences" do
       let (:mock_json) { File.read("./spec/support/chass_data/nonexistent_course_position_applicant_pref.json") }
       before(:each) do
-        pending("... needs to be fixed ...")
 
           # Sanity checking -- shouldn't ever fail
         expect(Applicant.all.count).to eq(0)
@@ -265,7 +258,6 @@ describe ChassImporter do
       before(:each) { subject } # Evaluate subject
 
       it "insert only the existent positions to Preference model" do
-        pending("... needs to be fixed ...")
         applicant = Applicant.where(utorid: "applicant478").take
         application = applicant.applications.take
         preferences ||= application.preferences
