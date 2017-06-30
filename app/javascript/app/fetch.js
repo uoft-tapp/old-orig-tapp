@@ -50,17 +50,18 @@ function fetchApplicants() {
 }
 
 function onFetchApplicationsSuccess(resp) {
-    let applications = {};
-
+    let applications = {}, prev;
+    
     resp.forEach(app => {
-	let prev = applications[app.applicant_id] ? applications[app.applicant_id] : [];
-	prev.push({
+	prev = applications[app.applicant_id] ? applications[app.applicant_id] : [];
+
+	applications[app.applicant_id] = prev.push({
 	    taTraining: app.ta_training == 'Y',
 	    academicAccess: app.access_acad_history == 'Y',
 	    round: null, // populated by positions fetch
 	    prefs: (function (prefs) {
 		return prefs.map(pref => ({positionId: pref.position_id,
-				    preferred: pref.rank == 1}));
+					   preferred: pref.rank == 1}));
 	    })(app.preferences),
 	    exp: app.ta_experience,
 	    qual: app.academic_qualifications,
@@ -69,8 +70,6 @@ function onFetchApplicationsSuccess(resp) {
 	    other: app.other_info,
 	    specialNeeds: app.special_needs,
 	});
-
-	applications[app.applicant_id] = prev;
     });
 
     appState.setApplicationList(applications);
@@ -128,19 +127,16 @@ function fetchCourses() {
 }
 
 function onFetchAssignmentsSuccess(resp) {
-    let assignments = {}, assignmentCounts = {}, count, origin;
+    let assignments = {}, assignmentCounts = {}, count, prev;
 
     resp.forEach(ass => {
-	newAssignment = {
+	prev = assignments[ass.applicant_id] ? assignments[ass.applicant_id] : [];
+
+	assignments[ass.applicant_id] = prev.push({
 	    id: ass.id,
 	    positionId: ass.position_id,
 	    hours: ass.hours,
-	};
-	
-	if (assignments[ass.applicant_id])
-	    assignments[ass.applicant_id].push(newAssignment);
-	else
-	    assignments[ass.applicant_id] = [newAssignment];
+	});
 
 	count = assignmentCounts[ass.position_id].assignmentCount;
 	assignmentCounts[ass.position_id] = count ? count+1 : 1;
@@ -153,7 +149,7 @@ function onFetchAssignmentsSuccess(resp) {
     return assignmentCounts;
 }
 
-function fetchAssignments(coursePromise) {
+function fetchAssignments() {
     appState.setFetchingAssignmentList(true);
 
     return fetchHelper('/assignments',
