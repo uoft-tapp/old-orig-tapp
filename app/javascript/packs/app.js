@@ -123,7 +123,9 @@ const NavbarInst = props => (
 	<Navbar.Header>
 	<Navbar.Brand>TAPP</Navbar.Brand>
 	</Navbar.Header>
-    	<Nav pullLeft activeKey={props.func.getSelectedNavTab()} onSelect={props.func.selectNavTab}>
+
+    	<Nav pullLeft activeKey={props.func.getSelectedNavTab()}
+    onSelect={eventKey => props.func.selectNavTab(eventKey)}>
 
 	<NavItem eventKey={navConfig.courses.key}><Link to={navConfig.courses.route}>Courses</Link></NavItem>
 	<NavItem eventKey={navConfig.abc.key}><Link to={navConfig.abc.route}>Applicants by Course</Link></NavItem>
