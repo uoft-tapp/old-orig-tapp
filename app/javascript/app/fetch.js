@@ -50,12 +50,10 @@ function fetchApplicants() {
 }
 
 function onFetchApplicationsSuccess(resp) {
-    let applications = {}, prev;
+    let applications = {}, newApp;
     
     resp.forEach(app => {
-	prev = applications[app.applicant_id] ? applications[app.applicant_id] : [];
-
-	applications[app.applicant_id] = prev.push({
+	newApp = {
 	    taTraining: app.ta_training == 'Y',
 	    academicAccess: app.access_acad_history == 'Y',
 	    round: null, // populated by positions fetch
@@ -69,7 +67,12 @@ function onFetchApplicationsSuccess(resp) {
 	    avail: app.availability,
 	    other: app.other_info,
 	    specialNeeds: app.special_needs,
-	});
+	};
+
+	if (applications[app.applicant_id])
+	    applications[app.applicant_id].push(newApp);
+	else
+	    applications[app.applicant_id] = [newApp];
     });
 
     appState.setApplicationList(applications);
@@ -127,17 +130,20 @@ function fetchCourses() {
 }
 
 function onFetchAssignmentsSuccess(resp) {
-    let assignments = {}, assignmentCounts = {}, count, prev;
+    let assignments = {}, assignmentCounts = {}, count, newAss;
 
     resp.forEach(ass => {
-	prev = assignments[ass.applicant_id] ? assignments[ass.applicant_id] : [];
-
-	assignments[ass.applicant_id] = prev.push({
+	newAss = {
 	    id: ass.id,
 	    positionId: ass.position_id,
 	    hours: ass.hours,
-	});
+	};
 
+	if (assignments[ass.applicant_id])
+	    assignments[ass.applicant_id].push(newAss);
+	else
+	    assignments[ass.applicant_id] = [newAss];
+	
 	count = assignmentCounts[ass.position_id].assignmentCount;
 	assignmentCounts[ass.position_id] = count ? count+1 : 1;
     });
