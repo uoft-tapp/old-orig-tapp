@@ -698,6 +698,37 @@ class AppState {
         this._data.set('instructors.list', list);
     }
 
+    updateCourseAttribute(courseId, data, val, attr){
+      this.routeAction('/positions/'+courseId, 'put', data,
+          "could not update "+attr+" in Course", (res)=>{
+          this._data.set('courses.list['+courseId+'].'+attr, val);
+      });
+    }
+
+    updateCourseHours(courseId, eventKey){
+      let val = eventKey.target.value;
+      this.updateCourseAttribute(courseId, {hours: val}, val, "positionHours");
+    }
+
+    updateCoursePosition(courseId, eventKey){
+      let val = eventKey.target.value;
+      this.updateCourseAttribute(courseId, {estimated_count: val}, val, "estimatedPositions");
+    }
+
+    updateCourseEnrol(courseId, eventKey){
+      let val = eventKey.target.value;
+      this.updateCourseAttribute(courseId, {estimated_enrolment: val}, val, "estimatedEnrol");
+    }
+
+    updateCourseQual(courseId, eventKey){
+      let val = eventKey.target.value;
+      this.updateCourseAttribute(courseId, {qualifications: val}, val, "qual");
+    }
+    updateCourseResp(courseId, eventKey){
+      let val = eventKey.target.value;
+      this.updateCourseAttribute(courseId, {duties: val}, val, "resp");
+    }
+
 }
 
 let appState = new AppState();
