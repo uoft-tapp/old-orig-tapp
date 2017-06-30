@@ -117,37 +117,43 @@ const RouterInst = props => (
 
 /*** Navbar ***/
 
-const NavbarInst = props => (
-	<Navbar fixedTop fluid>
+const NavbarInst = props => {
+    let selectedApplicant = props.func.getSelectedApplicant();
+    
+    return (
+	    <Navbar fixedTop fluid>
 
-	<Navbar.Header>
-	<Navbar.Brand>TAPP</Navbar.Brand>
-	</Navbar.Header>
+	    <Navbar.Header>
+	    <Navbar.Brand>TAPP</Navbar.Brand>
+	    </Navbar.Header>
 
-    	<Nav pullLeft activeKey={props.func.getSelectedNavTab()}
-    onSelect={eventKey => props.func.selectNavTab(eventKey)}>
+    	    <Nav pullLeft activeKey={props.func.getSelectedNavTab()}
+	onSelect={eventKey => props.func.selectNavTab(eventKey)}>
 
-	<NavItem eventKey={navConfig.courses.key}><Link to={navConfig.courses.route}>Courses</Link></NavItem>
-	<NavItem eventKey={navConfig.abc.key}><Link to={navConfig.abc.route}>Applicants by Course</Link></NavItem>
-	<NavItem eventKey={navConfig.assigned.key}><Link to={navConfig.assigned.route}>All Assigned</Link></NavItem>
-	<NavItem eventKey={navConfig.unassigned.key}><Link to={navConfig.unassigned.route}>All Unassigned</Link></NavItem>
-	<NavItem eventKey={navConfig.summary.key}><Link to={navConfig.summary.route}>Summary</Link></NavItem>
-	{props.func.getSelectedApplicant() &&
-	 <NavItem eventKey={navConfig.applicant.key}>{props.func.getSelectedApplicant()}</NavItem>
-	}
-    </Nav>
-
-	<Nav pullRight>
-	<NavDropdown eventKey={navConfig.logout.key}
-    title={props.func.getCurrentUserRole() + ':' + props.func.getCurrentUserName()} id='nav-dropdown'>
-	<MenuItem eventKey={navConfig.logout.key + '.1'}>
-	<Link to={navConfig.logout.route}>Logout</Link>
-	</MenuItem>
-	</NavDropdown>
+	    <NavItem eventKey={navConfig.courses.key}><Link to={navConfig.courses.route}>Courses</Link></NavItem>
+	    <NavItem eventKey={navConfig.abc.key}><Link to={navConfig.abc.route}>Applicants by Course</Link></NavItem>
+	    <NavItem eventKey={navConfig.assigned.key}><Link to={navConfig.assigned.route}>All Assigned</Link></NavItem>
+	    <NavItem eventKey={navConfig.unassigned.key}><Link to={navConfig.unassigned.route}>All Unassigned</Link></NavItem>
+	    <NavItem eventKey={navConfig.summary.key}><Link to={navConfig.summary.route}>Summary</Link></NavItem>
+	    {selectedApplicant &&
+	     <NavItem eventKey={navConfig.applicant.key}>
+	     {props.func.getApplicantById(selectedApplicant).lastName},&nbsp;
+	     {props.func.getApplicantById(selectedApplicant).firstName}
+	     </NavItem>}
 	</Nav>
 
-    </Navbar>
-);
+	    <Nav pullRight>
+	    <NavDropdown eventKey={navConfig.logout.key}
+	title={props.func.getCurrentUserRole() + ':' + props.func.getCurrentUserName()} id='nav-dropdown'>
+	    <MenuItem eventKey={navConfig.logout.key + '.1'}>
+	    <Link to={navConfig.logout.route}>Logout</Link>
+	    </MenuItem>
+	    </NavDropdown>
+	    </Nav>
+
+	</Navbar>
+    );
+};
 
 
 document.addEventListener('DOMContentLoaded', () => {
