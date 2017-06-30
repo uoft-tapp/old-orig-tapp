@@ -65,17 +65,9 @@ class AppState {
      ************************************/
     
     // select a navbar tab
-    selectNavTab(eventKey, applicant_id) {
-      if(!this.isFetching()){
-        let applicant = this._data.get('applicants.list['+applicant_id+']');
-        let applicant_name = applicant.firstName+' '+applicant.lastName;
-  	    this._data.set({'nav.selectedTab': eventKey,
-  			    'nav.selectedApplicant': applicant_id ? applicant_name : null});
-      }
-      else {
+    selectNavTab(eventKey, applicant) {
         this._data.set({'nav.selectedTab': eventKey,
-  			    'nav.selectedApplicant': applicant_id ? '-' : null});
-      }
+  			'nav.selectedApplicant': applicant ? applicant : null});
     }
 
     getSelectedNavTab() {
@@ -291,21 +283,19 @@ class AppState {
     
     // apply a sort to the applicant table (sorted up initially)
     addSort(course, field) {
-	if (!this.getCoursePanelSortsByCourse(course).includes(field + '-up'))
-            this._data.add('abcView.panelFields['+course+'].activeSortFields', field + '-up');
+	if (!this.getCoursePanelSortsByCourse(course).includes(field))
+            this._data.add('abcView.panelFields['+course+'].activeSortFields', field);
+	console.log(this.getCoursePanelSortsByCourse(course));
     }
 
     // toggle the sort direction of the sort currently applied to the applicant table
     toggleSortDir(course, field) {
-	let [name, dir] = field.split('-');
-	let newSort = name + '-' + (dir == 'up' ? 'down' : 'up');
-	
 	const sortFields = this.getCoursePanelSortsByCourse(course);
 	
-	if (!sortFields.includes(newSort)) {
+	if (!sortFields.includes(-field)) {
 	    this._data.unset('abcView.panelFields['+course+'].activeSortFields', {silent: true});
-
-	    sortFields[sortFields.indexOf(field)] = newSort;
+	
+	    sortFields[sortFields.indexOf(field)] = -field;
 	    this._data.set('abcView.panelFields['+course+'].activeSortFields', sortFields);
 	}
     }
