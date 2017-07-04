@@ -12,19 +12,22 @@ function defaultFailure(response) {
 }
 
 function fetchHelper(URL, method, body, success, failure = defaultFailure) {
-    fetch(URL, {
+    return fetch(URL, {
         headers: {
             'Accept': 'application/json',
-            'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+            'Content-Type': 'application/json; charset=utf-8'
         },
         method: method,
-        body: method != 'GET' ? this.jsonToURI(body) : null,
+        body: body ? JSON.stringify(body) : body,
 	
     }).then(function(response) {
-	if (response.ok)
-	    return response.json().then(
-		resp => success(resp)
-	    );
+	if (response.ok) {
+	    // parse the body of the response as JSON
+	    if (['GET','POST'].includes(method))
+		return response.json().then(resp => success(resp));
+
+	    return success(response);
+	}
 	
 	return failure(response);
 	
@@ -99,7 +102,6 @@ function onFetchApplicantsSuccess(resp) {
 
     return resp;
 }
-
 
 function onFetchApplicationsSuccess(resp) {
     let applications = {}, newApp;
@@ -180,7 +182,7 @@ function onFetchAssignmentsSuccess(resp) {
 	else
 	    assignments[ass.applicant_id] = [newAss];
 	
-	count = assignmentCounts[ass.position_id].assignmentCount;
+	count = assignmentCounts[ass.position_id];
 	assignmentCounts[ass.position_id] = count ? count+1 : 1;
     });
 
@@ -228,4 +230,36 @@ function fetchAll() {
     );
 }
 
-export {fetchAll};
+function postAssignment(applicant, course, hours) {
+    appState.setFetchingAssignmentsList(true);
+    
+    return fetchHelper('/applicants/' + applicant + '/assignments', 'POST',
+		       {position_id: course, hours: hours},
+		       resp => {
+			   appState.addAssignment(resp.applicant_id, resp.position_id, resp.hours, resp.id);
+			   appState.setFetchingApplicantsList(false);
+		       });
+}
+
+function deleteAssignment(applicant, assignment) {
+    appState.setFetchingApplicantsList(true);
+    
+    return fetchHelper('/applicants/' + applicant + '/assignments/' + assignment, 'DELETE', null,
+		       () => {
+			   appState.removeAssignment(applicant, assignment);
+			   appState.setFetchingApplicantsList(false);
+		       });
+}
+
+function updateAssignmentHours(applicant, assignment, hours) {
+    appState.setFetchingApplicantsList(true);
+    
+    return fetchHelper('/applicants/' + applicant + '/assignments/' + assignment, 'PUT',
+		       {hours: hours},
+		       () => {
+			   appState.setAssignmentHours(applicant, assignment, hours);
+			   appState.setFetchingApplicantsList(false);
+		       });
+}
+
+export {fetchAll, postAssignment, deleteAssignment};
