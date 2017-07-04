@@ -33,7 +33,9 @@ const initialState = {
     assignedView: null,
 
     // unassigned view
-    unassignedView: null,
+    unassignedView: {
+      selected: [],
+    },
 
     /** DB data **/
 
@@ -237,130 +239,141 @@ class AppState {
 
     // toggle a filter on the applicant table
     toggleFilter(course, field) {
-	let i = this._data.get('abcView.panelFields['+course+'].activeFilters').indexOf(field);
+	    let i = this._data.get('abcView.panelFields['+course+'].activeFilters').indexOf(field);
 
-        if (i != -1)
-	    this._data.remove('abcView.panelFields['+course+'].activeFilters['+i+']');
-	else
-            this._data.add('abcView.panelFields['+course+'].activeFilters', field);
+      if (i != -1)
+        this._data.remove('abcView.panelFields['+course+'].activeFilters['+i+']');
+      else
+        this._data.add('abcView.panelFields['+course+'].activeFilters', field);
     }
 
     // check whether a filter is active on the applicant table
     isFilterActive(course, field) {
-	return this._data.get('abcView.panelFields['+course+'].activeFilters').includes(field);
+	     return this._data.get('abcView.panelFields['+course+'].activeFilters').includes(field);
     }
 
     // check whether any of the given filters are active on the applicant table
     anyFilterActive(course, fields) {
-	return fields.some((field) => this.isFilterActive(course, field));
+	     return fields.some((field) => this.isFilterActive(course, field));
     }
 
     // remove all active filters on the applicant table
     clearFilters(course) {
-	this._data.set('abcView.panelFields['+course+'].activeFilters', []);
+	     this._data.set('abcView.panelFields['+course+'].activeFilters', []);
     }
 
     // apply a sort to the applicant table (sorted up initially)
     addSort(course, field) {
-	if (!this._data.get('abcView.panelFields['+course+'].activeSortFields').includes(field + '-up'))
+	     if (!this._data.get('abcView.panelFields['+course+'].activeSortFields').includes(field + '-up'))
             this._data.add('abcView.panelFields['+course+'].activeSortFields', field + '-up');
     }
 
     // toggle the sort direction of the sort currently applied to the applicant table
     toggleSortDir(course, field) {
-	let [name, dir] = field.split('-');
-	let newSort = name + '-' + (dir == 'up' ? 'down' : 'up');
+	     let [name, dir] = field.split('-');
+	     let newSort = name + '-' + (dir == 'up' ? 'down' : 'up');
 
-	const sortFields = this._data.get('abcView.panelFields['+course+'].activeSortFields');
+	     const sortFields = this._data.get('abcView.panelFields['+course+'].activeSortFields');
 
-	if (!sortFields.includes(newSort)) {
-	    this._data.unset('abcView.panelFields['+course+'].activeSortFields', {silent: true});
-
-	    sortFields[sortFields.indexOf(field)] = newSort;
-	    this._data.set('abcView.panelFields['+course+'].activeSortFields', sortFields);
-	}
+	      if (!sortFields.includes(newSort)) {
+	         this._data.unset('abcView.panelFields['+course+'].activeSortFields', {silent: true});
+	         sortFields[sortFields.indexOf(field)] = newSort;
+	         this._data.set('abcView.panelFields['+course+'].activeSortFields', sortFields);
+	        }
     }
 
     // remove a sort from the applicant table
     clearSort(course, field) {
-	let i = this._data.get('abcView.panelFields['+course+'].activeSortFields').indexOf(field);
+	     let i = this._data.get('abcView.panelFields['+course+'].activeSortFields').indexOf(field);
         this._data.remove('abcView.panelFields['+course+'].activeSortFields['+i+']');
+    }
+
+    // Add a sorting field to the assignment/unassignment pages
+    addAssignmentSortFilters(field) {
+      let attribute = 'unassignedView.selected';
+      if(!this._data.get(attribute).includes(field))
+        this._data.add(attribute, field);
+    }
+
+    clearAssignmentSortFilters(field) {
+      let i = this._data.get(attribute).indexOf(field);
+      this._data.remove(attribute[field]);
     }
 
     /** data getters and setters **/
 
     // create a new assignment (faked - doesn't propagate to db for now)
     addAssignment(applicant, course, hours) {
-	let assignments = this.getAssignmentsList();
+    	let assignments = this.getAssignmentsList();
 
-	if (assignments[applicant])
-	    assignments[applicant].push({ positionId: course, hours: hours });
-	else
-	    assignments[applicant] = [{ positionId: course, hours: hours }];
+    	if (assignments[applicant])
+    	    assignments[applicant].push({ positionId: course, hours: hours });
+    	else
+    	    assignments[applicant] = [{ positionId: course, hours: hours }];
 
-	this.setAssignmentList(assignments);
-	this.incrementCourseAssignmentCount(course);
+    	this.setAssignmentList(assignments);
+    	this.incrementCourseAssignmentCount(course);
     }
 
     decrementCourseAssignmentCount(course) {
-	let courses = this.getCoursesList();
-	courses[course].assignmentCount--;
+    	let courses = this.getCoursesList();
+    	courses[course].assignmentCount--;
 
-        this.setCourseList(courses);
+      this.setCourseList(courses);
     }
 
     getApplicationById(applicant) {
-	return this.getApplicationsList()[applicant][0];
+	     return this.getApplicationsList()[applicant][0];
     }
 
     // get applicants who are assigned to course
     getApplicantsAssignedToCourse(course) {
-	let assignments = this.getAssignmentsList(), applicants = this.getApplicantsList(), filteredApplicants = [];
+    	let assignments = this.getAssignmentsList(), applicants = this.getApplicantsList(), filteredApplicants = [];
 
-	let applicant;
-	for (applicant in assignments) {
-	    if (assignments[applicant].some(ass => ass.positionId == course))
-		filteredApplicants.push([applicant, applicants[applicant]]);
-	}
+    	let applicant;
+    	for (applicant in assignments) {
+    	    if (assignments[applicant].some(ass => ass.positionId == course))
+    		filteredApplicants.push([applicant, applicants[applicant]]);
+	     }
 
-	return filteredApplicants;
+	    return filteredApplicants;
     }
 
     getApplicantsList() {
-	return this._data.get('applicants.list');
+	     return this._data.get('applicants.list');
     }
 
     // get applicants who have applied to course; returns a list of [applicantID, applicantData]
     getApplicantsToCourse(course) {
-	let applications = Object.entries(this.getApplicationsList()).filter(
+	     let applications = Object.entries(this.getApplicationsList()).filter(
 	    ([key, val]) => val[0].prefs.some(pref => pref.positionId == course));
 
-	let applicants = this.getApplicantsList(), filteredApplicants = [];
+	     let applicants = this.getApplicantsList(), filteredApplicants = [];
 
-	applications.forEach(
-	    ([key, val]) => filteredApplicants.push([key, applicants[key]]));
+	     applications.forEach(
+	         ([key, val]) => filteredApplicants.push([key, applicants[key]]));
 
-	return filteredApplicants;
+	     return filteredApplicants;
     }
 
     // get applicants to course who are not assigned to it
     getApplicantsToCourseUnassigned(course) {
-	let applicants = this.getApplicantsToCourse(course);
-	let assignments = this.getAssignmentsList();
+	     let applicants = this.getApplicantsToCourse(course);
+	     let assignments = this.getAssignmentsList();
 
-	return applicants.filter(
+	     return applicants.filter(
 	    ([key, val]) => !assignments[key] || !(assignments[key].some(ass => ass.positionId == course)));
     }
 
     // check whether this course is a preference for this applicant
     getApplicationPreference(applicant, course) {
-	let prefs = this.getApplicationById(applicant).prefs;
+	     let prefs = this.getApplicationById(applicant).prefs;
 
-	return prefs.some(pref => (pref.positionId == course) && pref.preferred);
+	     return prefs.some(pref => (pref.positionId == course) && pref.preferred);
     }
 
     getApplicationsList() {
-	return this._data.get('applications.list');
+	     return this._data.get('applications.list');
     }
 
     /** data setters **/
@@ -370,46 +383,53 @@ class AppState {
     }
 
     getAssignmentsByApplicant(applicant) {
-	let assignments = this.getAssignmentsList()[applicant];
+    	let assignments = this.getAssignmentsList()[applicant];
 
-	if (assignments)
-	    return assignments;
-	else
-	    return [];
+    	if (assignments)
+    	    return assignments;
+    	else
+    	    return [];
     }
 
     getAssignmentsList() {
-	return this._data.get('assignments.list');
+	     return this._data.get('assignments.list');
+    }
+
+    getUnassignedApplicantsList() {
+      let assignments = this.getAssignmentsList();
+      let applicants = Object.entries(this.getApplicantsList());
+      return applicants.filter(
+        ([key, val]) => !assignments[key]);
     }
 
     getCoursesList() {
-	return this._data.get('courses.list');
+	     return this._data.get('courses.list');
     }
 
     getCourseById(course) {
-	return this.getCoursesList()[course];
+	     return this.getCoursesList()[course];
     }
 
     getCourseCodeById(course) {
-	return this.getCourseById(course).code;
+	     return this.getCourseById(course).code;
     }
 
     incrementCourseAssignmentCount(course) {
-	let courses = this.getCoursesList();
-	courses[course].assignmentCount++;
+    	let courses = this.getCoursesList();
+    	courses[course].assignmentCount++;
 
-        this.setCourseList(courses);
+      this.setCourseList(courses);
     }
 
     // remove an assignment (faked - doesn't propagate to db for now)
     removeAssignment(applicant, course) {
-	let assignments = this.getAssignmentsList();
+    	let assignments = this.getAssignmentsList();
 
-	let i = assignments[applicant].findIndex(ass => ass.positionId == course);
-	assignments[applicant].splice(i, 1);
+    	let i = assignments[applicant].findIndex(ass => ass.positionId == course);
+    	assignments[applicant].splice(i, 1);
 
-	this.setAssignmentList(assignments);
-	this.decrementCourseAssignmentCount(course);
+    	this.setAssignmentList(assignments);
+    	this.decrementCourseAssignmentCount(course);
     }
 
     setApplicantList(list) {
@@ -477,6 +497,13 @@ class AppState {
     setAssignmentList(list) {
       this._data.unset('assignment.list', {silent: true});
       this._data.set('assignments.list', list);
+    }
+
+
+    isAssignmentFetching() {
+      let assignment_fetch = this._data.get('assignments.fetching');
+      return assignment_fetch
+
     }
 
     /*For Assignment Form*/

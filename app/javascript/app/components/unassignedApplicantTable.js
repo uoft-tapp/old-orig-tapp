@@ -1,36 +1,44 @@
-import React from 'react'
-import { Table } from 'react-bootstrap'
+import React from "react";
+import { Table } from "react-bootstrap";
 
-const THeader = props => (
-	<thead><tr>
-	{props.fields.map((field, i) => <th key={"header"+i}>{field}</th>)}
-    </tr></thead>
-);
+const THeader = props =>
+  <thead>
+    <tr>
+      {props.config.map((field, i) =>
+        <th key={"header-" + i}>
+          {field.header}
+        </th>
+      )}
+    </tr>
+  </thead>;
 
-const ApplicantRow = props => (
-	<tr key={props.id}>
-	{props.fields.map(field => (
-		<td key={props.id+field}>
-		{field == 'assigned' ? <input type="checkbox" defaultChecked={props.assigned}/> : props.applicant[field]}
-	    </td>
-	))}
-	</tr>
-);
+const ApplicantRow = props =>
+  <tr key={"unassigned-" + props.applicantId + "-row"}>
+    {props.config.map((field, i) =>
+      <td key={"applicant-" + props.applicantId + "-row-" + i}>
+        {field.data(props)}
+      </td>
+    )}
+  </tr>;
 
 class UnassignedApplicantTable extends React.Component {
-    render() {
-	      return (
-		<Table striped bordered condensed hover>
-		<THeader fields={this.props.tableHeaders}/>
-		<tbody>
-		{this.props.applicants.map((applicant, i) => (
-			<ApplicantRow key={"applicant"+i} applicant={applicant} id={i} assigned={this.props.assigned}
-		    fields={this.props.tableFields}/>
-		))}
-	    </tbody>
-	    </Table>
-	);
-    }
+  render() {
+    return (
+      <Table striped bordered condensed hover>
+        <THeader config={this.props.config} />
+        <tbody>
+          {this.props.applicants.map(([key, val]) =>
+            <ApplicantRow
+              key={"unassigned" + key}
+              applicantId={key}
+              applicant={val}
+              {...this.props}
+            />
+          )}
+        </tbody>
+      </Table>
+    );
+  }
 }
 
 export { UnassignedApplicantTable };
