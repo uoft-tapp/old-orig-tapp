@@ -4,10 +4,6 @@ import { Panel } from 'react-bootstrap'
 
 class Applicant extends React.Component {
 
-    constructor(props){
-        super(props);
-    }
-
     selectThisTab() {
         this.props.func.selectNavTab(this.props.navKey, this.props.match.params.id);
     }
