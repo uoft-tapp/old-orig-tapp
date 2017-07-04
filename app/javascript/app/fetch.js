@@ -1,9 +1,41 @@
 import { appState } from './appState.js'
 
+function defaultFailure(response) {
+    if (response.status === 404 || response.status === 422) {
+        alert("Action Failed: "+msg);
+        return null;
+    }
+    else if (response.status === 204)
+        return {};
+    else
+        return response.json();
+}
+
+function fetchHelper(URL, method = 'GET', body, success, failure = defaultFailure) {
+    fetch(URL, {
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+        },
+        method: method,
+        body: this.jsonToURI(body),
+	
+    }).then(function(response) {
+	return response.json();
+	
+    }).then(function(response) {
+	if (response.ok)
+	    return success(response);
+	
+	return failure(response);
+	
+    }).catch(function(error) {
+	console.log(error);
+    });
+}
+
 function fetchHelper(URL, success, failure) {
     return fetch(URL).then(function(response) {
-	return response.json();
-    }).then(function(response) {
 	return success(response);
     }).catch(function(error) {
 	return failure(error);
@@ -165,7 +197,7 @@ function onFetchInstructorsSuccess(resp) {
     let instructors = {};
 
     resp.forEach(instr => {
-	instructors[instr.id] = {name: instr.name, email: instr.email};
+	instructors[instr.id] = instr.name;
     });
 
     appState.setInstructorsList(instructors);
