@@ -729,6 +729,18 @@ class AppState {
       this.updateCourseAttribute(courseId, {duties: val}, val, "resp");
     }
 
+    addInstructor(courseId, instructorId){
+      console.log(this._data.get('courses.list['+courseId+'].instructors'));
+      let array = this._data.get('courses.list['+courseId+'].instructors');
+      array.push(parseInt(instructorId));
+      this._data.set('courses.list['+courseId+'].instructors', array);
+      console.log(this._data.get('courses.list['+courseId+'].instructors'));
+    }
+
+    updateInstructorInput(courseId, input){
+      this._data.set('courses.list['+courseId+'].instructor_input', input);
+    }
+
 }
 
 let appState = new AppState();

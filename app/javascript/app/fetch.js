@@ -185,6 +185,7 @@ function onFetchCoursesSuccess(resp) {
 	    assignmentCount: 0, // populated by assignment fetch
 	    qual: course.qualifications,
 	    resp: course.duties,
+      instructor_input: "",
 	};
 
 	rounds[course.id] = course.round_id;

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Panel, ListGroup, ListGroupItem, Label } from 'react-bootstrap'
+import { Panel, ListGroup, ListGroupItem } from 'react-bootstrap'
 
 class CourseForm extends React.Component {
   constructor(props){
@@ -43,7 +43,8 @@ class CourseForm extends React.Component {
                   <td>
                   <p><b>Instructors: </b></p>
                     <InstructorForm list={"instructor_"+key}
-                      course={course[1].code}
+                      course={course[0]}
+                      input={course[1].instructor_input}
                       instructors={course[1].instructors}
                       self={this}
                       {...this}/>
@@ -69,22 +70,40 @@ class CourseForm extends React.Component {
     }
   }
 
-  setInstructor(course, instructors){
-    let labels =[];
-    Object.entries(instructor_data).forEach((instructor, key)=>{
-      for(let i in instructors){
-        if(instructor[0]==instructors[i]){
-          console.log(course+" add "+instructor[1]);
-          labels.push(
-            <Label bsStyle="primary">
-              {instructor[1]}
-              <button>X</button>
-            </Label>
-          );
+  setInstructor(instructors, course){
+    return(
+      Object.entries(instructor_data).map((instructor, key)=>(
+        <span>
+          <input type="checkbox" value={instructor[0]} id={course+"_"+instructor[0]}
+            defaultChecked={this.alreadyAddedInstructor(instructor[0],instructors)}/>
+          <label htmlFor={course+"_"+instructor[0]} key={key}>
+              <button className="fill">{instructor[1]}</button>
+              <b onClick={()=>console.log("clicked")}>X</b>
+          </label>
+        </span>
+      ))
+    );
+  }
+
+  isInstructor(eventKey, course, instructors){
+    let input = eventKey.target.value;
+    for(let i in instructor_data){
+      if(instructor_data[i]==input){
+        if(!this.alreadyAddedInstructor(i, instructors)){
+          this.props.func.addInstructor(course, i);
         }
+        input="";
       }
-    });
-    return labels;
+    }
+    this.props.func.updateInstructorInput(course, input);
+  }
+
+  alreadyAddedInstructor(id, instructors){
+    for(let i in instructors){
+      if(instructors[i] == id)
+        return true;
+    }
+    return false;
   }
 
   render(){
@@ -102,9 +121,10 @@ class CourseForm extends React.Component {
 const InstructorForm = props =>(
   <div className="instructor_form">
     <div>
-      {props.self.setInstructor(props.course, props.instructors)}
+      {props.self.setInstructor(props.instructors, props.course)}
     </div>
-    <input type="text" list={props.list}/>
+    <input type="text" list={props.list} value={props.input}
+      onChange={(eventKey)=>props.self.isInstructor(eventKey, props.course, props.instructors)}/>
     <datalist id={props.list}>
       {Object.entries(instructor_data).map((instructor, key)=>(
         <option key={key} value={instructor[1]}></option>
