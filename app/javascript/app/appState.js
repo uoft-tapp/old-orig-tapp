@@ -1,5 +1,6 @@
 import Backbone from 'backbone'
 import NestedModel from 'backbone-nested'
+import * as fetch from './fetch.js'
 
 const initialState = {
     // navbar component
@@ -143,12 +144,12 @@ class AppState {
 	let applicantId = this.getSelectedApplicant();
 	let tempAssignments = this.getTempAssignments();
 	
-	if (!tempAssignments)
-	    tempAssignments = {applicantId: []};
+	if (tempAssignments)
+	    tempAssignments[applicantId].push({positionId: positionId, hours: hours});
+	else
+	    tempAssignments[applicantId] = [{positionId: positionId, hours: hours}];
 	
-	tempAssignments[applicantId].push({positionId: positionId, hours: hours});
-
-	this._data.unset('assignmentForm.tempAssignments');
+	this._data.unset('assignmentForm.tempAssignments', {silent: true});
 	this._data.set('assignmentForm.tempAssignments', tempAssignments);
     }
 
@@ -308,19 +309,19 @@ class AppState {
 	this._data.remove('assignmentForm.tempAssignments['+this.getSelectedApplicant()+']['+index+']');
     }
 
-    setInput(value){
-	this._data.set('assignmentForm.assignmentInput', value);
-    }
-
     // select a navbar tab
     selectNavTab(eventKey, applicant) {
         this._data.set({'nav.selectedTab': eventKey,
   			'nav.selectedApplicant': applicant ? applicant : null});
     }
 
+    setInput(value){
+	this._data.set('assignmentForm.assignmentInput', value);
+    }
+
     // change the number of hours of a temporary assignment
     setTempAssignmentHours(index, hours) {
-	this._data.set('assignmentForm.tempAssignments['+this.getSelectedApplicant()+']['+index+'].hours', hours)
+	this._data.set('assignmentForm.tempAssignments['+this.getSelectedApplicant()+']['+index+'].hours', hours);
     }
 
     // toggle the visibility of a course panel in the ABC view
@@ -387,25 +388,21 @@ class AppState {
      ** data getters and setters **
      ******************************/
     
-    // create a new assignment (faked - doesn't propagate to db for now)
-    fakeAssignment(applicant, course, hours) {
+    // add an assignment to the assignment list
+    addAssignment(applicant, course, hours, assignment) {
 	let assignments = this.getAssignmentsList();
 
 	if (assignments[applicant])
-	    assignments[applicant].push({ positionId: course, hours: hours });
+	    assignments[applicant].push({ id: assignment, positionId: course, hours: hours });
 	else
-	    assignments[applicant] = [{ positionId: course, hours: hours }];
+	    assignments[applicant] = [{ id: assignment, positionId: course, hours: hours }];
 
-	this.setAssignmentList(assignments);
+	this.setAssignmentsList(assignments);
 	this.incrementCourseAssignmentCount(course);
     }
 
-    // create a new assignment
-    addAssignment(applicant, course, hours){
-    }
-
     // check if any data is still being fetched
-    anyFetching(){
+    anyFetching() {
 	return [
 	    this.getCoursesList() == null, this.fetchingCourses(),
 	    this.getInstructorsList() == null, this.fetchingInstructors(),
@@ -415,11 +412,21 @@ class AppState {
 	].some(val => val);
     }
 
+    // create a new assignment
+    createAssignment(applicant, course, hours) {
+	fetch.postAssignment(applicant, course, hours);
+    }
+
     decrementCourseAssignmentCount(course) {
 	let courses = this.getCoursesList();
 	courses[course].assignmentCount--;
 
-        this.setCourseList(courses);
+        this.setCoursesList(courses);
+    }
+
+    // delete an assignment
+    deleteAssignment(applicant, assignment) {
+	fetch.deleteAssignment(applicant, assignment);
     }
 
     // check if applicants are being fetched
@@ -505,6 +512,15 @@ class AppState {
 	return this._data.get('applications.list');
     }
 
+    getAssignmentByApplicant(applicant, course) {
+	let assignments = this.getAssignmentsList()[applicant];
+
+	if (assignments)
+	    return assignments.find(ass => (ass.positionId == course));
+	else
+	    return null;
+    }
+    
     getAssignmentsByApplicant(applicant) {
 	let assignments = this.getAssignmentsList()[applicant];
 
@@ -538,34 +554,35 @@ class AppState {
 	let courses = this.getCoursesList();
 	courses[course].assignmentCount++;
 
-        this.setCourseList(courses);
+        this.setCoursesList(courses);
     }
 
     // persist a temporary assignment to the database
     permAssignment(index) {
-	let assignments = this.getAssignmentsByApplicant(applicant);
+	let applicant = this.getSelectedApplicant();
 	let tempAssignment = this.getTempAssignments()[index];
+
+	this.createAssignment(applicant, tempAssignment.positionId, tempAssignment.hours);
 	
-      this.routeAction('/applicants/'+applicantId+'/assignments', 'post',
-        {position_id: tempAssignment.positionId, hours: tempAssignment.hours},
-          "could not add Assignment", (res)=>{
-
-          tempAssignment["id"]= res.id;
-          this._data.get('assignments.list['+applicantId+']').push(tempAssignment);
-          this._data.remove('assignmentForm.tempAssignments['+applicantId+']['+index+']');
-        });
-
+	this.removeTempAssignment(index);
     }
     
-    // remove an assignment (faked - doesn't propagate to db for now)
-    removeAssignment(applicant, course) {
+    // remove an assignment from the assignment list
+    removeAssignment(applicant, assignment) {
 	let assignments = this.getAssignmentsList();
 
-	let i = assignments[applicant].findIndex(ass => ass.positionId == course);
+	let i = assignments[applicant].findIndex(ass => (ass.id == assignment));
+	let course = assignments[applicant][i].positionId;
+	
 	assignments[applicant].splice(i, 1);
 
-	this.setAssignmentList(assignments);
+	this.setAssignmentsList(assignments);
 	this.decrementCourseAssignmentCount(course);
+    }
+
+    // remove a temporary assignment from the assignment form of the applicant view
+    removeTempAssignment(index) {
+	this._data.remove('assignmentForm.tempAssignments['+this.getSelectedApplicant()+']['+index+']');
     }
 
     setApplicantsList(list) {
@@ -591,6 +608,11 @@ class AppState {
 	}
 	
 	this.setApplicationsList(applications);
+    }
+
+    setAssignmentHours(applicant, assignment, hours) {
+	let i = this.getAssignmentsByApplicant(applicant).findIndex(ass => (ass.id == assignment));
+	this._data.set('assignments['+applicant+']['+i+'].hours', hours);
     }
 
     setAssignmentsList(list) {
@@ -637,61 +659,6 @@ class AppState {
     setInstructorsList(list) {
         this._data.unset('instructors.list', {silent: true});
         this._data.set('instructors.list', list);
-    }
-
-
-    /*For Assignment Form*/
-
-    jsonToURI(json){
-      let i = 0;
-      let uri = '';
-      for(let key in json){
-        if(i!=0)
-          uri+='&';
-        uri+=key+"="+encodeURIComponent(json[key]);
-        i++;
-      }
-      return uri;
-    }
-
-    routeAction(url, method, body, msg, func){
-      fetch(url,{
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
-        },
-        method: method,
-        body: this.jsonToURI(body)
-      }).then(function(response) {
-          if(response.status==404||response.status==422){
-            alert("Action Failed: "+msg);
-            return null;
-          }
-          else if (response.status==204)
-            return {};
-          else
-            return response.json();
-      }).then(function(response) {
-          if(response!=null)
-            func(response);
-      });
-    }
-
-    deleteAssignment(applicantId, index){
-      let assignment = this._data.get('assignments.list['+applicantId+']['+index+']');
-      this.routeAction('/applicants/'+applicantId+'/assignments/'+assignment.id, 'delete',
-        {}, "could not delete Assignment", (res)=>{
-
-        this._data.remove('assignments.list['+applicantId+']['+index+']');
-      });
-    }
-    updateAssignment(applicantId, index, hours) {
-      let assignment = this._data.get('assignments.list['+applicantId+']['+index+']');
-      this.routeAction('/applicants/'+applicantId+'/assignments/'+assignment.id, 'put',
-        {hours: hours}, "could not update Assignment hours", (res)=>{
-
-          this._data.set('assignments.list['+applicantId+']['+index+'].hours', hours)
-      });
     }
 
 }
