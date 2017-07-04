@@ -83,7 +83,8 @@ footer div p {
 }
 .form_table td textarea{
   height: 80px;
-  width: 100%;
+  width: calc(calc(100vw - calc(12em + 420px)) / 3);
+  float: left;
   resize: none;
 }
 .form_table p{
@@ -92,4 +93,26 @@ footer div p {
 .form_table input{
   height: 30px;
   margin-bottom: 5px;
+}
+
+/* instructor form */
+.instructor_form{
+  border: #CCC 1px solid;
+  width: calc(calc(100vw - calc(12em + 420px)) / 3);
+  height: 80px;
+  overflow-y: auto;
+}
+.instructor_form input{
+  border: none;
+  float: left;
+  margin: 0;
+  width: 100%;
+}
+.instructor_form div{
+  width: 100%;
+  float: left;
+}
+.instructor_form button{
+  background: none;
+  border: none;
 }
