@@ -20,9 +20,9 @@ function fetchHelper(URL, init, success, failure = defaultFailure) {
 
 	    return success(response);
 	}
-	
+
 	return failure(response);
-	
+
     }).catch(function(error) {
 	console.log(error);
     });
@@ -35,7 +35,7 @@ function getHelper(URL, success, failure) {
 	},
 	method: 'GET',
     };
-    
+
     return fetchHelper(URL, init, success, failure);
 }
 
@@ -48,7 +48,7 @@ function postHelper(URL, body, success, failure) {
 	method: 'POST',
 	body: JSON.stringify(body),
     };
-    
+
     return fetchHelper(URL, init, success, failure);
 }
 
@@ -64,7 +64,7 @@ function putHelper(URL, body, success, failure) {
 	method: 'PUT',
 	body: JSON.stringify(body),
     };
-    
+
     return fetchHelper(URL, init, success, failure);
 }
 
@@ -133,7 +133,7 @@ function onFetchApplicantsSuccess(resp) {
 
 function onFetchApplicationsSuccess(resp) {
     let applications = {}, newApp;
-    
+
     resp.forEach(app => {
 	newApp = {
 	    taTraining: app.ta_training == 'Y',
@@ -209,7 +209,7 @@ function onFetchAssignmentsSuccess(resp) {
 	    assignments[ass.applicant_id].push(newAss);
 	else
 	    assignments[ass.applicant_id] = [newAss];
-	
+
 	count = assignmentCounts[ass.position_id];
 	assignmentCounts[ass.position_id] = count ? count+1 : 1;
     });
@@ -260,7 +260,7 @@ function fetchAll() {
 
 function postAssignment(applicant, course, hours) {
     appState.setFetchingAssignmentsList(true);
-    
+
     return postHelper('/applicants/' + applicant + '/assignments',
 		       {position_id: course, hours: hours},
 		       resp => {
@@ -271,7 +271,7 @@ function postAssignment(applicant, course, hours) {
 
 function deleteAssignment(applicant, assignment) {
     appState.setFetchingApplicantsList(true);
-    
+
     return deleteHelper('/applicants/' + applicant + '/assignments/' + assignment,
 		       () => {
 			   appState.removeAssignment(applicant, assignment);
@@ -281,7 +281,7 @@ function deleteAssignment(applicant, assignment) {
 
 function updateAssignmentHours(applicant, assignment, hours) {
     appState.setFetchingApplicantsList(true);
-    
+
     return putHelper('/applicants/' + applicant + '/assignments/' + assignment,
 		       {hours: hours},
 		       () => {
