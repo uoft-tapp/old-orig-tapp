@@ -102,15 +102,40 @@ footer div p {
   height: 80px;
   overflow-y: auto;
 }
-.instructor_form input{
+.instructor_form input[type="text"]{
   border: none;
   float: left;
   margin: 0;
   width: 100%;
+  vertical-align: bottom;
 }
 .instructor_form div{
   width: 100%;
   float: left;
+}
+.instructor_form input[type="checkbox"]{
+  display: none;
+}
+.instructor_form input[type="checkbox"]:checked+label{
+  display: block;
+}
+.instructor_form input[type="checkbox"]:not(:checked)+label{
+  display: none;
+}
+.instructor_form span label{
+  float: left;
+  background: #CCC;
+  border-radius: 10px;
+  font-size: 10px;
+}
+.instructor_form span label .fill{
+  padding: 5px 10px;
+}
+.instructor_form span label b{
+  padding: 5px;
+}
+.instructor_form span label b:hover{
+  color: #AAA;
 }
 .instructor_form button{
   background: none;
