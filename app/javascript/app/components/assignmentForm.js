@@ -7,10 +7,6 @@ const cross = "fa fa-times-circle-o";
 
 class AssignmentForm extends React.Component {
 
-    constructor(props){
-	super(props);
-    }
-
     setAssignments(id, assignments, temp_assignments, courses){
 	if(this.noAssignments(assignments, temp_assignments))
 	    return (<tr><td>No Assignments</td></tr>);
@@ -82,7 +78,7 @@ class AssignmentForm extends React.Component {
 	if(temp){
 	    return(
 		    <AssignmentButton
-		click_func={()=>this.props.func.deleteTempAssignment(id, index)}
+		click_func={()=>this.props.func.removeTempAssignment(index)}
 		id={id} index={index} className={className} color="red" {...this}/>
 	    );
 	}
@@ -100,7 +96,7 @@ class AssignmentForm extends React.Component {
 	for(let course in courses){
 	    if(courses[course].code==evt.target.value){
 		if(!this.existingAssignment(course, assignments, temp_assignments)){
-		    this.props.func.addTempAssignment(id, course, courses[course].positionHours);
+		    this.props.func.addTempAssignment(course, courses[course].positionHours);
 		    this.props.func.setInput("");
 		}
 		else{
@@ -116,7 +112,7 @@ class AssignmentForm extends React.Component {
     }
 
     detectTempAssignmentHour(evt, index, id){
-	this.props.func.updateTempAssignment(id, index, evt.target.value);
+	this.props.func.setTempAssignmentHours(index, evt.target.value);
     }
 
     existingAssignment(positionId, assignments, temp_assignments){
@@ -143,7 +139,7 @@ class AssignmentForm extends React.Component {
 	let id = this.props.match.params.id;
 	let assignments = this.props.func.getAssignmentsByApplicant(id);
 	let assignmentForm = this.props.func.getAssignmentForm();
-	let temp_assignments = assignmentForm.tempAssignments[id];
+	let temp_assignments = this.props.func.getTempAssignments();
 	let courses = this.props.func.getCoursesList();
 	let application = this.props.func.getApplicationById(id);
 
