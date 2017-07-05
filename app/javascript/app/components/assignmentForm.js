@@ -7,14 +7,14 @@ const cross = "fa fa-times-circle-o";
 
 class AssignmentForm extends React.Component {
 
-    setAssignments(id, assignments, temp_assignments, courses){
+    setAssignments(applicant, assignments, temp_assignments, courses){
 	if(this.noAssignments(assignments, temp_assignments))
 	    return (<tr><td>No Assignments</td></tr>);
 	if(assignments!==undefined){
 	    return(
 		assignments.map((assignment,index)=>(
 			<AssignmentRow assignment={assignment}
-		    id={id} index={index} courses={courses} temp={false}
+		    applicant={applicant} index={index} courses={courses} temp={false}
 		    input_func={this.detectAssignmentHour} self={this}
 		    {...this}/>
 		))
@@ -62,31 +62,31 @@ class AssignmentForm extends React.Component {
 	}
     }
 
-    setAssignmentCheckButton(temp, id, index, self){
+    setAssignmentCheckButton(temp, applicant, course, self){
 	if(temp){
 	    return(
 		    <AssignmentButton
-		click_func={()=>this.props.func.addAssignment(id, index)}
-		id={id} index={index}
+		click_func={()=>this.props.func.permAssignment(course)}
+		id={applicant}
 		className="fa fa-check-circle-o" color="green" {...this}/>
 	    );
 	}
     }
 
-    setAssignmentCrossButton(temp, id, index, self){
+    setAssignmentCrossButton(temp, applicant, assignment, self){
 	let className="fa fa-times-circle-o";
 	if(temp){
 	    return(
 		    <AssignmentButton
-		click_func={()=>this.props.func.removeTempAssignment(index)}
-		id={id} index={index} className={className} color="red" {...this}/>
+		click_func={()=>this.props.func.removeTempAssignment(assignment.positionId)}
+		id={applicant} className={className} color="red" {...this}/>
 	    );
 	}
 	else{
 	    return(
 		    <AssignmentButton
-		click_func={()=>this.props.func.deleteAssignment(id, index)}
-		id={id} index={index} className={className} color="red" {...this}/>
+		click_func={()=>this.props.func.deleteAssignment(applicant, assignment.id)}
+		id={applicant} className={className} color="red" {...this}/>
 	    );
 	}
     }
@@ -108,7 +108,7 @@ class AssignmentForm extends React.Component {
     }
 
     detectAssignmentHour(evt, index, id){
-	this.props.func.updateAssignment(id, index, evt.target.value);
+	this.props.func.setAssignmentHours(id, index, evt.target.value);
     }
 
     detectTempAssignmentHour(evt, index, id){
@@ -136,25 +136,25 @@ class AssignmentForm extends React.Component {
     }
 
     render() {
-	let id = this.props.match.params.id;
-	let assignments = this.props.func.getAssignmentsByApplicant(id);
+	let applicant = this.props.match.params.id;
+	let assignments = this.props.func.getAssignmentsByApplicant(applicant);
 	let assignmentForm = this.props.func.getAssignmentForm();
 	let temp_assignments = this.props.func.getTempAssignments();
 	let courses = this.props.func.getCoursesList();
-	let application = this.props.func.getApplicationById(id);
+	let application = this.props.func.getApplicationById(applicant);
 
 	return (
 		<div>
 		<p><b>Application round: </b>{application.round}</p>
 		<table className="panel_table">
 		<tbody>
-		{this.setAssignments(id, assignments, temp_assignments, courses)}
-            {this.setTempAssignments(id, assignments, temp_assignments, courses)}
+		{this.setAssignments(applicant, assignments, temp_assignments, courses)}
+            {this.setTempAssignments(applicant, assignments, temp_assignments, courses)}
             </tbody>
 		</table>
 		<p style={{marginTop: '10px'}}><b>Add assignment: </b>
 		<input type="text" list="courses" value={assignmentForm.assignmentInput}
-            onChange={(eventKey)=>(this.detectCourse(eventKey, id, courses, assignments, temp_assignments))}/>
+            onChange={(eventKey)=>(this.detectCourse(eventKey, applicant, courses, assignments, temp_assignments))}/>
 		</p>
 		<datalist id="courses">
 		{this.setCourses(courses)}
@@ -173,10 +173,10 @@ const AssignmentRow = props =>(
     value={props.assignment.hours}/>
 	</td>
 	<td>
-	{props.self.setAssignmentCheckButton(props.temp, props.id, props.index, props.self)}
+	{props.self.setAssignmentCheckButton(props.temp, props.applicant, props.assignment.positionId, props.self)}
     </td>
 	<td>
-	{props.self.setAssignmentCrossButton(props.temp, props.id, props.index, props.self)}
+	{props.self.setAssignmentCrossButton(props.temp, props.applicant, props.assignment, props.self)}
     </td>
 	</tr>
 
