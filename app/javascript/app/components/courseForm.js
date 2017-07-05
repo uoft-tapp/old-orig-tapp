@@ -9,6 +9,7 @@ class CourseForm extends React.Component {
   setForms(){
     if(!this.props.func.anyFetching()){
       let courses = this.props.func.getCoursesList();
+      let instructors = this.props.func.getInstructorsList();
       return(
         Object.entries(courses).map((course, key) =>(
           <ListGroupItem key={key}>
@@ -46,6 +47,7 @@ class CourseForm extends React.Component {
                       course={course[0]}
                       input={course[1].instructor_input}
                       instructors={course[1].instructors}
+                      instructor_data={instructors}
                       state={this.props.func}
                       self={this}
                       {...this.props}/>
@@ -71,7 +73,7 @@ class CourseForm extends React.Component {
     }
   }
 
-  isInstructor(eventKey, course, instructors){
+  isInstructor(eventKey, course, instructors, instructor_data){
     let input = eventKey.target.value;
     let span = document.getElementById("input_"+course);
     for(let i in instructor_data){
@@ -122,7 +124,7 @@ const InstructorForm = props =>(
     <div>
       {props.instructors.map((instructor, key)=>(
         <Badge key={key}>
-          {instructor_data[instructor]}
+          {props.instructor_data[instructor]}
           <button onClick={()=>props.state.removeInstructor(props.course, key)}>
             <i className="fa fa-close"></i>
           </button>
@@ -133,58 +135,14 @@ const InstructorForm = props =>(
     </div>
     <input type="text" list={props.list} value={props.input} autoComplete="on"
       id={"hidden_input_"+props.course}
-      onInput={(eventKey)=>props.self.isInstructor(eventKey, props.course, props.instructors)}/>
+      onInput={(eventKey)=>props.self.isInstructor(eventKey, props.course,
+        props.instructors, props.instructor_data)}/>
     <datalist id={props.list}>
-      {Object.entries(instructor_data).map((instructor, key)=>(
+      {Object.entries(props.instructor_data).map((instructor, key)=>(
         <option key={key} value={instructor[1]}></option>
       ))}
     </datalist>
   </div>
 );
-
-const instructor_data = {
-    1: "Gary Baumgartner",
-    2: "Tom Fairgrieve",
-    3: "Paul Gries",
-    4: "Radford Neal",
-    5: "Bogdan Simion",
-    6: "Danny Heap",
-    7: "Jacqueline Smith",
-    8: "David Liu",
-    9: "Toniann Pitassi",
-    10: "Karen Reid",
-    11: "Faith Ellen",
-    12: "Sajad Shirali-Shahreza",
-    13: "Steve Engels",
-    14: "Francois Pitt",
-    15: "Sam Toueg",
-    16: "Sasa Milic",
-    17: "Lindsey Shorser",
-    18: "Joey Freund",
-    19: "Mat Zeleski",
-    20: "Amir Chinaei",
-    21: "Velian Pandeliev",
-    22: "Kyros Kutulakos",
-    23: "Roger Grosse",
-    24: "Christina Christara",
-    25: "Diane Horton",
-    26: "Peter Marbach",
-    27: "Allan Jepson",
-    28: "Sheila McIlraith",
-    29: "Frank Rudzicz",
-    30: "Michael Guerzhoy",
-    31: "David Duvenaud",
-    32: "David Levin",
-    33: "Edy Garfinkiel",
-    34: "David Holman",
-    35: "Marina Barsky",
-    36: "Ken Jackson",
-    37: "Mario Grech",
-    38: "Steve Cook",
-    39: "Aleksandar Nikolov",
-    40: "Steven Shapiro",
-    41: "Helen Kontozopoulos",
-    42: "Narges Norouzi",
-};
 
 export { CourseForm };
