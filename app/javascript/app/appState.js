@@ -144,14 +144,15 @@ class AppState {
 	this._data.add('assignmentForm.tempAssignments', {positionId: positionId, hours: hours});
     }
 
-    // check whether any of the given filters are active on the applicant table
-    anyFilterActive(course, fields) {
-	return fields.some((field) => this.isFilterActive(course, field));
+    // check whether any of the given filters in the category are active on the applicant table
+    anyFilterActive(course, field) {
+	return this.getCoursePanelFiltersByCourse(course)[field] != undefined;
     }
 
     // remove all active filters on the applicant table
     clearFilters(course) {
-	this._data.set('abcView.panelFields['+course+'].activeFilters', []);
+	this._data.unset('abcView.panelFields['+course+'].activeFilters', {silent: true});
+	this._data.set('abcView.panelFields['+course+'].activeFilters', {});
     }
 
     createAssignmentForm(panels) {
@@ -213,8 +214,10 @@ class AppState {
     }
 
     // check whether a filter is active on the applicant table
-    isFilterActive(course, field) {
-	return this.getCoursePanelFiltersByCourse(course).includes(field);
+    isFilterActive(course, field, category) {
+	let filters = this.getCoursePanelFiltersByCourse(course);
+
+	return filters[field] != undefined && filters[field].includes(category);
     }
 
     // check whether a panel is expanded in the applicant view
@@ -328,7 +331,7 @@ class AppState {
             this._data.set('abcView.layout', this.addCoursePanel(course, active.length));
 
             // add panel to panel state tracker
-            this._data.set('abcView.panelFields['+course+']', {activeSortFields: [], activeFilters: []});
+            this._data.set('abcView.panelFields['+course+']', {activeSortFields: [], activeFilters: {}});
 
         } else {
             // remove course from layout
@@ -342,13 +345,30 @@ class AppState {
     }
     
     // toggle a filter on the applicant table
-    toggleFilter(course, field) {
-	let i = this.getCoursePanelFiltersByCourse(course).indexOf(field);
+    toggleFilter(course, field, category) {
+	let filters = this.getCoursePanelFiltersByCourse(course);
+	this._data.unset('abcView.panelFields['+course+'].activeFilters', {silent: true});
+
+        if (filters[field]) {
+	    let i = filters[field].indexOf(category);
+
+	    // filter is not already applied
+	    if (i == -1)
+		filters[field].push(category);
+
+	    // filter is already applied, along with other filters
+	    else if (filters[field].length > 1)
+		filters[field].splice(i, 1);
+
+	    // only this filter is already applied
+	    else
+		delete filters[field];
+	    
+	} else {    
+	    filters[field] = [category];
+	}
 	
-        if (i != -1)
-	    this._data.remove('abcView.panelFields['+course+'].activeFilters['+i+']');
-	else
-            this._data.add('abcView.panelFields['+course+'].activeFilters', field);
+	this._data.set('abcView.panelFields['+course+'].activeFilters', filters);
     }
 
     // toggle the selected state of the course that is clicked
@@ -447,7 +467,7 @@ class AppState {
 	return this._data.get('instructors.fetching');
     }
 
-    // get applicants who are assigned to course
+    // get applicants who are assigned to course; returns a list of [applicantID, applicantData]
     getApplicantsAssignedToCourse(course) {
 	let assignments = this.getAssignmentsList(), applicants = this.getApplicantsList(), filteredApplicants = [];
 
@@ -481,7 +501,7 @@ class AppState {
 	return filteredApplicants;
     }
 
-    // get applicants to course who are not assigned to it
+    // get applicants to course who are not assigned to it; returns a list of [applicantID, applicantData]
     getApplicantsToCourseUnassigned(course) {
 	let applicants = this.getApplicantsToCourse(course);
 	let assignments = this.getAssignmentsList();
