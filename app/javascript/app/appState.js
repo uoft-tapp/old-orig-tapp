@@ -471,8 +471,7 @@ class AppState {
     getApplicantsAssignedToCourse(course) {
 	let assignments = this.getAssignmentsList(), applicants = this.getApplicantsList(), filteredApplicants = [];
 
-	let applicant;
-	for (applicant in assignments) {
+	for (var applicant in assignments) {
 	    if (assignments[applicant].some(ass => ass.positionId == course))
 		filteredApplicants.push([applicant, applicants[applicant]]);
 	}
@@ -608,8 +607,7 @@ class AppState {
 
 	// assumes that all courses in a single application will be part of the same round, and that all applicants
 	// have applied to at least one course
-	let applicant;
-	for (applicant in applications) {
+	for (var applicant in applications) {
             applications[applicant].forEach((app, index) => {
 		applications[applicant][index].round = courses[app.prefs[0].positionId].round;
             });
@@ -631,8 +629,7 @@ class AppState {
     setCoursesAssignmentCount(counts) {
         let courses = this.getCoursesList();
 
-        let course;
-        for (course in counts) {
+        for (var course in counts) {
             courses[course].assignmentCount = counts[course];
         }
 
