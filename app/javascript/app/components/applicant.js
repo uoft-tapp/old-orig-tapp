@@ -15,12 +15,12 @@ class Applicant extends React.Component {
     componentDidUpdate() {
         this.selectThisTab();
     }
-    
+
     setAddress(address){
         let parts = address.split("\r\n");
         return(
-            parts.map(part=>(
-                    <p>{part}</p>
+            parts.map((part, key)=>(
+                    <p key={key}>{part}</p>
             ))
         )
     }
@@ -32,10 +32,10 @@ class Applicant extends React.Component {
             j = j + size;
         }
         return (
-            columns.map(column=>(
-                    <td>
-                    {column.map(item =>(
-                            <p>
+            columns.map((column, key)=>(
+                <td key={key}>
+                    {column.map((item, key) =>(
+                        <p key={key}>
                             {courses[item.positionId].code}
                         {item.preferred?<i className="fa fa-star-o" style={{color:'orange'}}></i>:''}
                         </p>
@@ -128,7 +128,7 @@ class Applicant extends React.Component {
             }
         }
     }
-    
+
     render() {
         let panels = ["Personal Information", "Current Status",
                       "Current Program Information", "Current Assignment Status",
@@ -150,7 +150,7 @@ const CollapsiblePanel = props =>(
         <div className="container-fluid"
     style={{height: '90vh', width: '100vw', overflow: 'auto'}}>
         {props.assignmentForm.panels.map((panel, index) => (
-                <Panel style={{width: '98vw', float: 'left', margin: '0'}}
+                <Panel style={{width: '98vw', float: 'left', margin: '0'}} key={index}
             collapsible expanded={props.state.func.isPanelExpanded(index)}
             header={
                     <div style={{width: '100%', height: '100%', margin: '0', cursor: "pointer"}}
