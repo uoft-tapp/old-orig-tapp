@@ -102,23 +102,40 @@ footer div p {
   height: 80px;
   overflow-y: auto;
 }
+.instructor_form td{
+  border: red 1px solid;
+  float: left;
+  padding:0;
+  border-collapse: collapse;
+  white-space: nowrap;
+  width: auto !important;
+}
 .instructor_form input[type="text"]{
   border: none;
   float: left;
   margin: 0;
-  height: 30px;
+  height: 0px;
   vertical-align: text-bottom;
   width: 100%;
+  opacity: 0;
 }
-.instructor_form input[type="text"]:focus{
+.instructor_form input[type="text"]:focus,
+.instructor_form span:focus{
   outline: 0;
 }
 .instructor_form div{
   width: 100% !important;
-  min-height: calc(100% - 30px);
+  min-height: calc(100% - 2px);
   float: left;
 }
 .instructor_form button{
   background: none;
   border: none;
+}
+.instructor_form datalist{
+  display: block;
+  position: fixed;
+}
+.instructor_form span{
+  margin-left: 2px;
 }
