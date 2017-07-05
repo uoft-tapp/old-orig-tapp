@@ -260,36 +260,34 @@ function fetchAll() {
 }
 
 function postAssignment(applicant, course, hours) {
-    appState.setFetchingAssignmentsList(true);
-
     return postHelper('/applicants/' + applicant + '/assignments',
 		       {position_id: course, hours: hours},
 		       resp => {
 			   appState.addAssignment(resp.applicant_id, resp.position_id, resp.hours, resp.id);
-			   appState.setFetchingApplicantsList(false);
 		       });
 }
 
 function deleteAssignment(applicant, assignment) {
-    appState.setFetchingApplicantsList(true);
-
     return deleteHelper('/applicants/' + applicant + '/assignments/' + assignment,
 		       () => {
 			   appState.removeAssignment(applicant, assignment);
-			   appState.setFetchingApplicantsList(false);
 		       });
 }
 
 function updateAssignmentHours(applicant, assignment, hours) {
-    appState.setFetchingApplicantsList(true);
-
-    return putHelper('/applicants/' + applicant + '/assignments/' + assignment,
-		       {hours: hours},
-		       () => {
-    			   appState.setAssignmentHours(applicant, assignment, hours);
-             appState.setFetchingApplicantsList(false);
-
-		       });
+  return putHelper('/applicants/' + applicant + '/assignments/' + assignment,
+         {hours: hours},
+         () => {
+           appState.setAssignmentHours(applicant, assignment, hours);
+		});
 }
 
-export {fetchAll, postAssignment, deleteAssignment, updateAssignmentHours};
+function updateCourse(courseId, data, val, attr){
+  return fetchHelper('/positions/'+courseId, 'PUT', data,
+    ()=>{
+      appState.updateCourseAttribute(courseId, val, attr);
+    });
+
+}
+
+export {fetchAll, postAssignment, deleteAssignment, updateAssignmentHours, updateCourse};

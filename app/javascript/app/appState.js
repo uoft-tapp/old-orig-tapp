@@ -675,43 +675,46 @@ class AppState {
       fetch.updateAssignmentHours(applicant, assignment, hours);
     }
 
-    updateCourseAttribute(courseId, data, val, attr){
-      this.routeAction('/positions/'+courseId, 'put', data,
-          "could not update "+attr+" in Course", (res)=>{
-          this._data.set('courses.list['+courseId+'].'+attr, val);
-      });
+    updateCourseAttribute(courseId, val, attr){
+      this._data.set('courses.list['+courseId+'].'+attr, val);
     }
 
     updateCourseHours(courseId, eventKey){
       let val = eventKey.target.value;
-      this.updateCourseAttribute(courseId, {hours: val}, val, "positionHours");
+      fetch.updateCourse(courseId, {hours: val}, val, "positionHours");
     }
 
     updateCoursePosition(courseId, eventKey){
       let val = eventKey.target.value;
-      this.updateCourseAttribute(courseId, {estimated_count: val}, val, "estimatedPositions");
+      fetch.updateCourse(courseId, {estimated_count: val}, val, "estimatedPositions");
     }
 
     updateCourseEnrol(courseId, eventKey){
       let val = eventKey.target.value;
-      this.updateCourseAttribute(courseId, {estimated_enrolment: val}, val, "estimatedEnrol");
+      fetch.updateCourse(courseId, {estimated_enrolment: val}, val, "estimatedEnrol");
     }
 
     updateCourseQual(courseId, eventKey){
       let val = eventKey.target.value;
-      this.updateCourseAttribute(courseId, {qualifications: val}, val, "qual");
+      fetch.updateCourse(courseId, {qualifications: val}, val, "qual");
     }
     updateCourseResp(courseId, eventKey){
       let val = eventKey.target.value;
-      this.updateCourseAttribute(courseId, {duties: val}, val, "resp");
+      fetch.updateCourse(courseId, {duties: val}, val, "resp");
     }
 
     addInstructor(courseId, instructorId){
-      this._data.add('courses.list['+courseId+'].instructors', parseInt(instructorId));
+      let val = this._data.get('courses.list['+courseId+'].instructors');
+      val.push(parseInt(instructorId));
+      fetch.updateCourse(courseId, {instructors: val}, val, "instructors");
     }
 
     removeInstructor(courseId, index){
-      this._data.remove('courses.list['+courseId+'].instructors['+index+']');
+      let val = this._data.get('courses.list['+courseId+'].instructors');
+      val.splice(index, 1);
+      this._data.unset('courses.list['+courseId+'].instructors');
+      this._data.set('courses.list['+courseId+'].instructors', []);
+      fetch.updateCourse(courseId, {instructors: val}, val, "instructors");
     }
 
     updateInstructorInput(courseId, input){
