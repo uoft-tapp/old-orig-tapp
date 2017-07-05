@@ -1,5 +1,5 @@
 import React from 'react'
-import { Panel, ListGroup, ListGroupItem } from 'react-bootstrap'
+import { Panel, ListGroup, ListGroupItem, Badge } from 'react-bootstrap'
 
 class CourseForm extends React.Component {
   constructor(props){
@@ -46,8 +46,9 @@ class CourseForm extends React.Component {
                       course={course[0]}
                       input={course[1].instructor_input}
                       instructors={course[1].instructors}
+                      state={this.props.func}
                       self={this}
-                      {...this}/>
+                      {...this.props}/>
                   </td>
                   <td>
                     <p><b>Qualifications: </b></p>
@@ -70,27 +71,15 @@ class CourseForm extends React.Component {
     }
   }
 
-  setInstructor(instructors, course){
-    return(
-      Object.entries(instructor_data).map((instructor, key)=>(
-        <span>
-          <input type="checkbox" value={instructor[0]} id={course+"_"+instructor[0]}
-            defaultChecked={this.alreadyAddedInstructor(instructor[0],instructors)}/>
-          <label htmlFor={course+"_"+instructor[0]} key={key}>
-              <button className="fill">{instructor[1]}</button>
-              <b onClick={()=>console.log("clicked")}>X</b>
-          </label>
-        </span>
-      ))
-    );
-  }
-
   isInstructor(eventKey, course, instructors){
     let input = eventKey.target.value;
     for(let i in instructor_data){
       if(instructor_data[i]==input){
         if(!this.alreadyAddedInstructor(i, instructors)){
           this.props.func.addInstructor(course, i);
+        }
+        else{
+          alert("You've already added this instructor.");
         }
         input="";
       }
@@ -104,6 +93,12 @@ class CourseForm extends React.Component {
         return true;
     }
     return false;
+  }
+
+  updateInputField(eventKey, course){
+    let input = eventKey.target.value;
+    console.log(input);
+    this.props.func.updateInstructorInput(course, input);
   }
 
   render(){
@@ -121,7 +116,14 @@ class CourseForm extends React.Component {
 const InstructorForm = props =>(
   <div className="instructor_form">
     <div>
-      {props.self.setInstructor(props.instructors, props.course)}
+      {props.instructors.map((instructor, key)=>(
+        <Badge key={key}>
+          {instructor_data[instructor]}
+          <button onClick={()=>props.state.removeInstructor(props.course, key)}>
+            <i className="fa fa-close"></i>
+          </button>
+        </Badge>
+      ))}
     </div>
     <input type="text" list={props.list} value={props.input}
       onChange={(eventKey)=>props.self.isInstructor(eventKey, props.course, props.instructors)}/>
