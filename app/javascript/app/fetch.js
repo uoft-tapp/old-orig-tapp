@@ -286,9 +286,10 @@ function updateAssignmentHours(applicant, assignment, hours) {
     return putHelper('/applicants/' + applicant + '/assignments/' + assignment,
 		       {hours: hours},
 		       () => {
-			   appState.setAssignmentHours(applicant, assignment, hours);
-			   appState.setFetchingApplicantsList(false);
+    			   appState.setAssignmentHours(applicant, assignment, hours);
+             appState.setFetchingApplicantsList(false);
+
 		       });
 }
 
-export {fetchAll, postAssignment, deleteAssignment};
+export {fetchAll, postAssignment, deleteAssignment, updateAssignmentHours};

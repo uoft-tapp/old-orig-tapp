@@ -8,18 +8,20 @@ const cross = "fa fa-times-circle-o";
 class AssignmentForm extends React.Component {
 
     setAssignments(applicant, assignments, temp_assignments, courses){
-	if(this.noAssignments(assignments, temp_assignments))
-	    return (<tr><td>No Assignments</td></tr>);
-	if(assignments!==undefined){
-	    return(
-		assignments.map((assignment,index)=>(
-			<AssignmentRow assignment={assignment} key={index}
-		    applicant={applicant} index={index} courses={courses} temp={false}
-		    input_func={this.detectAssignmentHour} self={this}
-		    {...this}/>
-		))
-	    );
-	}
+    	if(this.noAssignments(assignments, temp_assignments))
+    	    return (<tr><td>No Assignments</td></tr>);
+    	if(assignments!==undefined){
+    	    return(
+        		assignments.map((assignment,index)=>(
+        			<AssignmentRow assignment={assignment} key={index}
+        		    applicant={applicant} courses={courses} temp={false}
+        		    input_func={(eventKey)=>
+                  this.props.func.updateAssignment(applicant, assignment.id,
+                    eventKey.target.value)}
+                self={this} state={this.props.func} {...this}/>
+        		))
+    	    );
+    	}
     }
 
     noAssignments(assignments, temp_assignments){
@@ -50,16 +52,16 @@ class AssignmentForm extends React.Component {
     }
 
     setTempAssignments(id, assignments, temp_assignments, courses){
-	if(temp_assignments!==undefined){
-	    return(
-		temp_assignments.map((assignment,index)=>(
-			<AssignmentRow assignment={assignment} key={index}
-		    id={id} index={index} courses={courses} temp={true}
-		    input_func={this.detectTempAssignmentHour} self={this}
-		    {...this}/>
-		))
-	    );
-	}
+    	if(temp_assignments!==undefined){
+    	    return(
+    		temp_assignments.map((assignment,index)=>(
+    			<AssignmentRow assignment={assignment} key={index}
+    		    courses={courses} temp={true} self={this} {...this}
+    		    input_func={((eventKey)=>
+              this.props.func.setTempAssignmentHours(assignment.positionId, eventKey.target.value))}/>
+        		))
+    	    );
+    	}
     }
 
     setAssignmentCheckButton(temp, applicant, course, self){
@@ -105,14 +107,6 @@ class AssignmentForm extends React.Component {
 		}
 	    }
 	}
-    }
-
-    detectAssignmentHour(evt, index, id){
-	this.props.func.setAssignmentHours(id, index, evt.target.value);
-    }
-
-    detectTempAssignmentHour(evt, index, id){
-	this.props.func.setTempAssignmentHours(index, evt.target.value);
     }
 
     existingAssignment(positionId, assignments, temp_assignments){
@@ -166,10 +160,10 @@ class AssignmentForm extends React.Component {
 
 const AssignmentRow = props =>(
 	<tr>
-	<td>{props.courses[props.assignment.positionId].code}</td>
+  <td>{props.courses[props.assignment.positionId].code}</td>
 	<td>
 	<input type="number" style={{width: '50px'}} min="0"
-    onChange={(eventKey)=>(props.input_func(eventKey, props.index, props.id))}
+    onChange={props.input_func}
     value={props.assignment.hours}/>
 	</td>
 	<td>
