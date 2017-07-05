@@ -320,9 +320,9 @@ class AppState {
     }
 
     // change the number of hours of a temporary assignment
-    setTempAssignmentHours(course, hours) {
-	let i = this.getTempAssignments().findIndex(ass => (ass.positionId == course));
-	this._data.set('assignmentForm.tempAssignments['+i+'].hours', hours);
+    setTempAssignmentHours(id, hours) {
+      let i = this.getTempAssignments().findIndex(ass => (ass.positionId == id));
+      this._data.set('assignmentForm.tempAssignments['+i+'].hours', hours);
     }
 
     // toggle the visibility of a course panel in the ABC view
@@ -622,8 +622,8 @@ class AppState {
     }
 
     setAssignmentHours(applicant, assignment, hours) {
-	let i = this.getAssignmentsByApplicant(applicant).findIndex(ass => (ass.id == assignment));
-	this._data.set('assignments['+applicant+']['+i+'].hours', hours);
+      let i = this.getAssignmentsByApplicant(applicant).findIndex(ass => (ass.id == assignment));
+	    this._data.set('assignments.list['+applicant+']['+i+'].hours', hours);
     }
 
     setAssignmentsList(list) {
@@ -669,6 +669,10 @@ class AppState {
     setInstructorsList(list) {
         this._data.unset('instructors.list', {silent: true});
         this._data.set('instructors.list', list);
+    }
+
+    updateAssignment(applicant, assignment, hours){
+      fetch.updateAssignmentHours(applicant, assignment, hours);
     }
 
     updateCourseAttribute(courseId, data, val, attr){
