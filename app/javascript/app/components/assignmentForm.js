@@ -13,7 +13,7 @@ class AssignmentForm extends React.Component {
 	if(assignments!==undefined){
 	    return(
 		assignments.map((assignment,index)=>(
-			<AssignmentRow assignment={assignment}
+			<AssignmentRow assignment={assignment} key={index}
 		    applicant={applicant} index={index} courses={courses} temp={false}
 		    input_func={this.detectAssignmentHour} self={this}
 		    {...this}/>
@@ -53,7 +53,7 @@ class AssignmentForm extends React.Component {
 	if(temp_assignments!==undefined){
 	    return(
 		temp_assignments.map((assignment,index)=>(
-			<AssignmentRow assignment={assignment}
+			<AssignmentRow assignment={assignment} key={index}
 		    id={id} index={index} courses={courses} temp={true}
 		    input_func={this.detectTempAssignmentHour} self={this}
 		    {...this}/>
@@ -129,8 +129,8 @@ class AssignmentForm extends React.Component {
 
     setCourses(courses){
 	return(
-	    Object.entries(courses).map(key => (
-		    <option value={key[1].code}></option>
+	    Object.entries(courses).map((key, index) => (
+		    <option value={key[1].code} key={index}></option>
 	    ))
 	);
     }
