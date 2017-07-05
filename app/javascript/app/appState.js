@@ -141,15 +141,6 @@ class AppState {
 
     // add a temporary assignment through the assignment form of the applicant view
     addTempAssignment(positionId, hours){
-/*	let tempAssignments = this.getTempAssignments();
-
-	if (!tempAssignments) {
-	    tempAssignments = [{positionId: positionId, hours: hours}];
-	} else {
-	    tempAssignments.push({positionId: positionId, hours: hours});
-	}
-	    
-	this._data.unset('assignmentForm.tempAssignments', {silent: true});*/
 	this._data.add('assignmentForm.tempAssignments', {positionId: positionId, hours: hours});
     }
 
