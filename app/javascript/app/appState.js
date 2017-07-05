@@ -38,7 +38,7 @@ const initialState = {
     // assignment form used by applicant view
     assignmentForm: {
 	panels: [],
-	tempAssignments: {},
+	tempAssignments: [],
 	assignmentInput: "",
     },
 
@@ -141,16 +141,16 @@ class AppState {
 
     // add a temporary assignment through the assignment form of the applicant view
     addTempAssignment(positionId, hours){
-	let applicantId = this.getSelectedApplicant();
-	let tempAssignments = this.getTempAssignments();
-	
-	if (tempAssignments)
-	    tempAssignments[applicantId].push({positionId: positionId, hours: hours});
-	else
-	    tempAssignments[applicantId] = [{positionId: positionId, hours: hours}];
-	
-	this._data.unset('assignmentForm.tempAssignments', {silent: true});
-	this._data.set('assignmentForm.tempAssignments', tempAssignments);
+/*	let tempAssignments = this.getTempAssignments();
+
+	if (!tempAssignments) {
+	    tempAssignments = [{positionId: positionId, hours: hours}];
+	} else {
+	    tempAssignments.push({positionId: positionId, hours: hours});
+	}
+	    
+	this._data.unset('assignmentForm.tempAssignments', {silent: true});*/
+	this._data.add('assignmentForm.tempAssignments', {positionId: positionId, hours: hours});
     }
 
     // check whether any of the given filters are active on the applicant table
@@ -213,7 +213,7 @@ class AppState {
     }
 
     getTempAssignments() {
-	return this._data.get('assignmentForm.tempAssignments['+this.getSelectedApplicant()+']');
+	return this._data.get('assignmentForm.tempAssignments');
     }
     
     // check whether a course in the course menu is selected
@@ -305,8 +305,9 @@ class AppState {
     }
 
     // remove a temporary assignment from the assignment form of the applicant view
-    removeTempAssignment(index) {
-	this._data.remove('assignmentForm.tempAssignments['+this.getSelectedApplicant()+']['+index+']');
+    removeTempAssignment(course) {
+	let i = this.getTempAssignments().findIndex(ass => (ass.positionId == course));
+	this._data.remove('assignmentForm.tempAssignments['+i+']');
     }
 
     // select a navbar tab
@@ -320,8 +321,9 @@ class AppState {
     }
 
     // change the number of hours of a temporary assignment
-    setTempAssignmentHours(index, hours) {
-	this._data.set('assignmentForm.tempAssignments['+this.getSelectedApplicant()+']['+index+'].hours', hours);
+    setTempAssignmentHours(course, hours) {
+	let i = this.getTempAssignments().findIndex(ass => (ass.positionId == course));
+	this._data.set('assignmentForm.tempAssignments['+i+'].hours', hours);
     }
 
     // toggle the visibility of a course panel in the ABC view
@@ -558,13 +560,13 @@ class AppState {
     }
 
     // persist a temporary assignment to the database
-    permAssignment(index) {
+    permAssignment(course) {
 	let applicant = this.getSelectedApplicant();
-	let tempAssignment = this.getTempAssignments()[index];
+	let tempAssignment = this.getTempAssignments().find(ass => (ass.positionId == course));
 
-	this.createAssignment(applicant, tempAssignment.positionId, tempAssignment.hours);
-	
-	this.removeTempAssignment(index);
+	this.createAssignment(applicant, course, tempAssignment.hours);
+
+	this.removeTempAssignment(course);
     }
     
     // remove an assignment from the assignment list
@@ -578,11 +580,6 @@ class AppState {
 
 	this.setAssignmentsList(assignments);
 	this.decrementCourseAssignmentCount(course);
-    }
-
-    // remove a temporary assignment from the assignment form of the applicant view
-    removeTempAssignment(index) {
-	this._data.remove('assignmentForm.tempAssignments['+this.getSelectedApplicant()+']['+index+']');
     }
 
     setApplicantsList(list) {
