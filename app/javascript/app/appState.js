@@ -70,33 +70,6 @@ class AppState {
      ** view state getters and setters **
      ************************************/
 
-    // select a navbar tab
-    selectNavTab(eventKey, applicant_id) {
-      if(!this.isFetching()&&eventKey==6){
-        let applicant = this._data.get('applicants.list['+applicant_id+']');
-        let applicant_name = applicant.firstName+' '+applicant.lastName;
-  	    this._data.set({'nav.selectedTab': eventKey,
-  			    'nav.selectedApplicant': applicant_id ? applicant_name : null});
-      }
-      else {
-        this._data.set({'nav.selectedTab': eventKey,
-  			    'nav.selectedApplicant': applicant_id ? '-' : null});
-      }
-    }
-
-    // toggle the selected state of the course that is clicked
-    toggleSelectedCourse(course) {
-        let selected = this._data.get('courseMenu.selected');
-        let i = selected.indexOf(course);
-
-        if (i == -1) {
-            if (selected.length < 4)
-                this._data.add('courseMenu.selected', course);
-        } else {
-            this._data.remove('courseMenu.selected[' + i + ']');
-        };
-    }
-
     // check whether a course in the course menu is selected
     isCourseSelected(course) {
         return this._data.get('courseMenu.selected').includes(course);
