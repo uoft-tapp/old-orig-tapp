@@ -7,8 +7,8 @@ class CourseForm extends React.Component {
   }
 
   setForms(){
-    if(!this.props.func.isFetching()){
-      let courses = this.props.courses.list;
+    if(!this.props.func.anyFetching()){
+      let courses = this.props.func.getCoursesList();
       return(
         Object.entries(courses).map((course, key) =>(
           <ListGroupItem key={key}>
