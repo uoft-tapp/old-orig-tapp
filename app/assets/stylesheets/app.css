@@ -83,7 +83,7 @@ footer div p {
 }
 .form_table td textarea{
   height: 80px;
-  width: calc(calc(100vw - calc(12em + 420px)) / 3);
+  width: calc(calc(100vw - calc(12em + 520px)) / 3);
   float: left;
   resize: none;
 }
@@ -98,7 +98,7 @@ footer div p {
 /* instructor form */
 .instructor_form{
   border: #CCC 1px solid;
-  width: calc(calc(100vw - calc(12em + 420px)) / 3);
+  width: calc(calc(100vw - calc(12em + 520px)) / 3);
   height: 80px;
   overflow-y: auto;
 }
@@ -106,36 +106,17 @@ footer div p {
   border: none;
   float: left;
   margin: 0;
+  height: 30px;
+  vertical-align: text-bottom;
   width: 100%;
-  vertical-align: bottom;
+}
+.instructor_form input[type="text"]:focus{
+  outline: 0;
 }
 .instructor_form div{
-  width: 100%;
+  width: 100% !important;
+  min-height: calc(100% - 30px);
   float: left;
-}
-.instructor_form input[type="checkbox"]{
-  display: none;
-}
-.instructor_form input[type="checkbox"]:checked+label{
-  display: block;
-}
-.instructor_form input[type="checkbox"]:not(:checked)+label{
-  display: none;
-}
-.instructor_form span label{
-  float: left;
-  background: #CCC;
-  border-radius: 10px;
-  font-size: 10px;
-}
-.instructor_form span label .fill{
-  padding: 5px 10px;
-}
-.instructor_form span label b{
-  padding: 5px;
-}
-.instructor_form span label b:hover{
-  color: #AAA;
 }
 .instructor_form button{
   background: none;

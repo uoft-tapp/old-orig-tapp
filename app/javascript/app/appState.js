@@ -730,11 +730,11 @@ class AppState {
     }
 
     addInstructor(courseId, instructorId){
-      console.log(this._data.get('courses.list['+courseId+'].instructors'));
-      let array = this._data.get('courses.list['+courseId+'].instructors');
-      array.push(parseInt(instructorId));
-      this._data.set('courses.list['+courseId+'].instructors', array);
-      console.log(this._data.get('courses.list['+courseId+'].instructors'));
+      this._data.add('courses.list['+courseId+'].instructors', parseInt(instructorId));
+    }
+
+    removeInstructor(courseId, index){
+      this._data.remove('courses.list['+courseId+'].instructors['+index+']');
     }
 
     updateInstructorInput(courseId, input){
