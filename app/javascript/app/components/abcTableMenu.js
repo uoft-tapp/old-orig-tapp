@@ -63,9 +63,10 @@ class ABCTableMenu extends React.Component {
 		    })}
 
 		<DropdownButton title="Add sort field" id="sort-dropdown" bsStyle="info" noCaret>
-		{this.props.config.slice(1).map(
-		    (field, index) => (<MenuItem key={"sort-" + field.header}
-				       onSelect={() => this.props.func.addSort(this.props.course, index+1)}>
+		{this.props.config.map(
+		    (field, index) => (field.sortData &&
+				       <MenuItem key={"sort-" + field.header}
+				       onSelect={() => this.props.func.addSort(this.props.course, index)}>
 				       {field.header}
 				       </MenuItem>)
 		)}
