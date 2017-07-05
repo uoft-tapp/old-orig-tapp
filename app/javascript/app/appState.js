@@ -739,6 +739,8 @@ class AppState {
 
     updateInstructorInput(courseId, input){
       this._data.set('courses.list['+courseId+'].instructor_input', input);
+      let visible_input = document.getElementById("input_"+courseId);
+      visible_input.innerHTML = input;
     }
 
 }

@@ -73,6 +73,7 @@ class CourseForm extends React.Component {
 
   isInstructor(eventKey, course, instructors){
     let input = eventKey.target.value;
+    let span = document.getElementById("input_"+course);
     for(let i in instructor_data){
       if(instructor_data[i]==input){
         if(!this.alreadyAddedInstructor(i, instructors)){
@@ -82,6 +83,7 @@ class CourseForm extends React.Component {
           alert("You've already added this instructor.");
         }
         input="";
+        span.innerHTML="";
       }
     }
     this.props.func.updateInstructorInput(course, input);
@@ -95,15 +97,17 @@ class CourseForm extends React.Component {
     return false;
   }
 
-  updateInputField(eventKey, course){
-    let input = eventKey.target.value;
-    console.log(input);
-    this.props.func.updateInstructorInput(course, input);
+  updateInputField(eventKey, courseId){
+    let input = eventKey.target.innerHTML;
+    let hidden_input = document.getElementById("hidden_input_"+courseId);
+    this.props.func.updateInstructorInput(courseId, input);
+    hidden_input.focus();
   }
 
   render(){
     return(
-      <Panel style={{width: 'calc(100% - 12em)', float: 'left', margin: '0', height: '88vh', overflow: 'auto'}}>
+      <Panel style={{width: 'calc(100% - 12em)', float: 'left',
+        margin: '0', height: '88vh', overflow: 'auto'}}>
         <ListGroup fill>
         {this.setForms()}
         </ListGroup>
@@ -124,9 +128,12 @@ const InstructorForm = props =>(
           </button>
         </Badge>
       ))}
+      <span contentEditable='true' id={"input_"+props.course}
+        onInput={(eventKey)=>props.self.updateInputField(eventKey, props.course)}></span>
     </div>
-    <input type="text" list={props.list} value={props.input}
-      onChange={(eventKey)=>props.self.isInstructor(eventKey, props.course, props.instructors)}/>
+    <input type="text" list={props.list} value={props.input} autoComplete="on"
+      id={"hidden_input_"+props.course}
+      onInput={(eventKey)=>props.self.isInstructor(eventKey, props.course, props.instructors)}/>
     <datalist id={props.list}>
       {Object.entries(instructor_data).map((instructor, key)=>(
         <option key={key} value={instructor[1]}></option>
