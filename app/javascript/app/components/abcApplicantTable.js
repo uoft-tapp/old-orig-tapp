@@ -32,6 +32,18 @@ class ABCApplicantTable extends React.Component {
 	    // apply additional filtering and sorting to unassigned applicants
 	    let panelFields = this.props.func.getCoursePanelFieldsByCourse(this.props.course);
 
+	    for (var field in panelFields.activeFilters) {
+		this.applicants = this.applicants.filter(
+		    applicant =>
+			// disjointly apply filters within the same field
+			panelFields.activeFilters[field].reduce(
+			    (acc, category) =>
+				acc || this.props.config[field].filterFuncs[category](
+				    {applicantId: applicant[0], applicant: applicant[1], course: this.props.course}
+				), false)
+		);
+	    }
+	    
 	    this.applicants.sort((a, b) => this.sortApplicants(a, b, panelFields.activeSortFields));
 	}
     }

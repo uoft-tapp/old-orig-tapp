@@ -36,11 +36,27 @@ class CoursePane extends React.Component {
                 header: 'Dept.',
                 data: p => p.applicant.dept,
                 sortData: p => p.applicant.dept,
+
+		filterLabel: 'Dept.',
+		filterCategories: ['DCS','Other'],
+		filterFuncs: [
+		    p => p.applicant.dept == 'Computer Science',
+		    p => p.applicant.dept != 'Computer Science',
+		],
             },
             {
                 header: 'Prog.',
                 data: p => p.applicant.program,
                 sortData: p => p.applicant.program,
+
+		filterLabel: 'Prog.',
+		filterCategories: ['PostDoc','PhD','Masters','UG'],
+		filterFuncs: [
+		    p => p.applicant.program == 'PostDoc',
+		    p => p.applicant.program == 'PhD',
+		    p => ['MSc','MASc','MScAC','MEng','OG'].includes(p.applicant.program),
+		    p => p.applicant.program == 'UG',
+		],
             },
             {
                 header: 'Year',
@@ -52,6 +68,7 @@ class CoursePane extends React.Component {
                 data: p => (props.func.getApplicationPreference(p.applicantId, p.course) ?
                             <i className='fa fa-check'/> : ''
                            ),
+		
                 sortData: p => (props.func.getApplicationPreference(p.applicantId, p.course)),
             },
             {
@@ -62,12 +79,23 @@ class CoursePane extends React.Component {
                             str : str + props.func.getCourseCodeById(ass.positionId) + ', ',
                         '')
                 ),
+		
                 sortData: p => (
                     props.func.getAssignmentsByApplicant(p.applicantId).reduce(
                         (str, ass) => (ass.positionId == p.course) ?
                             str : str + props.func.getCourseCodeById(ass.positionId),
                     '')
                 ),
+		
+		filterLabel: 'Status',
+		filterCategories: ['Assigned elsewhere', 'Unassigned'],
+		filterFuncs: [
+		    // filter corresponding to 'assigned elsewhere'
+		    p => props.func.getAssignmentsByApplicant(p.applicantId).length > 0,
+
+		    // filter corresponding to 'unassigned'
+		    p => props.func.getAssignmentsByApplicant(p.applicantId).length == 0,
+		],
             }
         ];
     }
