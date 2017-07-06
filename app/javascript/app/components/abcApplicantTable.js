@@ -3,47 +3,14 @@ import { Table } from 'react-bootstrap'
 
 const THeader = props => (
 	<thead><tr>
-	{props.fields.map((field, i) => <th key={'header-'+i}>{field}</th>)}
+	{props.config.map((field, i) => <th key={'header-'+i}>{field.header}</th>)}
     </tr></thead>
 );
 
-const UnassignedApplicantRow = props => (
+const ApplicantRow = props => (
 	<tr key={'applicant-'+props.id+'-row'}>
-	<td><input type='checkbox' defaultChecked={false}
-    onClick={() => props.func.addAssignment(props.id, props.course,
-					    props.func.getCourseById(props.course).positionHours)}/></td>
-	
-    {props.fields.map(field => <td key={'applicant-'+props.id+field}>{props.applicant[field]}</td>)}
-
-	<td key='applicant-pref'>
-	{props.func.getApplicationPreference(props.id, props.course) && <i className='fa fa-check'/>}
-    </td>
-
-    <td key='applicant-other'>
-	{props.func.getAssignmentsByApplicant(props.id).map(
-	    ass => (ass.positionId == props.course) ? '' : props.func.getCourseCodeById(ass.positionId)
-	).join(' ')}
-    </td>    
-    </tr>
-);
-
-const AssignedApplicantRow = props => (
-	<tr key={'applicant-'+props.id+'-row'}>
-	<td><input type='checkbox' defaultChecked={true}
-    onClick={() => props.func.removeAssignment(props.id, props.course)}/></td>
-
-    {props.fields.map(field => <td key={'applicant-'+props.id+field}>{props.applicant[field]}</td>)}
-
-    	<td key='applicant-pref'>
-	{props.func.getApplicationPreference(props.id, props.course) && <i className='fa fa-check'/>}
-    </td>
-
-    <td key='applicant-other'>
-	{props.func.getAssignmentsByApplicant(props.id).map(
-	    ass => (ass.positionId == props.course) ? '' : props.func.getCourseCodeById(ass.positionId)
-	).join(' ')}
-    </td>
-    </tr>
+	{props.config.map((field, i) => <td key={'applicant-'+props.id+'-row-'+i}>{field.data(props)}</td>)}
+	 </tr>
 );
 
 class ABCApplicantTable extends React.Component {
@@ -53,14 +20,55 @@ class ABCApplicantTable extends React.Component {
 	this.filterApplicants();
     }
 
-    // acquire list of applicants
+    // acquire and process list of applicants
     filterApplicants() {
-	if (this.props.assigned)
+	// filter applicants by assignment status
+	if (this.props.assigned) {
 	    this.applicants = this.props.func.getApplicantsAssignedToCourse(this.props.course);
-	else
+
+	} else {
 	    this.applicants = this.props.func.getApplicantsToCourseUnassigned(this.props.course);
 
-//	this.props.func.applyApplicantFilters(
+	    // apply additional filtering and sorting to unassigned applicants
+	    let panelFields = this.props.func.getCoursePanelFieldsByCourse(this.props.course);
+
+	    for (var field in panelFields.activeFilters) {
+		this.applicants = this.applicants.filter(
+		    applicant =>
+			// disjointly apply filters within the same field
+			panelFields.activeFilters[field].reduce(
+			    (acc, category) =>
+				acc || this.props.config[field].filterFuncs[category](
+				    {applicantId: applicant[0], applicant: applicant[1], course: this.props.course}
+				), false)
+		);
+	    }
+	    
+	    this.applicants.sort((a, b) => this.sortApplicants(a, b, panelFields.activeSortFields));
+	}
+    }
+
+    // sort applicants by the list of criteria, in order
+    sortApplicants(a, b, criteria) {
+	if (criteria.length == 0)
+	    return 0;
+
+	let dir = criteria[0] > 0 ? 1 : -1;
+	let field = criteria[0] * dir;
+
+	let aData = this.props.config[field].sortData(
+	    {applicantId: a[0], applicant: a[1], course: this.props.course});
+	let bData = this.props.config[field].sortData(
+	    {applicantId: b[0], applicant: b[1], course: this.props.course});
+
+	if (aData < bData)
+	    return -dir;
+
+	if (aData > bData)
+	    return dir;
+
+	// if the applicant values for this field are equal, apply the next sort criterion
+	return this.sortApplicants(a, b, criteria.slice(1));
     }
 
     componentWillUpdate() {
@@ -73,17 +81,11 @@ class ABCApplicantTable extends React.Component {
 
 	return (
 		<Table striped bordered condensed hover>
-		<THeader fields={this.props.tableHeaders}/>
+		<THeader config={this.props.config}/>
 		<tbody>
-		{this.applicants.map(
-		    ([key, val]) => (
-			this.props.assigned ?
-			    <AssignedApplicantRow key={'applicant-'+key} id={key} applicant={val}
-			fields={this.props.tableFields} {...this.props}/> :
-			    <UnassignedApplicantRow key={'applicant-'+key} id={key} applicant={val}
-			fields={this.props.tableFields} {...this.props}/>
-
-		    ))}
+		{this.applicants.map(([key, val]) => (
+			<ApplicantRow key={'applicant-'+key} applicantId={key} applicant={val} {...this.props}/>
+		))}
 	    </tbody>
 	    </Table>
 	);

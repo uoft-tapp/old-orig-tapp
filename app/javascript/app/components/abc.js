@@ -7,9 +7,9 @@ import SplitPane from 'react-split-pane/lib/SplitPane'
 
 class ABC extends React.Component {
     mapLayoutToPanes() {
-	let active = this.props.courseMenu.selected;
+	let active = this.props.func.getSelectedCourses();
 	let activeCount = active.length;
-	let layout = this.props.abcView.layout;
+	let layout = this.props.func.getCoursePanelLayout();
 
 	let paneProps = {defaultSize: '50%', paneStyle: {margin: '2px'}, maxSize: -10};
 
@@ -140,7 +140,7 @@ class ABC extends React.Component {
     }
 
     selectThisTab() {
-	this.props.func.selectNavTab(this.props.navKey);
+    	this.props.func.selectNavTab(this.props.navKey);
     }
 
     componentDidMount() {

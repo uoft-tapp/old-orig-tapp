@@ -1,13 +1,101 @@
 import { appState } from './appState.js'
 
-function fetchHelper(URL, success, failure) {
-    return fetch(URL).then(function(response) {
-	return response.json();
-    }).then(function(response) {
-	return success(response);
+function defaultFailure(response) {
+    if (response.status === 404 || response.status === 422) {
+        console.log("Action Failed:", response.statusText);
+        return null;
+    } else if (response.status === 204) {
+        return {};
+    } else {
+        return response;
+    }
+}
+
+function fetchHelper(URL, init, success, failure = defaultFailure) {
+    return fetch(URL, init).then(function(response) {
+	if (response.ok) {
+	    // parse the body of the response as JSON
+	    if (['GET','POST'].includes(init.method))
+		return response.json().then(resp => success(resp));
+
+	    return success(response);
+	}
+	
+	return failure(response);
+	
     }).catch(function(error) {
-	return failure(error);
+	console.log(error);
     });
+}
+
+function getHelper(URL, success, failure) {
+    let init = {
+	headers: {
+	    'Accept': 'application/json',
+	},
+	method: 'GET',
+    };
+    
+    return fetchHelper(URL, init, success, failure);
+}
+
+function postHelper(URL, body, success, failure) {
+    let init = {
+	headers: {
+	    'Accept': 'application/json',
+	    'Content-Type': 'application/json; charset=utf-8',
+	},
+	method: 'POST',
+	body: JSON.stringify(body),
+    };
+    
+    return fetchHelper(URL, init, success, failure);
+}
+
+function deleteHelper(URL, success, failure) {
+    return fetchHelper(URL, { method: 'DELETE' }, success, failure);
+}
+
+function putHelper(URL, body, success, failure) {
+    let init = {
+	headers: {
+	    'Content-Type': 'application/json; charset=utf-8',
+	},
+	method: 'PUT',
+	body: JSON.stringify(body),
+    };
+    
+    return fetchHelper(URL, init, success, failure);
+}
+
+function getApplicants() {
+    appState.setFetchingApplicantsList(true);
+
+    return getHelper('/applicants', onFetchApplicantsSuccess);
+}
+
+function getApplications() {
+    appState.setFetchingApplicationsList(true);
+
+    return getHelper('/applications', onFetchApplicationsSuccess);
+}
+
+function getCourses() {
+    appState.setFetchingCoursesList(true);
+
+    return getHelper('/positions', onFetchCoursesSuccess);
+}
+
+function getAssignments() {
+    appState.setFetchingAssignmentsList(true);
+
+    return getHelper('/assignments', onFetchAssignmentsSuccess);
+}
+
+function getInstructors() {
+    appState.setFetchingInstructorsList(true);
+
+    return getHelper('/instructors', onFetchInstructorsSuccess);
 }
 
 function onFetchApplicantsSuccess(resp) {
@@ -37,30 +125,23 @@ function onFetchApplicantsSuccess(resp) {
 	}
     });
 
-    appState.setApplicantList(applicants);
-    appState.setFetchingApplicantList(false);
+    appState.setApplicantsList(applicants);
+    appState.setFetchingApplicantsList(false);
 
     return resp;
 }
 
-function fetchApplicants() {
-    appState.setFetchingApplicantList(true);
-
-    return fetchHelper('/applicants', onFetchApplicantsSuccess, (error) => {console.log(error);});
-}
-
 function onFetchApplicationsSuccess(resp) {
-    let applications = {};
-
+    let applications = {}, newApp;
+    
     resp.forEach(app => {
-	let prev = applications[app.applicant_id] ? applications[app.applicant_id] : [];
-	prev.push({
+	newApp = {
 	    taTraining: app.ta_training == 'Y',
 	    academicAccess: app.access_acad_history == 'Y',
 	    round: null, // populated by positions fetch
 	    prefs: (function (prefs) {
 		return prefs.map(pref => ({positionId: pref.position_id,
-				    preferred: pref.rank == 1}));
+					   preferred: pref.rank == 1}));
 	    })(app.preferences),
 	    exp: app.ta_experience,
 	    qual: app.academic_qualifications,
@@ -68,23 +149,20 @@ function onFetchApplicationsSuccess(resp) {
 	    avail: app.availability,
 	    other: app.other_info,
 	    specialNeeds: app.special_needs,
-	});
+	};
 
-	applications[app.applicant_id] = prev;
+	if (applications[app.applicant_id])
+	    applications[app.applicant_id].push(newApp);
+	else
+	    applications[app.applicant_id] = [newApp];
     });
 
-    appState.setApplicationList(applications);
+    appState.setApplicationsList(applications);
 
     return resp;
 }
 
-function fetchApplications() {
-    appState.setFetchingApplicationList(true);
-
-    return fetchHelper('/applications', onFetchApplicationsSuccess, (error) => {console.log(error);});
-}
-
-function onFetchCoursesSuccess(resp, applicationPromise) {
+function onFetchCoursesSuccess(resp) {
     let courses = {}, rounds = {};
 
     resp.forEach(course => {
@@ -100,9 +178,7 @@ function onFetchCoursesSuccess(resp, applicationPromise) {
 		default: return 'Other';
 		}
 	    })(course.campus_code),
-	    instructors: course.instructors.map(instr => ({
-		id: instr.id, name: instr.name
-	    })),
+	    instructors: course.instructors.map(instr => instr.id),
 	    estimatedPositions: course.estimated_count,
 	    estimatedEnrol: course.estimated_enrolment,
 	    positionHours: course.hours,
@@ -114,73 +190,104 @@ function onFetchCoursesSuccess(resp, applicationPromise) {
 	rounds[course.id] = course.round_id;
     });
 
-    appState.setCourseList(courses);
+    appState.setCoursesList(courses);
 
-    applicationPromise.then(
-	() => {
-	    appState.setApplicationRounds(courses);
-	    appState.setFetchingApplicationList(false);
-	}
-    );
-
-    return resp;
+    return courses;
 }
 
-function fetchCourses(applicationPromise) {
-    appState.setFetchingCourseList(true);
-
-    return fetchHelper('/positions',
-		       (resp) => onFetchCoursesSuccess(resp, applicationPromise),
-		       (error) => {console.log(error);});
-}
-
-function onFetchAssignmentsSuccess(resp, coursePromise) {
-    let assignments = {}, assignmentCounts = {}, count;
+function onFetchAssignmentsSuccess(resp) {
+    let assignments = {}, assignmentCounts = {}, count, newAss;
 
     resp.forEach(ass => {
-      if(assignments[ass.applicant_id]==undefined){
-        assignments[ass.applicant_id]=[];
-      }
-    	assignments[ass.applicant_id].push({
-          id: ass.id,
-    	    positionId: ass.position_id,
-    	    hours: ass.hours,
-    	});
+	newAss = {
+	    id: ass.id,
+	    positionId: ass.position_id,
+	    hours: ass.hours,
+	};
 
-      assignmentCounts[ass.position_id]= {assignmentCount: 0};
-    	count = assignmentCounts[ass.position_id].assignmentCount;
-    	assignmentCounts[ass.position_id] = count ? count+1 : 1;
+	if (assignments[ass.applicant_id])
+	    assignments[ass.applicant_id].push(newAss);
+	else
+	    assignments[ass.applicant_id] = [newAss];
+	
+	count = assignmentCounts[ass.position_id];
+	assignmentCounts[ass.position_id] = count ? count+1 : 1;
     });
 
-    appState.setAssignmentList(assignments);
-    appState.setFetchingAssignmentList(false);
+    appState.setAssignmentsList(assignments);
+    appState.setFetchingAssignmentsList(false);
 
-    coursePromise.then(
-	() => {
-	    appState.setCoursesAssignmentCount(assignmentCounts);
-	    appState.setFetchingCourseList(false);
-	}
-    );
-
-    return resp;
+    // return assignmentCounts, to be used to populate the corresponding courses field
+    return assignmentCounts;
 }
 
-function fetchAssignments(coursePromise) {
-    appState.setFetchingAssignmentList(true);
+function onFetchInstructorsSuccess(resp) {
+    let instructors = {};
 
-    return fetchHelper('/assignments',
-		       (resp) => onFetchAssignmentsSuccess(resp, coursePromise),
-		       (error) => {console.log(error);});
+    resp.forEach(instr => {
+	instructors[instr.id] = instr.name;
+    });
+
+    appState.setInstructorsList(instructors);
+    appState.setFetchingInstructorsList(false);
+
+    return resp;
 }
 
 function fetchAll() {
-    let applicantPromise = fetchApplicants();
+    let applicantPromise = getApplicants();
+    let applicationPromise = getApplications();
+    let coursePromise = getCourses();
+    let assignmentPromise = getAssignments();
+    let instructorsPromise = getInstructors();
 
-    let applicationPromise = fetchApplications();
+    // add rounds to applications from courses, once both have been fetched
+    Promise.all([applicationPromise, coursePromise]).then(
+	([_, courses]) => {
+	    appState.setApplicationRounds(courses);
+	    appState.setFetchingApplicationsList(false);
+	}
+    );
 
-    let coursePromise = fetchCourses(applicationPromise);
-
-    let assignmentPromise = fetchAssignments(coursePromise);
+    // add assignment counts to courses, once both have been fetched
+    Promise.all([coursePromise, assignmentPromise]).then(
+	([_, assignmentCounts]) => {
+	    appState.setCoursesAssignmentCount(assignmentCounts);
+	    appState.setFetchingCoursesList(false);
+	}
+    );
 }
 
-export {fetchAll};
+function postAssignment(applicant, course, hours) {
+    appState.setFetchingAssignmentsList(true);
+    
+    return postHelper('/applicants/' + applicant + '/assignments',
+		       {position_id: course, hours: hours},
+		       resp => {
+			   appState.addAssignment(resp.applicant_id, resp.position_id, resp.hours, resp.id);
+			   appState.setFetchingApplicantsList(false);
+		       });
+}
+
+function deleteAssignment(applicant, assignment) {
+    appState.setFetchingApplicantsList(true);
+    
+    return deleteHelper('/applicants/' + applicant + '/assignments/' + assignment,
+		       () => {
+			   appState.removeAssignment(applicant, assignment);
+			   appState.setFetchingApplicantsList(false);
+		       });
+}
+
+function updateAssignmentHours(applicant, assignment, hours) {
+    appState.setFetchingApplicantsList(true);
+    
+    return putHelper('/applicants/' + applicant + '/assignments/' + assignment,
+		       {hours: hours},
+		       () => {
+			   appState.setAssignmentHours(applicant, assignment, hours);
+			   appState.setFetchingApplicantsList(false);
+		       });
+}
+
+export {fetchAll, postAssignment, deleteAssignment};

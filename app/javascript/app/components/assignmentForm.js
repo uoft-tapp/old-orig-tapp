@@ -7,190 +7,187 @@ const cross = "fa fa-times-circle-o";
 
 class AssignmentForm extends React.Component {
 
-  constructor(props){
-    super(props);
-  }
-
-  setAssignments(id, assignments, temp_assignments, courses){
-    if(this.noAssignments(assignments, temp_assignments))
-      return (<tr><td>No Assignments</td></tr>);
-    if(assignments!==undefined){
-      return(
-        assignments.map((assignment,index)=>(
-          <AssignmentRow assignment={assignment}
-            id={id} index={index} courses={courses} temp={false}
-            input_func={this.detectAssignmentHour} self={this}
-            {...this}/>
-        ))
-      );
+    setAssignments(applicant, assignments, temp_assignments, courses){
+	if(this.noAssignments(assignments, temp_assignments))
+	    return (<tr><td>No Assignments</td></tr>);
+	if(assignments!==undefined){
+	    return(
+		assignments.map((assignment,index)=>(
+			<AssignmentRow assignment={assignment}
+		    applicant={applicant} index={index} courses={courses} temp={false}
+		    input_func={this.detectAssignmentHour} self={this}
+		    {...this}/>
+		))
+	    );
+	}
     }
-  }
 
-  noAssignments(assignments, temp_assignments){
-    if(assignments===undefined&&temp_assignments===undefined)
-      return true;
-    else if(assignments===undefined){
-      if(temp_assignments!==undefined){
-        if(temp_assignments.length==0)
-          return true;
-        else { return false; }
-      }
-      else { return false; }
+    noAssignments(assignments, temp_assignments){
+	if(assignments===undefined&&temp_assignments===undefined)
+	    return true;
+	else if(assignments===undefined){
+	    if(temp_assignments!==undefined){
+		if(temp_assignments.length==0)
+		    return true;
+		else { return false; }
+	    }
+	    else { return false; }
+	}
+	else if(temp_assignments===undefined){
+	    if(assignments!==undefined){
+		if(assignments.length==0)
+		    return true;
+		else { return false; }
+	    }
+	    else { return false; }
+	}
+	else if(assignments!==undefined&&temp_assignments!==undefined){
+	    if(assignments.length==0&&temp_assignments==0)
+		return true;
+	    else { return false; }
+	}
+	else{ return false; }
     }
-    else if(temp_assignments===undefined){
-      if(assignments!==undefined){
-        if(assignments.length==0)
-          return true;
-        else { return false; }
-      }
-      else { return false; }
+
+    setTempAssignments(id, assignments, temp_assignments, courses){
+	if(temp_assignments!==undefined){
+	    return(
+		temp_assignments.map((assignment,index)=>(
+			<AssignmentRow assignment={assignment}
+		    id={id} index={index} courses={courses} temp={true}
+		    input_func={this.detectTempAssignmentHour} self={this}
+		    {...this}/>
+		))
+	    );
+	}
     }
-    else if(assignments!==undefined&&temp_assignments!==undefined){
-      if(assignments.length==0&&temp_assignments==0)
-        return true;
-      else { return false; }
+
+    setAssignmentCheckButton(temp, applicant, course, self){
+	if(temp){
+	    return(
+		    <AssignmentButton
+		click_func={()=>this.props.func.permAssignment(course)}
+		id={applicant}
+		className="fa fa-check-circle-o" color="green" {...this}/>
+	    );
+	}
     }
-    else{ return false; }
-  }
 
-  setTempAssignments(id, assignments, temp_assignments, courses){
-    if(temp_assignments!==undefined){
-      return(
-        temp_assignments.map((assignment,index)=>(
-          <AssignmentRow assignment={assignment}
-            id={id} index={index} courses={courses} temp={true}
-            input_func={this.detectTempAssignmentHour} self={this}
-            {...this}/>
-        ))
-      );
+    setAssignmentCrossButton(temp, applicant, assignment, self){
+	let className="fa fa-times-circle-o";
+	if(temp){
+	    return(
+		    <AssignmentButton
+		click_func={()=>this.props.func.removeTempAssignment(assignment.positionId)}
+		id={applicant} className={className} color="red" {...this}/>
+	    );
+	}
+	else{
+	    return(
+		    <AssignmentButton
+		click_func={()=>this.props.func.deleteAssignment(applicant, assignment.id)}
+		id={applicant} className={className} color="red" {...this}/>
+	    );
+	}
     }
-  }
 
-  setAssignmentCheckButton(temp, id, index, self){
-    if(temp){
-      return(
-        <AssignmentButton
-          click_func={()=>this.props.func.addAssignment(id, index)}
-          id={id} index={index}
-          className="fa fa-check-circle-o" color="green" {...this}/>
-      );
+    detectCourse(evt, id, courses, assignments, temp_assignments){
+	this.props.func.setInput(evt.target.value);
+	for(let course in courses){
+	    if(courses[course].code==evt.target.value){
+		if(!this.existingAssignment(course, assignments, temp_assignments)){
+		    this.props.func.addTempAssignment(course, courses[course].positionHours);
+		    this.props.func.setInput("");
+		}
+		else{
+		    this.props.func.setInput("");
+		    alert(courses[course].code+" has already been assigned.");
+		}
+	    }
+	}
     }
-  }
 
-  setAssignmentCrossButton(temp, id, index, self){
-    let className="fa fa-times-circle-o";
-    if(temp){
-      return(
-        <AssignmentButton
-          click_func={()=>this.props.func.deleteTempAssignment(id, index)}
-          id={id} index={index} className={className} color="red" {...this}/>
-      );
+    detectAssignmentHour(evt, index, id){
+	this.props.func.setAssignmentHours(id, index, evt.target.value);
     }
-    else{
-      return(
-        <AssignmentButton
-          click_func={()=>this.props.func.deleteAssignment(id, index)}
-          id={id} index={index} className={className} color="red" {...this}/>
-      );
+
+    detectTempAssignmentHour(evt, index, id){
+	this.props.func.setTempAssignmentHours(index, evt.target.value);
     }
-  }
 
-  detectCourse(evt, id, courses, assignments, temp_assignments){
-    this.props.func.setInput(evt.target.value);
-    for(let course in courses){
-      if(courses[course].code==evt.target.value){
-        if(!this.existingAssignment(course, assignments, temp_assignments)){
-          this.props.func.addTempAssignment(id, course, courses[course].positionHours);
-          this.props.func.setInput("");
-        }
-        else{
-          this.props.func.setInput("");
-          alert(courses[course].code+" has already been assigned.");
-        }
-      }
+    existingAssignment(positionId, assignments, temp_assignments){
+	for(let assignment in assignments){
+	    if(assignments[assignment].positionId==positionId)
+		return true;
+	}
+	for(let assignment in temp_assignments){
+	    if(temp_assignments[assignment].positionId==positionId)
+		return true;
+	}
+	return false;
     }
-  }
 
-  detectAssignmentHour(evt, index, id){
-    this.props.func.updateAssignment(id, index, evt.target.value);
-  }
-
-  detectTempAssignmentHour(evt, index, id){
-    this.props.func.updateTempAssignment(id, index, evt.target.value);
-  }
-
-  existingAssignment(positionId, assignments, temp_assignments){
-    for(let assignment in assignments){
-      if(assignments[assignment].positionId==positionId)
-        return true;
+    setCourses(courses){
+	return(
+	    Object.entries(courses).map(key => (
+		    <option value={key[1].code}></option>
+	    ))
+	);
     }
-    for(let assignment in temp_assignments){
-      if(temp_assignments[assignment].positionId==positionId)
-        return true;
+
+    render() {
+	let applicant = this.props.match.params.id;
+	let assignments = this.props.func.getAssignmentsByApplicant(applicant);
+	let assignmentForm = this.props.func.getAssignmentForm();
+	let temp_assignments = this.props.func.getTempAssignments();
+	let courses = this.props.func.getCoursesList();
+	let application = this.props.func.getApplicationById(applicant);
+
+	return (
+		<div>
+		<p><b>Application round: </b>{application.round}</p>
+		<table className="panel_table">
+		<tbody>
+		{this.setAssignments(applicant, assignments, temp_assignments, courses)}
+            {this.setTempAssignments(applicant, assignments, temp_assignments, courses)}
+            </tbody>
+		</table>
+		<p style={{marginTop: '10px'}}><b>Add assignment: </b>
+		<input type="text" list="courses" value={assignmentForm.assignmentInput}
+            onChange={(eventKey)=>(this.detectCourse(eventKey, applicant, courses, assignments, temp_assignments))}/>
+		</p>
+		<datalist id="courses">
+		{this.setCourses(courses)}
+            </datalist>
+		</div>
+	);
     }
-    return false;
-  }
-
-  setCourses(courses){
-    return(
-      Object.entries(courses).map(key => (
-        <option value={key[1].code}></option>
-      ))
-    );
-  }
-
-  render() {
-    let id = this.props.match.params.id;
-    let assignments = this.props.assignments.list[id];
-    let temp_assignments=this.props.assignment_form.temp_assignments[id];
-    let courses = this.props.courses.list;
-    let application = this.props.applications.list[id][0];
-
-    return (
-      <div>
-        <p><b>Application round: </b>{application.round}</p>
-        <table className="panel_table">
-          <tbody>
-            {this.setAssignments(id, assignments, temp_assignments, courses)}
-            {this.setTempAssignments(id, assignments, temp_assignments, courses)}
-          </tbody>
-        </table>
-        <p style={{marginTop: '10px'}}><b>Add assignment: </b>
-          <input type="text" list="courses" value={this.props.assignment_form.assignment_input}
-              onChange={(eventKey)=>(this.detectCourse(eventKey, id, courses, assignments, temp_assignments))}/>
-        </p>
-        <datalist id="courses">
-          {this.setCourses(courses)}
-        </datalist>
-      </div>
-    );
-  }
 }
 
 const AssignmentRow = props =>(
-  <tr>
-    <td>{props.courses[props.assignment.positionId].code}</td>
-    <td>
-      <input type="number" style={{width: '50px'}} min="0"
-        onChange={(eventKey)=>(props.input_func(eventKey, props.index, props.id))}
-        value={props.assignment.hours}/>
+	<tr>
+	<td>{props.courses[props.assignment.positionId].code}</td>
+	<td>
+	<input type="number" style={{width: '50px'}} min="0"
+    onChange={(eventKey)=>(props.input_func(eventKey, props.index, props.id))}
+    value={props.assignment.hours}/>
+	</td>
+	<td>
+	{props.self.setAssignmentCheckButton(props.temp, props.applicant, props.assignment.positionId, props.self)}
     </td>
-    <td>
-      {props.self.setAssignmentCheckButton(props.temp, props.id, props.index, props.self)}
+	<td>
+	{props.self.setAssignmentCrossButton(props.temp, props.applicant, props.assignment, props.self)}
     </td>
-    <td>
-      {props.self.setAssignmentCrossButton(props.temp, props.id, props.index, props.self)}
-    </td>
-  </tr>
+	</tr>
 
 );
 
 const AssignmentButton = props =>(
-  <button onClick={props.click_func}
+	<button onClick={props.click_func}
     style={{border: 'none', background: 'none'}}>
-    <i className={props.className} style={{color: props.color, fontSize: '20px'}}>
-    </i>
-  </button>
+	<i className={props.className} style={{color: props.color, fontSize: '20px'}}>
+	</i>
+	</button>
 );
 
 export { AssignmentForm };
