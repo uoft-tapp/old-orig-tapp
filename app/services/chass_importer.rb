@@ -133,7 +133,7 @@ class ChassImporter
         position: posting_id,
         round_id: round_id,
         open: true,
-        campus_code: course_id[course_id[/[A-Za-z]{3}\d{3,4}/].size+1].to_i,
+        campus_code: course_id[course_id[/[A-Za-z0-9]{3}\d{3,4}/].size+1].to_i,
         course_name: course_entry["course_name"],
         estimated_enrolment: course_entry["enrollment"],
         duties: course_entry["duties"],
@@ -147,8 +147,17 @@ class ChassImporter
 
       Rails.logger.debug "#{position.new_record?} #{position.valid?} #{position.attributes.inspect}"
 
-      course_entry["instructors"].each do |instructor|
-        instructor_ident = Instructor.find_by(name: instructor)
+      course_entry["instructor"].each do |instructor|
+        name = instructor["first_name"]+" "+instructor["last_name"]
+        instructor_ident = Instructor.find_by(name: name)
+        if !instructor_ident
+          Instructor.create!(
+            name: name,
+            email: instructor["email"],
+            utorid: instructor["utorid"],
+          )
+          instructor_ident = Instructor.find_by(name: name)
+        end
         if instructor_ident
           position.instructors << [instructor_ident]
         end
