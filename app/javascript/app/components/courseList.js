@@ -11,8 +11,7 @@ class CourseList extends React.Component {
       let courses = this.props.func.getCoursesList();
       return(
         Object.entries(courses).map((course, key) =>(
-            <ListGroupItem key={key} className="course_list_item"
-               style={{height: '2em', padding: '3px'}}
+            <ListGroupItem key={key}
                href={"#"+course[0]}>
                {course[1].code}
             </ListGroupItem>
@@ -22,14 +21,13 @@ class CourseList extends React.Component {
   }
 
   render(){
-    return(
-      <Panel style={{width: '12em', float: 'left', margin: '0', height: '88vh'}}
-        header="Courses">
-        <ListGroup style={{height: 'calc(100% - 30px)', overflow: 'auto'}} fill>
-            {this.setCourseList()}
-        </ListGroup>
-      </Panel>
-    );
+      return(
+	      <Panel className='course-list-panel' header="Courses">
+              <ListGroup className='course-list-group' fill>
+              {this.setCourseList()}
+          </ListGroup>
+	      </Panel>
+      );
   }
 }
 

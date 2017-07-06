@@ -29,22 +29,33 @@ footer div p {
     position: absolute;
     height: 92vh;
 }
+
 .panel_table td{
   padding-right: 50px;
   margin-top: 0;
   vertical-align: top;
 }
 
+/* for CourseMenu and CourseList */
+.course-list-panel {
+    width: 12em;
+    float: left;
+    margin: 0;
+    height: 88vh;
+}
+
+.course-list-group {
+    height: calc(100% - 30px);
+    overflow: auto;
+}
+
+.course-list-group .list-group-item {
+    height: 2em;
+    padding: 3px;
+}
+
+
 /* for CourseList */
-.course_list_item{
-  width: 100%;
-  float: left;
-  margin: 0;
-  border: none;
-}
-.course_list_item:hover{
-  background: #EEE;
-}
 .panel-heading{
   padding: 5px 15px !important;
   height: 30px;
