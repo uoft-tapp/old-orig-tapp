@@ -8,7 +8,7 @@ tags:
 - name: "dcs-ta"
   description: "DCS-TA application"
 paths:
-  /assignments?{positionid}:
+  /assignments:
     get:
       tags:
       - "assignments"
@@ -17,31 +17,29 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "positionid"
-        in: "path"
+      - name: positionid
+        in: query
+        type: integer
         description: "Filters assignments by a position id"
-        type: "integer"
       responses:
         200:
           description: "successful operation"
           schema:
-            type: "array"
-            items:
-              $ref: "#/defintions/Assignment"
-  /assignment/{id}:
+            $ref: "#/definitions/Assignment"
+  /assignments/{id}:
       get:
         tags:
-          - "assignment"
+        - "assignment"
         summary: "Find assignment by ID"
         description: "Returns a single assignment"
         produces:
         - "application/json"
         parameters:
-        - name: "id"
-          in: "path"
+        - name: id
+          in: path
+          type: integer
           description: "ID of assignment to return"
           required: true
-          type: "integer"
         responses:
           200:
             description: "successful operation"
@@ -52,21 +50,21 @@ paths:
 
 definitions:
   Assignment:
-    type: "object"
-      properties:
+    type: object
+    properties:
         id:
-          type: "integer"
+          type: integer
         applicant_id:
-          type: "integer"
+          type: integer
         position_id:
-          type: "integer"
+          type: integer
         created_at:
-          type: "string"
-          format: "date-time"
+          type: string
+          format: date-time
           example: "2017-06-05T14:26:44.808Z"
         updated_at:
-          type: "string"
-          format: "date-time"
+          type: string
+          format: date-time
           example: "2017-06-05T14:26:44.808Z"
         hours:
-          type: "integer"
+          type: integer

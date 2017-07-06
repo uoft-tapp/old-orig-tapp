@@ -20,9 +20,7 @@ paths:
         200:
           description: "successful operation"
           schema:
-            type: "array"
-            items:
-              $ref: "#/defintions/Application"
+            $ref: "#/definitions/Application"
   /applications/{id}:
     get:
       tags:
@@ -32,11 +30,11 @@ paths:
       produces:
       - "application/json"
       parameters:
-      - name: "id"
-        in: "path"
+      - name: id
+        in: path
+        type: integer
         description: "ID of application to return"
         required: true
-        type: "integer"
       responses:
         200:
           description: "successful operation"
@@ -45,46 +43,46 @@ paths:
         404:
           description: "invalid ID supplied"
 definitions:
-  Applications:
-    type: "object"
-      properties:
+  Application:
+    type: object
+    properties:
         id:
-          type: "integer"
+          type: integer
         applicant_id:
-          type: "integer"
+          type: integer
         app_id:
-          type: "string"
+          type: string
           description: "id coming from CHASS"
         ta_training:
-          type: "string"
+          type: string
           example: "N"
         access_acad_history:
-          type: "string"
+          type: string
           example: "Y"
         ta_experience:
-          type: "string"
+          type: string
           example: "CSC100H1S (0), CSC108H1S-Marking_TA (0), CSC104H1S (0), CSC108H1S-Head_TA (0), CSC108H1S-Student-Facing_TA (0), HLP101H1S (0)"
         academic_qualifications:
-          type: "string"
+          type: string
         technical_skills:
-          type: "string"
+          type: string
         availability:
-            type: "string"
+            type: string
             example: "M-W:10-5, RF: 1-6"
         other_info:
-            type: "string"
+            type: string
         special_needs:
-            type: "string"
+            type: string
         created_at:
-          type: "string"
-          format: "date-time"
+          type: string
+          format: date-time
           example: "2017-06-05T14:26:44.808Z"
         updated_at:
-          type: "string"
-          format: "date-time"
+          type: string
+          format: date-time
           example: "2017-06-05T14:26:44.808Z"
         preferences:
-          type: "list of json"
+          type: array
           example:  [
             {
                 "id": 6,
