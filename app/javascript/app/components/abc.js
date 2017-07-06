@@ -39,7 +39,7 @@ class ABC extends React.Component {
 	    );
 
 	case 3:
-	    if (layout.length == 1)
+	    if (layout.length == 1) {
 		return (
 			<SplitPane split='horizontal' {...paneProps}>
 			<CoursePane key={layout[0][0]} course={layout[0][0]} {...this.props}/>
@@ -49,9 +49,10 @@ class ABC extends React.Component {
 			</SplitPane>
 			</SplitPane>
 		);
+	    }
 
 	    if (layout.length == 2) {
-		if (layout[0].length == 1)
+		if (layout[0].length == 1) {
 		    return (
 			    <SplitPane split='vertical' {...paneProps}>
 			    <CoursePane key={layout[0]} course={layout[0]} {...this.props}/>
@@ -61,8 +62,9 @@ class ABC extends React.Component {
 			    </SplitPane>
 			    </SplitPane>
 		    );
+		}
 
-		if (layout[1].length == 1)
+		if (layout[1].length == 1) {
 		    return (
 			    <SplitPane split='vertical' {...paneProps}>
 			    <SplitPane split='horizontal' {...paneProps}>
@@ -72,8 +74,9 @@ class ABC extends React.Component {
 			    <CoursePane key={layout[1]} course={layout[1]} {...this.props}/>
 			    </SplitPane>
 		    );
+		}
 
-		if (layout[0][0] == layout[1][0])
+		if (layout[0][0] == layout[1][0]) {
 		    return (
 			    <SplitPane split='horizontal' {...paneProps}>
 			    <CoursePane key={layout[0][0]} course={layout[0][0]} {...this.props}/>
@@ -83,8 +86,9 @@ class ABC extends React.Component {
 			    </SplitPane>
 			    </SplitPane>
 		    );
+		}
 
-		if (layout[0][1] == layout[1][1])
+		if (layout[0][1] == layout[1][1]) {
 		    return (
 			    <SplitPane split='horizontal' {...paneProps}>
 			    <SplitPane split='vertical' {...paneProps}>
@@ -94,10 +98,10 @@ class ABC extends React.Component {
 			    <CoursePane key={layout[0][1]} course={layout[0][1]} {...this.props}/>
 			    </SplitPane>
 		    );
-
+		}
 	    }
 
-	    if (layout.length == 3){
+	    if (layout.length == 3) {
 		return (
 			<SplitPane split='vertical' {...paneProps}>
 			<CoursePane key={layout[0]} course={layout[0]} {...this.props}/>
@@ -106,8 +110,8 @@ class ABC extends React.Component {
 			<CoursePane key={layout[2]} course={layout[2]} {...this.props}/>
 			</SplitPane>
 			</SplitPane>
-		);}
-
+		);
+	    }
 	    break;
 
 	case 4:

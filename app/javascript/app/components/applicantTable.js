@@ -49,8 +49,9 @@ class ApplicantTable extends React.Component {
 
     // sort applicants by the list of criteria, in order
     sortApplicants(a, b, criteria) {
-	if (criteria.length == 0)
+	if (criteria.length == 0) {
 	    return 0;
+	}
 
 	let dir = criteria[0] > 0 ? 1 : -1;
 	let field = criteria[0] * dir;
@@ -60,11 +61,13 @@ class ApplicantTable extends React.Component {
 	let bData = this.props.config[field].sortData(
 	    {applicantId: b[0], applicant: b[1], course: this.props.course});
 
-	if (aData < bData)
+	if (aData < bData) {
 	    return -dir;
+	}
 
-	if (aData > bData)
+	if (aData > bData) {
 	    return dir;
+	}
 
 	// if the applicant values for this field are equal, apply the next sort criterion
 	return this.sortApplicants(a, b, criteria.slice(1));
@@ -75,8 +78,9 @@ class ApplicantTable extends React.Component {
     }
     
     render() {
-	if (!this.applicants)
+	if (!this.applicants) {
 	    return null;
+	}
 
 	return (
 		<Table striped bordered condensed hover>
