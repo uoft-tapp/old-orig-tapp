@@ -15,8 +15,9 @@ function fetchHelper(URL, init, success, failure = defaultFailure) {
     return fetch(URL, init).then(function(response) {
 	if (response.ok) {
 	    // parse the body of the response as JSON
-	    if (['GET','POST'].includes(init.method))
+	    if (['GET','POST'].includes(init.method)) {
 		return response.json().then(resp => success(resp));
+	    }
 
 	    return success(response);
 	}
@@ -151,10 +152,11 @@ function onFetchApplicationsSuccess(resp) {
 	    specialNeeds: app.special_needs,
 	};
 
-	if (applications[app.applicant_id])
+	if (applications[app.applicant_id]) {
 	    applications[app.applicant_id].push(newApp);
-	else
+	} else {
 	    applications[app.applicant_id] = [newApp];
+	}
     });
 
     appState.setApplicationsList(applications);
@@ -206,10 +208,11 @@ function onFetchAssignmentsSuccess(resp) {
 	    hours: ass.hours,
 	};
 
-	if (assignments[ass.applicant_id])
+	if (assignments[ass.applicant_id]) {
 	    assignments[ass.applicant_id].push(newAss);
-	else
+	} else {
 	    assignments[ass.applicant_id] = [newAss];
+	}
 
 	count = assignmentCounts[ass.position_id];
 	assignmentCounts[ass.position_id] = count ? count+1 : 1;

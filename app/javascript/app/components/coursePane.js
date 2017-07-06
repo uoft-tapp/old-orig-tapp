@@ -13,12 +13,13 @@ class CoursePane extends React.Component {
                 header: '',
                 data: p => (
                         <input type='checkbox' defaultChecked={p.assigned} onClick={() => {
-			    if (p.assigned)
+			    if (p.assigned) {
 				props.func.deleteAssignment(
 				    p.applicantId, props.func.getAssignmentByApplicant(p.applicantId, p.course).id);
-			    else
+			    } else {
 				props.func.createAssignment(
 				    p.applicantId, p.course, props.func.getCourseById(p.course).positionHours);
+			    }
 			}}/>
                 ),
             },
@@ -102,8 +103,9 @@ class CoursePane extends React.Component {
     
     render() {
         let course = this.props.func.getCourseById(this.props.course);
-        if (!course)
+        if (!course) {
             return null;
+	}
 	
         return (
                 <Panel style={{height: '100%', maxHeight: '88vh', overflow: 'auto'}}

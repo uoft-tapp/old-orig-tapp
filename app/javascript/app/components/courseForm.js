@@ -93,8 +93,9 @@ class CourseForm extends React.Component {
 
   alreadyAddedInstructor(id, instructors){
     for(let i in instructors){
-      if(instructors[i] == id)
-        return true;
+	if(instructors[i] == id){
+            return true;
+	}
     }
     return false;
   }
