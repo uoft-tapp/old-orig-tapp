@@ -1,6 +1,6 @@
 import React from 'react'
 import { Panel } from 'react-bootstrap'
-import { ABCTableMenu } from './abcTableMenu.js'
+import { ApplicantTableMenu } from './applicantTableMenu.js'
 import { ABCApplicantTable } from './abcApplicantTable.js'
 
 class CoursePane extends React.Component {
@@ -118,7 +118,16 @@ class CoursePane extends React.Component {
 
                 <ABCApplicantTable config={this.fields} assigned={true} {...panelFields} {...this.props}/>
 
-                <ABCTableMenu config={this.fields} {...panelFields} {...this.props}/>
+                <ApplicantTableMenu
+	    config={this.fields}
+	    activeSortFields={panelFields.activeSortFields}
+	    anyFilterActive={field => this.props.func.anyFilterActive(this.props.course, field)}
+	    isFilterActive={(field, category) => this.props.func.isFilterActive(this.props.course, field, category)}
+	    toggleFilter={(field, category) => this.props.func.toggleFilter(this.props.course, field, category)}
+	    clearFilters={() => this.props.func.clearFilters(this.props.course)}
+	    addSort={field => this.props.func.addSort(this.props.course, field)}
+	    removeSort={field => this.props.func.removeSort(this.props.course, field)}
+	    toggleSortDir={field => this.props.func.toggleSortDir(this.props.course, field)}/>
 
                 <ABCApplicantTable config={this.fields} assigned={false} {...panelFields} {...this.props}/>
                 </Panel>
