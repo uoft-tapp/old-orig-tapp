@@ -24,11 +24,9 @@ class CourseMenu extends React.Component {
 	if (!this.courses)
 	    return null;
 	
-	let itemStyle = {height: '2em', padding: '3px'};
-
 	const list = this.courses.map(
 	    ([key, val]) => {
-		return (<ListGroupItem className='course-menu-item' key={'course-' + key} style={itemStyle}
+		return (<ListGroupItem key={'course-' + key}
 			onClick={() => {
 			    this.props.func.toggleSelectedCourse(key);
 			    this.props.func.toggleCoursePanel(key);
@@ -40,8 +38,8 @@ class CourseMenu extends React.Component {
 	    });
 
 	return (
-		<Panel header='Courses' style={{height: '100%', overflow: 'auto'}}>
-		<ListGroup fill>{list}</ListGroup>
+		<Panel header='Courses' className='course-list-panel'>
+		<ListGroup className='course-list-group' fill>{list}</ListGroup>
 		</Panel>
 	);
     }
