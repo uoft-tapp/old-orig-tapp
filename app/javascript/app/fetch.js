@@ -11,19 +11,11 @@ function defaultFailure(response) {
     }
 }
 
-function fetchHelper(URL, method, body, success, failure = defaultFailure) {
-    return fetch(URL, {
-        headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json; charset=utf-8'
-        },
-        method: method,
-        body: body ? JSON.stringify(body) : body,
-	
-    }).then(function(response) {
+function fetchHelper(URL, init, success, failure = defaultFailure) {
+    return fetch(URL, init).then(function(response) {
 	if (response.ok) {
 	    // parse the body of the response as JSON
-	    if (['GET','POST'].includes(method))
+	    if (['GET','POST'].includes(init.method))
 		return response.json().then(resp => success(resp));
 
 	    return success(response);
@@ -37,7 +29,43 @@ function fetchHelper(URL, method, body, success, failure = defaultFailure) {
 }
 
 function getHelper(URL, success, failure) {
-    return fetchHelper(URL, 'GET', null, success, failure);
+    let init = {
+	headers: {
+	    'Accept': 'application/json',
+	},
+	method: 'GET',
+    };
+    
+    return fetchHelper(URL, init, success, failure);
+}
+
+function postHelper(URL, body, success, failure) {
+    let init = {
+	headers: {
+	    'Accept': 'application/json',
+	    'Content-Type': 'application/json; charset=utf-8',
+	},
+	method: 'POST',
+	body: JSON.stringify(body),
+    };
+    
+    return fetchHelper(URL, init, success, failure);
+}
+
+function deleteHelper(URL, success, failure) {
+    return fetchHelper(URL, { method: 'DELETE' }, success, failure);
+}
+
+function putHelper(URL, body, success, failure) {
+    let init = {
+	headers: {
+	    'Content-Type': 'application/json; charset=utf-8',
+	},
+	method: 'PUT',
+	body: JSON.stringify(body),
+    };
+    
+    return fetchHelper(URL, init, success, failure);
 }
 
 function getApplicants() {
@@ -233,7 +261,7 @@ function fetchAll() {
 function postAssignment(applicant, course, hours) {
     appState.setFetchingAssignmentsList(true);
     
-    return fetchHelper('/applicants/' + applicant + '/assignments', 'POST',
+    return postHelper('/applicants/' + applicant + '/assignments',
 		       {position_id: course, hours: hours},
 		       resp => {
 			   appState.addAssignment(resp.applicant_id, resp.position_id, resp.hours, resp.id);
@@ -244,7 +272,7 @@ function postAssignment(applicant, course, hours) {
 function deleteAssignment(applicant, assignment) {
     appState.setFetchingApplicantsList(true);
     
-    return fetchHelper('/applicants/' + applicant + '/assignments/' + assignment, 'DELETE', null,
+    return deleteHelper('/applicants/' + applicant + '/assignments/' + assignment,
 		       () => {
 			   appState.removeAssignment(applicant, assignment);
 			   appState.setFetchingApplicantsList(false);
@@ -254,7 +282,7 @@ function deleteAssignment(applicant, assignment) {
 function updateAssignmentHours(applicant, assignment, hours) {
     appState.setFetchingApplicantsList(true);
     
-    return fetchHelper('/applicants/' + applicant + '/assignments/' + assignment, 'PUT',
+    return putHelper('/applicants/' + applicant + '/assignments/' + assignment,
 		       {hours: hours},
 		       () => {
 			   appState.setAssignmentHours(applicant, assignment, hours);
