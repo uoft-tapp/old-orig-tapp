@@ -11,7 +11,7 @@ class CourseMenu extends React.Component {
     // acquire and sort courses in order of course code
     sortCourses() {
 	if ((this.courses = this.props.func.getCoursesList())) {
-	    this.courses = Object.entries(this.courses);
+	    this.courses = this.props.func.idEntries(this.courses);
 	    this.courses.sort(([A, valA], [B, valB]) => valA.code < valB.code ? -1 : 1);
 	}
     }
@@ -25,7 +25,7 @@ class CourseMenu extends React.Component {
 	    return null;
 	
 	let itemStyle = {height: '2em', padding: '3px'};
-	
+
 	const list = this.courses.map(
 	    ([key, val]) => {
 		return (<ListGroupItem className='course-menu-item' key={'course-' + key} style={itemStyle}
