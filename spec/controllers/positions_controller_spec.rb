@@ -18,6 +18,14 @@ RSpec.describe PositionsController, type: :controller do
     )
   end
 
+  let(:instructor) do
+    Instructor.create!(
+      name: "instructor name",
+      email: "example@email.com",
+      utorid: "utorid",
+    )
+  end
+
   describe "GET /positions/" do
     context "when expected" do
       it "lists all positions" do
@@ -60,7 +68,7 @@ RSpec.describe PositionsController, type: :controller do
           hours: 20,
           estimated_count: 15,
           estimated_total_hours: 300,
-          instructors: [2, 4]
+          instructors: [instructor.id]
         }
         expect(position.instructor_ids).to eq([])
         put :update, params: @params
@@ -70,7 +78,7 @@ RSpec.describe PositionsController, type: :controller do
         position.reload
         expect(position.as_json(:except => [:title, :created_at, :updated_at, :instructors]))
           .to eq(@params.as_json(:except => [:instructors]))
-        expect(position.instructor_ids).to eq([2,4])
+        expect(position.instructor_ids).to eq(@params[:instructors])
           expect(response.status).to eq(204)
       end
     end
