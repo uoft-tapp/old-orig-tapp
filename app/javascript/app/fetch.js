@@ -283,7 +283,7 @@ function updateAssignmentHours(applicant, assignment, hours) {
 }
 
 function updateCourse(courseId, data, val, attr){
-  return fetchHelper('/positions/'+courseId, 'PUT', data,
+  return putHelper('/positions/'+courseId, data,
     ()=>{
       appState.updateCourseAttribute(courseId, val, attr);
     });
