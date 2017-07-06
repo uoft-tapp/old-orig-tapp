@@ -12,6 +12,7 @@ class CourseList extends React.Component {
       return(
         Object.entries(courses).map((course, key) =>(
             <ListGroupItem key={key} className="course_list_item"
+               style={{height: '2em', padding: '3px'}}
                href={"#"+course[0]}>
                {course[1].code}
             </ListGroupItem>
