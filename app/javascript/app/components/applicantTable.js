@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Table } from 'react-bootstrap'
 
 const THeader = props => (
@@ -8,43 +9,41 @@ const THeader = props => (
 );
 
 const ApplicantRow = props => (
-	<tr key={'applicant-'+props.id+'-row'}>
-	{props.config.map((field, i) => <td key={'applicant-'+props.id+'-row-'+i}>{field.data(props)}</td>)}
+	<tr key={'applicant-'+props.applicantId+'-row'}>
+	{props.config.map((field, i) => <td key={'applicant-'+props.applicantId+'-row-'+i}>{field.data(props)}</td>)}
 	 </tr>
 );
 
-class ABCApplicantTable extends React.Component {
+class ApplicantTable extends React.Component {
     constructor(props) {
 	super(props);
-
+	
 	this.filterApplicants();
     }
 
     // acquire and process list of applicants
     filterApplicants() {
-	// filter applicants by assignment status
-	if (this.props.assigned) {
-	    this.applicants = this.props.func.getApplicantsAssignedToCourse(this.props.course);
+	this.applicants = this.props.getApplicants();
 
-	} else {
-	    this.applicants = this.props.func.getApplicantsToCourseUnassigned(this.props.course);
-
-	    // apply additional filtering and sorting to unassigned applicants
-	    let panelFields = this.props.func.getCoursePanelFieldsByCourse(this.props.course);
-
-	    for (var field in panelFields.activeFilters) {
+	if (!this.props.assigned) {
+	    let activeFilters = this.props.getActiveFilters();
+	    let activeSortFields = this.props.getActiveSortFields();
+	    
+	    // apply additional filtering to unassigned applicants
+	    for (var field in activeFilters) {
 		this.applicants = this.applicants.filter(
 		    applicant =>
 			// disjointly apply filters within the same field
-			panelFields.activeFilters[field].reduce(
+			activeFilters[field].reduce(
 			    (acc, category) =>
 				acc || this.props.config[field].filterFuncs[category](
 				    {applicantId: applicant[0], applicant: applicant[1], course: this.props.course}
 				), false)
 		);
 	    }
-	    
-	    this.applicants.sort((a, b) => this.sortApplicants(a, b, panelFields.activeSortFields));
+
+	    // apply additional sorting to unassigned applicants
+	    this.applicants.sort((a, b) => this.sortApplicants(a, b, activeSortFields));
 	}
     }
 
@@ -84,7 +83,8 @@ class ABCApplicantTable extends React.Component {
 		<THeader config={this.props.config}/>
 		<tbody>
 		{this.applicants.map(([key, val]) => (
-			<ApplicantRow key={'applicant-'+key} applicantId={key} applicant={val} {...this.props}/>
+			<ApplicantRow key={'applicant-'+key} applicantId={key} applicant={val}
+		    course={this.props.course} config={this.props.config} assigned={this.props.assigned}/>
 		))}
 	    </tbody>
 	    </Table>
@@ -92,4 +92,25 @@ class ABCApplicantTable extends React.Component {
     }
 }
 
-export { ABCApplicantTable };
+ApplicantTable.propTypes = {
+    config: PropTypes.arrayOf(
+	PropTypes.shape({
+	    header: PropTypes.string.isRequired,
+	    data: PropTypes.func.isRequired,
+	    
+	    sortData: PropTypes.func,
+	    filterLabel: PropTypes.string,
+	    filterCategories: PropTypes.arrayOf(PropTypes.string),
+	    filterFuncs: PropTypes.arrayOf(PropTypes.func),
+	})
+    ).isRequired,
+
+    getApplicants: PropTypes.func.isRequired,
+    getActiveSortFields: PropTypes.func,
+    getActiveFilters: PropTypes.func,
+
+    course: PropTypes.number.isRequired,
+};
+
+
+export { ApplicantTable };

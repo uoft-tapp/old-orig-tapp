@@ -66,6 +66,11 @@ class AppState {
         return this._data.toJSON();
     }
 
+    // transform object into an array of [key, value] pairs found directly upon object, where key is numerical
+    idEntries(object) {
+	return Object.entries(object).map(([key, val]) => [Number(key), val]);
+    }
+
     /************************************
      ** view state getters and setters **
      ************************************/
@@ -494,7 +499,7 @@ class AppState {
 
     // get applicants who have applied to course; returns a list of [applicantID, applicantData]
     getApplicantsToCourse(course) {
-	let applications = Object.entries(this.getApplicationsList()).filter(
+	let applications = this.idEntries(this.getApplicationsList()).filter(
 	    ([key, val]) => val[0].prefs.some(pref => pref.positionId == course));
 
 	let applicants = this.getApplicantsList(), filteredApplicants = [];

@@ -1,5 +1,5 @@
 import React from 'react'
-import PropTypes from 'prop-types';
+import PropTypes from 'prop-types'
 import { ButtonGroup, Button, DropdownButton, MenuItem, Glyphicon } from 'react-bootstrap'
 
 class ApplicantTableMenu extends React.Component {
@@ -42,7 +42,7 @@ class ApplicantTableMenu extends React.Component {
 	    </ButtonGroup>
 		
 		<ButtonGroup style={{paddingLeft: "1vw"}}>
-		{this.props.activeSortFields.map(
+		{this.props.getActiveSortFields().map(
 		    sortField => {
 			let dir = sortField > 0 ? 1 : -1;
 			let name = this.props.config[sortField * dir].header;
@@ -90,8 +90,6 @@ ApplicantTableMenu.propTypes = {
 	})
     ).isRequired,
     
-    activeSortFields: PropTypes.arrayOf(PropTypes.number).isRequired,
-    
     anyFilterActive: PropTypes.func.isRequired,
     isFilterActive: PropTypes.func.isRequired,
     toggleFilter: PropTypes.func.isRequired,
@@ -100,6 +98,7 @@ ApplicantTableMenu.propTypes = {
     addSort: PropTypes.func.isRequired,
     removeSort: PropTypes.func.isRequired,
     toggleSortDir: PropTypes.func.isRequired,
+    getActiveSortFields: PropTypes.func.isRequired,
 };
 
 

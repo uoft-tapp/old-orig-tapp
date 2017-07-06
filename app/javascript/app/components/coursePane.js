@@ -1,7 +1,7 @@
 import React from 'react'
 import { Panel } from 'react-bootstrap'
 import { ApplicantTableMenu } from './applicantTableMenu.js'
-import { ABCApplicantTable } from './abcApplicantTable.js'
+import { ApplicantTable } from './applicantTable.js'
 
 class CoursePane extends React.Component {
     constructor(props) {
@@ -104,9 +104,7 @@ class CoursePane extends React.Component {
         let course = this.props.func.getCourseById(this.props.course);
         if (!course)
             return null;
-
-        let panelFields = this.props.func.getCoursePanelFieldsByCourse(this.props.course);
-
+	
         return (
                 <Panel style={{height: '100%', maxHeight: '88vh', overflow: 'auto'}}
             header={<span>{course.code}&emsp;{course.assignmentCount} /{course.estimatedPositions}
@@ -116,11 +114,12 @@ class CoursePane extends React.Component {
                     }}></i>
                     </span>}>
 
-                <ABCApplicantTable config={this.fields} assigned={true} {...panelFields} {...this.props}/>
-
+                <ApplicantTable config={this.fields} assigned={true} course={this.props.course}
+	    getApplicants={() => this.props.func.getApplicantsAssignedToCourse(this.props.course)}/>
+		
                 <ApplicantTableMenu
 	    config={this.fields}
-	    activeSortFields={panelFields.activeSortFields}
+	    getActiveSortFields={() => this.props.func.getCoursePanelSortsByCourse(this.props.course)}
 	    anyFilterActive={field => this.props.func.anyFilterActive(this.props.course, field)}
 	    isFilterActive={(field, category) => this.props.func.isFilterActive(this.props.course, field, category)}
 	    toggleFilter={(field, category) => this.props.func.toggleFilter(this.props.course, field, category)}
@@ -129,7 +128,11 @@ class CoursePane extends React.Component {
 	    removeSort={field => this.props.func.removeSort(this.props.course, field)}
 	    toggleSortDir={field => this.props.func.toggleSortDir(this.props.course, field)}/>
 
-                <ABCApplicantTable config={this.fields} assigned={false} {...panelFields} {...this.props}/>
+                <ApplicantTable config={this.fields} assigned={false} course={this.props.course}
+	    getApplicants={() => this.props.func.getApplicantsToCourseUnassigned(this.props.course)}
+	    getActiveSortFields={() => this.props.func.getCoursePanelSortsByCourse(this.props.course)}
+	    getActiveFilters={() => this.props.func.getCoursePanelFiltersByCourse(this.props.course)}/>
+		
                 </Panel>
         );
     }
