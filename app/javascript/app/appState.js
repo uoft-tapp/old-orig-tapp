@@ -25,7 +25,7 @@ const initialState = {
     // abc view
     abcView: {
         layout: [],
-        // will be populated with mappings of active courses to their active sort and filter fields
+        // will be populated with mappings of selected courses to their selected sort and filter fields
         panelFields: {},
     },
 
@@ -81,11 +81,11 @@ class AppState {
     }
 
     // add a course panel to the ABC view
-    addCoursePanel(course, activeCount) {
+    addCoursePanel(course, selectedCount) {
         let layout = this._data.get('abcView.layout');
         this._data.unset('abcView.layout', { silent: true });
 
-        switch (activeCount) {
+        switch (selectedCount) {
             case 1:
                 // layout is now [ course ]
                 layout = [course];
@@ -142,7 +142,7 @@ class AppState {
     // apply a sort to the applicant table (sorted up initially)
     addSort(course, field) {
         if (!this.getCoursePanelSortsByCourse(course).includes(field)) {
-            this._data.add('abcView.panelFields[' + course + '].activeSortFields', field);
+            this._data.add('abcView.panelFields[' + course + '].selectedSortFields', field);
         }
     }
 
@@ -151,15 +151,15 @@ class AppState {
         this._data.add('assignmentForm.tempAssignments', { positionId: positionId, hours: hours });
     }
 
-    // check whether any of the given filters in the category are active on the applicant table
-    anyFilterActive(course, field) {
+    // check whether any of the given filters in the category are selected on the applicant table
+    anyFilterSelected(course, field) {
         return this.getCoursePanelFiltersByCourse(course)[field] != undefined;
     }
 
-    // remove all active filters on the applicant table
+    // remove all selected filters on the applicant table
     clearFilters(course) {
-        this._data.unset('abcView.panelFields[' + course + '].activeFilters', { silent: true });
-        this._data.set('abcView.panelFields[' + course + '].activeFilters', {});
+        this._data.unset('abcView.panelFields[' + course + '].selectedFilters', { silent: true });
+        this._data.set('abcView.panelFields[' + course + '].selectedFilters', {});
     }
 
     createAssignmentForm(panels) {
@@ -184,7 +184,7 @@ class AppState {
     }
 
     getCoursePanelFiltersByCourse(course) {
-        return this.getCoursePanelFieldsByCourse(course).activeFilters;
+        return this.getCoursePanelFieldsByCourse(course).selectedFilters;
     }
 
     getCoursePanelLayout() {
@@ -192,7 +192,7 @@ class AppState {
     }
 
     getCoursePanelSortsByCourse(course) {
-        return this.getCoursePanelFieldsByCourse(course).activeSortFields;
+        return this.getCoursePanelFieldsByCourse(course).selectedSortFields;
     }
 
     getCurrentUserName() {
@@ -224,8 +224,8 @@ class AppState {
         return this.getSelectedCourses().includes(course);
     }
 
-    // check whether a filter is active on the applicant table
-    isFilterActive(course, field, category) {
+    // check whether a filter is selected on the applicant table
+    isFilterSelected(course, field, category) {
         let filters = this.getCoursePanelFiltersByCourse(course);
 
         return filters[field] != undefined && filters[field].includes(category);
@@ -236,18 +236,18 @@ class AppState {
         return this._data.get('assignmentForm.panels[' + index + '].expanded');
     }
 
-    // check whether a sort is active on the applicant table
-    isSortActive(course, field) {
+    // check whether a sort is selected on the applicant table
+    isSortSelected(course, field) {
         return this.getCoursePanelSortsByCourse(course).includes(field);
     }
 
     // remove a course panel from the ABC view
-    removeCoursePanel(course, activeCount) {
+    removeCoursePanel(course, selectedCount) {
         let layout = this._data.get('abcView.layout');
         let layoutLen = layout.length;
         this._data.unset('abcView.layout', { silent: true });
 
-        switch (activeCount) {
+        switch (selectedCount) {
             case 0:
                 layout = [];
                 break;
@@ -303,7 +303,7 @@ class AppState {
     // remove a sort from the applicant table
     removeSort(course, field) {
         let i = this.getCoursePanelSortsByCourse(course).indexOf(field);
-        this._data.remove('abcView.panelFields[' + course + '].activeSortFields[' + i + ']');
+        this._data.remove('abcView.panelFields[' + course + '].selectedSortFields[' + i + ']');
     }
 
     // remove a temporary assignment from the assignment form of the applicant view
@@ -332,22 +332,22 @@ class AppState {
 
     // toggle the visibility of a course panel in the ABC view
     toggleCoursePanel(course) {
-        let active = this.getSelectedCourses();
+        let selected = this.getSelectedCourses();
 
         let panelFields = this.getCoursePanelFields();
 
-        if (active.includes(course)) {
+        if (selected.includes(course)) {
             // add course to layout
-            this._data.set('abcView.layout', this.addCoursePanel(course, active.length));
+            this._data.set('abcView.layout', this.addCoursePanel(course, selected.length));
 
             // add panel to panel state tracker
             this._data.set('abcView.panelFields[' + course + ']', {
-                activeSortFields: [],
-                activeFilters: {},
+                selectedSortFields: [],
+                selectedFilters: {},
             });
         } else {
             // remove course from layout
-            this._data.set('abcView.layout', this.removeCoursePanel(course, active.length));
+            this._data.set('abcView.layout', this.removeCoursePanel(course, selected.length));
         }
     }
 
@@ -362,7 +362,7 @@ class AppState {
     // toggle a filter on the applicant table
     toggleFilter(course, field, category) {
         let filters = this.getCoursePanelFiltersByCourse(course);
-        this._data.unset('abcView.panelFields[' + course + '].activeFilters', { silent: true });
+        this._data.unset('abcView.panelFields[' + course + '].selectedFilters', { silent: true });
 
         if (filters[field]) {
             let i = filters[field].indexOf(category);
@@ -383,7 +383,7 @@ class AppState {
             filters[field] = [category];
         }
 
-        this._data.set('abcView.panelFields[' + course + '].activeFilters', filters);
+        this._data.set('abcView.panelFields[' + course + '].selectedFilters', filters);
     }
 
     // toggle the selected state of the course that is clicked
@@ -405,12 +405,12 @@ class AppState {
         const sortFields = this.getCoursePanelSortsByCourse(course);
 
         if (!sortFields.includes(-field)) {
-            this._data.unset('abcView.panelFields[' + course + '].activeSortFields', {
+            this._data.unset('abcView.panelFields[' + course + '].selectedSortFields', {
                 silent: true,
             });
 
             sortFields[sortFields.indexOf(field)] = -field;
-            this._data.set('abcView.panelFields[' + course + '].activeSortFields', sortFields);
+            this._data.set('abcView.panelFields[' + course + '].selectedSortFields', sortFields);
         }
     }
 

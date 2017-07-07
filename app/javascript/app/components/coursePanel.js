@@ -3,7 +3,7 @@ import { Panel } from 'react-bootstrap';
 import { ApplicantTableMenu } from './applicantTableMenu.js';
 import { ApplicantTable } from './applicantTable.js';
 
-class CoursePane extends React.Component {
+class CoursePanel extends React.Component {
     constructor(props) {
         super(props);
 
@@ -150,12 +150,12 @@ class CoursePane extends React.Component {
 
                 <ApplicantTableMenu
                     config={this.fields}
-                    getActiveSortFields={() =>
+                    getSelectedSortFields={() =>
                         this.props.func.getCoursePanelSortsByCourse(this.props.course)}
-                    anyFilterActive={field =>
-                        this.props.func.anyFilterActive(this.props.course, field)}
-                    isFilterActive={(field, category) =>
-                        this.props.func.isFilterActive(this.props.course, field, category)}
+                    anyFilterSelected={field =>
+                        this.props.func.anyFilterSelected(this.props.course, field)}
+                    isFilterSelected={(field, category) =>
+                        this.props.func.isFilterSelected(this.props.course, field, category)}
                     toggleFilter={(field, category) =>
                         this.props.func.toggleFilter(this.props.course, field, category)}
                     clearFilters={() => this.props.func.clearFilters(this.props.course)}
@@ -170,9 +170,9 @@ class CoursePane extends React.Component {
                     course={this.props.course}
                     getApplicants={() =>
                         this.props.func.getApplicantsToCourseUnassigned(this.props.course)}
-                    getActiveSortFields={() =>
+                    getSelectedSortFields={() =>
                         this.props.func.getCoursePanelSortsByCourse(this.props.course)}
-                    getActiveFilters={() =>
+                    getSelectedFilters={() =>
                         this.props.func.getCoursePanelFiltersByCourse(this.props.course)}
                 />
             </Panel>
@@ -180,4 +180,4 @@ class CoursePane extends React.Component {
     }
 }
 
-export { CoursePane };
+export { CoursePanel };
