@@ -73,6 +73,7 @@ class ChassImporter
         application = applicant.applications.where(check_duplicate).take
         application ||= applicant.applications.build(
           app_id: app_id,
+          round_id: @round_id,
           ta_training: applicant_entry["ta_training"],
           access_acad_history: applicant_entry["access_acad_history"],
           ta_experience: applicant_entry["ta_experience"],
