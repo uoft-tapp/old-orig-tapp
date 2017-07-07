@@ -5,4 +5,20 @@ namespace :db do
       puts "Mock CHASS data import successful!"
     end
   end
+  namespace :csv do
+    task cdf: :environment do
+      generator = CSVGenerator.new
+      puts "CDF info CSV download success"
+    end
+    task offer: :environment do
+      generator = CSVGenerator.new
+      puts "Offer CSV download success"
+    end
+    task transcript_access: :environment do
+      generator = CSVGenerator.new
+      generator.generate_transcript_access
+      puts "Transcript Access CSV download success"
+    end
+  end
+
 end
