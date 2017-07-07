@@ -2,18 +2,18 @@ import React from 'react';
 import _ from 'underscore';
 import { Grid, Row, Col, Well } from 'react-bootstrap';
 import { CourseMenu } from './courseMenu.js';
-import { CoursePane } from './coursePane.js';
+import { CoursePanel } from './coursePanel.js';
 import SplitPane from 'react-split-pane/lib/SplitPane';
 
 class ABC extends React.Component {
-    mapLayoutToPanes() {
-        let active = this.props.func.getSelectedCourses();
-        let activeCount = active.length;
+    mapLayoutToPanels() {
+        let selected = this.props.func.getSelectedCourses();
+        let selectedCount = selected.length;
         let layout = this.props.func.getCoursePanelLayout();
 
-        let paneProps = { defaultSize: '50%', paneStyle: { margin: '2px' }, maxSize: -10 };
+        let panelProps = { defaultSize: '50%', panelStyle: { margin: '2px' }, maxSize: -10 };
 
-        switch (activeCount) {
+        switch (selectedCount) {
             case 0:
                 return (
                     <Well>
@@ -25,7 +25,7 @@ class ABC extends React.Component {
             case 1:
                 return (
                     <div>
-                        <CoursePane key={layout[0]} course={layout[0]} {...this.props} />
+                        <CoursePanel key={layout[0]} course={layout[0]} {...this.props} />
                     </div>
                 );
 
@@ -40,24 +40,24 @@ class ABC extends React.Component {
                 }
 
                 return (
-                    <SplitPane split={orient} {...paneProps}>
-                        <CoursePane key={course1} course={course1} {...this.props} />
-                        <CoursePane key={course2} course={course2} {...this.props} />
+                    <SplitPane split={orient} {...panelProps}>
+                        <CoursePanel key={course1} course={course1} {...this.props} />
+                        <CoursePanel key={course2} course={course2} {...this.props} />
                     </SplitPane>
                 );
 
             case 3:
                 if (layout.length == 1) {
                     return (
-                        <SplitPane split="horizontal" {...paneProps}>
-                            <CoursePane key={layout[0][0]} course={layout[0][0]} {...this.props} />
-                            <SplitPane split="horizontal" {...paneProps}>
-                                <CoursePane
+                        <SplitPane split="horizontal" {...panelProps}>
+                            <CoursePanel key={layout[0][0]} course={layout[0][0]} {...this.props} />
+                            <SplitPane split="horizontal" {...panelProps}>
+                                <CoursePanel
                                     key={layout[0][1]}
                                     course={layout[0][1]}
                                     {...this.props}
                                 />
-                                <CoursePane
+                                <CoursePanel
                                     key={layout[0][2]}
                                     course={layout[0][2]}
                                     {...this.props}
@@ -70,15 +70,15 @@ class ABC extends React.Component {
                 if (layout.length == 2) {
                     if (layout[0].length == 1) {
                         return (
-                            <SplitPane split="vertical" {...paneProps}>
-                                <CoursePane key={layout[0]} course={layout[0]} {...this.props} />
-                                <SplitPane split="horizontal" {...paneProps}>
-                                    <CoursePane
+                            <SplitPane split="vertical" {...panelProps}>
+                                <CoursePanel key={layout[0]} course={layout[0]} {...this.props} />
+                                <SplitPane split="horizontal" {...panelProps}>
+                                    <CoursePanel
                                         key={layout[1][0]}
                                         course={layout[1][0]}
                                         {...this.props}
                                     />
-                                    <CoursePane
+                                    <CoursePanel
                                         key={layout[1][1]}
                                         course={layout[1][1]}
                                         {...this.props}
@@ -90,39 +90,39 @@ class ABC extends React.Component {
 
                     if (layout[1].length == 1) {
                         return (
-                            <SplitPane split="vertical" {...paneProps}>
-                                <SplitPane split="horizontal" {...paneProps}>
-                                    <CoursePane
+                            <SplitPane split="vertical" {...panelProps}>
+                                <SplitPane split="horizontal" {...panelProps}>
+                                    <CoursePanel
                                         key={layout[0][0]}
                                         course={layout[0][0]}
                                         {...this.props}
                                     />
-                                    <CoursePane
+                                    <CoursePanel
                                         key={layout[0][1]}
                                         course={layout[0][1]}
                                         {...this.props}
                                     />
                                 </SplitPane>
-                                <CoursePane key={layout[1]} course={layout[1]} {...this.props} />
+                                <CoursePanel key={layout[1]} course={layout[1]} {...this.props} />
                             </SplitPane>
                         );
                     }
 
                     if (layout[0][0] == layout[1][0]) {
                         return (
-                            <SplitPane split="horizontal" {...paneProps}>
-                                <CoursePane
+                            <SplitPane split="horizontal" {...panelProps}>
+                                <CoursePanel
                                     key={layout[0][0]}
                                     course={layout[0][0]}
                                     {...this.props}
                                 />
-                                <SplitPane split="vertical" {...paneProps}>
-                                    <CoursePane
+                                <SplitPane split="vertical" {...panelProps}>
+                                    <CoursePanel
                                         key={layout[0][1]}
                                         course={layout[0][1]}
                                         {...this.props}
                                     />
-                                    <CoursePane
+                                    <CoursePanel
                                         key={layout[1][1]}
                                         course={layout[1][1]}
                                         {...this.props}
@@ -134,20 +134,20 @@ class ABC extends React.Component {
 
                     if (layout[0][1] == layout[1][1]) {
                         return (
-                            <SplitPane split="horizontal" {...paneProps}>
-                                <SplitPane split="vertical" {...paneProps}>
-                                    <CoursePane
+                            <SplitPane split="horizontal" {...panelProps}>
+                                <SplitPane split="vertical" {...panelProps}>
+                                    <CoursePanel
                                         key={layout[0][0]}
                                         course={layout[0][0]}
                                         {...this.props}
                                     />
-                                    <CoursePane
+                                    <CoursePanel
                                         key={layout[1][0]}
                                         course={layout[1][0]}
                                         {...this.props}
                                     />
                                 </SplitPane>
-                                <CoursePane
+                                <CoursePanel
                                     key={layout[0][1]}
                                     course={layout[0][1]}
                                     {...this.props}
@@ -159,11 +159,11 @@ class ABC extends React.Component {
 
                 if (layout.length == 3) {
                     return (
-                        <SplitPane split="vertical" {...paneProps}>
-                            <CoursePane key={layout[0]} course={layout[0]} {...this.props} />
-                            <SplitPane split="vertical" {...paneProps}>
-                                <CoursePane key={layout[1]} course={layout[1]} {...this.props} />
-                                <CoursePane key={layout[2]} course={layout[2]} {...this.props} />
+                        <SplitPane split="vertical" {...panelProps}>
+                            <CoursePanel key={layout[0]} course={layout[0]} {...this.props} />
+                            <SplitPane split="vertical" {...panelProps}>
+                                <CoursePanel key={layout[1]} course={layout[1]} {...this.props} />
+                                <CoursePanel key={layout[2]} course={layout[2]} {...this.props} />
                             </SplitPane>
                         </SplitPane>
                     );
@@ -172,15 +172,15 @@ class ABC extends React.Component {
 
             case 4:
                 return (
-                    <SplitPane split="horizontal" {...paneProps}>
-                        <SplitPane split="vertical" {...paneProps}>
-                            <CoursePane key={layout[0][0]} course={layout[0][0]} {...this.props} />
-                            <CoursePane key={layout[0][1]} course={layout[0][1]} {...this.props} />
+                    <SplitPane split="horizontal" {...panelProps}>
+                        <SplitPane split="vertical" {...panelProps}>
+                            <CoursePanel key={layout[0][0]} course={layout[0][0]} {...this.props} />
+                            <CoursePanel key={layout[0][1]} course={layout[0][1]} {...this.props} />
                         </SplitPane>
 
-                        <SplitPane split="vertical" {...paneProps}>
-                            <CoursePane key={layout[1][0]} course={layout[1][0]} {...this.props} />
-                            <CoursePane key={layout[1][1]} course={layout[1][1]} {...this.props} />
+                        <SplitPane split="vertical" {...panelProps}>
+                            <CoursePanel key={layout[1][0]} course={layout[1][0]} {...this.props} />
+                            <CoursePanel key={layout[1][1]} course={layout[1][1]} {...this.props} />
                         </SplitPane>
                     </SplitPane>
                 );
@@ -197,7 +197,7 @@ class ABC extends React.Component {
                 pane2Style={{ marginRight: '1vw' }}
                 resizerStyle={{ display: 'none' }}>
                 <CourseMenu key={'courseMenu'} {...this.props} />
-                {this.mapLayoutToPanes()}
+                {this.mapLayoutToPanels()}
             </SplitPane>
         );
     }

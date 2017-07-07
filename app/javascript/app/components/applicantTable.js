@@ -34,14 +34,14 @@ class ApplicantTable extends React.Component {
         this.applicants = this.props.getApplicants();
 
         if (!this.props.assigned) {
-            let activeFilters = this.props.getActiveFilters();
-            let activeSortFields = this.props.getActiveSortFields();
+            let selectedFilters = this.props.getSelectedFilters();
+            let selectedSortFields = this.props.getSelectedSortFields();
 
             // apply additional filtering to unassigned applicants
-            for (var field in activeFilters) {
+            for (var field in selectedFilters) {
                 this.applicants = this.applicants.filter(applicant =>
                     // disjointly apply filters within the same field
-                    activeFilters[field].reduce(
+                    selectedFilters[field].reduce(
                         (acc, category) =>
                             acc ||
                             this.props.config[field].filterFuncs[category]({
@@ -55,7 +55,7 @@ class ApplicantTable extends React.Component {
             }
 
             // apply additional sorting to unassigned applicants
-            this.applicants.sort((a, b) => this.sortApplicants(a, b, activeSortFields));
+            this.applicants.sort((a, b) => this.sortApplicants(a, b, selectedSortFields));
         }
     }
 
@@ -134,8 +134,8 @@ ApplicantTable.propTypes = {
     ).isRequired,
 
     getApplicants: PropTypes.func.isRequired,
-    getActiveSortFields: PropTypes.func,
-    getActiveFilters: PropTypes.func,
+    getSelectedSortFields: PropTypes.func,
+    getSelectedFilters: PropTypes.func,
 
     course: PropTypes.number.isRequired,
     assigned: PropTypes.bool.isRequired,

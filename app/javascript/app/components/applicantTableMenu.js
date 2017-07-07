@@ -25,7 +25,7 @@ class ApplicantTableMenu extends React.Component {
                                 title={field.filterLabel}
                                 key={field.filterLabel + '-dropdown'}
                                 id={field.filterLabel + '-dropdown'}
-                                bsStyle={this.props.anyFilterActive(i) ? 'primary' : 'default'}>
+                                bsStyle={this.props.anyFilterSelected(i) ? 'primary' : 'default'}>
                                 {field.filterCategories.map((category, j) =>
                                     <MenuItem
                                         key={'filter-' + category}
@@ -34,7 +34,7 @@ class ApplicantTableMenu extends React.Component {
                                             this.props.toggleFilter(
                                                 ...eventKey.split('.').map(Number)
                                             )}
-                                        active={this.props.isFilterActive(i, j)}>
+                                        selected={this.props.isFilterSelected(i, j)}>
                                         {category}
                                     </MenuItem>
                                 )}
@@ -43,7 +43,7 @@ class ApplicantTableMenu extends React.Component {
                 </ButtonGroup>
 
                 <ButtonGroup style={{ paddingLeft: '1vw' }}>
-                    {this.props.getActiveSortFields().map(sortField => {
+                    {this.props.getSelectedSortFields().map(sortField => {
                         let dir = sortField > 0 ? 1 : -1;
                         let name = this.props.config[sortField * dir].header;
 
@@ -102,15 +102,15 @@ ApplicantTableMenu.propTypes = {
         })
     ).isRequired,
 
-    anyFilterActive: PropTypes.func.isRequired,
-    isFilterActive: PropTypes.func.isRequired,
+    anyFilterSelected: PropTypes.func.isRequired,
+    isFilterSelected: PropTypes.func.isRequired,
     toggleFilter: PropTypes.func.isRequired,
     clearFilters: PropTypes.func.isRequired,
 
     addSort: PropTypes.func.isRequired,
     removeSort: PropTypes.func.isRequired,
     toggleSortDir: PropTypes.func.isRequired,
-    getActiveSortFields: PropTypes.func.isRequired,
+    getSelectedSortFields: PropTypes.func.isRequired,
 };
 
 export { ApplicantTableMenu };

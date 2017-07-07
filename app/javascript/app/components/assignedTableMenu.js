@@ -27,7 +27,7 @@ class AssignedTableMenu extends React.Component {
                 </ButtonGroup>
 
                 <ButtonGroup style={{ paddingLeft: '1vw' }}>
-                    {this.props.activeSortFields.map((field, index) =>
+                    {this.props.selectedSortFields.map((field, index) =>
                         <DropdownButton
                             title={
                                 <span>
