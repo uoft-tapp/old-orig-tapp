@@ -33,7 +33,7 @@ class CoursePane extends React.Component {
             },
             {
                 header: 'Last Name',
-                data: p => p.applicant.lastName,
+                data: p => (<a href={'applicant/' + p.applicantId}>{p.applicant.lastName}</a>),
                 sortData: p => p.applicant.lastName,
             },
             {
