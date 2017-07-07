@@ -31,6 +31,7 @@ RSpec.describe AssignmentsController, type: :controller do
 
         @application = @applicant.applications.create!(
         app_id: "-111",
+        round_id: "110",
         ta_training: "N",
         access_acad_history: "Y",
         ta_experience: "CSC373H1S (2), CSC318H1S (5), CSC423H5S (4), CSC324H1S (9), CSC404H1S (8)",
@@ -98,6 +99,7 @@ RSpec.describe AssignmentsController, type: :controller do
 
         @application = @applicant.applications.create!(
         app_id: "-111",
+        round_id: "110",
         ta_training: "N",
         access_acad_history: "Y",
         ta_experience: "CSC373H1S (2), CSC318H1S (5), CSC423H5S (4), CSC324H1S (9), CSC404H1S (8)",
@@ -188,6 +190,7 @@ RSpec.describe AssignmentsController, type: :controller do
 
         @application = @applicant.applications.create!(
         app_id: "-111",
+        round_id: "110",
         ta_training: "N",
         access_acad_history: "Y",
         ta_experience: "CSC373H1S (2), CSC318H1S (5), CSC423H5S (4), CSC324H1S (9), CSC404H1S (8)",
@@ -263,6 +266,7 @@ RSpec.describe AssignmentsController, type: :controller do
 
         @application = @applicant.applications.create!(
         app_id: "-111",
+        round_id: "110",
         ta_training: "N",
         access_acad_history: "Y",
         ta_experience: "CSC373H1S (2), CSC318H1S (5), CSC423H5S (4), CSC324H1S (9), CSC404H1S (8)",
@@ -325,6 +329,7 @@ RSpec.describe AssignmentsController, type: :controller do
 
         @application = @applicant.applications.create!(
         app_id: "-111",
+        round_id: "110",
         ta_training: "N",
         access_acad_history: "Y",
         ta_experience: "CSC373H1S (2), CSC318H1S (5), CSC423H5S (4), CSC324H1S (9), CSC404H1S (8)",
