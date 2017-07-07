@@ -10,8 +10,9 @@ namespace :db do
       generator = CSVGenerator.new
       puts "CDF info CSV download success"
     end
-    task offer: :environment do
+    task offers: :environment do
       generator = CSVGenerator.new
+      generator.generate_offers
       puts "Offer CSV download success"
     end
     task transcript_access: :environment do

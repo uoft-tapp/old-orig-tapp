@@ -11,8 +11,19 @@ class CSVGenerator
   end
 
   def generate_offers
-  #  data = get_offers
-  #  write_export_file("offers", data)
+    data = get_offers
+    attributes = generate_csv_string([
+      "course_code",
+      "course_title",
+      "offer_hours",
+      "student_number",
+      "familyname",
+      "givenname",
+      "student_status",
+      "student_department",
+      "email_address",
+    ])
+    write_export_file("offers", data, attributes)
   end
 
   def generate_transcript_access
@@ -40,6 +51,44 @@ class CSVGenerator
       csv_string = (csv_string + item + ", ")
     end
     return (csv_string[0, csv_string.size-2]+"\n")
+  end
+
+  def get_offers
+    data = ""
+    @assignments.each do |assignment|
+      course = assignment.position
+      applicant = assignment.applicant
+      csv_string = generate_csv_string([
+        course[:position],
+        course[:course_name],
+        assignment[:hours].to_s,
+        applicant[:student_number].to_s,
+        applicant[:last_name],
+        applicant[:first_name],
+        get_status(applicant[:program_id]),
+        applicant[:dept],
+        applicant[:email],
+      ])
+      data = (data + csv_string)
+    end
+    return data
+  end
+
+  def get_status(program_id)
+    case program_id
+    when '7PDF'
+      return 'PostDoc'
+    when '1PHD'
+      return 'PhD'
+    when '2Msc'
+      return 'MSc'
+    when '4MASc'
+      return 'MASc'
+    when '8UG'
+      return 'UG'
+    else
+      return 'Other'
+    end
   end
 
   def get_transcript_access
