@@ -110,6 +110,7 @@ ApplicantTable.propTypes = {
     getActiveFilters: PropTypes.func,
 
     course: PropTypes.number.isRequired,
+    assigned: PropTypes.bool.isRequired,
 };
 
 
