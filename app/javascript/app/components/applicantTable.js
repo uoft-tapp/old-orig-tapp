@@ -14,7 +14,9 @@ const THeader = props =>
     </thead>;
 
 const ApplicantRow = props =>
-    <tr key={'applicant-' + props.applicantId + '-row'}>
+    <tr
+        key={'applicant-' + props.applicantId + '-row'}
+        id={props.course + '-' + props.applicantId + (props.assigned ? 1 : 0)}>
         {props.config.map((field, i) =>
             <td key={'applicant-' + props.applicantId + '-row-' + i}>
                 {field.data(props)}
