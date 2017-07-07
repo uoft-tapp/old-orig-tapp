@@ -21,8 +21,9 @@ class CourseMenu extends React.Component {
     }
     
     render() {
-	if (!this.courses)
+	if (!this.courses) {
 	    return null;
+	}
 	
 	let itemStyle = {height: '2em', padding: '3px'};
 

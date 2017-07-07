@@ -97,13 +97,14 @@ class AppState {
             break;
 
         case 3:
-            if (layout.length == 2)
+            if (layout.length == 2) {
                 // layout was [ course1, course2 ], is now [ course1, course2, course3 ]
                 layout.push(course);
 
-            else
+	    } else {
                 // layout was [ [course1, course2] ], is now [ course3, [course1, course2] ]
                 layout = [course, layout];
+	    }
 
             break;
 
@@ -111,30 +112,31 @@ class AppState {
             // layout is now [ [course1, course2], [course3, course4] ]
             let course1, course2, course3;
 
-            if (layout.length == 3)
+            if (layout.length == 3) {
                 // layout was [ course1, course2, course3 ]
                 [course1, course2, course3] = layout;
 
-            else if (layout.length == 1)
+	    } else if (layout.length == 1) {
                 // layout was [ [course1, course2, course3] ]
                 [course1, course2, course3] = layout[0];
 
-            else if (layout[0].length == 1)
+	    } else if (layout[0].length == 1) {
                 // layout was [ course1, [course2, course3] ]
                 course1 = layout[0], [course2, course3] = layout[1];
 
-            else if (layout[1].length == 1)
+	    } else if (layout[1].length == 1) {
                 // layout was [ [course1, course2], course3 ]
                 [course1, course2] = layout[0], course3 = layout[1];
 
-            else if (layout[0][0] == layout[1][0])
+	    } else if (layout[0][0] == layout[1][0]) {
                 // layout was [ [course1, course2] [course1, course3] ]
                 [course1, course2] = layout[0], course3 = layout[1][1];
 
-            else
+	    } else {
                 // layout was [ [course1, course2] [course3, course2] ]
                 [course1, course2] = layout[0], course3 = layout[1][0];
-
+	    }
+	    
             layout = [[course1, course2], [course3, course]];
 
             break;
@@ -145,8 +147,9 @@ class AppState {
 
     // apply a sort to the applicant table (sorted up initially)
     addSort(course, field) {
-	if (!this.getCoursePanelSortsByCourse(course).includes(field))
+	if (!this.getCoursePanelSortsByCourse(course).includes(field)) {
             this._data.add('abcView.panelFields['+course+'].activeSortFields', field);
+	}
     }
 
     // add a temporary assignment through the assignment form of the applicant view
@@ -166,8 +169,9 @@ class AppState {
     }
 
     createAssignmentForm(panels) {
-	if (this.getAssignmentForm().panels.length == 0)
+	if (this.getAssignmentForm().panels.length == 0) {
             this._data.set('assignmentForm.panels', panels.map(panel => ({label: panel, expanded: true})));
+	}
     }
 
     getAssignmentForm() {
@@ -253,13 +257,14 @@ class AppState {
 
         case 1: // layout is now [ course ]
 
-            if (layoutLen == 2)
+            if (layoutLen == 2) {
                 // layout was [ course1, course2 ]
                 layout = [(layout[0] == course) ? layout[1] : layout[0]];
-            else
+	    } else {
                 // layout was [ [course1, course2] ]
                 layout = [(layout[0][0] == course) ? layout[0][1] : layout[0][0]];
-
+	    }
+	    
             break;
 
         case 2: // layout is now [ course1, course2 ]
@@ -282,8 +287,9 @@ class AppState {
                     layout.splice(layout.indexOf(course), 1);
 
                     let i = layout.indexOf(course);
-                    if (i != -1)
+                    if (i != -1) {
                         layout.splice(i, 1);
+		    }
                 }
 
             } else if (layoutLen == 3) {
@@ -363,17 +369,18 @@ class AppState {
 	    let i = filters[field].indexOf(category);
 
 	    // filter is not already applied
-	    if (i == -1)
+	    if (i == -1) {
 		filters[field].push(category);
 
 	    // filter is already applied, along with other filters
-	    else if (filters[field].length > 1)
+	    } else if (filters[field].length > 1) {
 		filters[field].splice(i, 1);
 
 	    // only this filter is already applied
-	    else
+	    } else {
 		delete filters[field];
-
+	    }
+	    
 	} else {
 	    filters[field] = [category];
 	}
@@ -387,8 +394,9 @@ class AppState {
         let i = selected.indexOf(course);
 
         if (i == -1) {
-            if (selected.length < 4)
+            if (selected.length < 4) {
                 this._data.add('courseMenu.selected', course);
+	    }
         } else {
             this._data.remove('courseMenu.selected[' + i + ']');
         };
@@ -415,10 +423,11 @@ class AppState {
     addAssignment(applicant, course, hours, assignment) {
 	let assignments = this.getAssignmentsList();
 
-	if (assignments[applicant])
+	if (assignments[applicant]) {
 	    assignments[applicant].push({ id: assignment, positionId: course, hours: hours });
-	else
+	} else {
 	    assignments[applicant] = [{ id: assignment, positionId: course, hours: hours }];
+	}
 
 	this.setAssignmentsList(assignments);
 	this.incrementCourseAssignmentCount(course);
@@ -482,8 +491,9 @@ class AppState {
 	let assignments = this.getAssignmentsList(), applicants = this.getApplicantsList(), filteredApplicants = [];
 
 	for (var applicant in assignments) {
-	    if (assignments[applicant].some(ass => ass.positionId == course))
+	    if (assignments[applicant].some(ass => ass.positionId == course)) {
 		filteredApplicants.push([applicant, applicants[applicant]]);
+	    }
 	}
 
 	return filteredApplicants;
@@ -537,19 +547,21 @@ class AppState {
     getAssignmentByApplicant(applicant, course) {
 	let assignments = this.getAssignmentsList()[applicant];
 
-	if (assignments)
+	if (assignments) {
 	    return assignments.find(ass => (ass.positionId == course));
-	else
+	} else {
 	    return null;
+	}
     }
 
     getAssignmentsByApplicant(applicant) {
 	let assignments = this.getAssignmentsList()[applicant];
 
-	if (assignments)
+	if (assignments) {
 	    return assignments;
-	else
+	} else {
 	    return [];
+	}
     }
 
     getAssignmentsList() {

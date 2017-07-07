@@ -8,9 +8,11 @@ const cross = "fa fa-times-circle-o";
 class AssignmentForm extends React.Component {
 
     setAssignments(applicant, assignments, temp_assignments, courses){
-    	if(this.noAssignments(assignments, temp_assignments))
+    	if(this.noAssignments(assignments, temp_assignments)) {
     	    return (<tr><td>No Assignments</td></tr>);
-    	if(assignments!==undefined){
+	}
+	
+    	if(assignments!==undefined) {
     	    return(
         		assignments.map((assignment,index)=>(
         			<AssignmentRow assignment={assignment} key={index}
@@ -25,28 +27,29 @@ class AssignmentForm extends React.Component {
     }
 
     noAssignments(assignments, temp_assignments){
-	if(assignments===undefined&&temp_assignments===undefined)
+	if (assignments===undefined&&temp_assignments===undefined) {
 	    return true;
-	else if(assignments===undefined){
-	    if(temp_assignments!==undefined){
-		if(temp_assignments.length==0)
+	    
+	} else if(assignments===undefined) {
+	    if(temp_assignments!==undefined) {
+		if(temp_assignments.length==0) {
 		    return true;
-		else { return false; }
+		} else { return false; }
 	    }
 	    else { return false; }
 	}
 	else if(temp_assignments===undefined){
 	    if(assignments!==undefined){
-		if(assignments.length==0)
+		if(assignments.length==0) {
 		    return true;
-		else { return false; }
+		} else { return false; }
 	    }
 	    else { return false; }
 	}
 	else if(assignments!==undefined&&temp_assignments!==undefined){
-	    if(assignments.length==0&&temp_assignments==0)
+	    if(assignments.length==0&&temp_assignments==0) {
 		return true;
-	    else { return false; }
+	    } else { return false; }
 	}
 	else{ return false; }
     }
@@ -111,12 +114,14 @@ class AssignmentForm extends React.Component {
 
     existingAssignment(positionId, assignments, temp_assignments){
 	for(let assignment in assignments){
-	    if(assignments[assignment].positionId==positionId)
+	    if(assignments[assignment].positionId==positionId) {
 		return true;
+	    }
 	}
 	for(let assignment in temp_assignments){
-	    if(temp_assignments[assignment].positionId==positionId)
+	    if(temp_assignments[assignment].positionId==positionId) {
 		return true;
+	    }
 	}
 	return false;
     }
