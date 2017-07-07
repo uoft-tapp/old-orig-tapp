@@ -16,8 +16,9 @@ class ChassExporter
           round_id: round_id.to_s
         })
       end
+      json = JSON.pretty_generate(data)
       File.open("#{Rails.root}/db/#{file}.json", "w") do |file|
-        file.puts "assignments = #{data.to_json}"
+        file.puts "assignments = #{json}"
       end
     end
 end
