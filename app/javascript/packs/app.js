@@ -30,18 +30,13 @@ import { Applicant } from '../app/components/applicant.js';
 class App extends React.Component {
     constructor(props) {
         super(props);
-        this.state = appState.toJSO();
 
         // start fetching data
         fetchAll();
     }
 
-    _updateState() {
-        this.setState(appState.toJSO());
-    }
-
     componentDidMount() {
-        appState.subscribe(this._updateState.bind(this));
+        appState.subscribe(this.forceUpdate.bind(this, null));
     }
 
     render() {
