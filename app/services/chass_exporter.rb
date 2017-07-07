@@ -1,8 +1,8 @@
 class ChassExporter
-    def initialize(file)
+    def initialize(file, round_id)
       @assignments = Assignment.all.includes([:position, :applicant])
       @applicants = Applicant.all.includes([:applications])
-      data = create_data
+      data = create_data(round_id)
       write_export_file(file, data)
     end
 
@@ -14,22 +14,25 @@ class ChassExporter
       end
     end
 
-    def create_data
+    def create_data(round_id)
       data = []
       @assignments.each do |assignment|
         hours = assignment[:hours]
-        course_id = assignment.position[:position]
-        round_id = assignment.position[:round_id]
-        applications = @applicants.find(assignment.applicant[:id]).applications
-        application = get_application(applications, round_id)
-        if application
-          app_id = application[0][:app_id]
-          data.push({
-            app_id: app_id,
-            course_id: course_id,
-            hours: hours,
-            round_id: round_id.to_s
-          })
+        course = assignment.position
+        if course[:round_id]==round_id.to_i
+          course_id = course[:position]
+          round_id = course[:round_id]
+          applications = @applicants.find(assignment.applicant[:id]).applications
+          application = get_application(applications, round_id)
+          if application
+            app_id = application[0][:app_id]
+            data.push({
+              app_id: app_id,
+              course_id: course_id,
+              hours: hours,
+              round_id: round_id.to_s
+            })
+          end
         end
       end
       return data
