@@ -6,8 +6,17 @@ class CSVGenerator
   end
 
   def generate_cdf_info
-  #  data = get_cdf_info
-  #  write_export_file("cdf_info", data)
+    data = get_cdf_info
+    attributes = generate_csv_string([
+      "course_code",
+      "email_address",
+      "studentnumber",
+      "familyname",
+      "givenname",
+      "student_department",
+      "utorid",
+    ])
+    write_export_file("cdf_info", data, attributes)
   end
 
   def generate_offers
@@ -29,11 +38,11 @@ class CSVGenerator
   def generate_transcript_access
     data = get_transcript_access
     attributes = generate_csv_string([
-      "studentnumber",
+      "student_number",
       "familyname",
       "givenname",
       "grant",
-      "emailaddress"
+      "email_address"
     ])
     write_export_file("transcript_access", data, attributes)
   end
@@ -43,6 +52,25 @@ class CSVGenerator
     File.open("#{Rails.root}/db/seeds/#{file}.csv", "w") do |file|
       file.puts "#{attributes}#{data}"
     end
+  end
+
+  def get_cdf_info
+    data =""
+    @assignments.each do |assignment|
+      course = assignment.position
+      applicant = assignment.applicant
+      csv_string = generate_csv_string([
+        course[:position],
+        applicant[:email],
+        applicant[:student_number],
+        applicant[:last_name],
+        applicant[:first_name],
+        applicant[:dept],
+        applicant[:utorid],
+      ])
+      data = (data + csv_string)
+    end
+    return data
   end
 
   def generate_csv_string(row)

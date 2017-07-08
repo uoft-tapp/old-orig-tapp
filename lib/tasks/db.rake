@@ -8,6 +8,7 @@ namespace :db do
   namespace :csv do
     task cdf: :environment do
       generator = CSVGenerator.new
+      generator.generate_cdf_info
       puts "CDF info CSV download success"
     end
     task offers: :environment do
