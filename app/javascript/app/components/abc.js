@@ -1,5 +1,4 @@
 import React from 'react';
-import _ from 'underscore';
 import { Grid, Row, Col, Well } from 'react-bootstrap';
 import { CourseMenu } from './courseMenu.js';
 import { CoursePanel } from './coursePanel.js';

@@ -22,11 +22,15 @@ const initialState = {
         selected: [],
     },
 
-    // abc view
-    abcView: {
-        layout: [],
-        // will be populated with mappings of selected courses to their selected sort and filter fields
-        panelFields: {},
+    panelLayout: [],
+
+    // will be populated with mappings of selected courses to their selected sort and filter fields
+    panelFields: {},
+
+    // will be populated with selected sort and filter fields for single-applicant-table views
+    tableFields: {
+        selectedSortFields: [],
+        selectedFilters: {},
     },
 
     // assigned view
@@ -82,8 +86,8 @@ class AppState {
 
     // add a course panel to the ABC view
     addCoursePanel(course, selectedCount) {
-        let layout = this._data.get('abcView.layout');
-        this._data.unset('abcView.layout', { silent: true });
+        let layout = this._data.get('panelLayout');
+        this._data.unset('panelLayout', { silent: true });
 
         switch (selectedCount) {
             case 1:
@@ -139,10 +143,17 @@ class AppState {
         return layout;
     }
 
-    // apply a sort to the applicant table (sorted up initially)
-    addSort(course, field) {
+    // apply a sort to the applicant table in a course panel (sorted up initially)
+    addCoursePanelSort(course, field) {
         if (!this.getCoursePanelSortsByCourse(course).includes(field)) {
-            this._data.add('abcView.panelFields[' + course + '].selectedSortFields', field);
+            this._data.add('panelFields[' + course + '].selectedSortFields', field);
+        }
+    }
+
+    // apply a sort to the applicant table in a single-applicant-table view (sorted up initially)
+    addSort(field) {
+        if (!this.getSorts().includes(field)) {
+            this._data.add('tableFields.selectedSortFields', field);
         }
     }
 
@@ -151,17 +162,29 @@ class AppState {
         this._data.add('assignmentForm.tempAssignments', { positionId: positionId, hours: hours });
     }
 
-    // check whether any of the given filters in the category are selected on the applicant table
-    anyFilterSelected(course, field) {
+    // check whether any of the given filters in the category are selected on the applicant table in a course panel
+    anyCoursePanelFilterSelected(course, field) {
         return this.getCoursePanelFiltersByCourse(course)[field] != undefined;
     }
 
-    // remove all selected filters on the applicant table
-    clearFilters(course) {
-        this._data.unset('abcView.panelFields[' + course + '].selectedFilters', { silent: true });
-        this._data.set('abcView.panelFields[' + course + '].selectedFilters', {});
+    // check whether any of the given filters in the category are selected on the applicant table in a
+    // single-applicant-table view
+    anyFilterSelected(field) {
+        return this.getFilters()[field] != undefined;
+    }
+    
+    // remove all selected filters on the applicant table in a course panel
+    clearCoursePanelFilters(course) {
+        this._data.unset('panelFields[' + course + '].selectedFilters', { silent: true });
+        this._data.set('panelFields[' + course + '].selectedFilters', {});
     }
 
+    // remove all selected filters on the applicant table in a single-applicant-table view
+    clearFilters() {
+        this._data.unset('tableFields.selectedFilters', { silent: true });
+        this._data.set('tableFields.selectedFilters', {});
+    }
+    
     createAssignmentForm(panels) {
         if (this.getAssignmentForm().panels.length == 0) {
             this._data.set(
@@ -176,19 +199,19 @@ class AppState {
     }
 
     getCoursePanelFields() {
-        return this._data.get('abcView.panelFields');
+        return this._data.get('panelFields');
     }
 
     getCoursePanelFieldsByCourse(course) {
         return this.getCoursePanelFields()[course];
     }
-
+    
     getCoursePanelFiltersByCourse(course) {
         return this.getCoursePanelFieldsByCourse(course).selectedFilters;
     }
 
     getCoursePanelLayout() {
-        return this._data.get('abcView.layout');
+        return this._data.get('panelLayout');
     }
 
     getCoursePanelSortsByCourse(course) {
@@ -203,6 +226,10 @@ class AppState {
         return this._data.get('nav.role');
     }
 
+    getFilters() {
+        return this.getTableFields().selectedFilters;
+    }
+
     getSelectedCourses() {
         return this._data.get('courseMenu.selected');
     }
@@ -215,8 +242,28 @@ class AppState {
         return this._data.get('nav.selectedApplicant');
     }
 
+    getSorts() {
+        return this.getTableFields().selectedSortFields;
+    }
+
+    getTableFields() {
+        return this._data.get('tableFields');
+    }
+    
     getTempAssignments() {
         return this._data.get('assignmentForm.tempAssignments');
+    }
+
+    // check whether a filter is selected on the applicant table in a course panel
+    isCoursePanelFilterSelected(course, field, category) {
+        let filters = this.getCoursePanelFiltersByCourse(course);
+
+        return filters[field] != undefined && filters[field].includes(category);
+    }
+
+    // check whether a sort is selected on the applicant table in a course panel
+    isCoursePanelSortSelected(course, field) {
+        return this.getCoursePanelSortsByCourse(course).includes(field);
     }
 
     // check whether a course in the course menu is selected
@@ -224,28 +271,28 @@ class AppState {
         return this.getSelectedCourses().includes(course);
     }
 
-    // check whether a filter is selected on the applicant table
-    isFilterSelected(course, field, category) {
-        let filters = this.getCoursePanelFiltersByCourse(course);
+    // check whether a filter is selected on the applicant table in a single-applicant-table view
+    isFilterSelected(field, category) {
+        let filters = this.getFilters();
 
         return filters[field] != undefined && filters[field].includes(category);
     }
-
+    
     // check whether a panel is expanded in the applicant view
     isPanelExpanded(index) {
         return this._data.get('assignmentForm.panels[' + index + '].expanded');
     }
 
-    // check whether a sort is selected on the applicant table
-    isSortSelected(course, field) {
-        return this.getCoursePanelSortsByCourse(course).includes(field);
+    // check whether a sort is selected on the applicant table in a single-applicant-table view
+    isSortSelected(field) {
+        return this.getSorts().includes(field);
     }
-
+    
     // remove a course panel from the ABC view
     removeCoursePanel(course, selectedCount) {
-        let layout = this._data.get('abcView.layout');
+        let layout = this._data.get('panelLayout');
         let layoutLen = layout.length;
-        this._data.unset('abcView.layout', { silent: true });
+        this._data.unset('panelLayout', { silent: true });
 
         switch (selectedCount) {
             case 0:
@@ -300,10 +347,16 @@ class AppState {
         return layout;
     }
 
-    // remove a sort from the applicant table
-    removeSort(course, field) {
+    // remove a sort from the applicant table in a course panel
+    removeCoursePanelSort(course, field) {
         let i = this.getCoursePanelSortsByCourse(course).indexOf(field);
-        this._data.remove('abcView.panelFields[' + course + '].selectedSortFields[' + i + ']');
+        this._data.remove('panelFields[' + course + '].selectedSortFields[' + i + ']');
+    }
+
+    // remove a sort from the applicant table in a single-applicant-table view
+    removeSort(field) {
+        let i = this.getSorts().indexOf(field);
+        this._data.remove('tableFields.selectedSortFields[' + i + ']');
     }
 
     // remove a temporary assignment from the assignment form of the applicant view
@@ -338,31 +391,23 @@ class AppState {
 
         if (selected.includes(course)) {
             // add course to layout
-            this._data.set('abcView.layout', this.addCoursePanel(course, selected.length));
+            this._data.set('panelLayout', this.addCoursePanel(course, selected.length));
 
             // add panel to panel state tracker
-            this._data.set('abcView.panelFields[' + course + ']', {
+            this._data.set('panelFields[' + course + ']', {
                 selectedSortFields: [],
                 selectedFilters: {},
             });
         } else {
             // remove course from layout
-            this._data.set('abcView.layout', this.removeCoursePanel(course, selected.length));
+            this._data.set('panelLayout', this.removeCoursePanel(course, selected.length));
         }
     }
 
-    // toggle the expanded state of a panel in the applicant assignment form component
-    togglePanelExpanded(index) {
-        this._data.set(
-            'assignmentForm.panels[' + index + '].expanded',
-            !this.isPanelExpanded(index)
-        );
-    }
-
-    // toggle a filter on the applicant table
-    toggleFilter(course, field, category) {
+    // toggle a filter on the applicant table in a course panel
+    toggleCoursePanelFilter(course, field, category) {
         let filters = this.getCoursePanelFiltersByCourse(course);
-        this._data.unset('abcView.panelFields[' + course + '].selectedFilters', { silent: true });
+        this._data.unset('panelFields[' + course + '].selectedFilters', { silent: true });
 
         if (filters[field]) {
             let i = filters[field].indexOf(category);
@@ -383,7 +428,56 @@ class AppState {
             filters[field] = [category];
         }
 
-        this._data.set('abcView.panelFields[' + course + '].selectedFilters', filters);
+        this._data.set('panelFields[' + course + '].selectedFilters', filters);
+    }
+
+    // toggle the sort direction of the sort currently applied to the applicant table in a course panel
+    toggleCoursePanelSortDir(course, field) {
+        const sortFields = this.getCoursePanelSortsByCourse(course);
+
+        if (!sortFields.includes(-field)) {
+            this._data.unset('panelFields[' + course + '].selectedSortFields', {
+                silent: true,
+            });
+
+            sortFields[sortFields.indexOf(field)] = -field;
+            this._data.set('panelFields[' + course + '].selectedSortFields', sortFields);
+        }
+    }
+
+    // toggle a filter on the applicant table in a single-applicant-table view
+    toggleFilter(field, category) {
+        let filters = this.getFilters();
+        this._data.unset('tableFields.selectedFilters', { silent: true });
+
+        if (filters[field]) {
+            let i = filters[field].indexOf(category);
+
+            // filter is not already applied
+            if (i == -1) {
+                filters[field].push(category);
+
+                // filter is already applied, along with other filters
+            } else if (filters[field].length > 1) {
+                filters[field].splice(i, 1);
+
+                // only this filter is already applied
+            } else {
+                delete filters[field];
+            }
+        } else {
+            filters[field] = [category];
+        }
+
+        this._data.set('tableFields.selectedFilters', filters);
+    }
+
+    // toggle the expanded state of a panel in the applicant assignment form component
+    togglePanelExpanded(index) {
+        this._data.set(
+            'assignmentForm.panels[' + index + '].expanded',
+            !this.isPanelExpanded(index)
+        );
     }
 
     // toggle the selected state of the course that is clicked
@@ -400,17 +494,15 @@ class AppState {
         }
     }
 
-    // toggle the sort direction of the sort currently applied to the applicant table
-    toggleSortDir(course, field) {
-        const sortFields = this.getCoursePanelSortsByCourse(course);
+    // toggle the sort direction of the sort currently applied to the applicant table in a single-applicant-table view
+    toggleSortDir(field) {
+        const sortFields = this.getSorts();
 
         if (!sortFields.includes(-field)) {
-            this._data.unset('abcView.panelFields[' + course + '].selectedSortFields', {
-                silent: true,
-            });
+            this._data.unset('tableFields.selectedSortFields', {silent: true});
 
             sortFields[sortFields.indexOf(field)] = -field;
-            this._data.set('abcView.panelFields[' + course + '].selectedSortFields', sortFields);
+            this._data.set('tableFields.selectedSortFields', sortFields);
         }
     }
 
@@ -553,6 +645,17 @@ class AppState {
         return this._data.get('applications.list');
     }
 
+    // get all applicants who have been assigned to a course; returns a list of [applicantID, applicantData]
+    getAssignedApplicants() {
+        let assignments = this.getAssignmentsList(), applicants = this.getApplicantsList(), filteredApplicants = [];
+
+        for (var applicant in assignments) {
+            filteredApplicants.push([applicant, applicants[applicant]]);
+        }
+        
+        return filteredApplicants;
+    }
+    
     getAssignmentByApplicant(applicant, course) {
         let assignments = this.getAssignmentsList()[applicant];
 
@@ -585,6 +688,15 @@ class AppState {
         return this.getCoursesList()[course];
     }
 
+    // return a sorted list of course codes
+    getCourseCodes() {
+        let courses = Object.values(this.getCoursesList());
+        courses = courses.map(course => course.code);
+        courses.sort();
+
+        return courses;
+    }
+    
     getCourseCodeById(course) {
         return this.getCourseById(course).code;
     }
@@ -593,6 +705,17 @@ class AppState {
         return this._data.get('instructors.list');
     }
 
+    // get all applicants who have not been assigned to a course; returns a list of [applicantID, applicantData]
+    getUnassignedApplicants() {
+        let assignments = this.getAssignmentsList(), applicants = this.getApplicantsList();
+
+        for (var applicant in assignments) {
+            delete applicants[applicant];
+        }
+
+        return this.idEntries(applicants);
+    }
+    
     incrementCourseAssignmentCount(course) {
         let courses = this.getCoursesList();
         courses[course].assignmentCount++;

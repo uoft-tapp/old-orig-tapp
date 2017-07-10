@@ -14,7 +14,7 @@ class ApplicantTableMenu extends React.Component {
 
     render() {
         return (
-            <div style={{ marginBottom: '1vh' }}>
+            <div className="applicant-table-menu">
                 <ButtonGroup>
                     <Button onClick={this.props.clearFilters}>Clear filters</Button>
 
@@ -34,7 +34,7 @@ class ApplicantTableMenu extends React.Component {
                                             this.props.toggleFilter(
                                                 ...eventKey.split('.').map(Number)
                                             )}
-                                        selected={this.props.isFilterSelected(i, j)}>
+                                        active={this.props.isFilterSelected(i, j)}>
                                         {category}
                                     </MenuItem>
                                 )}

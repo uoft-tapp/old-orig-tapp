@@ -163,15 +163,21 @@ class CoursePanel extends React.Component {
                     getSelectedSortFields={() =>
                         this.props.func.getCoursePanelSortsByCourse(this.props.course)}
                     anyFilterSelected={field =>
-                        this.props.func.anyFilterSelected(this.props.course, field)}
+                        this.props.func.anyCoursePanelFilterSelected(this.props.course, field)}
                     isFilterSelected={(field, category) =>
-                        this.props.func.isFilterSelected(this.props.course, field, category)}
+                        this.props.func.isCoursePanelFilterSelected(
+                            this.props.course,
+                            field,
+                            category
+                        )}
                     toggleFilter={(field, category) =>
-                        this.props.func.toggleFilter(this.props.course, field, category)}
-                    clearFilters={() => this.props.func.clearFilters(this.props.course)}
-                    addSort={field => this.props.func.addSort(this.props.course, field)}
-                    removeSort={field => this.props.func.removeSort(this.props.course, field)}
-                    toggleSortDir={field => this.props.func.toggleSortDir(this.props.course, field)}
+                        this.props.func.toggleCoursePanelFilter(this.props.course, field, category)}
+                    clearFilters={() => this.props.func.clearCoursePanelFilters(this.props.course)}
+                    addSort={field => this.props.func.addCoursePanelSort(this.props.course, field)}
+                    removeSort={field =>
+                        this.props.func.removeCoursePanelSort(this.props.course, field)}
+                    toggleSortDir={field =>
+                        this.props.func.toggleCoursePanelSortDir(this.props.course, field)}
                 />
 
                 <ApplicantTable

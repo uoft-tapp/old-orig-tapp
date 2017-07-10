@@ -98,19 +98,21 @@ class ApplicantTable extends React.Component {
         }
 
         return (
-            <Table striped bordered condensed hover>
-                <THeader config={this.props.config} />
-                <tbody>
-                    {this.applicants.map(([key, val]) =>
-                        <ApplicantRow
-                            key={'applicant-' + key}
-                            applicantId={key}
-                            applicant={val}
-                            {...this.props}
-                        />
-                    )}
-                </tbody>
-            </Table>
+            <div className="table-container">
+                <Table striped bordered condensed hover>
+                    <THeader config={this.props.config} />
+                    <tbody>
+                        {this.applicants.map(([key, val]) =>
+                            <ApplicantRow
+                                key={'applicant-' + key}
+                                applicantId={key}
+                                applicant={val}
+                                {...this.props}
+                            />
+                        )}
+                    </tbody>
+                </Table>
+            </div>
         );
     }
 }
