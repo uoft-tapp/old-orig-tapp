@@ -1,19 +1,27 @@
+:root {
+    --footer-height: 4vh; /* includes margins */
+    --navbar-height: 71px; /* includes margins */
+    --applicant-table-menu-height: calc(34px + 1vh);
+    --main-div-height: calc(100vh - var(--navbar-height) - var(--footer-height));
+}
+
 html {
     position: relative;
     min-height: 100%;
 }
 
 body {
-    margin-bottom: 4vh;
+    margin-bottom: var(--footer-height);
 }
 
 footer {
     position: absolute;
     bottom: 0;
     width: 100%;
-    height: 3vh;
+    height: calc(var(--footer-height) - 1vh);
     background-color: #f5f5f5;
     border: 1px solid #e7e7e7;
+    margin-top: 1vh;
 }
 
 footer div {
@@ -25,15 +33,20 @@ footer div p {
 }
 
 #root nav+div {
-    margin-top: 70px;
+    margin-top: var(--navbar-height);
     position: absolute;
-    height: 92vh;
+    height: var(--main-div-height);
 }
 
 .panel_table td{
-  padding-right: 50px;
-  margin-top: 0;
-  vertical-align: top;
+    padding-right: 50px;
+    margin-top: 0;
+    vertical-align: top;
+}
+
+/* for ApplicantTableMenu */
+.applicant-table-menu {
+    margin-bottom: 1vh;
 }
 
 /* for CourseMenu and CourseList */
@@ -54,100 +67,165 @@ footer div p {
     padding: 3px;
 }
 
-
 /* for CourseList */
 .panel-heading{
-  padding: 5px 15px !important;
-  height: 30px;
+    padding: 5px 15px !important;
+    height: 30px;
+}
+
+/* for ApplicantTable in Assigned/Unassigned view */
+#unassigned-grid .table-container {
+    max-height: calc(100% - var(--applicant-table-menu-height));
+    overflow: auto;
+}
+
+#assigned-grid .table-container {
+    max-height: 88vh;
+    overflow: auto;
+}
+
+/* for ABC view */
+nav+.SplitPane {
+    /* override the default 100% height inline style */
+/*    height: 88vh !important;*/
+}
+
+.Resizer {
+/*    background: #000;*/
+    opacity: .2;
+    z-index: 1;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    -moz-background-clip: padding;
+    -webkit-background-clip: padding;
+    background-clip: padding-box;
+}
+
+.Resizer:hover {
+    -webkit-transition: all 2s ease;
+    transition: all 2s ease;
+}
+
+.Resizer.horizontal {
+    height: 11px;
+    margin: -5px 0;
+    border-top: 5px solid rgba(255, 255, 255, 0);
+    border-bottom: 5px solid rgba(255, 255, 255, 0);
+    cursor: row-resize;
+    width: 100%;
+}
+
+.Resizer.horizontal:hover {
+    border-top: 5px solid rgba(0, 0, 0, 0.5);
+    border-bottom: 5px solid rgba(0, 0, 0, 0.5);
+}
+
+.Resizer.vertical {
+    width: 11px;
+    margin: 0 -5px;
+    border-left: 5px solid rgba(255, 255, 255, 0);
+    border-right: 5px solid rgba(255, 255, 255, 0);
+    cursor: col-resize;
+}
+
+.Resizer.vertical:hover {
+    border-left: 5px solid rgba(0, 0, 0, 0.5);
+    border-right: 5px solid rgba(0, 0, 0, 0.5);
+}
+
+.well {
+    text-align: center;
+    color: #555;
 }
 
 /* for CourseForm */
 .form_table{
-  width: 100%;
+    width: 100%;
 }
 .form_table td{
-  padding-right: 10px;
-  vertical-align: top;
+    padding-right: 10px;
+    vertical-align: top;
 }
 .form_table .course{
-  font-weight: bold;
+    font-weight: bold;
 }
 .form_table td:first-child{
-  width: 200px;
+    width: 200px;
 }
 .form_table td:first-child input{
-  margin-left: 10px;
-  width: 90%;
+    margin-left: 10px;
+    width: 90%;
 }
 .form_table td:nth-child(2){
-  width: 160px;
+    width: 160px;
 }
 .form_table td:nth-child(2) p{
-  line-height: 30px;
-  margin-bottom: 5px;
+    line-height: 30px;
+    margin-bottom: 5px;
 }
 .form_table td:nth-child(3){
-  width: 60px;
+    width: 60px;
 }
 .form_table td:nth-child(3) input{
-  width: 50px;
+    width: 50px;
 }
 .form_table td textarea{
-  height: 80px;
-  width: calc(calc(100vw - calc(12em + 520px)) / 3);
-  float: left;
-  resize: none;
+    height: 80px;
+    width: calc(calc(100vw - calc(12em + 520px)) / 3);
+    float: left;
+    resize: none;
 }
 .form_table p{
-  margin: 0;
+    margin: 0;
 }
 .form_table input{
-  height: 30px;
-  margin-bottom: 5px;
+    height: 30px;
+    margin-bottom: 5px;
 }
 
 /* instructor form */
 .instructor_form{
-  border: #CCC 1px solid;
-  width: calc(calc(100vw - calc(12em + 520px)) / 3);
-  height: 80px;
-  overflow-y: auto;
+    border: #CCC 1px solid;
+    width: calc(calc(100vw - calc(12em + 520px)) / 3);
+    height: 80px;
+    overflow-y: auto;
 }
 .instructor_form td{
-  border: red 1px solid;
-  float: left;
-  padding:0;
-  border-collapse: collapse;
-  white-space: nowrap;
-  width: auto !important;
+    border: red 1px solid;
+    float: left;
+    padding:0;
+    border-collapse: collapse;
+    white-space: nowrap;
+    width: auto !important;
 }
 .instructor_form input[type="text"]{
-  border: none;
-  float: left;
-  margin: 0;
-  height: 0px;
-  vertical-align: text-bottom;
-  width: 100%;
-  opacity: 0;
+    border: none;
+    float: left;
+    margin: 0;
+    height: 0px;
+    vertical-align: text-bottom;
+    width: 100%;
+    opacity: 0;
 }
 .instructor_form input[type="text"]:focus,
 .instructor_form span:focus,
 .instructor_form button:focus{
-  outline: 0;
+    outline: 0;
 }
 .instructor_form div{
-  width: 100% !important;
-  min-height: calc(100% - 2px);
-  float: left;
+    width: 100% !important;
+    min-height: calc(100% - 2px);
+    float: left;
 }
 .instructor_form button{
-  background: none;
-  border: none;
+    background: none;
+    border: none;
 }
 .instructor_form datalist{
-  display: block;
-  position: fixed;
+    display: block;
+    position: fixed;
 }
 .instructor_form span{
-  margin-left: 2px;
+    margin-left: 2px;
 }
