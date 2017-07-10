@@ -96,7 +96,7 @@ class AssignmentForm extends React.Component {
                 <AssignmentButton
                     click_func={() => this.props.func.permAssignment(course)}
                     id={applicant}
-                    className="fa fa-check-circle-o"
+                    className={check}
                     color="green"
                     {...this}
                 />
@@ -105,13 +105,12 @@ class AssignmentForm extends React.Component {
     }
 
     setAssignmentCrossButton(temp, applicant, assignment, self) {
-        let className = 'fa fa-times-circle-o';
         if (temp) {
             return (
                 <AssignmentButton
                     click_func={() => this.props.func.removeTempAssignment(assignment.positionId)}
                     id={applicant}
-                    className={className}
+                    className={cross}
                     color="red"
                     {...this}
                 />
@@ -121,7 +120,7 @@ class AssignmentForm extends React.Component {
                 <AssignmentButton
                     click_func={() => this.props.func.deleteAssignment(applicant, assignment.id)}
                     id={applicant}
-                    className={className}
+                    className={cross}
                     color="red"
                     {...this}
                 />
