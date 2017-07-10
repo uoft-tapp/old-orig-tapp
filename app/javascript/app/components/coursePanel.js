@@ -33,7 +33,10 @@ class CoursePanel extends React.Component {
             },
             {
                 header: 'Last Name',
-                data: p => (<a href={'applicant/' + p.applicantId}>{p.applicant.lastName}</a>),
+                data: p =>
+                    <a href={'applicant/' + p.applicantId}>
+                        {p.applicant.lastName}
+                    </a>,
                 sortData: p => p.applicant.lastName,
             },
             {
@@ -146,6 +149,7 @@ class CoursePanel extends React.Component {
                     course={this.props.course}
                     getApplicants={() =>
                         this.props.func.getApplicantsAssignedToCourse(this.props.course)}
+                    rowId={p => p.course + '-' + p.applicantId + '-1'}
                 />
 
                 <ApplicantTableMenu
@@ -174,6 +178,7 @@ class CoursePanel extends React.Component {
                         this.props.func.getCoursePanelSortsByCourse(this.props.course)}
                     getSelectedFilters={() =>
                         this.props.func.getCoursePanelFiltersByCourse(this.props.course)}
+                    rowId={p => p.course + '-' + p.applicantId + '-0'}
                 />
             </Panel>
         );
