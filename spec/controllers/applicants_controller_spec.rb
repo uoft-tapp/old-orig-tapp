@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe ApplicantsController, type: :controller do
+  let (:parsed_body) { JSON.parse(response.body) }
+
   describe "GET #index" do
     it "list applicants" do
       get :index
@@ -41,6 +43,35 @@ RSpec.describe ApplicantsController, type: :controller do
   end
 
   describe "PATCH #update" do
-    
+    let(:applicant) do
+      Applicant.create!(
+        utorid: "simps169",
+        student_number: 1234567890,
+        first_name: "Landy",
+        last_name: "Simpson",
+        email: "simps@mail.com",
+        phone: "4165558888",
+        address: "100 Jameson Ave Toronto, ON M65-48H",
+        commentary: ""
+        )
+    end
+
+    context "when valid parameter is passed" do
+      it "returns status 200 and the JSON of updated applicant" do
+        commentary = "Hello World"
+        patch :update, params: { id: applicant.id, commentary: commentary }
+        expect(response.status).to eq(200)
+        expect(parsed_body["commentary"]).to eq(commentary)
+      end
+    end
+
+    context "when invalid parameter is passed" do
+      it "returns a 200 status and ignores the extra parameter" do
+        patch :update, params: { id: applicant.id, random: "data" }
+        expect(response.status).to eq(200)
+        expect(parsed_body["commentary"]).to eq(applicant[:commentary])
+      end
+    end
+
   end
 end
