@@ -58,12 +58,16 @@ class CourseForm extends React.Component {
                                     <p>
                                         <input
                                             type="number"
-                                            value={course[1].estimatedPositions}
+                                            value={course[1].estimatedPositions
+                                                  ? course[1].estimatedPositions:
+                                                  0}
                                             min="0"
                                             onChange={eventKey =>
-                                                this.props.func.updateCoursePosition(
+                                                this.props.func.updateCourse(
                                                     course[0],
-                                                    eventKey
+                                                    eventKey,
+                                                    "estimated_count",
+                                                    "estimatedPositions"
                                                 )}
                                         />
                                     </p>
@@ -73,9 +77,11 @@ class CourseForm extends React.Component {
                                             value={course[1].positionHours}
                                             min="0"
                                             onChange={eventKey =>
-                                                this.props.func.updateCourseHours(
+                                                this.props.func.updateCourse(
                                                     course[0],
-                                                    eventKey
+                                                    eventKey,
+                                                    "hours",
+                                                    'positionHours'
                                                 )}
                                         />
                                     </p>
@@ -89,9 +95,11 @@ class CourseForm extends React.Component {
                                             }
                                             min="0"
                                             onChange={eventKey =>
-                                                this.props.func.updateCourseEnrol(
+                                                this.props.func.updateCourse(
                                                     course[0],
-                                                    eventKey
+                                                    eventKey,
+                                                    "estimated_enrolment",
+                                                    "estimatedEnrol"
                                                 )}
                                         />
                                     </p>
@@ -117,7 +125,12 @@ class CourseForm extends React.Component {
                                     </p>
                                     <textarea
                                         onChange={eventKey =>
-                                            this.props.func.updateCourseQual(course[0], eventKey)}
+                                            this.props.func.updateCourse(
+                                              course[0],
+                                              eventKey,
+                                              "qualifications",
+                                              "qual"
+                                            )}
                                         value={course[1].qual}
                                     />
                                 </td>
@@ -127,7 +140,12 @@ class CourseForm extends React.Component {
                                     </p>
                                     <textarea
                                         onChange={eventKey =>
-                                            this.props.func.updateCourseResp(course[0], eventKey)}
+                                            this.props.func.updateCourse(
+                                              course[0],
+                                              eventKey,
+                                              "duties",
+                                              "resp"
+                                            )}
                                         value={course[1].resp}
                                     />
                                 </td>
