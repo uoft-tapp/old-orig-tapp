@@ -3,36 +3,47 @@ class CSVGenerator
   def initialize
     @assignments = Assignment.all.includes([:position, :applicant])
     @applicants = Applicant.all.includes([:applications])
+    @courses = {}
   end
 
   def generate_cdf_info
-    data = get_cdf_info
-    attributes = generate_csv_string([
-      "course_code",
-      "email_address",
-      "studentnumber",
-      "familyname",
-      "givenname",
-      "student_department",
-      "utorid",
-    ])
-    write_export_file("cdf_info", data, attributes)
+    if @assignments.size == 0
+      puts "Warning: You have not made any assignments yet. Operation aborted"
+    else
+      data = get_cdf_info
+      attributes = generate_csv_string([
+        "course_code",
+        "email_address",
+        "studentnumber",
+        "familyname",
+        "givenname",
+        "student_department",
+        "utorid",
+      ])
+      write_export_file("cdf_info", data, attributes)
+      puts "CDF info CSV download success"
+    end
   end
 
   def generate_offers
-    data = get_offers
-    attributes = generate_csv_string([
-      "course_code",
-      "course_title",
-      "offer_hours",
-      "student_number",
-      "familyname",
-      "givenname",
-      "student_status",
-      "student_department",
-      "email_address",
-    ])
-    write_export_file("offers", data, attributes)
+    if @assignments.size == 0
+      puts "Warning: You have not made any assignments yet. Operation aborted"
+    else
+      data = get_offers
+      attributes = generate_csv_string([
+        "course_code",
+        "course_title",
+        "offer_hours",
+        "student_number",
+        "familyname",
+        "givenname",
+        "student_status",
+        "student_department",
+        "email_address",
+      ])
+      write_export_file("offers", data, attributes)
+      puts "Offer CSV download success"
+    end
   end
 
   def generate_transcript_access
@@ -45,6 +56,7 @@ class CSVGenerator
       "email_address"
     ])
     write_export_file("transcript_access", data, attributes)
+    puts "Transcript Access CSV download success"
   end
 
   private
@@ -86,6 +98,7 @@ class CSVGenerator
     @assignments.each do |assignment|
       course = assignment.position
       applicant = assignment.applicant
+      course_code = course[:position]
       csv_string = generate_csv_string([
         course[:position],
         course[:course_name],
