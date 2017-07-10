@@ -59,8 +59,9 @@ class CourseForm extends React.Component {
                                         <input
                                             type="number"
                                             value={course[1].estimatedPositions
-                                                  ? course[1].estimatedPositions:
-                                                  0}
+                                                  ? course[1].estimatedPositions
+                                                  : 0
+                                            }
                                             min="0"
                                             onChange={eventKey =>
                                                 this.props.func.updateCourse(
@@ -74,7 +75,10 @@ class CourseForm extends React.Component {
                                     <p>
                                         <input
                                             type="number"
-                                            value={course[1].positionHours}
+                                            value={course[1].positionHours
+                                                  ? course[1].positionHours
+                                                  : 0
+                                            }
                                             min="0"
                                             onChange={eventKey =>
                                                 this.props.func.updateCourse(
