@@ -127,21 +127,12 @@ class CSVGenerator
         applicant[:student_number],
         applicant[:last_name],
         applicant[:first_name],
-        has_access(application[:access_acad_history]).to_s,
+        application[:access_acad_history].downcase,
         applicant[:email],
       ])
       data = (data + csv_string)
     end
     return data
-  end
-
-  def has_access(access)
-    case access
-    when "N"
-      return false
-    when "Y"
-      return true
-    end
   end
 
 end
