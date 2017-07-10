@@ -24,13 +24,16 @@ class ChassExporter
           round_id = course[:round_id]
           applications = @applicants.find(assignment.applicant[:id]).applications
           application = get_application(applications, round_id)
+          applicant = assignment.applicant
           if application
             app_id = application[0][:app_id]
             data.push({
               app_id: app_id,
               course_id: course_id,
               hours: hours,
-              round_id: round_id.to_s
+              round_id: round_id.to_s,
+              utorid: applicant[:utorid],
+              name: "#{applicant[:first_name]} #{applicant[:last_name]}"
             })
           end
         end
