@@ -60,9 +60,9 @@ class AssignmentsController < ApplicationController
   '''
     update #PATCH
     /applicants/:applicant_id/assignments/:id
-    hours
+    hours, export_date
 
-    updates the hours column for an applicant given assignment ID and applicant ID
+    updates the hours and export_date column for an applicant given assignment ID and applicant ID
   '''
   def update
     @applicant = Applicant.find(params[:applicant_id])
