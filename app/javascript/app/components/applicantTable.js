@@ -44,11 +44,9 @@ class ApplicantTable extends React.Component {
                     selectedFilters[field].reduce(
                         (acc, category) =>
                             acc ||
-                            this.props.config[field].filterFuncs[category]({
-                                applicantId: applicant[0],
-                                applicant: applicant[1],
-                                course: this.props.course,
-                            }),
+                            this.props.config[field].filterFuncs[category](
+                                Object.assign({applicantId: applicant[0], applicant: applicant[1]}, this.props)
+                            ),
                         false
                     )
                 );

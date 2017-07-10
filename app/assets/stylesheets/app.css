@@ -80,7 +80,7 @@ footer div p {
 }
 
 #assigned-grid .table-container {
-    max-height: 88vh;
+    max-height: calc(100% - var(--applicant-table-menu-height));
     overflow: auto;
 }
 
