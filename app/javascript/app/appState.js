@@ -878,28 +878,11 @@ class AppState {
         this._data.set('courses.list[' + courseId + '].' + attr, val);
     }
 
-    updateCourseHours(courseId, eventKey) {
+    updateCourse(courseId, eventKey, attr, props) {
         let val = eventKey.target.value;
-        fetch.updateCourse(courseId, { hours: val }, val, 'positionHours');
-    }
-
-    updateCoursePosition(courseId, eventKey) {
-        let val = eventKey.target.value;
-        fetch.updateCourse(courseId, { estimated_count: val }, val, 'estimatedPositions');
-    }
-
-    updateCourseEnrol(courseId, eventKey) {
-        let val = eventKey.target.value;
-        fetch.updateCourse(courseId, { estimated_enrolment: val }, val, 'estimatedEnrol');
-    }
-
-    updateCourseQual(courseId, eventKey) {
-        let val = eventKey.target.value;
-        fetch.updateCourse(courseId, { qualifications: val }, val, 'qual');
-    }
-    updateCourseResp(courseId, eventKey) {
-        let val = eventKey.target.value;
-        fetch.updateCourse(courseId, { duties: val }, val, 'resp');
+        let data = {};
+        data[attr] = val;
+        fetch.updateCourse(courseId, data, val, props);
     }
 
     addInstructor(courseId, instructorId) {
@@ -910,9 +893,10 @@ class AppState {
 
     removeInstructor(courseId, index) {
         let val = this._data.get('courses.list[' + courseId + '].instructors');
+        let original = val;
         val.splice(index, 1);
         this._data.unset('courses.list[' + courseId + '].instructors');
-        this._data.set('courses.list[' + courseId + '].instructors', []);
+        this._data.set('courses.list[' + courseId + '].instructors', original);
         fetch.updateCourse(courseId, { instructors: val }, val, 'instructors');
     }
 
