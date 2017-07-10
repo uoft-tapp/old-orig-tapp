@@ -8,6 +8,7 @@ class CreateApplicants < ActiveRecord::Migration[5.1]
       t.string :email
       t.string :phone
       t.text :address
+      t.text :commentary
 
       t.timestamps
     end
