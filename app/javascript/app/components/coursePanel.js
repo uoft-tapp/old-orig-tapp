@@ -8,9 +8,10 @@ class CoursePanel extends React.Component {
         super(props);
 
         // table/menu configuration
-        this.fields = [
+        this.config = [
             {
                 header: '',
+                // checkbox that is checked if the applicant is currently assigned, unchecked if not
                 data: p =>
                     <input
                         type="checkbox"
@@ -33,6 +34,7 @@ class CoursePanel extends React.Component {
             },
             {
                 header: 'Last Name',
+                // last name contains a link to the applicant's individual page
                 data: p =>
                     <a href={'applicant/' + p.applicantId}>
                         {p.applicant.lastName}
@@ -66,6 +68,7 @@ class CoursePanel extends React.Component {
                 filterFuncs: [
                     p => p.applicant.program == 'PostDoc',
                     p => p.applicant.program == 'PhD',
+                    // group masters programs together
                     p => ['MSc', 'MASc', 'MScAC', 'MEng', 'OG'].includes(p.applicant.program),
                     p => p.applicant.program == 'UG',
                 ],
@@ -77,6 +80,7 @@ class CoursePanel extends React.Component {
             },
             {
                 header: 'Pref.',
+                // checkmark if the applicant has a special preference for this course, nothing otherwise
                 data: p =>
                     props.func.getApplicationPreference(p.applicantId, p.course)
                         ? <i className="fa fa-check" />
@@ -86,6 +90,7 @@ class CoursePanel extends React.Component {
             },
             {
                 header: 'Other',
+                // comma-separated list of the codes for the (other) courses to which this applicant is assigned
                 data: p =>
                     props.func
                         .getAssignmentsByApplicant(p.applicantId)
@@ -97,6 +102,7 @@ class CoursePanel extends React.Component {
                             ''
                         ),
 
+                // unseparated string of the codes for the (other) courses to which this applicant is assigned
                 sortData: p =>
                     props.func
                         .getAssignmentsByApplicant(p.applicantId)
@@ -144,7 +150,7 @@ class CoursePanel extends React.Component {
                     </span>
                 }>
                 <ApplicantTable
-                    config={this.fields}
+                    config={this.config}
                     assigned={true}
                     course={this.props.course}
                     getApplicants={() =>
@@ -153,7 +159,7 @@ class CoursePanel extends React.Component {
                 />
 
                 <ApplicantTableMenu
-                    config={this.fields}
+                    config={this.config}
                     getSelectedSortFields={() =>
                         this.props.func.getCoursePanelSortsByCourse(this.props.course)}
                     anyFilterSelected={field =>
@@ -169,7 +175,7 @@ class CoursePanel extends React.Component {
                 />
 
                 <ApplicantTable
-                    config={this.fields}
+                    config={this.config}
                     assigned={false}
                     course={this.props.course}
                     getApplicants={() =>
