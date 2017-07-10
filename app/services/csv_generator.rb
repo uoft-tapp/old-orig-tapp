@@ -21,7 +21,7 @@ class CSVGenerator
         "utorid",
       ])
       write_export_file("cdf_info", data, attributes)
-      puts "CDF info CSV download success"
+      puts "Success: CDF info CSV file created"
     end
   end
 
@@ -42,7 +42,7 @@ class CSVGenerator
         "email_address",
       ])
       write_export_file("offers", data, attributes)
-      puts "Offer CSV download success"
+      puts "Success: Offer CSV file created"
     end
   end
 
@@ -56,7 +56,7 @@ class CSVGenerator
       "email_address"
     ])
     write_export_file("transcript_access", data, attributes)
-    puts "Transcript Access CSV download success"
+    puts "Suceess: Transcript Access file created"
   end
 
   private
