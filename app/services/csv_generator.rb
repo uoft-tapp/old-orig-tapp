@@ -40,6 +40,7 @@ class CSVGenerator
         "student_status",
         "student_department",
         "email_address",
+        "round_id",
       ])
       write_export_file("offers", data, attributes)
       puts "Success: Offer CSV file created"
@@ -56,7 +57,7 @@ class CSVGenerator
       "email_address"
     ])
     write_export_file("transcript_access", data, attributes)
-    puts "Suceess: Transcript Access file created"
+    puts "Suceess: Transcript Access CSV file created"
   end
 
   private
@@ -109,6 +110,7 @@ class CSVGenerator
         get_status(applicant[:program_id]),
         applicant[:dept],
         applicant[:email],
+        course[:round_id].to_s,
       ])
       data = (data + csv_string)
     end
