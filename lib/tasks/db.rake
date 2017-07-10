@@ -5,9 +5,8 @@ namespace :db do
       puts "Mock CHASS data import successful!"
     end
     task :export, [:round_id]=> [:environment] do |t, args|
-      file = "seeds/export_data"
-      exporter = ChassExporter.new(file, args[:round_id])
-      puts "Assignments have been exported to #{file}"
+      exporter = ChassExporter.new
+      exporter.export(args[:round_id])
     end
   end
 end
