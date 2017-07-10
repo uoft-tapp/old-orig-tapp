@@ -60,6 +60,7 @@ class ApplicantTable extends React.Component {
     }
 
     // sort applicants by the list of criteria, in order
+    // in accordance with Array.sort, returns -1 if a sorts first, 1 if b sorts first, or 0 otherwise
     sortApplicants(a, b, criteria) {
         if (criteria.length == 0) {
             return 0;
@@ -68,16 +69,12 @@ class ApplicantTable extends React.Component {
         let dir = criteria[0] > 0 ? 1 : -1;
         let field = criteria[0] * dir;
 
-        let aData = this.props.config[field].sortData({
-            applicantId: a[0],
-            applicant: a[1],
-            course: this.props.course,
-        });
-        let bData = this.props.config[field].sortData({
-            applicantId: b[0],
-            applicant: b[1],
-            course: this.props.course,
-        });
+        let aData = this.props.config[field].sortData(
+            Object.assign({ applicantId: a[0], applicant: a[1] }, this.props)
+        );
+        let bData = this.props.config[field].sortData(
+            Object.assign({ applicantId: b[0], applicant: b[1] }, this.props)
+        );
 
         if (aData < bData) {
             return -dir;
@@ -109,10 +106,7 @@ class ApplicantTable extends React.Component {
                             key={'applicant-' + key}
                             applicantId={key}
                             applicant={val}
-                            course={this.props.course}
-                            config={this.props.config}
-                            assigned={this.props.assigned}
-                            rowId={this.props.rowId}
+                            {...this.props}
                         />
                     )}
                 </tbody>
@@ -124,23 +118,39 @@ class ApplicantTable extends React.Component {
 ApplicantTable.propTypes = {
     config: PropTypes.arrayOf(
         PropTypes.shape({
+            // label for table column, used in table header
             header: PropTypes.string.isRequired,
+            // function that produces the data needed for this column, for each row
             data: PropTypes.func.isRequired,
 
+            // function that produces the data by which rows in this column will be sorted
+            // eg. sortData might produce a string, for native (lexicographic) string sorting
             sortData: PropTypes.func,
+
+            // label for filter corresponding to this column
             filterLabel: PropTypes.string,
+            // categories for filtering on this column
+            // eg. for the column containing the applicant's program, categories might include: PostDoc, PhD, etc.
             filterCategories: PropTypes.arrayOf(PropTypes.string),
+            // functions corresponding to the filter categories for this column; a function should return false
+            // on a row that should *not* be displayed when filtering by its corresponding category
             filterFuncs: PropTypes.arrayOf(PropTypes.func),
         })
     ).isRequired,
 
+    // function that returns the applicants for this table
     getApplicants: PropTypes.func.isRequired,
+    // function that returns the currently selected sort fields for this table
     getSelectedSortFields: PropTypes.func,
+    // function that returns the currently selected filter fields+categories for this table
     getSelectedFilters: PropTypes.func,
 
-    course: PropTypes.number.isRequired,
-    assigned: PropTypes.bool.isRequired,
+    // course id of the course to which these applicants have applied (for the ABC view)
+    course: PropTypes.number,
+    // whether the applicants in this table have been assigned to this course (for the ABC view)
+    assigned: PropTypes.bool,
 
+    // function that returns a unique id for each applicant row
     rowId: PropTypes.func,
 };
 
