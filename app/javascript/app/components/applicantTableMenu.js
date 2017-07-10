@@ -92,24 +92,42 @@ class ApplicantTableMenu extends React.Component {
 ApplicantTableMenu.propTypes = {
     config: PropTypes.arrayOf(
         PropTypes.shape({
+            // label for table column, used in table header
             header: PropTypes.string.isRequired,
+            // function that produces the data needed for this column, for each row
             data: PropTypes.func.isRequired,
 
+            // function that produces the data by which rows in this column will be sorted
+            // eg. sortData might produce a string, for native (lexicographic) string sorting
             sortData: PropTypes.func,
+
+            // label for filter corresponding to this column
             filterLabel: PropTypes.string,
+            // categories for filtering on this column
+            // eg. for the column containing the applicant's program, categories might include: PostDoc, PhD, etc.
             filterCategories: PropTypes.arrayOf(PropTypes.string),
+            // functions corresponding to the filter categories for this column; a function should return false
+            // on a row that should *not* be displayed when filtering by its corresponding category
             filterFuncs: PropTypes.arrayOf(PropTypes.func),
         })
     ).isRequired,
 
+    // function that checks whether any of the filter categories for the given filter are selected
     anyFilterSelected: PropTypes.func.isRequired,
+    // function that checks whether a given filter category is selected
     isFilterSelected: PropTypes.func.isRequired,
+    // function that toggles a given filter category between selected and unselected
     toggleFilter: PropTypes.func.isRequired,
+    // function that unselects all filters
     clearFilters: PropTypes.func.isRequired,
 
+    // function that selects a sort field
     addSort: PropTypes.func.isRequired,
+    // function that unselects a sort field
     removeSort: PropTypes.func.isRequired,
+    // function that changes the sort direction of a currently selected sort field
     toggleSortDir: PropTypes.func.isRequired,
+    // function that returns the currently selected sort fields
     getSelectedSortFields: PropTypes.func.isRequired,
 };
 
