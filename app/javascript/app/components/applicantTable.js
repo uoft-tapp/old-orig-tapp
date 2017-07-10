@@ -14,9 +14,7 @@ const THeader = props =>
     </thead>;
 
 const ApplicantRow = props =>
-    <tr
-        key={'applicant-' + props.applicantId + '-row'}
-        id={props.course + '-' + props.applicantId + (props.assigned ? 1 : 0)}>
+    <tr key={'applicant-' + props.applicantId + '-row'} id={props.rowId(props)}>
         {props.config.map((field, i) =>
             <td key={'applicant-' + props.applicantId + '-row-' + i}>
                 {field.data(props)}
@@ -114,6 +112,7 @@ class ApplicantTable extends React.Component {
                             course={this.props.course}
                             config={this.props.config}
                             assigned={this.props.assigned}
+                            rowId={this.props.rowId}
                         />
                     )}
                 </tbody>
@@ -141,6 +140,8 @@ ApplicantTable.propTypes = {
 
     course: PropTypes.number.isRequired,
     assigned: PropTypes.bool.isRequired,
+
+    rowId: PropTypes.func,
 };
 
 export { ApplicantTable };
