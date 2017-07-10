@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(version: 20170707190517) do
     t.string "email"
     t.string "phone"
     t.text "address"
+    t.text "commentary"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "dept"
@@ -42,6 +43,7 @@ ActiveRecord::Schema.define(version: 20170707190517) do
     t.text "availability"
     t.text "other_info"
     t.text "special_needs"
+    t.text "raw_prefs"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "round_id"
@@ -52,6 +54,7 @@ ActiveRecord::Schema.define(version: 20170707190517) do
   create_table "assignments", force: :cascade do |t|
     t.bigint "applicant_id"
     t.bigint "position_id"
+    t.datetime "export_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "hours"

@@ -56,7 +56,8 @@ class ChassImporter
           dept: applicant_entry["dept"],
           program_id: applicant_entry["program_id"],
           yip: applicant_entry["yip"],
-          address:applicant_entry["address"]
+          address:applicant_entry["address"],
+          commentary: ""
       )
       exists = "applicant #{utorid} already exists"
       insertion_helper(applicant, condition, exists)
@@ -81,7 +82,8 @@ class ChassImporter
           technical_skills: applicant_entry["technical_skills"],
           availability: applicant_entry["availability"],
           other_info: applicant_entry["other_info"],
-          special_needs: applicant_entry["special_needs"]
+          special_needs: applicant_entry["special_needs"],
+          raw_prefs: applicant_entry["course_preferences"]
         )
         Rails.logger.debug "application #{app_id} already exists" unless application.new_record?
         application.save!

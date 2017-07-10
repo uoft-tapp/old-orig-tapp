@@ -14,6 +14,7 @@ class CreateApplications < ActiveRecord::Migration[5.1]
       t.text :availability
       t.text :other_info
       t.text :special_needs
+      t.text :raw_prefs
 
       t.timestamps
     end
