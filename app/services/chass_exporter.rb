@@ -1,4 +1,5 @@
 class ChassExporter
+
     def initialize
       @assignments = Assignment.all.includes([:position, :applicant])
       @applicants = Applicant.all.includes([:applications])
@@ -58,6 +59,7 @@ class ChassExporter
               utorid: applicant[:utorid],
               name: "#{applicant[:first_name]} #{applicant[:last_name]}"
             })
+            assignment.update_attributes(export_date: Time.now)
           end
         end
       end
