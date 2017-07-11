@@ -118,6 +118,18 @@ class Assigned extends React.Component {
             </Grid>
         );
     }
+    
+    selectThisTab() {
+        this.props.func.selectNavTab(this.props.navKey);
+    }
+
+    componentDidMount() {
+        this.selectThisTab();
+    }
+
+    componentDidUpdate() {
+        this.selectThisTab();
+    }
 }
 
 export { Assigned };
