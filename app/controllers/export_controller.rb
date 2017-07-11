@@ -7,7 +7,9 @@ class ExportController < ApplicationController
     if response[:generated]
       send_file("#{Rails.root}/db/seeds/export_data.json")
     else
-      render json: {error: response[:msg]}
+      render status: 404, json: {
+        message: response[:msg]
+      }.to_json
     end
   end
 
