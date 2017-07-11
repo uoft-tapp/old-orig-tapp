@@ -180,7 +180,7 @@ class AppState {
 
     // add an alert to the list of active alerts
     alert(text) {
-        this._data.add('alerts', text);
+        this._data.add('alerts', { text: text, active: true });
     }
 
     // check whether any of the given filters in the category are selected on the applicant table in a course panel
@@ -216,7 +216,7 @@ class AppState {
     }
 
     dismissAlert(index) {
-        this._data.remove('alerts[' + index + ']');
+        this._data.set('alerts[' + index + '].active', false);
     }
 
     getAlerts() {

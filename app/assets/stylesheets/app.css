@@ -42,8 +42,15 @@ footer div p {
     margin-top: var(--navbar-height);
 }
 
+@keyframes fadeout {
+    0% {opacity: 1;}
+    100% {opacity: 0.5;}
+}
+
 #alert-container .alert {
     margin-bottom: 2px;
+    animation-name: fadeout;
+    animation-duration: 10s;
 }
 
 /* for main body container, between navbar and footer */
