@@ -43,9 +43,8 @@ class ApplicantTableMenu extends React.Component {
                 </ButtonGroup>
 
                 <ButtonGroup style={{ paddingLeft: '1vw' }}>
-                    {this.props.getSelectedSortFields().map(sortField => {
-                        let dir = sortField > 0 ? 1 : -1;
-                        let name = this.props.config[sortField * dir].header;
+                    {this.props.getSelectedSortFields().map(([sortField, dir]) => {
+                        let name = this.props.config[sortField].header;
 
                         return (
                             <DropdownButton

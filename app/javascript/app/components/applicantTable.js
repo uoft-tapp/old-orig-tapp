@@ -64,8 +64,7 @@ class ApplicantTable extends React.Component {
             return 0;
         }
 
-        let dir = criteria[0] > 0 ? 1 : -1;
-        let field = criteria[0] * dir;
+        let [field, dir] = criteria[0];
 
         let aData = this.props.config[field].sortData(
             Object.assign({ applicantId: a[0], applicant: a[1] }, this.props)
