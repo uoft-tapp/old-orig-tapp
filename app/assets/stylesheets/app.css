@@ -16,7 +16,7 @@ body {
 }
 
 footer {
-    position: absolute;
+    position: fixed;
     bottom: 0;
     width: 100%;
     height: calc(var(--footer-height) - 1vh);
@@ -130,7 +130,7 @@ nav+.SplitPane {
     border-right: 5px solid rgba(0, 0, 0, 0.5);
 }
 
-.well {
+#no-courses-well {
     text-align: center;
     color: #555;
 }

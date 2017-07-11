@@ -15,7 +15,7 @@ class ABC extends React.Component {
         switch (selectedCount) {
             case 0:
                 return (
-                    <Well>
+                    <Well id="no-courses-well">
                         <p>Nothing here yet!</p>
                         <p>Select one or more courses to start.</p>
                     </Well>
