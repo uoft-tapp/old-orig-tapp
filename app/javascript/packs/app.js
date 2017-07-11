@@ -169,10 +169,12 @@ const NavbarInst = props => {
                     }
                     id="nav-alert-dropdown"
                     onToggle={willOpen => {
-                        if (!willOpen) props.func.readNotifications();
+                        if (!willOpen) {
+                            props.func.readNotifications();
+                        }
                     }}>
-                    {notifications.map(text =>
-                        <MenuItem>
+                    {notifications.map((text, i) =>
+                        <MenuItem key={'notification-' + i}>
                             {text}
                         </MenuItem>
                     )}
