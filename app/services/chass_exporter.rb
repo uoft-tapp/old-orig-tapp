@@ -8,14 +8,14 @@ class ChassExporter
     def export(round_id)
       if is_valid_round_id(round_id)
         if @assignments.size == 0
-          puts "Warning: You have not made any assignments. Operation aborted."
+          return {generated: false, msg: "Warning: You have not made any assignments. Operation aborted."}
         else
           data = create_data(round_id)
           write_export_file(data)
-          puts "Success: Assignments have been exported"
+          return {generated: true, msg: "Success: Assignments have been exported"}
         end
       else
-        puts "Error: Invalid round_id"
+        return {generated: false, msg: "Error: Invalid round_id"}
       end
     end
 
