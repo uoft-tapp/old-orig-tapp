@@ -3,6 +3,7 @@
     --navbar-height: 71px; /* includes margins */
     --applicant-table-menu-height: calc(34px + 1vh);
     --main-div-height: calc(100vh - var(--navbar-height) - var(--footer-height));
+    --min-row-height: 32px;
 }
 
 html {
@@ -74,13 +75,8 @@ footer div p {
 }
 
 /* for ApplicantTable in Assigned/Unassigned view */
-#unassigned-grid .table-container {
-    max-height: calc(100% - var(--applicant-table-menu-height));
-    overflow: auto;
-}
-
-#assigned-grid .table-container {
-    max-height: calc(100% - var(--applicant-table-menu-height));
+#unassigned-grid .table-container, #assigned-grid .table-container {
+    max-height: calc(var(--main-div-height) - var(--applicant-table-menu-height));
     overflow: auto;
 }
 
