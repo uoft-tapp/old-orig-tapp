@@ -13,8 +13,8 @@ class Assigned extends React.Component {
                 header: 'Last Name',
                 data: p =>
                     <a href={'applicant/' + p.applicantId}>
-                    {p.applicant.lastName}
-                </a>,
+                        {p.applicant.lastName}
+                    </a>,
                 sortData: p => p.applicant.lastName,
             },
             {
@@ -61,64 +61,63 @@ class Assigned extends React.Component {
             {
                 header: 'Course(s)',
                 data: p =>
-                    <ButtonToolbar>   
-                    {props.func.getAssignmentsByApplicant(p.applicantId).map(ass =>
-                                                                             <Button
+                    <ButtonToolbar>
+                        {props.func.getAssignmentsByApplicant(p.applicantId).map(ass =>
+                            <Button
                                 bsSize="xsmall"
                                 style={{ borderColor: '#555' }}
                                 key={'button-' + p.applicantId + '-' + ass.positionId}
                                 href={
                                     'applicantsbycourse#' +
-                                        ass.positionId +
-                                        '-' +
-                                        p.applicantId +
-                                        '-1'
+                                    ass.positionId +
+                                    '-' +
+                                    p.applicantId +
+                                    '-1'
                                 }>
-                                                                             {props.func.getCourseCodeById(ass.positionId)}&nbsp;&middot;&nbsp;{ass.hours}
-                                                                              </Button>
-                                                                             )}
-                     </ButtonToolbar>,
+                                {props.func.getCourseCodeById(ass.positionId)}&nbsp;&middot;&nbsp;{ass.hours}
+                            </Button>
+                        )}
+                    </ButtonToolbar>,
 
                 filterLabel: 'Course',
                 filterCategories: props.func.getCourseCodes(),
                 // for each course, filter out applicants who are not assigned to that course
-                filterFuncs: Object.keys(props.func.getCoursesList()).map(
-                    key => (
-                        p => props.func
-                            .getAssignmentsByApplicant(p.applicantId)
-                            .some(pref => pref.positionId == key)
-                    )),
+                filterFuncs: Object.keys(props.func.getCoursesList()).map(key => p =>
+                    props.func
+                        .getAssignmentsByApplicant(p.applicantId)
+                        .some(pref => pref.positionId == key)
+                ),
             },
-        ];          
+        ];
     }
 
     render() {
         return (
-                <Grid fluid id="assigned-grid">
+            <Grid fluid id="assigned-grid">
                 <ApplicantTableMenu
-            config={this.config}
-            getSelectedSortFields={() => this.props.func.getSorts()}
-            anyFilterSelected={field => this.props.func.anyFilterSelected(field)}
-            isFilterSelected={(field, category) =>
-                              this.props.func.isFilterSelected(field, category)}
-            toggleFilter={(field, category) =>
-                          this.props.func.toggleFilter(field, category)}
-            clearFilters={() => this.props.func.clearFilters()}
-            addSort={field => this.props.func.addSort(field)}
-            removeSort={field => this.props.func.removeSort(field)}
-            toggleSortDir={field => this.props.func.toggleSortDir(field)}
+                    config={this.config}
+                    getSelectedSortFields={() => this.props.func.getSorts()}
+                    anyFilterSelected={field => this.props.func.anyFilterSelected(field)}
+                    isFilterSelected={(field, category) =>
+                        this.props.func.isFilterSelected(field, category)}
+                    toggleFilter={(field, category) =>
+                        this.props.func.toggleFilter(field, category)}
+                    clearFilters={() => this.props.func.clearFilters()}
+                    addSort={field => this.props.func.addSort(field)}
+                    removeSort={field => this.props.func.removeSort(field)}
+                    toggleSortDir={field => this.props.func.toggleSortDir(field)}
                 />
 
                 <ApplicantTable
-            config={this.config}
-            getApplicants={() => this.props.func.getAssignedApplicants()}
-            rowId={p => 'unassigned-' + p.applicantId}
-            getSelectedSortFields={() => this.props.func.getSorts()}
-            getSelectedFilters={() => this.props.func.getFilters()}
+                    config={this.config}
+                    getApplicants={() => this.props.func.getAssignedApplicants()}
+                    rowId={p => 'unassigned-' + p.applicantId}
+                    getSelectedSortFields={() => this.props.func.getSorts()}
+                    getSelectedFilters={() => this.props.func.getFilters()}
                 />
-                </Grid>
+            </Grid>
         );
     }
 }
 
-export {Assigned};
+export { Assigned };
