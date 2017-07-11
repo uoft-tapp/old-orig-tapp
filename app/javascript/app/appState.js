@@ -878,8 +878,7 @@ class AppState {
         this._data.set('courses.list[' + courseId + '].' + attr, val);
     }
 
-    updateCourse(courseId, eventKey, attr, props) {
-        let val = eventKey.target.value;
+    updateCourse(courseId, val, attr, props) {
         let data = {};
         data[attr] = val;
         fetch.updateCourse(courseId, data, val, props);
