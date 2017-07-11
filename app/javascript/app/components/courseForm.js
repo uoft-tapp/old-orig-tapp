@@ -63,10 +63,10 @@ class CourseForm extends React.Component {
                                                   : 0
                                             }
                                             min="0"
-                                            onChange={eventKey =>
+                                            onChange={event =>
                                                 this.props.func.updateCourse(
                                                     course[0],
-                                                    eventKey,
+                                                    event.target.value,
                                                     "estimated_count",
                                                     "estimatedPositions"
                                                 )}
@@ -80,10 +80,10 @@ class CourseForm extends React.Component {
                                                   : 0
                                             }
                                             min="0"
-                                            onChange={eventKey =>
+                                            onChange={event =>
                                                 this.props.func.updateCourse(
                                                     course[0],
-                                                    eventKey,
+                                                    event.target.value,
                                                     "hours",
                                                     'positionHours'
                                                 )}
@@ -98,10 +98,10 @@ class CourseForm extends React.Component {
                                                     : 0
                                             }
                                             min="0"
-                                            onChange={eventKey =>
+                                            onChange={event =>
                                                 this.props.func.updateCourse(
                                                     course[0],
-                                                    eventKey,
+                                                    event.target.value,
                                                     "estimated_enrolment",
                                                     "estimatedEnrol"
                                                 )}
@@ -128,10 +128,10 @@ class CourseForm extends React.Component {
                                         <b>Qualifications: </b>
                                     </p>
                                     <textarea
-                                        onChange={eventKey =>
+                                        onChange={event =>
                                             this.props.func.updateCourse(
                                               course[0],
-                                              eventKey,
+                                              event.target.value,
                                               "qualifications",
                                               "qual"
                                             )}
@@ -143,10 +143,10 @@ class CourseForm extends React.Component {
                                         <b>Responsibilities: </b>
                                     </p>
                                     <textarea
-                                        onChange={eventKey =>
+                                        onChange={event =>
                                             this.props.func.updateCourse(
                                               course[0],
-                                              eventKey,
+                                              event.target.value,
                                               "duties",
                                               "resp"
                                             )}
@@ -161,8 +161,7 @@ class CourseForm extends React.Component {
         }
     }
 
-    isInstructor(eventKey, course, instructors, instructor_data) {
-        let input = eventKey.target.value;
+    isInstructor(input, course, instructors, instructor_data) {
         let span = document.getElementById('input_' + course);
         for (let i in instructor_data) {
             if (instructor_data[i] == input) {
@@ -187,8 +186,7 @@ class CourseForm extends React.Component {
         return false;
     }
 
-    updateInputField(eventKey, courseId) {
-        let input = eventKey.target.innerHTML;
+    updateInputField(input, courseId) {
         let hidden_input = document.getElementById('hidden_input_' + courseId);
         this.props.func.updateInstructorInput(courseId, input);
         hidden_input.focus();
@@ -226,7 +224,7 @@ const InstructorForm = props =>
             <span
                 contentEditable="true"
                 id={'input_' + props.course}
-                onInput={eventKey => props.self.updateInputField(eventKey, props.course)}
+                onInput={event => props.self.updateInputField(event.target.value, props.course)}
             />
         </div>
         <input
@@ -235,9 +233,9 @@ const InstructorForm = props =>
             value={props.input}
             autoComplete="on"
             id={'hidden_input_' + props.course}
-            onInput={eventKey =>
+            onInput={event =>
                 props.self.isInstructor(
-                    eventKey,
+                    event.target.value,
                     props.course,
                     props.instructors,
                     props.instructor_data
