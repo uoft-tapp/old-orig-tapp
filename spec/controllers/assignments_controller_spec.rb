@@ -284,20 +284,33 @@ RSpec.describe AssignmentsController, type: :controller do
     end
 
     it "hours is an integer parameter, update the assignment" do
-      time = Time.now.strftime("%Y-%d-%mT%H:%M:%S.000Z")
-      patch :update, params: { applicant_id: @applicant.id, id: @assignment.id, hours: 90, export_date: time }
+      patch :update, params: { applicant_id: @applicant.id, id: @assignment.id, hours: 90}
       expect(response.status).to eq(200)
       expect(parsed_body["applicant_id"]).to eq(@applicant.id)
       expect(parsed_body["id"]).to eq(@assignment.id)
       expect(parsed_body["hours"]).to eq(90)
-      expect(parsed_body["export_date"]).to eq(time)
     end
 
     it "hours is a non integer parameter returns a 422 status" do
-      time = Time.now.strftime("%Y-%d-%mT%H:%M:%S.000Z")
-      patch :update, params: { applicant_id: @applicant.id, id: @assignment.id, hours: "poops", export_date: time }
+      patch :update, params: { applicant_id: @applicant.id, id: @assignment.id, hours: "poops"}
       expect(response.status).to eq(422)
     end
+
+    context "when updating export_date" do
+      it "return status 200 if valid and updated" do
+        time = Time.now.strftime("%Y-%d-%mT%H:%M:%S.000Z")
+        patch :update, params: { applicant_id: @applicant.id, id: @assignment.id, export_date: time }
+        expect(response.status).to eq(200)
+        expect(parsed_body["export_date"]).to eq(time)
+      end
+
+      it "return status 200 and ignores the request if invalid" do
+        patch :update, params: { applicant_id: @applicant.id, id: @assignment.id, export_date: "poops" }
+        expect(response.status).to eq(200)
+        expect(parsed_body["export_date"]).to eq(nil)
+      end
+    end
+
   end
 
 
