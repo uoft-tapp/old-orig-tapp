@@ -12,8 +12,12 @@ const initialState = {
         selectedTab: null,
         selectedApplicant: null,
 
+        // list of unread notifications (can be text or HTML/JSX)
         notifications: [],
     },
+
+    // list of UI alerts (can be text or HTML/JSX)
+    alerts: [],
 
     // course list component
     courseList: {
@@ -147,7 +151,7 @@ class AppState {
         if (!this.getCoursePanelSortsByCourse(course).some(([f, _]) => f == field)) {
             this._data.add('panelFields[' + course + '].selectedSortFields', [field, 1]);
         } else {
-            this.notify(
+            this.alert(
                 <span>
                     <b>Applicant Table</b>&ensp;Cannot apply the same sort more than once.
                 </span>
@@ -161,7 +165,7 @@ class AppState {
         if (!this.getSorts().some(([f, _]) => f == field)) {
             this._data.add('tableFields.selectedSortFields', [field, 1]);
         } else {
-            this.notify(
+            this.alert(
                 <span>
                     <b>Applicant Table</b>&ensp;Cannot apply the same sort more than once.
                 </span>
@@ -172,6 +176,11 @@ class AppState {
     // add a temporary assignment through the assignment form of the applicant view
     addTempAssignment(positionId, hours) {
         this._data.add('assignmentForm.tempAssignments', { positionId: positionId, hours: hours });
+    }
+
+    // add an alert to the list of active alerts
+    alert(text) {
+        this._data.add('alerts', text);
     }
 
     // check whether any of the given filters in the category are selected on the applicant table in a course panel
@@ -204,6 +213,14 @@ class AppState {
                 panels.map(panel => ({ label: panel, expanded: true }))
             );
         }
+    }
+
+    dismissAlert(index) {
+        this._data.remove('alerts[' + index + ']');
+    }
+
+    getAlerts() {
+        return this._data.get('alerts');
     }
 
     getAssignmentForm() {
@@ -309,6 +326,7 @@ class AppState {
         this._data.add('nav.notifications', text);
     }
 
+    // clear the list of unread notifications
     readNotifications() {
         this._data.set('nav.notifications', []);
     }
@@ -514,7 +532,7 @@ class AppState {
             if (selected.length < 4) {
                 this._data.add('courseMenu.selected', course);
             } else {
-                this.notify(
+                this.alert(
                     <span>
                         <b>Courses Menu</b>&ensp;Cannot select more than 4 courses.
                     </span>

@@ -13,7 +13,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
-import { Navbar, Nav, NavItem, NavDropdown, MenuItem, Glyphicon, Badge } from 'react-bootstrap';
+import { Navbar, Nav, NavItem, NavDropdown, MenuItem, Alert } from 'react-bootstrap';
 
 import { appState } from '../app/appState.js';
 import { fetchAll } from '../app/fetch.js';
@@ -117,6 +117,17 @@ const RouterInst = props =>
                         <Applicant navKey={navConfig.applicant.key} match={match} {...props} />}
                 />
             </Switch>
+
+            <div className="container-fluid" id="alert-container">
+                {props.func.getAlerts().map((text, i) =>
+                    <Alert
+                        key={'alert-' + i}
+                        bsStyle="danger"
+                        onDismiss={() => props.func.dismissAlert(i)}>
+                        {text}
+                    </Alert>
+                )}
+            </div>
         </div>
     </Router>;
 
@@ -164,10 +175,10 @@ const NavbarInst = props => {
                     disabled={notifications.length == 0}
                     title={
                         <span>
-                            <i className="fa fa-warning" style={{ fontSize: '16px' }} />&nbsp;{notifications.length}
+                            <i className="fa fa-bell-o" style={{ fontSize: '16px' }} />&nbsp;{notifications.length}
                         </span>
                     }
-                    id="nav-alert-dropdown"
+                    id="nav-notif-dropdown"
                     onToggle={willOpen => {
                         if (!willOpen) {
                             props.func.readNotifications();

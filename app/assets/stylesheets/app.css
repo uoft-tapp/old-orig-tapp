@@ -1,3 +1,4 @@
+/* global vars */
 :root {
     --footer-height: 4vh; /* includes margins */
     --navbar-height: 71px; /* includes margins */
@@ -15,6 +16,7 @@ body {
     margin-bottom: var(--footer-height);
 }
 
+/* for footer (sticky bottom fixed-height footer) */
 footer {
     position: fixed;
     bottom: 0;
@@ -33,7 +35,20 @@ footer div p {
     margin: 0;
 }
 
+/* for alerts */
+#alert-container {
+    position: relative;
+    z-index: 5000;
+    margin-top: var(--navbar-height);
+}
+
+#alert-container .alert {
+    margin-bottom: 2px;
+}
+
+/* for main body container, between navbar and footer */
 #root nav+div {
+    top: 0;
     margin-top: var(--navbar-height);
     position: absolute;
     height: var(--main-div-height);
