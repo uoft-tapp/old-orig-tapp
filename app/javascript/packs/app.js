@@ -13,7 +13,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
-import { Navbar, Nav, NavItem, NavDropdown, MenuItem } from 'react-bootstrap';
+import { Navbar, Nav, NavItem, NavDropdown, MenuItem, Glyphicon, Badge } from 'react-bootstrap';
 
 import { appState } from '../app/appState.js';
 import { fetchAll } from '../app/fetch.js';
@@ -124,6 +124,7 @@ const RouterInst = props =>
 
 const NavbarInst = props => {
     let selectedApplicant = props.func.getSelectedApplicant();
+    let notifications = props.func.getUnreadNotifications();
 
     return (
         <Navbar fixedTop fluid>
@@ -159,9 +160,28 @@ const NavbarInst = props => {
 
             <Nav pullRight>
                 <NavDropdown
+                    noCaret
+                    disabled={notifications.length == 0}
+                    title={
+                        <span>
+                            <i className="fa fa-warning" style={{ fontSize: '16px' }} />&nbsp;{notifications.length}
+                        </span>
+                    }
+                    id="nav-alert-dropdown"
+                    onToggle={willOpen => {
+                        if (!willOpen) props.func.readNotifications();
+                    }}>
+                    {notifications.map(text =>
+                        <MenuItem>
+                            {text}
+                        </MenuItem>
+                    )}
+                </NavDropdown>
+
+                <NavDropdown
                     eventKey={navConfig.logout.key}
                     title={props.func.getCurrentUserRole() + ':' + props.func.getCurrentUserName()}
-                    id="nav-dropdown">
+                    id="nav-auth-dropdown">
                     <MenuItem eventKey={navConfig.logout.key + '.1'}>
                         <Link to={navConfig.logout.route}>Logout</Link>
                     </MenuItem>

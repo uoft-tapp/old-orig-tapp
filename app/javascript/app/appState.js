@@ -1,4 +1,5 @@
 import Backbone from 'backbone';
+import React from 'react';
 import NestedModel from 'backbone-nested';
 import * as fetch from './fetch.js';
 
@@ -10,6 +11,8 @@ const initialState = {
 
         selectedTab: null,
         selectedApplicant: null,
+
+        notifications: [],
     },
 
     // course list component
@@ -143,6 +146,12 @@ class AppState {
     addCoursePanelSort(course, field) {
         if (!this.getCoursePanelSortsByCourse(course).some(([f, _]) => f == field)) {
             this._data.add('panelFields[' + course + '].selectedSortFields', [field, 1]);
+        } else {
+            this.notify(
+                <span>
+                    <b>Applicant Table</b>&ensp;Cannot apply the same sort more than once.
+                </span>
+            );
         }
     }
 
@@ -151,6 +160,12 @@ class AppState {
     addSort(field) {
         if (!this.getSorts().some(([f, _]) => f == field)) {
             this._data.add('tableFields.selectedSortFields', [field, 1]);
+        } else {
+            this.notify(
+                <span>
+                    <b>Applicant Table</b>&ensp;Cannot apply the same sort more than once.
+                </span>
+            );
         }
     }
 
@@ -251,6 +266,10 @@ class AppState {
         return this._data.get('assignmentForm.tempAssignments');
     }
 
+    getUnreadNotifications() {
+        return this._data.get('nav.notifications');
+    }
+
     // check whether a filter is selected on the applicant table in a course panel
     isCoursePanelFilterSelected(course, field, category) {
         let filters = this.getCoursePanelFiltersByCourse(course);
@@ -283,6 +302,15 @@ class AppState {
     // check whether a sort is selected on the applicant table in a single-applicant-table view
     isSortSelected(field, dir) {
         return this.getSorts().some(([f, d]) => f == field && d == dir);
+    }
+
+    // add a notification to the list of unread notifications
+    notify(text) {
+        this._data.add('nav.notifications', text);
+    }
+
+    readNotifications() {
+        this._data.set('nav.notifications', []);
     }
 
     // remove a course panel from the ABC view
@@ -477,13 +505,20 @@ class AppState {
     }
 
     // toggle the selected state of the course that is clicked
+    // note that we only allow up to 4 courses to be selected in the ABC view
     toggleSelectedCourse(course) {
-        let selected = this._data.get('courseMenu.selected');
+        let selected = this.getSelectedCourses();
         let i = selected.indexOf(course);
 
         if (i == -1) {
             if (selected.length < 4) {
                 this._data.add('courseMenu.selected', course);
+            } else {
+                this.notify(
+                    <span>
+                        <b>Courses Menu</b>&ensp;Cannot select more than 4 courses.
+                    </span>
+                );
             }
         } else {
             this._data.remove('courseMenu.selected[' + i + ']');
