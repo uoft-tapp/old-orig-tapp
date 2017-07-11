@@ -13,7 +13,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
-import { Navbar, Nav, NavItem, NavDropdown, MenuItem, Alert } from 'react-bootstrap';
+import { Navbar, Nav, NavItem, NavDropdown, MenuItem, Alert, Fade } from 'react-bootstrap';
 
 import { appState } from '../app/appState.js';
 import { fetchAll } from '../app/fetch.js';
@@ -119,13 +119,16 @@ const RouterInst = props =>
             </Switch>
 
             <div className="container-fluid" id="alert-container">
-                {props.func.getAlerts().map((text, i) =>
-                    <Alert
-                        key={'alert-' + i}
-                        bsStyle="danger"
-                        onDismiss={() => props.func.dismissAlert(i)}>
-                        {text}
-                    </Alert>
+                {props.func.getAlerts().map(
+                    (alert, i) =>
+                        alert.active &&
+                        <Alert
+                            key={'alert-' + i}
+                            bsStyle="danger"
+                            onClick={() => props.func.dismissAlert(i)}
+                            onAnimationEnd={() => props.func.dismissAlert(i)}>
+                            {alert.text}
+                        </Alert>
                 )}
             </div>
         </div>
