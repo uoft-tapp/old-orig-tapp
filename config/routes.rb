@@ -11,4 +11,6 @@ Rails.application.routes.draw do
   resources :instructors
 
   get "/index.html/(*z)", to: "app#main"
+
+  get "/export/chass/:round_id", to: "export#chass"
 end
