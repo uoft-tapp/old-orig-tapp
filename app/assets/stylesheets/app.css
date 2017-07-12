@@ -5,6 +5,7 @@
     --applicant-table-menu-height: calc(34px + 1vh);
     --main-div-height: calc(100vh - var(--navbar-height) - var(--footer-height));
     --min-row-height: 32px;
+    --course-list-panel-width: calc(15em + 8px); /* includes margins */
 }
 
 html {
@@ -76,10 +77,10 @@ footer div p {
 
 /* for CourseMenu and CourseList */
 .course-list-panel {
-    width: 12em;
+    width: 15em;
     float: left;
-    margin: 0;
-    height: 88vh;
+    margin: 0px 8px 0px 0px;
+    height: var(--main-div-height);
 }
 
 .course-list-group {
@@ -92,10 +93,17 @@ footer div p {
     padding: 3px;
 }
 
-/* for CourseList */
-.panel-heading{
+.course-list-panel .panel-heading {
     padding: 5px 15px !important;
     height: 30px;
+}
+
+/* for CourseForm in Courses view */
+#courses-grid #course-form {
+    width: calc(100% - var(--course-list-panel-width));
+    float: left;
+    height: var(--main-div-height);
+    overflow: auto;
 }
 
 /* for ApplicantTable in Assigned/Unassigned view */
