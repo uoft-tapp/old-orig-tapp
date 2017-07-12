@@ -155,37 +155,43 @@ class Applicant extends React.Component {
                 case 5:
                     return (
                         <p>
-                            {application.exp}
+                            {application.rawPrefs}
                         </p>
                     );
                 case 6:
                     return (
                         <p>
-                            {application.qual}
+                            {application.exp}
                         </p>
                     );
                 case 7:
                     return (
                         <p>
-                            {application.skills}
+                            {application.qual}
                         </p>
                     );
                 case 8:
                     return (
                         <p>
-                            {application.avail}
+                            {application.skills}
                         </p>
                     );
                 case 9:
                     return (
                         <p>
-                            {application.other}
+                            {application.avail}
                         </p>
                     );
                 case 10:
                     return (
                         <p>
-                            {application.special_needs}
+                            {application.other}
+                        </p>
+                    );
+                case 11:
+                    return (
+                        <p>
+                            {application.specialNeeds}
                         </p>
                     );
             }
@@ -199,6 +205,7 @@ class Applicant extends React.Component {
             'Current Program Information',
             'Current Assignment Status',
             'Course Preferences',
+            'Course Preferences (Raw)',
             'Teaching Experience',
             'Academic Qualifications',
             'Technical Skills',
