@@ -149,7 +149,28 @@ class CoursePanel extends React.Component {
                             }}
                         />
                     </span>
-                }>
+                }
+                draggable={true}
+                onDragStart={e => {
+                    // send this course ID to an element that this panel is dragged over
+                    e.dataTransfer.setData('text', this.props.course);
+                }}
+                onDragOver={e => {
+                    if (e.preventDefault) {
+                        e.preventDefault(); // Necessary. Allows us to drop.
+                    }
+                }}
+                onDrop={e => {
+                    if (e.stopPropagation) {
+                        e.stopPropagation(); // stops the browser from redirecting.
+                    }
+
+                    // swap this course with the course that was dragged over it
+                    let swap = parseInt(e.dataTransfer.getData('text'));
+                    if (swap != this.props.course) {
+                        this.props.func.swapCoursesInLayout(swap, this.props.course);
+                    }
+                }}>
                 <ApplicantTable
                     config={this.config}
                     assigned={true}
