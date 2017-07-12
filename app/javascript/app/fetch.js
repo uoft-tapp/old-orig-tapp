@@ -34,6 +34,7 @@ function getHelper(URL, success, failure) {
     let init = {
         headers: {
             Accept: 'application/json',
+            'Content-Type': 'application/json; charset=utf-8',
         },
         method: 'GET',
     };
