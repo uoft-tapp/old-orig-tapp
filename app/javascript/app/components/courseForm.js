@@ -2,10 +2,6 @@ import React from 'react';
 import { Panel, ListGroup, ListGroupItem, Badge } from 'react-bootstrap';
 
 class CourseForm extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
     setForms() {
         if (!this.props.func.anyFetching()) {
             let courses = this.props.func.getCoursesList();
@@ -190,14 +186,7 @@ class CourseForm extends React.Component {
 
     render() {
         return (
-            <Panel
-                style={{
-                    width: 'calc(100% - 12em)',
-                    float: 'left',
-                    margin: '0',
-                    height: '88vh',
-                    overflow: 'auto',
-                }}>
+            <Panel id="course-form">
                 <ListGroup fill>
                     {this.setForms()}
                 </ListGroup>
