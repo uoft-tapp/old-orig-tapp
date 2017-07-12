@@ -45,7 +45,10 @@ class ApplicantTable extends React.Component {
                         (acc, category) =>
                             acc ||
                             this.props.config[field].filterFuncs[category](
-                                Object.assign({applicantId: applicant[0], applicant: applicant[1]}, this.props)
+                                Object.assign(
+                                    { applicantId: applicant[0], applicant: applicant[1] },
+                                    this.props
+                                )
                             ),
                         false
                     )
@@ -95,7 +98,11 @@ class ApplicantTable extends React.Component {
         }
 
         return (
-            <div className="table-container">
+            <div
+                className={
+                    'table-container ' +
+                    (this.props.assigned ? 'assigned-table' : 'unassigned-table')
+                }>
                 <Table striped bordered condensed hover>
                     <THeader config={this.props.config} />
                     <tbody>

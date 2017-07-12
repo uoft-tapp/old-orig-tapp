@@ -423,6 +423,34 @@ class AppState {
         this._data.set('assignmentForm.tempAssignments[' + i + '].hours', hours);
     }
 
+    // switch the places of two courses in the course panel layout in the ABC view
+    swapCoursesInLayout(course1, course2) {
+        let layout = this.getCoursePanelLayout();
+        this._data.unset('panelLayout', { silent: true });
+
+        // find and replaces all instances of course1 in the layout with course2, and vice versa
+        // (assumes that the layout is at most 1 level of nested arrays
+        for (var i = 0; i < layout.length; i++) {
+            if (layout[i] instanceof Array) {
+                for (var j = 0; j < layout[i].length; j++) {
+                    if (layout[i][j] == course1) {
+                        layout[i][j] = course2;
+                    } else if (layout[i][j] == course2) {
+                        layout[i][j] = course1;
+                    }
+                }
+            } else {
+                if (layout[i] == course1) {
+                    layout[i] = course2;
+                } else if (layout[i] == course2) {
+                    layout[i] = course1;
+                }
+            }
+        }
+
+        this._data.set('panelLayout', layout);
+    }
+
     // toggle the visibility of a course panel in the ABC view
     toggleCoursePanel(course) {
         let selected = this.getSelectedCourses();
