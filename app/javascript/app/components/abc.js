@@ -188,16 +188,12 @@ class ABC extends React.Component {
 
     render() {
         return (
-            <SplitPane
-                split="vertical"
-                defaultSize="14em"
-                allowResize={false}
-                pane1Style={{ margin: '0 1vw' }}
-                pane2Style={{ marginRight: '1vw' }}
-                resizerStyle={{ display: 'none' }}>
-                <CourseMenu key={'courseMenu'} {...this.props} />
-                {this.mapLayoutToPanels()}
-            </SplitPane>
+            <Grid fluid id="abc-grid">
+                <CourseMenu {...this.props} />
+                <div>
+                    {this.mapLayoutToPanels()}
+                </div>
+            </Grid>
         );
     }
 

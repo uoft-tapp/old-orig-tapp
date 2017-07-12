@@ -1,6 +1,6 @@
 import React from 'react';
 import { AssignmentForm } from './assignmentForm.js';
-import { Panel, Button } from 'react-bootstrap';
+import { Panel, Grid, Button } from 'react-bootstrap';
 
 class Applicant extends React.Component {
     selectThisTab() {
@@ -247,10 +247,9 @@ const NotesForm = props => {
 };
 
 const CollapsiblePanel = props =>
-    <div className="container-fluid" style={{ height: '90vh', width: '100vw', overflow: 'auto' }}>
+    <Grid fluid id="applicant-grid">
         {props.assignmentForm.panels.map((panel, index) =>
             <Panel
-                style={{ width: '98vw', float: 'left', margin: '0' }}
                 key={index}
                 collapsible
                 expanded={props.state.func.isPanelExpanded(index)}
@@ -265,6 +264,6 @@ const CollapsiblePanel = props =>
                 {props.self.addPanelContent(index)}
             </Panel>
         )}
-    </div>;
+    </Grid>;
 
 export { Applicant };
