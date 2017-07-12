@@ -32,7 +32,8 @@ class ExportController < ApplicationController
     else
       render status: 404, json: {
         message: response[:msg]
-      }.to_json
+      }.to_json,
+      content_type: response[:type]
     end
   end
 
