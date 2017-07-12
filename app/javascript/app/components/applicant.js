@@ -200,18 +200,18 @@ class Applicant extends React.Component {
 
     render() {
         let panels = [
-            'Personal Information',
-            'Current Status',
-            'Current Program Information',
-            'Current Assignment Status',
-            'Course Preferences',
-            'Course Preferences (Raw)',
-            'Teaching Experience',
-            'Academic Qualifications',
-            'Technical Skills',
-            'Availability',
-            'Other Information',
-            'Special Needs Issues',
+            { label: 'Personal Information', expanded: true },
+            { label: 'Current Status', expanded: true },
+            { label: 'Current Program Information', expanded: true },
+            { label: 'Current Assignment Status', expanded: true },
+            { label: 'Course Preferences', expanded: true },
+            { label: 'Course Preferences (Raw Text)', expanded: false },
+            { label: 'Teaching Experience', expanded: true },
+            { label: 'Academic Qualifications', expanded: true },
+            { label: 'Technical Skills', expanded: true },
+            { label: 'Availability', expanded: true },
+            { label: 'Other Information', expanded: true },
+            { label: 'Special Needs Issues', expanded: true },
         ];
         this.props.func.createAssignmentForm(panels);
         return (

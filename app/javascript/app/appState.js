@@ -208,10 +208,7 @@ class AppState {
 
     createAssignmentForm(panels) {
         if (this.getAssignmentForm().panels.length == 0) {
-            this._data.set(
-                'assignmentForm.panels',
-                panels.map(panel => ({ label: panel, expanded: true }))
-            );
+            this._data.set('assignmentForm.panels', panels);
         }
     }
 
