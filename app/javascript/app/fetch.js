@@ -155,6 +155,7 @@ function onFetchApplicationsSuccess(resp) {
                     preferred: pref.rank == 1,
                 }));
             })(app.preferences),
+            rawPrefs: app.raw_prefs,
             exp: app.ta_experience,
             qual: app.academic_qualifications,
             skills: app.technical_skills,
