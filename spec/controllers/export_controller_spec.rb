@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe ExportController, type: :controller do
   let(:position) do
     Position.create!(
-    position: "CSC411",
+    position: "CSC411 - test 3",
     round_id: "110",
     open: true,
     campus_code: 1,
@@ -44,7 +44,7 @@ RSpec.describe ExportController, type: :controller do
         address: "100 Jameson Ave Toronto, ON M65-48H"
       )
       @application = @applicant.applications.create!(
-        app_id: "1",
+        app_id: "14",
         round_id: "110",
         ta_training: "N",
         access_acad_history: "Y",
@@ -61,6 +61,7 @@ RSpec.describe ExportController, type: :controller do
       it "returns status 200 and downloads transcript_access.csv" do
         get :transcript_access
         expect(response.status).to eq(200)
+        expect(response.content_type).to eq("text/csv")
         expect(response.header["Content-Disposition"]).to eq(
           "attachment; filename=\"transcript_access.csv\"")
       end
@@ -70,7 +71,7 @@ RSpec.describe ExportController, type: :controller do
       context "when calling #chass" do
         context "when round_id is valid" do
           it "returns status 404 and an error message" do
-            get :chass, params: {round_id: 110}
+            get :chass, params: {round_id: position[:round_id]}
             message = {message:
               "Warning: You have not made any assignments. Operation aborted."}
             expect(response.status).to eq(404)
@@ -125,7 +126,7 @@ RSpec.describe ExportController, type: :controller do
 
         context "when round_id is valid" do
           it "returns status 200 and downloads offers_(round_id).json" do
-            get :chass, params: {round_id: 110}
+            get :chass, params: {round_id: position[:round_id]}
             expect(response.status).to eq(200)
             expect(response.content_type).to eq("application/json")
             expect(response.header["Content-Disposition"]).to eq(
@@ -140,6 +141,7 @@ RSpec.describe ExportController, type: :controller do
         it "returns status 200 and downloads cdf_info.csv" do
           get :cdf
           expect(response.status).to eq(200)
+          expect(response.content_type).to eq("text/csv")
           expect(response.header["Content-Disposition"]).to eq(
             "attachment; filename=\"cdf_info.csv\"")
         end
@@ -150,6 +152,7 @@ RSpec.describe ExportController, type: :controller do
         it "returns status 200 and downloads offers.csv" do
           get :offers
           expect(response.status).to eq(200)
+          expect(response.content_type).to eq("text/csv")
           expect(response.header["Content-Disposition"]).to eq(
             "attachment; filename=\"offers.csv\"")
         end

@@ -5,7 +5,7 @@ describe CSVGenerator do
   let (:generator) { CSVGenerator.new }
   let(:position) do
     Position.create!(
-    position: "CSC411",
+    position: "CSC411 - test",
     round_id: "110",
     open: true,
     campus_code: 1,
@@ -36,7 +36,7 @@ describe CSVGenerator do
 
     let(:application) do
       applicant.applications.create!(
-        app_id: "1",
+        app_id: "15",
         round_id: "110",
         ta_training: "N",
         access_acad_history: "Y",
@@ -86,7 +86,7 @@ describe CSVGenerator do
       let (:response) { generator.generate_cdf_info }
 
       it "returns generated true and data of all cdf info" do
-        expect(response).to eq ({generated: true, data: @data,
+        expect(response).to eq ({generated: true, data: @data, type: "text/csv",
           file: "cdf_info.csv"})
       end
     end
@@ -166,7 +166,7 @@ describe CSVGenerator do
       let (:response) { generator.generate_offers }
 
       it "returns generated true and data of all cdf info" do
-        expect(response).to eq ({generated: true, data: @data,
+        expect(response).to eq ({generated: true, data: @data, type: "text/csv",
           file: "offers.csv"})
       end
     end
@@ -227,7 +227,7 @@ describe CSVGenerator do
       let (:response) { generator.generate_transcript_access }
 
       it "returns generated true and data of all cdf info" do
-        expect(response).to eq ({generated: true, data: @data,
+        expect(response).to eq ({generated: true, data: @data, type: "text/csv",
           file: "transcript_access.csv"})
       end
 
