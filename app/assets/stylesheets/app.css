@@ -83,6 +83,12 @@ footer div p {
     height: var(--main-div-height);
 }
 
+.course-list-panel .panel-heading {
+    padding: 5px 15px !important;
+    height: 30px;
+}
+
+/* for contents of CourseMenu and CourseList */
 .course-list-group {
     height: calc(100% - 30px);
     overflow: auto;
@@ -93,9 +99,37 @@ footer div p {
     padding: 3px;
 }
 
-.course-list-panel .panel-heading {
-    padding: 5px 15px !important;
-    height: 30px;
+/* for CourseList contents in Courses view */
+#courses-grid .course-list-group .list-group-item {
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+#courses-grid .course-list-group .list-group-item:hover {
+    text-overflow: inherit;
+    overflow: visible;
+}
+
+/* for CourseMenu contents in ABC view */
+#abc-grid .course-list-group .list-group-item span {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+#abc-grid .course-list-group .list-group-item span:hover {
+    text-overflow: inherit;
+    overflow: visible;
+}
+
+#abc-grid .course-list-group .list-group-item .course-code {
+    float: left;
+    max-width: 10em;
+}
+
+#abc-grid .course-list-group .list-group-item .counts {
+    float: right;
+    max-width: calc(100% - 10em);
 }
 
 /* for CourseForm in Courses view */

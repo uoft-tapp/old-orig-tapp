@@ -34,10 +34,10 @@ class CourseMenu extends React.Component {
                         this.props.func.toggleCoursePanel(key);
                     }}
                     active={this.props.func.isCourseSelected(key)}>
-                    <span style={{ float: 'left' }}>
+                    <span className="course-code">
                         {val.code}
                     </span>
-                    <span style={{ float: 'right' }}>
+                    <span className="counts">
                         {val.assignmentCount} /{val.estimatedPositions}
                     </span>
                 </ListGroupItem>
