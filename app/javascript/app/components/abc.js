@@ -2,17 +2,15 @@ import React from 'react';
 import { Grid, Row, Col, Well } from 'react-bootstrap';
 import { CourseMenu } from './courseMenu.js';
 import { CoursePanel } from './coursePanel.js';
-import SplitPane from 'react-split-pane/lib/SplitPane';
 
 class ABC extends React.Component {
     mapLayoutToPanels() {
         let selected = this.props.func.getSelectedCourses();
-        let selectedCount = selected.length;
         let layout = this.props.func.getCoursePanelLayout();
 
-        let panelProps = { defaultSize: '50%', panelStyle: { margin: '2px' }, maxSize: -10 };
+        let course1, course2, course3, course4, panel1style, panel2style, panel3style, panel4style;
 
-        switch (selectedCount) {
+        switch (selected.length) {
             case 0:
                 return (
                     <Well id="no-courses-well">
@@ -22,168 +20,108 @@ class ABC extends React.Component {
                 );
 
             case 1:
-                return (
-                    <div>
-                        <CoursePanel key={layout[0]} course={layout[0]} {...this.props} />
-                    </div>
-                );
+                course1 = layout[0];
+                panel1style = { height: '100%', width: '100%' };
+                break;
 
             case 2:
-                let course1, course2, orient;
                 if (layout.length == 1) {
+                    // stacked
                     (course1 = layout[0][0]), (course2 = layout[0][1]);
-                    orient = 'horizontal';
+                    panel1style = panel2style = { height: '50%', width: '100%' };
                 } else {
+                    // side-by-side
                     (course1 = layout[0]), (course2 = layout[1]);
-                    orient = 'vertical';
+                    panel1style = panel2style = { height: '100%', width: '50%' };
                 }
-
-                return (
-                    <SplitPane split={orient} {...panelProps}>
-                        <CoursePanel key={course1} course={course1} {...this.props} />
-                        <CoursePanel key={course2} course={course2} {...this.props} />
-                    </SplitPane>
-                );
+                break;
 
             case 3:
                 if (layout.length == 1) {
-                    return (
-                        <SplitPane split="horizontal" {...panelProps}>
-                            <CoursePanel key={layout[0][0]} course={layout[0][0]} {...this.props} />
-                            <SplitPane split="horizontal" {...panelProps}>
-                                <CoursePanel
-                                    key={layout[0][1]}
-                                    course={layout[0][1]}
-                                    {...this.props}
-                                />
-                                <CoursePanel
-                                    key={layout[0][2]}
-                                    course={layout[0][2]}
-                                    {...this.props}
-                                />
-                            </SplitPane>
-                        </SplitPane>
-                    );
-                }
+                    // stacked
+                    [course1, course2, course3] = layout[0];
 
-                if (layout.length == 2) {
+                    panel1style = panel2style = panel3style = {
+                        height: 'calc(100%/3)',
+                        width: '100%',
+                    };
+                } else if (layout.length == 2) {
                     if (layout[0].length == 1) {
-                        return (
-                            <SplitPane split="vertical" {...panelProps}>
-                                <CoursePanel key={layout[0]} course={layout[0]} {...this.props} />
-                                <SplitPane split="horizontal" {...panelProps}>
-                                    <CoursePanel
-                                        key={layout[1][0]}
-                                        course={layout[1][0]}
-                                        {...this.props}
-                                    />
-                                    <CoursePanel
-                                        key={layout[1][1]}
-                                        course={layout[1][1]}
-                                        {...this.props}
-                                    />
-                                </SplitPane>
-                            </SplitPane>
-                        );
-                    }
+                        // 1 panel left, 2 stacked panels right
+                        [course1, [course2, course3]] = layout;
 
-                    if (layout[1].length == 1) {
-                        return (
-                            <SplitPane split="vertical" {...panelProps}>
-                                <SplitPane split="horizontal" {...panelProps}>
-                                    <CoursePanel
-                                        key={layout[0][0]}
-                                        course={layout[0][0]}
-                                        {...this.props}
-                                    />
-                                    <CoursePanel
-                                        key={layout[0][1]}
-                                        course={layout[0][1]}
-                                        {...this.props}
-                                    />
-                                </SplitPane>
-                                <CoursePanel key={layout[1]} course={layout[1]} {...this.props} />
-                            </SplitPane>
-                        );
-                    }
+                        panel1style = { height: '100%', width: '50%' };
+                        panel2style = panel3style = { height: '50%', width: '50%' };
+                    } else if (layout[1].length == 1) {
+                        // 2 stacked panels left, 1 panel right
+                        [[course1, course2], course3] = layout;
 
-                    if (layout[0][0] == layout[1][0]) {
-                        return (
-                            <SplitPane split="horizontal" {...panelProps}>
-                                <CoursePanel
-                                    key={layout[0][0]}
-                                    course={layout[0][0]}
-                                    {...this.props}
-                                />
-                                <SplitPane split="vertical" {...panelProps}>
-                                    <CoursePanel
-                                        key={layout[0][1]}
-                                        course={layout[0][1]}
-                                        {...this.props}
-                                    />
-                                    <CoursePanel
-                                        key={layout[1][1]}
-                                        course={layout[1][1]}
-                                        {...this.props}
-                                    />
-                                </SplitPane>
-                            </SplitPane>
-                        );
-                    }
+                        panel1style = panel2style = { height: '50%', width: '50%' };
+                        panel3style = { height: '100%', width: '50%' };
+                    } else if (layout[0][0] == layout[1][0]) {
+                        // 1 panel on top, 2 side-by-side panels on bottom
+                        [[course1, course2], [_, course3]] = layout;
 
-                    if (layout[0][1] == layout[1][1]) {
-                        return (
-                            <SplitPane split="horizontal" {...panelProps}>
-                                <SplitPane split="vertical" {...panelProps}>
-                                    <CoursePanel
-                                        key={layout[0][0]}
-                                        course={layout[0][0]}
-                                        {...this.props}
-                                    />
-                                    <CoursePanel
-                                        key={layout[1][0]}
-                                        course={layout[1][0]}
-                                        {...this.props}
-                                    />
-                                </SplitPane>
-                                <CoursePanel
-                                    key={layout[0][1]}
-                                    course={layout[0][1]}
-                                    {...this.props}
-                                />
-                            </SplitPane>
-                        );
-                    }
-                }
+                        panel1style = { height: '50%', width: '100%' };
+                        panel2style = panel3style = { height: '50%', width: '50%' };
+                    } else if (layout[0][1] == layout[1][1]) {
+                        // 2 side-by-side panels on top, 1 panel on bottom
+                        [[course1, course3], [course2, _]] = layout;
 
-                if (layout.length == 3) {
-                    return (
-                        <SplitPane split="vertical" {...panelProps}>
-                            <CoursePanel key={layout[0]} course={layout[0]} {...this.props} />
-                            <SplitPane split="vertical" {...panelProps}>
-                                <CoursePanel key={layout[1]} course={layout[1]} {...this.props} />
-                                <CoursePanel key={layout[2]} course={layout[2]} {...this.props} />
-                            </SplitPane>
-                        </SplitPane>
-                    );
+                        panel1style = panel2style = { height: '50%', width: '50%' };
+                        panel3style = { height: '50%', width: '100%' };
+                    }
+                } else if (layout.length == 3) {
+                    // side-by-side
+                    [course1, course2, course3] = layout;
+                    panel1style = panel2style = panel3style = {
+                        height: '100%',
+                        width: 'calc(100%/3)',
+                    };
                 }
                 break;
 
             case 4:
-                return (
-                    <SplitPane split="horizontal" {...panelProps}>
-                        <SplitPane split="vertical" {...panelProps}>
-                            <CoursePanel key={layout[0][0]} course={layout[0][0]} {...this.props} />
-                            <CoursePanel key={layout[0][1]} course={layout[0][1]} {...this.props} />
-                        </SplitPane>
-
-                        <SplitPane split="vertical" {...panelProps}>
-                            <CoursePanel key={layout[1][0]} course={layout[1][0]} {...this.props} />
-                            <CoursePanel key={layout[1][1]} course={layout[1][1]} {...this.props} />
-                        </SplitPane>
-                    </SplitPane>
-                );
+                [[course1, course2], [course3, course4]] = layout;
+                panel1style = panel2style = panel3style = panel4style = {
+                    height: '50%',
+                    width: '50%',
+                };
+                break;
         }
+
+        return (
+            <span>
+                {course1 &&
+                    <CoursePanel
+                        key="course-panel-1"
+                        panelStyle={panel1style}
+                        course={course1}
+                        {...this.props}
+                    />}
+                {course2 &&
+                    <CoursePanel
+                        key="course-panel-2"
+                        panelStyle={panel2style}
+                        course={course2}
+                        {...this.props}
+                    />}
+                {course3 &&
+                    <CoursePanel
+                        key="course-panel-3"
+                        panelStyle={panel3style}
+                        course={course3}
+                        {...this.props}
+                    />}
+                {course4 &&
+                    <CoursePanel
+                        key="course-panel-4"
+                        panelStyle={panel4style}
+                        course={course4}
+                        {...this.props}
+                    />}
+            </span>
+        );
     }
 
     render() {
