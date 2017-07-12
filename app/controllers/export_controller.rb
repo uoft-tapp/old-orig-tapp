@@ -10,7 +10,6 @@ class ExportController < ApplicationController
   def cdf
     generator = CSVGenerator.new
     response = generator.generate_cdf_info
-    puts response
     render_helper(response)
   end
 
