@@ -10,7 +10,7 @@ class CSVGenerator
   def generate_cdf_info
     if @assignments.size == 0
       return {generated: false,
-        msg: "Warning: You have not made any assignments yet. Operation aborted"}
+        msg: "Warning: You have not made any assignments. Operation aborted."}
     else
       attributes = [
         "course_code",
@@ -22,15 +22,14 @@ class CSVGenerator
         "utorid",
       ]
       data = get_cdf_info(attributes)
-      return {generated: true, data: data,
-        file: "cdf_info.csv"}
+      return {generated: true, data: data, file: "cdf_info.csv", type: "text/csv"}
     end
   end
 
   def generate_offers
     if @assignments.size == 0
       return {generated: false,
-        msg: "Warning: You have not made any assignments yet. Operation aborted"}
+        msg: "Warning: You have not made any assignments. Operation aborted."}
     else
       attributes = [
         "course_code",
@@ -45,8 +44,7 @@ class CSVGenerator
         "round_id",
       ]
       data = get_offers(attributes)
-      return {generated: true,
-        data: data, file: "offers.csv"}
+      return {generated: true, data: data, file: "offers.csv", type: "text/csv"}
     end
   end
 
@@ -63,8 +61,7 @@ class CSVGenerator
         "email_address"
       ]
       data = get_transcript_access(attributes)
-      return {generated: true,
-        data: data, file: "transcript_access.csv"}
+      return {generated: true, data: data, file: "transcript_access.csv", type: "text/csv"}
     end
   end
 

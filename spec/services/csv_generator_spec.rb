@@ -52,7 +52,7 @@ describe CSVGenerator do
       let (:response) { generator.generate_cdf_info }
       it "return generated false and an error message" do
         expect(response).to eq({generated: false,
-          msg: "Warning: You have not made any assignments yet. Operation aborted"})
+          msg: "Warning: You have not made any assignments. Operation aborted."})
       end
     end
 
@@ -126,7 +126,7 @@ describe CSVGenerator do
       let (:response) { generator.generate_offers }
       it "return generated false and an error message" do
         expect(response).to eq({generated: false,
-          msg: "Warning: You have not made any assignments yet. Operation aborted"})
+          msg: "Warning: You have not made any assignments. Operation aborted."})
       end
     end
 
