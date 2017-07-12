@@ -29,7 +29,7 @@ class ExportController < ApplicationController
   private
   def render_helper(response)
     if response[:generated]
-      send_file("#{Rails.root}/db/seeds/#{response[:file]}")
+      send_data response[:data], :filename => response[:file]
     else
       render status: 404, json: {
         message: response[:msg]
