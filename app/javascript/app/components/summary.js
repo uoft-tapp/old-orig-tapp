@@ -1,11 +1,12 @@
 import React from 'react';
+import { Grid } from 'react-bootstrap';
 
 class Summary extends React.Component {
     render() {
         return (
-            <div className="container-fluid" style={{ paddingTop: '70px' }}>
+            <Grid fluid id="summary-grid">
                 <h1>Summary!</h1>
-            </div>
+            </Grid>
         );
     }
 

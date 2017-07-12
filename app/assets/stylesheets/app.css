@@ -53,12 +53,14 @@ footer div p {
     animation-duration: 10s;
 }
 
-/* for main body container, between navbar and footer */
+/* applies to the first div after the navbar, which should be the main div container for the view, between the
+ * navbar and the footer */
 #root nav+div {
     top: 0;
     margin-top: var(--navbar-height);
     position: absolute;
     height: var(--main-div-height);
+    width: 100%;
 }
 
 .panel_table td{
@@ -102,10 +104,14 @@ footer div p {
     overflow: auto;
 }
 
-/* for ABC view */
-nav+.SplitPane {
-    /* override the default 100% height inline style */
-/*    height: 88vh !important;*/
+/* for Applicant view */
+#applicant-grid {
+    overflow: auto;
+}
+
+/* for panels in Applicant view */
+#applicant-grid .panel {
+    margin-bottom: 0;
 }
 
 .Resizer {
