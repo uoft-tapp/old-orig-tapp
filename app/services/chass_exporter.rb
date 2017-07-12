@@ -11,8 +11,7 @@ class ChassExporter
           return {generated: false, msg: "Warning: You have not made any assignments. Operation aborted."}
         else
           data = create_data(round_id)
-          write_export_file(data, round_id)
-          return {generated: true, msg: "Success: Assignments have been exported",
+          return {generated: true, data: data,
             file: "offers_#{round_id}.json"}
         end
       else
@@ -21,13 +20,6 @@ class ChassExporter
     end
 
     private
-    def write_export_file(data, round_id)
-      json = JSON.pretty_generate(data)
-      File.open("#{Rails.root}/db/seeds/offers_#{round_id}.json", "w") do |file|
-        file.puts "assignments = #{json}"
-      end
-    end
-
     def is_valid_round_id(round_id)
       @positions = Position.all
       valid = false

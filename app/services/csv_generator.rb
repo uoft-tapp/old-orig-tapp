@@ -22,8 +22,7 @@ class CSVGenerator
         "utorid",
       ]
       data = get_cdf_info(attributes)
-      write_export_file("cdf_info", data)
-      return {generated: true, msg: "Success: CDF info CSV file created",
+      return {generated: true, data: data,
         file: "cdf_info.csv"}
     end
   end
@@ -46,9 +45,8 @@ class CSVGenerator
         "round_id",
       ]
       data = get_offers(attributes)
-      write_export_file("offers", data)
       return {generated: true,
-        msg: "Success: Offer CSV file created", file: "offers.csv"}
+        data: data, file: "offers.csv"}
     end
   end
 
@@ -65,19 +63,12 @@ class CSVGenerator
         "email_address"
       ]
       data = get_transcript_access(attributes)
-      write_export_file("transcript_access", data)
       return {generated: true,
-        msg: "Success: Transcript Access CSV file created", file: "transcript_access.csv"}
+        data: data, file: "transcript_access.csv"}
     end
   end
 
   private
-  def write_export_file(file, data)
-    File.open("#{Rails.root}/db/seeds/#{file}.csv", "w") do |file|
-      file.puts "#{data}"
-    end
-  end
-
   def get_cdf_info(attributes)
     data = CSV.generate do |csv|
       csv << attributes
