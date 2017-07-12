@@ -135,7 +135,8 @@ class CoursePanel extends React.Component {
 
         return (
             <Panel
-                style={{ height: '100%', width: '100%', overflow: 'auto' }}
+                className="course-panel"
+                style={this.props.panelStyle}
                 header={
                     <span>
                         {course.code}&emsp;{course.assignmentCount} /{course.estimatedPositions}

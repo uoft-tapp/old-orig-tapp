@@ -33,7 +33,6 @@
     "react-bootstrap": "^0.31.0",
     "react-dom": "^15.5.4",
     "react-router-dom": "^4.1.1",
-    "react-split-pane": "^0.1.63",
     "resolve-url-loader": "^2.0.2",
     "sass-loader": "^6.0.5",
     "style-loader": "^0.18.1",
