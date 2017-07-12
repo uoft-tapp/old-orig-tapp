@@ -190,7 +190,7 @@ class ABC extends React.Component {
         return (
             <Grid fluid id="abc-grid">
                 <CourseMenu {...this.props} />
-                <div>
+                <div id="course-panel-layout">
                     {this.mapLayoutToPanels()}
                 </div>
             </Grid>
