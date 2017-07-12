@@ -4,8 +4,32 @@ class ExportController < ApplicationController
   def chass
     exporter = ChassExporter.new
     response = exporter.export(params[:round_id])
+    render_helper(response)
+  end
+
+  def cdf
+    generator = CSVGenerator.new
+    response = generator.generate_cdf_info
+    puts response
+    render_helper(response)
+  end
+
+  def offers
+    generator = CSVGenerator.new
+    response = generator.generate_offers
+    render_helper(response)
+  end
+
+  def transcript_access
+    generator = CSVGenerator.new
+    response = generator.generate_transcript_access
+    render_helper(response)
+  end
+
+  private
+  def render_helper(response)
     if response[:generated]
-      send_file("#{Rails.root}/db/seeds/export_data.json")
+      send_file("#{Rails.root}/db/seeds/#{response[:file]}")
     else
       render status: 404, json: {
         message: response[:msg]

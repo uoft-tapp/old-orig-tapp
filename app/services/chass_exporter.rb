@@ -12,7 +12,8 @@ class ChassExporter
         else
           data = create_data(round_id)
           write_export_file(data)
-          return {generated: true, msg: "Success: Assignments have been exported"}
+          return {generated: true, msg: "Success: Assignments have been exported",
+            file: "export_data.json"}
         end
       else
         return {generated: false, msg: "Error: Invalid round_id"}

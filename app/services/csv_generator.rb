@@ -9,7 +9,8 @@ class CSVGenerator
 
   def generate_cdf_info
     if @assignments.size == 0
-      puts "Warning: You have not made any assignments yet. Operation aborted"
+      return {generated: false,
+        msg: "Warning: You have not made any assignments yet. Operation aborted"}
     else
       attributes = [
         "course_code",
@@ -22,13 +23,15 @@ class CSVGenerator
       ]
       data = get_cdf_info(attributes)
       write_export_file("cdf_info", data)
-      puts "Success: CDF info CSV file created"
+      return {generated: true, msg: "Success: CDF info CSV file created",
+        file: "cdf_info.csv"}
     end
   end
 
   def generate_offers
     if @assignments.size == 0
-      puts "Warning: You have not made any assignments yet. Operation aborted"
+      return {generated: false,
+        msg: "Warning: You have not made any assignments yet. Operation aborted"}
     else
       attributes = [
         "course_code",
@@ -44,13 +47,15 @@ class CSVGenerator
       ]
       data = get_offers(attributes)
       write_export_file("offers", data)
-      puts "Success: Offer CSV file created"
+      return {generated: true,
+        msg: "Success: Offer CSV file created", file: "offers.csv"}
     end
   end
 
   def generate_transcript_access
     if @applicants.size == 0
-      puts "Warning: There are currenly no applicant in the system. Operation aborted"
+      return {generated: false,
+        msg: "Warning: There are currenly no applicant in the system. Operation aborted"}
     else
       attributes = [
         "student_number",
@@ -61,7 +66,8 @@ class CSVGenerator
       ]
       data = get_transcript_access(attributes)
       write_export_file("transcript_access", data)
-      puts "Suceess: Transcript Access CSV file created"
+      return {generated: true,
+        msg: "Success: Transcript Access CSV file created", file: "transcript_access.csv"}
     end
   end
 
