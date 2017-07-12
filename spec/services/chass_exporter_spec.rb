@@ -4,7 +4,7 @@ describe ChassExporter do
   let (:exporter) { ChassExporter.new }
   let(:position) do
     Position.create!(
-    position: "CSC411",
+    position: "CSC411 - test 2",
     round_id: "110",
     open: true,
     campus_code: 1,
@@ -18,22 +18,21 @@ describe ChassExporter do
     )
   end
 
-  let(:applicant) do
-    Applicant.create!(
-    utorid: "cookie222",
-    student_number: 1234567890,
-    first_name: "Landy",
-    last_name: "Simpson",
-    dept: "Computer Science",
-    program_id: "4UG",
-    yip: 4,
-    email: "simps@mail.com",
-    phone: "4165558888",
-    address: "100 Jameson Ave Toronto, ON M65-48H")
-  end
+  before(:each) do
+    @applicant = Applicant.create!(
+      utorid: "cookie222",
+      student_number: 1234567890,
+      first_name: "Landy",
+      last_name: "Simpson",
+      dept: "Computer Science",
+      program_id: "4UG",
+      yip: 4,
+      email: "simps@mail.com",
+      phone: "4165558888",
+      address: "100 Jameson Ave Toronto, ON M65-48H"
+    )
 
-  let(:application) do
-    applicant.applications.create!(
+    @application = @applicant.applications.create!(
       app_id: "1",
       round_id: "110",
       ta_training: "N",
@@ -56,7 +55,7 @@ describe ChassExporter do
 
   context "when round_id is valid" do
     context "and there are no assignments" do
-      let (:response) { exporter.export(110) }
+      let (:response) { exporter.export(position[:round_id]) }
 
       it "returns generated false and an error message" do
         expect(response).to eq ({generated: false,
@@ -66,23 +65,23 @@ describe ChassExporter do
 
     context "and there are assignments" do
       before(:each) do
-        @assignment= applicant.assignments.create!(
+        @assignment= @applicant.assignments.create!(
             position_id: position.id,
             hours: 50
         )
         @data= [{
-          app_id: application[:app_id],
+          app_id: @application[:app_id],
           course_id: position[:position],
           hours: @assignment[:hours],
-          round_id: 110.to_s,
-          utorid: applicant[:utorid],
-          name: "#{applicant[:first_name]} #{applicant[:last_name]}"
+          round_id: position[:round_id].to_s,
+          utorid: @applicant[:utorid],
+          name: "#{@applicant[:first_name]} #{@applicant[:last_name]}"
         }]
       end
-      let (:response) { exporter.export(110) }
+      let (:response) { exporter.export(position[:round_id]) }
 
       it "returns generated true and data of all assignments in :round_id" do
-        expect(response).to eq ({generated: true, data: @data,
+        expect(response).to eq ({generated: true, data: @data, type: "application/json",
           file: "offers_#{position[:round_id]}.json"})
       end
     end
