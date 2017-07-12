@@ -67,7 +67,6 @@ class CourseForm extends React.Component {
                                                 this.props.func.updateCourse(
                                                     course[0],
                                                     event.target.value,
-                                                    "estimated_count",
                                                     "estimatedPositions"
                                                 )}
                                         />
@@ -84,7 +83,6 @@ class CourseForm extends React.Component {
                                                 this.props.func.updateCourse(
                                                     course[0],
                                                     event.target.value,
-                                                    "hours",
                                                     'positionHours'
                                                 )}
                                         />
@@ -102,7 +100,6 @@ class CourseForm extends React.Component {
                                                 this.props.func.updateCourse(
                                                     course[0],
                                                     event.target.value,
-                                                    "estimated_enrolment",
                                                     "estimatedEnrol"
                                                 )}
                                         />
@@ -132,7 +129,6 @@ class CourseForm extends React.Component {
                                             this.props.func.updateCourse(
                                               course[0],
                                               event.target.value,
-                                              "qualifications",
                                               "qual"
                                             )}
                                         value={course[1].qual}
@@ -147,7 +143,6 @@ class CourseForm extends React.Component {
                                             this.props.func.updateCourse(
                                               course[0],
                                               event.target.value,
-                                              "duties",
                                               "resp"
                                             )}
                                         value={course[1].resp}
@@ -186,9 +181,10 @@ class CourseForm extends React.Component {
         return false;
     }
 
-    updateInputField(input, courseId) {
+    updateInputField(courseId) {
+        let visible_input = document.getElementById('input_' + courseId);
         let hidden_input = document.getElementById('hidden_input_' + courseId);
-        this.props.func.updateInstructorInput(courseId, input);
+        this.props.func.updateInstructorInput(courseId, visible_input.innerHTML);
         hidden_input.focus();
     }
 
@@ -224,7 +220,7 @@ const InstructorForm = props =>
             <span
                 contentEditable="true"
                 id={'input_' + props.course}
-                onInput={event => props.self.updateInputField(event.target.value, props.course)}
+                onInput={() => props.self.updateInputField(props.course)}
             />
         </div>
         <input

@@ -879,10 +879,26 @@ class AppState {
         this._data.set('courses.list[' + courseId + '].' + attr, val);
     }
 
-    updateCourse(courseId, val, attr, props) {
+    updateCourse(courseId, val, props) {
         let data = {};
+        let attr = this.getCourseAttributeMapping(props);
         data[attr] = val;
         fetch.updateCourse(courseId, data, val, props);
+    }
+
+    getCourseAttributeMapping(props){
+      switch (props) {
+        case "estimatedPositions":
+          return "estimated_count";
+        case "positionHours":
+          return "hours";
+        case "estimatedEnrol":
+          return "estimated_enrolment";
+        case "qual":
+          return "qualifications";
+        case "resp":
+          return "duties";
+      }
     }
 
     addInstructor(courseId, instructorId) {
@@ -901,6 +917,8 @@ class AppState {
     }
 
     updateInstructorInput(courseId, input) {
+        if(input===undefined)
+          input = "";
         this._data.set('courses.list[' + courseId + '].instructor_input', input);
         let visible_input = document.getElementById('input_' + courseId);
         visible_input.innerHTML = input;
