@@ -154,7 +154,7 @@ const NavbarInst = props => {
     let selectedApplicant = props.func.getSelectedApplicant();
 
     // used to populate the layout menu in the ABC view
-    let selectedCourses = props.func.getSelectedCourses();
+    let activeLayout = props.func.getCoursePanelLayoutAsId();
 
     return (
         <Navbar fixedTop fluid>
@@ -188,35 +188,39 @@ const NavbarInst = props => {
                     </NavItem>}
             </Nav>
 
-            <Nav pullRight>
+            <Nav pullRight activeKey={activeLayout}>
                 {(selectedTab == navConfig.abc.key &&
-                    (selectedCourses.length == 2 &&
-                        <Nav bsStyle="pills">
-                            <NavItem>
+                    ([20, 21].includes(activeLayout) &&
+                        <Nav
+                            bsStyle="pills"
+                            onSelect={eventKey => props.func.setCoursePanelLayoutById(eventKey)}>
+                            <NavItem eventKey={20}>
                                 <img src={img20} alt="layout-20" style={{ height: '16px' }} />
                             </NavItem>
-                            <NavItem>
+                            <NavItem eventKey={21}>
                                 <img src={img21} alt="layout-21" style={{ height: '16px' }} />
                             </NavItem>
                         </Nav>)) ||
-                    (selectedCourses.length == 3 &&
-                        <Nav bsStyle="pills">
-                            <NavItem>
+                    ([30, 31, 32, 33, 34, 35].includes(activeLayout) &&
+                        <Nav
+                            bsStyle="pills"
+                            onSelect={eventKey => props.func.setCoursePanelLayoutById(eventKey)}>
+                            <NavItem eventKey={30}>
                                 <img src={img30} alt="layout-30" style={{ height: '16px' }} />
                             </NavItem>
-                            <NavItem>
+                            <NavItem eventKey={31}>
                                 <img src={img31} alt="layout-31" style={{ height: '16px' }} />
                             </NavItem>
-                            <NavItem>
+                            <NavItem eventKey={32}>
                                 <img src={img32} alt="layout-32" style={{ height: '16px' }} />
                             </NavItem>
-                            <NavItem>
+                            <NavItem eventKey={33}>
                                 <img src={img33} alt="layout-33" style={{ height: '16px' }} />
                             </NavItem>
-                            <NavItem>
+                            <NavItem eventKey={34}>
                                 <img src={img34} alt="layout-34" style={{ height: '16px' }} />
                             </NavItem>
-                            <NavItem>
+                            <NavItem eventKey={35}>
                                 <img src={img35} alt="layout-35" style={{ height: '16px' }} />
                             </NavItem>
                         </Nav>)}
