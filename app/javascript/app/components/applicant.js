@@ -16,12 +16,14 @@ class Applicant extends React.Component {
     }
 
     setAddress(address) {
-        let parts = address.split('\r\n');
-        return parts.map((part, key) =>
-            <p key={key}>
-                {part}
-            </p>
-        );
+        if(address != null){
+            let parts = address.split('\r\n');
+            return parts.map((part, key) =>
+                <p key={key}>
+                    {part}
+                </p>
+            );
+        }
     }
 
     setPrefs(pref, courses) {
