@@ -11,8 +11,8 @@ class ChassExporter
           return {generated: false, msg: "Warning: You have not made any assignments. Operation aborted."}
         else
           data = create_data(round_id)
-          return {generated: true, data: data.to_json, file: "offers_#{round_id}.json",
-            type: "application/json"}
+          return {generated: true, data: JSON.pretty_generate(data),
+            file: "offers_#{round_id}.json", type: "application/json"}
         end
       else
         return {generated: false, msg: "Error: Invalid round_id"}
