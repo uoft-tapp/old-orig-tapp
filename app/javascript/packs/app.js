@@ -12,29 +12,19 @@ import '../app-styles';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
-import { Navbar, Nav, NavItem, NavDropdown, MenuItem, Alert, Fade } from 'react-bootstrap';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { Alert } from 'react-bootstrap';
 
 import { appState } from '../app/appState.js';
 import { fetchAll } from '../app/fetch.js';
 
+import { Navbar, navConfig } from '../app/components/navbar.js';
 import { Courses } from '../app/components/courses.js';
 import { ABC } from '../app/components/abc.js';
 import { Assigned } from '../app/components/assigned.js';
 import { Unassigned } from '../app/components/unassigned.js';
 import { Summary } from '../app/components/summary.js';
 import { Applicant } from '../app/components/applicant.js';
-
-/*** Navbar ABC view layout icons ***/
-
-import img20 from '../app/img/layout-20.png';
-import img21 from '../app/img/layout-21.png';
-import img30 from '../app/img/layout-30.png';
-import img31 from '../app/img/layout-31.png';
-import img32 from '../app/img/layout-32.png';
-import img33 from '../app/img/layout-33.png';
-import img34 from '../app/img/layout-34.png';
-import img35 from '../app/img/layout-35.png';
 
 /*** Main app component ***/
 
@@ -55,37 +45,6 @@ class App extends React.Component {
     }
 }
 
-const navConfig = {
-    courses: {
-        route: '/courses',
-        key: '1',
-    },
-    abc: {
-        route: '/applicantsbycourse',
-        key: '2',
-    },
-    assigned: {
-        route: '/assigned',
-        key: '3',
-    },
-    unassigned: {
-        route: '/unassigned',
-        key: '4',
-    },
-    summary: {
-        route: '/summary',
-        key: '5',
-    },
-    applicant: {
-        route: '/applicant/:id',
-        key: '6',
-    },
-    logout: {
-        route: '/bye',
-        key: '7',
-    },
-};
-
 /*** Router ***/
 // temporary logout "view"
 const Bye = props =>
@@ -96,7 +55,7 @@ const Bye = props =>
 const RouterInst = props =>
     <Router basename="index.html">
         <div>
-            <NavbarInst {...props} />
+            <Navbar {...props} />
 
             <Switch>
                 <Route
@@ -144,120 +103,6 @@ const RouterInst = props =>
             </div>
         </div>
     </Router>;
-
-/*** Navbar ***/
-
-const NavbarInst = props => {
-    let selectedTab = props.func.getSelectedNavTab();
-    let notifications = props.func.getUnreadNotifications();
-
-    let selectedApplicant = props.func.getSelectedApplicant();
-
-    // used to populate the layout menu in the ABC view
-    let activeLayout = props.func.getCoursePanelLayoutAsId();
-
-    return (
-        <Navbar fixedTop fluid>
-            <Navbar.Header>
-                <Navbar.Brand>TAPP</Navbar.Brand>
-            </Navbar.Header>
-
-            <Nav
-                pullLeft
-                activeKey={selectedTab}
-                onSelect={eventKey => props.func.selectNavTab(eventKey)}>
-                <NavItem eventKey={navConfig.courses.key}>
-                    <Link to={navConfig.courses.route}>Courses</Link>
-                </NavItem>
-                <NavItem eventKey={navConfig.abc.key}>
-                    <Link to={navConfig.abc.route}>Applicants by Course</Link>
-                </NavItem>
-                <NavItem eventKey={navConfig.assigned.key}>
-                    <Link to={navConfig.assigned.route}>All Assigned</Link>
-                </NavItem>
-                <NavItem eventKey={navConfig.unassigned.key}>
-                    <Link to={navConfig.unassigned.route}>All Unassigned</Link>
-                </NavItem>
-                <NavItem eventKey={navConfig.summary.key}>
-                    <Link to={navConfig.summary.route}>Summary</Link>
-                </NavItem>
-                {selectedApplicant &&
-                    <NavItem eventKey={navConfig.applicant.key}>
-                        {props.func.getApplicantById(selectedApplicant).lastName},&nbsp;
-                        {props.func.getApplicantById(selectedApplicant).firstName}
-                    </NavItem>}
-            </Nav>
-
-            <Nav pullRight activeKey={activeLayout}>
-                {(selectedTab == navConfig.abc.key &&
-                    ([20, 21].includes(activeLayout) &&
-                        <Nav
-                            bsStyle="pills"
-                            onSelect={eventKey => props.func.setCoursePanelLayoutById(eventKey)}>
-                            <NavItem eventKey={20}>
-                                <img src={img20} alt="layout-20" style={{ height: '16px' }} />
-                            </NavItem>
-                            <NavItem eventKey={21}>
-                                <img src={img21} alt="layout-21" style={{ height: '16px' }} />
-                            </NavItem>
-                        </Nav>)) ||
-                    ([30, 31, 32, 33, 34, 35].includes(activeLayout) &&
-                        <Nav
-                            bsStyle="pills"
-                            onSelect={eventKey => props.func.setCoursePanelLayoutById(eventKey)}>
-                            <NavItem eventKey={30}>
-                                <img src={img30} alt="layout-30" style={{ height: '16px' }} />
-                            </NavItem>
-                            <NavItem eventKey={31}>
-                                <img src={img31} alt="layout-31" style={{ height: '16px' }} />
-                            </NavItem>
-                            <NavItem eventKey={32}>
-                                <img src={img32} alt="layout-32" style={{ height: '16px' }} />
-                            </NavItem>
-                            <NavItem eventKey={33}>
-                                <img src={img33} alt="layout-33" style={{ height: '16px' }} />
-                            </NavItem>
-                            <NavItem eventKey={34}>
-                                <img src={img34} alt="layout-34" style={{ height: '16px' }} />
-                            </NavItem>
-                            <NavItem eventKey={35}>
-                                <img src={img35} alt="layout-35" style={{ height: '16px' }} />
-                            </NavItem>
-                        </Nav>)}
-
-                <NavDropdown
-                    noCaret
-                    disabled={notifications.length == 0}
-                    title={
-                        <span>
-                            <i className="fa fa-bell-o" style={{ fontSize: '16px' }} />&nbsp;{notifications.length}
-                        </span>
-                    }
-                    id="nav-notif-dropdown"
-                    onToggle={willOpen => {
-                        if (!willOpen) {
-                            props.func.readNotifications();
-                        }
-                    }}>
-                    {notifications.map((text, i) =>
-                        <MenuItem key={'notification-' + i}>
-                            {text}
-                        </MenuItem>
-                    )}
-                </NavDropdown>
-
-                <NavDropdown
-                    eventKey={navConfig.logout.key}
-                    title={props.func.getCurrentUserRole() + ':' + props.func.getCurrentUserName()}
-                    id="nav-auth-dropdown">
-                    <MenuItem eventKey={navConfig.logout.key + '.1'}>
-                        <Link to={navConfig.logout.route}>Logout</Link>
-                    </MenuItem>
-                </NavDropdown>
-            </Nav>
-        </Navbar>
-    );
-};
 
 document.addEventListener('DOMContentLoaded', () => {
     ReactDOM.render(<App />, document.getElementById('root'));
