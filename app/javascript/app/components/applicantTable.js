@@ -6,7 +6,7 @@ const THeader = props =>
     <thead>
         <tr>
             {props.config.map((field, i) =>
-                <th key={'header-' + i}>
+                <th key={'header-' + i} style={field.style ? field.style() : {}}>
                     {field.header}
                 </th>
             )}
@@ -16,7 +16,9 @@ const THeader = props =>
 const ApplicantRow = props =>
     <tr key={'applicant-' + props.applicantId + '-row'} id={props.rowId(props)}>
         {props.config.map((field, i) =>
-            <td key={'applicant-' + props.applicantId + '-row-' + i}>
+            <td
+                key={'applicant-' + props.applicantId + '-row-' + i}
+                style={field.style ? field.style() : {}}>
                 {field.data(props)}
             </td>
         )}
@@ -100,7 +102,8 @@ class ApplicantTable extends React.Component {
         return (
             <div
                 className={
-                    'table-container ' + (this.props.assigned ? 'assigned-table' : 'unassigned-table')
+                    'table-container ' +
+                    (this.props.assigned ? 'assigned-table' : 'unassigned-table')
                 }>
                 <Table striped bordered condensed hover>
                     <THeader config={this.props.config} />
@@ -149,6 +152,9 @@ ApplicantTable.propTypes = {
             // functions corresponding to the filter categories for this column; a function should return false
             // on a row that should *not* be displayed when filtering by its corresponding category
             filterFuncs: PropTypes.arrayOf(PropTypes.func),
+
+            // style applied to cells in table column
+            style: PropTypes.func,
         })
     ).isRequired,
 

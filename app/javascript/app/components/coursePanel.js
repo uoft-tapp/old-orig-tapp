@@ -31,6 +31,8 @@ class CoursePanel extends React.Component {
                             }
                         }}
                     />,
+
+                style: () => ({ width: '2%' }),
             },
             {
                 header: 'Last Name',
@@ -40,11 +42,15 @@ class CoursePanel extends React.Component {
                         {p.applicant.lastName}
                     </a>,
                 sortData: p => p.applicant.lastName,
+
+                style: () => ({ width: '15%' }),
             },
             {
                 header: 'First Name',
                 data: p => p.applicant.firstName,
                 sortData: p => p.applicant.firstName,
+
+                style: () => ({ width: '15%' }),
             },
             {
                 header: 'Dept.',
@@ -57,6 +63,8 @@ class CoursePanel extends React.Component {
                     p => p.applicant.dept == 'Computer Science',
                     p => p.applicant.dept != 'Computer Science',
                 ],
+
+                style: () => ({ width: '25%' }),
             },
             {
                 header: 'Prog.',
@@ -72,11 +80,15 @@ class CoursePanel extends React.Component {
                     p => ['MSc', 'MASc', 'MScAC', 'MEng', 'OG'].includes(p.applicant.program),
                     p => p.applicant.program == 'UG',
                 ],
+
+                style: () => ({ width: '10%' }),
             },
             {
                 header: 'Year',
                 data: p => p.applicant.year,
                 sortData: p => p.applicant.year,
+
+                style: () => ({ width: '5%' }),
             },
             {
                 header: 'Pref.',
@@ -87,6 +99,8 @@ class CoursePanel extends React.Component {
                         : '',
 
                 sortData: p => props.func.getApplicationPreference(p.applicantId, p.course),
+
+                style: () => ({ width: '5%' }),
             },
             {
                 header: 'Other',
@@ -123,6 +137,8 @@ class CoursePanel extends React.Component {
                     // filter corresponding to 'unassigned'
                     p => props.func.getAssignmentsByApplicant(p.applicantId).length == 0,
                 ],
+
+                style: () => ({}),
             },
         ];
     }

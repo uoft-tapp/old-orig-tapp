@@ -16,11 +16,15 @@ class Assigned extends React.Component {
                         {p.applicant.lastName}
                     </a>,
                 sortData: p => p.applicant.lastName,
+
+                style: () => ({ width: '10%' }),
             },
             {
                 header: 'First Name',
                 data: p => p.applicant.firstName,
                 sortData: p => p.applicant.firstName,
+
+                style: () => ({ width: '10%' }),
             },
             {
                 header: 'Dept.',
@@ -33,6 +37,8 @@ class Assigned extends React.Component {
                     p => p.applicant.dept == 'Computer Science',
                     p => p.applicant.dept != 'Computer Science',
                 ],
+
+                style: () => ({ width: '13%' }),
             },
             {
                 header: 'Prog.',
@@ -47,16 +53,22 @@ class Assigned extends React.Component {
                     p => ['MSc', 'MASc', 'MScAC', 'MEng', 'OG'].includes(p.applicant.program),
                     p => p.applicant.program == 'UG',
                 ],
+
+                style: () => ({ width: '5%' }),
             },
             {
                 header: 'Year',
                 data: p => p.applicant.year,
                 sortData: p => p.applicant.year,
+
+                style: () => ({ width: '2%' }),
             },
             {
                 header: 'Email',
                 data: p => p.applicant.email,
                 sortData: p => p.applicant.email,
+
+                style: () => ({ width: '20%' }),
             },
             {
                 header: 'Course(s)',
@@ -118,7 +130,7 @@ class Assigned extends React.Component {
             </Grid>
         );
     }
-    
+
     selectThisTab() {
         this.props.func.selectNavTab(this.props.navKey);
     }
