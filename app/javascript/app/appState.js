@@ -881,24 +881,19 @@ class AppState {
 
     updateCourse(courseId, val, props) {
         let data = {};
-        let attr = this.getCourseAttributeMapping(props);
-        data[attr] = val;
+        switch (props) {
+          case "estimatedPositions":
+            data["estimated_count"] = val;
+          case "positionHours":
+            data["hours"] = val;
+          case "estimatedEnrol":
+            data["estimated_enrolment"] = val;
+          case "qual":
+            data["qualifications"] = val;
+          case "resp":
+            data["duties"] = val;
+        }
         fetch.updateCourse(courseId, data, val, props);
-    }
-
-    getCourseAttributeMapping(props){
-      switch (props) {
-        case "estimatedPositions":
-          return "estimated_count";
-        case "positionHours":
-          return "hours";
-        case "estimatedEnrol":
-          return "estimated_enrolment";
-        case "qual":
-          return "qualifications";
-        case "resp":
-          return "duties";
-      }
     }
 
     addInstructor(courseId, instructorId) {
