@@ -81,8 +81,8 @@ describe ChassExporter do
       subject { exporter.export(position[:round_id]) }
 
       it "returns generated true and data of all assignments in :round_id" do
-        expect(subject).to eq ({generated: true, data: @data, type: "application/json",
-          file: "offers_#{position[:round_id]}.json"})
+        expect(subject).to eq ({generated: true, data: JSON.pretty_generate(@data),
+          type: "application/json", file: "offers_#{position[:round_id]}.json"})
       end
     end
 
