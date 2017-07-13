@@ -49,9 +49,9 @@ describe CSVGenerator do
         )
     end
     context "when there are no assignments in the system" do
-      let (:response) { generator.generate_cdf_info }
+      subject { generator.generate_cdf_info }
       it "return generated false and an error message" do
-        expect(response).to eq({generated: false,
+        expect(subject).to eq({generated: false,
           msg: "Warning: You have not made any assignments. Operation aborted."})
       end
     end
@@ -83,10 +83,10 @@ describe CSVGenerator do
           ]
         end
       end
-      let (:response) { generator.generate_cdf_info }
+      subject { generator.generate_cdf_info }
 
       it "returns generated true and data of all cdf info" do
-        expect(response).to eq ({generated: true, data: @data, type: "text/csv",
+        expect(subject).to eq ({generated: true, data: @data, type: "text/csv",
           file: "cdf_info.csv"})
       end
     end
@@ -123,9 +123,9 @@ describe CSVGenerator do
     end
 
     context "when there are no assignments in the system" do
-      let (:response) { generator.generate_offers }
+      subject { generator.generate_offers }
       it "return generated false and an error message" do
-        expect(response).to eq({generated: false,
+        expect(subject).to eq({generated: false,
           msg: "Warning: You have not made any assignments. Operation aborted."})
       end
     end
@@ -163,10 +163,10 @@ describe CSVGenerator do
           ]
         end
       end
-      let (:response) { generator.generate_offers }
+      subject { generator.generate_offers }
 
       it "returns generated true and data of all cdf info" do
-        expect(response).to eq ({generated: true, data: @data, type: "text/csv",
+        expect(subject).to eq ({generated: true, data: @data, type: "text/csv",
           file: "offers.csv"})
       end
     end
@@ -174,9 +174,9 @@ describe CSVGenerator do
 
   context "when generating transcript_access" do
     context "when there are no applicants in the system" do
-      let (:response) { generator.generate_transcript_access }
+      subject { generator.generate_transcript_access }
       it "return generated false and an error message" do
-        expect(response).to eq({generated: false,
+        expect(subject).to eq({generated: false,
           msg: "Warning: There are currenly no applicant in the system. Operation aborted"})
       end
     end
@@ -224,10 +224,10 @@ describe CSVGenerator do
           ]
         end
       end
-      let (:response) { generator.generate_transcript_access }
+      subject { generator.generate_transcript_access }
 
       it "returns generated true and data of all cdf info" do
-        expect(response).to eq ({generated: true, data: @data, type: "text/csv",
+        expect(subject).to eq ({generated: true, data: @data, type: "text/csv",
           file: "transcript_access.csv"})
       end
 
