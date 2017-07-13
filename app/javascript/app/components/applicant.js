@@ -17,7 +17,7 @@ class Applicant extends React.Component {
 
     setAddress(address) {
         if(address != null){
-            return parts = address.split('\r\n').map((part, key) =>
+            return address.split('\r\n').map((part, key) =>
                 <p key={key}>
                     {part}
                 </p>
