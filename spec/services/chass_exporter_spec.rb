@@ -47,18 +47,18 @@ describe ChassExporter do
   end
 
   context "when round_id is invalid" do
-    let (:response) { exporter.export(1) }
+    subject { exporter.export(1) }
     it "return generated false and an error message" do
-      expect(response).to eq({generated: false, msg: "Error: Invalid round_id"})
+      expect(subject).to eq({generated: false, msg: "Error: Invalid round_id"})
     end
   end
 
   context "when round_id is valid" do
     context "and there are no assignments" do
-      let (:response) { exporter.export(position[:round_id]) }
+      subject { exporter.export(position[:round_id]) }
 
       it "returns generated false and an error message" do
-        expect(response).to eq ({generated: false,
+        expect(subject).to eq ({generated: false,
           msg: "Warning: You have not made any assignments. Operation aborted."})
       end
     end
@@ -78,10 +78,10 @@ describe ChassExporter do
           name: "#{@applicant[:first_name]} #{@applicant[:last_name]}"
         }]
       end
-      let (:response) { exporter.export(position[:round_id]) }
+      subject { exporter.export(position[:round_id]) }
 
       it "returns generated true and data of all assignments in :round_id" do
-        expect(response).to eq ({generated: true, data: @data, type: "application/json",
+        expect(subject).to eq ({generated: true, data: @data, type: "application/json",
           file: "offers_#{position[:round_id]}.json"})
       end
     end
