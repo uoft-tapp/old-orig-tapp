@@ -909,10 +909,8 @@ class AppState {
 
     removeInstructor(courseId, index) {
         let val = this._data.get('courses.list[' + courseId + '].instructors');
-        let original = val;
         val.splice(index, 1);
-        this._data.unset('courses.list[' + courseId + '].instructors');
-        this._data.set('courses.list[' + courseId + '].instructors', original);
+        this._data.unset('courses.list[' + courseId + '].instructors', { silent: true });
         fetch.updateCourse(courseId, { instructors: val }, val, 'instructors');
     }
 
