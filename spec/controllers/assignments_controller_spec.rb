@@ -296,21 +296,6 @@ RSpec.describe AssignmentsController, type: :controller do
       expect(response.status).to eq(422)
     end
 
-    context "when updating export_date" do
-      it "return status 200 if valid and updated" do
-        time = Time.now.strftime("%Y-%d-%mT%H:%M:%S.000Z")
-        patch :update, params: { applicant_id: @applicant.id, id: @assignment.id, export_date: time }
-        expect(response.status).to eq(200)
-        expect(parsed_body["export_date"]).to eq(time)
-      end
-
-      it "return status 200 and ignores the request if invalid" do
-        patch :update, params: { applicant_id: @applicant.id, id: @assignment.id, export_date: "poops" }
-        expect(response.status).to eq(200)
-        expect(parsed_body["export_date"]).to eq(nil)
-      end
-    end
-
   end
 
 

@@ -60,15 +60,15 @@ class AssignmentsController < ApplicationController
   '''
     update #PATCH
     /applicants/:applicant_id/assignments/:id
-    hours, export_date
+    hours
 
-    updates the hours and export_date column for an applicant given assignment ID and applicant ID
+    updates the hours column for an applicant given assignment ID and applicant ID
   '''
   def update
     @applicant = Applicant.find(params[:applicant_id])
     assignment = @applicant.assignments.find(params[:id])
 
-    if assignment.update_attributes(updateable_params)
+    if assignment.update_attributes(hours: params[:hours])
       render json: assignment.to_json
     else
       render json: assignment.errors.to_hash(true), status: :unprocessable_entity
@@ -97,7 +97,4 @@ class AssignmentsController < ApplicationController
       params.permit(:position_id, :hours)
     end
 
-    def updateable_params
-      params.permit(:hours, :export_date)
-    end
 end
