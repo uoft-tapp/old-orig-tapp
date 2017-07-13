@@ -1,6 +1,6 @@
 import React from 'react';
 import { AssignmentForm } from './assignmentForm.js';
-import { Panel } from 'react-bootstrap';
+import { Panel, Button } from 'react-bootstrap';
 
 class Applicant extends React.Component {
     selectThisTab() {
@@ -16,7 +16,7 @@ class Applicant extends React.Component {
     }
 
     setAddress(address) {
-        if(address != null){
+        if (address != null) {
             return address.split('\r\n').map((part, key) =>
                 <p key={key}>
                     {part}
@@ -66,11 +66,11 @@ class Applicant extends React.Component {
                                             {applicant.lastName}
                                         </p>
                                         <p>
-                                            <b>UTORIid: </b>
+                                            <b>UTORid: </b>
                                             {applicant.utorid}
                                         </p>
                                         <p>
-                                            <b>Email address: </b>
+                                            <b>Email Address: </b>
                                             {applicant.email}
                                         </p>
                                         <p>
@@ -195,6 +195,8 @@ class Applicant extends React.Component {
                             {application.specialNeeds}
                         </p>
                     );
+                case 12:
+                    return <NotesForm applicant={id} notes={applicant.notes} {...this.props} />;
             }
         }
     }
@@ -213,6 +215,7 @@ class Applicant extends React.Component {
             { label: 'Availability', expanded: true },
             { label: 'Other Information', expanded: true },
             { label: 'Special Needs Issues', expanded: true },
+            { label: 'Notes', expanded: true },
         ];
         this.props.func.createAssignmentForm(panels);
         return (
@@ -224,6 +227,24 @@ class Applicant extends React.Component {
         );
     }
 }
+
+const NotesForm = props => {
+    return (
+        <div>
+            <textarea id="applicant-notes" style={{ width: '100%' }} defaultValue={props.notes} />
+            <br />
+            <Button
+                bsSize="small"
+                onClick={() =>
+                    props.func.noteApplicant(
+                        props.applicant,
+                        document.getElementById('applicant-notes').value
+                    )}>
+                Save
+            </Button>
+        </div>
+    );
+};
 
 const CollapsiblePanel = props =>
     <div className="container-fluid" style={{ height: '90vh', width: '100vw', overflow: 'auto' }}>

@@ -773,6 +773,11 @@ class AppState {
         this.setCoursesList(courses);
     }
 
+    // add/update the notes for an applicant
+    noteApplicant(applicant, notes) {
+        fetch.noteApplicant(applicant, notes);
+    }
+
     // persist a temporary assignment to the database
     permAssignment(course) {
         let applicant = this.getSelectedApplicant();
