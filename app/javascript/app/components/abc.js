@@ -5,12 +5,13 @@ import { CoursePanel } from './coursePanel.js';
 
 class ABC extends React.Component {
     mapLayoutToPanels() {
-        let selected = this.props.func.getSelectedCourses();
+        let layoutId = this.props.func.getCoursePanelLayoutAsId();
         let layout = this.props.func.getCoursePanelLayout();
 
         let course1, course2, course3, course4, panel1style, panel2style, panel3style, panel4style;
+        let temp;
 
-        switch (selected.length) {
+        switch (layoutId) {
             case 0:
                 return 0;
 
@@ -19,61 +20,67 @@ class ABC extends React.Component {
                 panel1style = { height: '100%', width: '100%' };
                 break;
 
-            case 2:
-                if (layout.length == 1) {
-                    // stacked
-                    (course1 = layout[0][0]), (course2 = layout[0][1]);
-                    panel1style = panel2style = { height: '50%', width: '100%' };
-                } else {
-                    // side-by-side
-                    (course1 = layout[0]), (course2 = layout[1]);
-                    panel1style = panel2style = { height: '100%', width: '50%' };
-                }
+            case 20:
+                // stacked
+                (course1 = layout[0][0]), (course2 = layout[0][1]);
+                panel1style = panel2style = { height: '50%', width: '100%' };
                 break;
 
-            case 3:
-                if (layout.length == 1) {
-                    // stacked
-                    [course1, course2, course3] = layout[0];
+            case 21:
+                // side-by-side
+                (course1 = layout[0]), (course2 = layout[1]);
+                panel1style = panel2style = { height: '100%', width: '50%' };
+                break;
 
-                    panel1style = panel2style = panel3style = {
-                        height: 'calc(100%/3)',
-                        width: '100%',
-                    };
-                } else if (layout.length == 2) {
-                    if (layout[0].length == 1) {
-                        // 1 panel left, 2 stacked panels right
-                        [course1, [course2, course3]] = layout;
+            case 30:
+                // stacked
+                [course1, course2, course3] = layout[0];
 
-                        panel1style = { height: '100%', width: '50%' };
-                        panel2style = panel3style = { height: '50%', width: '50%' };
-                    } else if (layout[1].length == 1) {
-                        // 2 stacked panels left, 1 panel right
-                        [[course1, course2], course3] = layout;
+                panel1style = panel2style = panel3style = {
+                    height: 'calc(100%/3)',
+                    width: '100%',
+                };
+                break;
 
-                        panel1style = panel2style = { height: '50%', width: '50%' };
-                        panel3style = { height: '100%', width: '50%' };
-                    } else if (layout[0][0] == layout[1][0]) {
-                        // 1 panel on top, 2 side-by-side panels on bottom
-                        [[course1, course2], [_, course3]] = layout;
+            case 31:
+                // 1 panel left, 2 stacked panels right
+                [course1, [course2, course3]] = layout;
 
-                        panel1style = { height: '50%', width: '100%' };
-                        panel2style = panel3style = { height: '50%', width: '50%' };
-                    } else if (layout[0][1] == layout[1][1]) {
-                        // 2 side-by-side panels on top, 1 panel on bottom
-                        [[course1, course3], [course2, _]] = layout;
+                panel1style = { height: '100%', width: '50%' };
+                panel2style = panel3style = { height: '50%', width: '50%' };
+                break;
 
-                        panel1style = panel2style = { height: '50%', width: '50%' };
-                        panel3style = { height: '50%', width: '100%' };
-                    }
-                } else if (layout.length == 3) {
-                    // side-by-side
-                    [course1, course2, course3] = layout;
-                    panel1style = panel2style = panel3style = {
-                        height: '100%',
-                        width: 'calc(100%/3)',
-                    };
-                }
+            case 32:
+                // 2 stacked panels left, 1 panel right
+                [[course1, course3], course2] = layout;
+
+                panel1style = panel3style = { height: '50%', width: '50%' };
+                panel2style = { height: '100%', width: '50%', float: 'right' };
+                break;
+
+            case 33:
+                // 1 panel on top, 2 side-by-side panels on bottom
+                [[course1, course2], [temp, course3]] = layout;
+
+                panel1style = { height: '50%', width: '100%' };
+                panel2style = panel3style = { height: '50%', width: '50%' };
+                break;
+
+            case 34:
+                // 2 side-by-side panels on top, 1 panel on bottom
+                [[course1, course3], [course2, temp]] = layout;
+
+                panel1style = panel2style = { height: '50%', width: '50%' };
+                panel3style = { height: '50%', width: '100%' };
+                break;
+
+            case 35:
+                // side-by-side
+                [course1, course2, course3] = layout;
+                panel1style = panel2style = panel3style = {
+                    height: '100%',
+                    width: 'calc(100%/3)',
+                };
                 break;
 
             case 4:

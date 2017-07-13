@@ -240,6 +240,52 @@ class AppState {
         return this._data.get('panelLayout');
     }
 
+    // return an id that represents the current course panel layout
+    // one of: 0, 1, 20, 21, 30, 31, 32, 33, 34, 35, 4
+    getCoursePanelLayoutAsId() {
+        let selected = this.getSelectedCourses();
+        let layout = this.getCoursePanelLayout();
+
+        switch (selected.length) {
+            case 0:
+                return 0;
+            case 1:
+                return 1;
+            case 2:
+                if (layout.length == 1) {
+                    // stacked
+                    return 20;
+                } else {
+                    // side-by-side
+                    return 21;
+                }
+            case 3:
+                if (layout.length == 1) {
+                    // stacked
+                    return 30;
+                } else if (layout.length == 2) {
+                    if (!(layout[0] instanceof Array) && layout[1] instanceof Array) {
+                        // 1 panel left, 2 stacked panels right
+                        return 31;
+                    } else if (!(layout[1] instanceof Array) && layout[0] instanceof Array) {
+                        // 2 stacked panels left, 1 panel right
+                        return 32;
+                    } else if (layout[0][0] == layout[1][0]) {
+                        // 1 panel on top, 2 side-by-side panels on bottom
+                        return 33;
+                    } else if (layout[0][1] == layout[1][1]) {
+                        // 2 side-by-side panels on top, 1 panel on bottom
+                        return 34;
+                    }
+                } else if (layout.length == 3) {
+                    // side-by-side
+                    return 35;
+                }
+            case 4:
+                return 4;
+        }
+    }
+
     getCoursePanelSortsByCourse(course) {
         return this.getCoursePanelFieldsByCourse(course).selectedSortFields;
     }
@@ -415,6 +461,70 @@ class AppState {
 
     setInput(value) {
         this._data.set('assignmentForm.assignmentInput', value);
+    }
+
+    // set the course panel layout (assumes that the correct number of courses is selected for the specified
+    // layout); id should be one of: 0, 1, 20, 21, 30, 31, 32, 33, 34, 35, 4
+    setCoursePanelLayoutById(id) {
+        let layout,
+            courses = this.getSelectedCourses();
+
+        switch (id) {
+            case 0:
+                layout = [];
+                break;
+
+            case 1:
+                layout = courses;
+                break;
+
+            case 20:
+                // stacked
+                layout = [courses];
+                break;
+
+            case 21:
+                // side-by-side
+                layout = courses;
+                break;
+
+            case 30:
+                // stacked
+                layout = [courses];
+                break;
+
+            case 31:
+                // 1 panel left, 2 stacked panels right
+                layout = [courses[0], courses.slice(1, 3)];
+                break;
+
+            case 32:
+                // 2 stacked panels left, 1 panel right
+                layout = [courses.slice(0, 2), courses[2]];
+                break;
+
+            case 33:
+                // 1 panel on top, 2 side-by-side panels on bottom
+                layout = [courses.slice(0, 2), [courses[0], courses[2]]];
+                break;
+
+            case 34:
+                // 2 side-by-side panels on top, 1 panel on bottom
+                layout = [[courses[0], courses[2]], [courses[1], courses[2]]];
+                break;
+
+            case 35:
+                // side-by-side
+                layout = courses;
+                break;
+
+            case 4:
+                layout = [courses.slice(0, 2), courses.slice(2, 4)];
+                break;
+        }
+
+        this._data.unset('panelLayout', { silent: true });
+        this._data.set('panelLayout', layout);
     }
 
     // change the number of hours of a temporary assignment
