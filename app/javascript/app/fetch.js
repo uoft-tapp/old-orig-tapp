@@ -131,6 +131,7 @@ function onFetchApplicantsSuccess(resp) {
                 }
             })(app.program_id),
             year: app.yip,
+            notes: app.commentary,
         };
     });
 
@@ -278,6 +279,7 @@ function fetchAll() {
     });
 }
 
+// create a new assignment
 function postAssignment(applicant, course, hours) {
     return postHelper(
         '/applicants/' + applicant + '/assignments',
@@ -288,12 +290,21 @@ function postAssignment(applicant, course, hours) {
     );
 }
 
+// remove an assignment
 function deleteAssignment(applicant, assignment) {
     return deleteHelper('/applicants/' + applicant + '/assignments/' + assignment, () => {
         appState.removeAssignment(applicant, assignment);
     });
 }
 
+// add/update the notes for an applicant
+function noteApplicant(applicant, notes) {
+    return putHelper('/applicants/' + applicant, { commentary: notes }, () => {
+        getApplicants();
+    });
+}
+
+// update the number of hours for an assignment
 function updateAssignmentHours(applicant, assignment, hours) {
     return putHelper(
         '/applicants/' + applicant + '/assignments/' + assignment,
@@ -310,4 +321,11 @@ function updateCourse(courseId, data, val, attr) {
     });
 }
 
-export { fetchAll, postAssignment, deleteAssignment, updateAssignmentHours, updateCourse };
+export {
+    fetchAll,
+    postAssignment,
+    deleteAssignment,
+    updateAssignmentHours,
+    updateCourse,
+    noteApplicant,
+};
