@@ -16363,7 +16363,7 @@
       "email": "zedarkd.zorkcraarc@mail.utoronto.ca",
       "phone": "(647)-235-5702",
       "student_no": "1264806754",
-      "address": "500 Kcraarc St.",
+      "address": null,
       "ta_training": "Y",
       "access_acad_history": "N",
       "dept": "Physics",
@@ -16377,13 +16377,7 @@
       "other_info": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget dignissim sem. Curabitur at semper eros. Aenean nec sem lobortis, scelerisque mi at, aliquam diam. Mauris malesuada elit nibh, sed hendrerit nulla mattis sed. Mauris laoreet imperdiet dictum. Pellentesque risus nulla, varius ut massa ut, venenatis fringilla sapien. Cras eget euismod augue, eget dignissim erat. Cras nec nibh ullamcorper ante rutrum dapibus sed nec tellus. In hac habitasse platea dictumst. Suspendisse semper tellus ac sem tincidunt auctor.",
       "special_needs": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget dignissim sem. Curabitur at semper eros. Aenean nec sem lobortis, scelerisque mi at, aliquam diam. Mauris malesuada elit nibh, sed hendrerit nulla mattis sed. Mauris laoreet imperdiet dictum. Pellentesque risus nulla, varius ut massa ut, venenatis fringilla sapien. Cras eget euismod augue, eget dignissim erat. Cras nec nibh ullamcorper ante rutrum dapibus sed nec tellus. In hac habitasse platea dictumst. Suspendisse semper tellus ac sem tincidunt auctor.",
       "last_updated": "2017-06-16 10:18:37",
-      "courses": [
-        "CSC263H1F",
-        "CSC2527HF",
-        "CSC436H1F",
-        "CSC148H1F-A",
-        "CSC465H1F/2104HF"
-      ]
+      "courses": [ "" ]
     }
   ]
 }
