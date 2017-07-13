@@ -12,12 +12,7 @@ class ABC extends React.Component {
 
         switch (selected.length) {
             case 0:
-                return (
-                    <Well id="no-courses-well">
-                        <p>Nothing here yet!</p>
-                        <p>Select one or more courses to start.</p>
-                    </Well>
-                );
+                return 0;
 
             case 1:
                 course1 = layout[0];
@@ -90,46 +85,58 @@ class ABC extends React.Component {
                 break;
         }
 
-        return (
-            <span>
-                {course1 &&
-                    <CoursePanel
-                        key="course-panel-1"
-                        panelStyle={panel1style}
-                        course={course1}
-                        {...this.props}
-                    />}
-                {course2 &&
-                    <CoursePanel
-                        key="course-panel-2"
-                        panelStyle={panel2style}
-                        course={course2}
-                        {...this.props}
-                    />}
-                {course3 &&
-                    <CoursePanel
-                        key="course-panel-3"
-                        panelStyle={panel3style}
-                        course={course3}
-                        {...this.props}
-                    />}
-                {course4 &&
-                    <CoursePanel
-                        key="course-panel-4"
-                        panelStyle={panel4style}
-                        course={course4}
-                        {...this.props}
-                    />}
-            </span>
-        );
+        return {
+            course1: course1,
+            course2: course2,
+            course3: course3,
+            course4: course4,
+            panel1style: panel1style,
+            panel2style: panel2style,
+            panel3style: panel3style,
+            panel4style: panel4style,
+        };
     }
 
     render() {
+        let layout = this.mapLayoutToPanels();
+
         return (
             <Grid fluid id="abc-grid">
                 <CourseMenu {...this.props} />
                 <div id="course-panel-layout">
-                    {this.mapLayoutToPanels()}
+                    {layout == 0 &&
+                        <Well id="no-courses-well">
+                            <p>Nothing here yet!</p>
+                            <p>Select one or more courses to start.</p>
+                        </Well>}
+                    {layout.course1 &&
+                        <CoursePanel
+                            key="course-panel-1"
+                            panelStyle={layout.panel1style}
+                            course={layout.course1}
+                            {...this.props}
+                        />}
+                    {layout.course2 &&
+                        <CoursePanel
+                            key="course-panel-2"
+                            panelStyle={layout.panel2style}
+                            course={layout.course2}
+                            {...this.props}
+                        />}
+                    {layout.course3 &&
+                        <CoursePanel
+                            key="course-panel-3"
+                            panelStyle={layout.panel3style}
+                            course={layout.course3}
+                            {...this.props}
+                        />}
+                    {layout.course4 &&
+                        <CoursePanel
+                            key="course-panel-4"
+                            panelStyle={layout.panel4style}
+                            course={layout.course4}
+                            {...this.props}
+                        />}
                 </div>
             </Grid>
         );
