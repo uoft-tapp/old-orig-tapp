@@ -28,12 +28,12 @@ class ExportController < ApplicationController
   private
   def render_helper(response)
     if response[:generated]
-      send_data response[:data], :filename => response[:file]
+      send_data response[:data], :filename => response[:file],
+      content_type: response[:type]
     else
       render status: 404, json: {
         message: response[:msg]
-      }.to_json,
-      content_type: response[:type]
+      }.to_json
     end
   end
 
