@@ -25,6 +25,17 @@ import { Unassigned } from '../app/components/unassigned.js';
 import { Summary } from '../app/components/summary.js';
 import { Applicant } from '../app/components/applicant.js';
 
+/*** Navbar ABC view layout icons ***/
+
+import img20 from '../app/img/layout-20.png';
+import img21 from '../app/img/layout-21.png';
+import img30 from '../app/img/layout-30.png';
+import img31 from '../app/img/layout-31.png';
+import img32 from '../app/img/layout-32.png';
+import img33 from '../app/img/layout-33.png';
+import img34 from '../app/img/layout-34.png';
+import img35 from '../app/img/layout-35.png';
+
 /*** Main app component ***/
 
 class App extends React.Component {
@@ -137,8 +148,13 @@ const RouterInst = props =>
 /*** Navbar ***/
 
 const NavbarInst = props => {
-    let selectedApplicant = props.func.getSelectedApplicant();
+    let selectedTab = props.func.getSelectedNavTab();
     let notifications = props.func.getUnreadNotifications();
+
+    let selectedApplicant = props.func.getSelectedApplicant();
+
+    // used to populate the layout menu in the ABC view
+    let selectedCourses = props.func.getSelectedCourses();
 
     return (
         <Navbar fixedTop fluid>
@@ -148,7 +164,7 @@ const NavbarInst = props => {
 
             <Nav
                 pullLeft
-                activeKey={props.func.getSelectedNavTab()}
+                activeKey={selectedTab}
                 onSelect={eventKey => props.func.selectNavTab(eventKey)}>
                 <NavItem eventKey={navConfig.courses.key}>
                     <Link to={navConfig.courses.route}>Courses</Link>
@@ -173,6 +189,38 @@ const NavbarInst = props => {
             </Nav>
 
             <Nav pullRight>
+                {(selectedTab == navConfig.abc.key &&
+                    (selectedCourses.length == 2 &&
+                        <Nav bsStyle="pills">
+                            <NavItem>
+                                <img src={img20} alt="layout-20" style={{ height: '16px' }} />
+                            </NavItem>
+                            <NavItem>
+                                <img src={img21} alt="layout-21" style={{ height: '16px' }} />
+                            </NavItem>
+                        </Nav>)) ||
+                    (selectedCourses.length == 3 &&
+                        <Nav bsStyle="pills">
+                            <NavItem>
+                                <img src={img30} alt="layout-30" style={{ height: '16px' }} />
+                            </NavItem>
+                            <NavItem>
+                                <img src={img31} alt="layout-31" style={{ height: '16px' }} />
+                            </NavItem>
+                            <NavItem>
+                                <img src={img32} alt="layout-32" style={{ height: '16px' }} />
+                            </NavItem>
+                            <NavItem>
+                                <img src={img33} alt="layout-33" style={{ height: '16px' }} />
+                            </NavItem>
+                            <NavItem>
+                                <img src={img34} alt="layout-34" style={{ height: '16px' }} />
+                            </NavItem>
+                            <NavItem>
+                                <img src={img35} alt="layout-35" style={{ height: '16px' }} />
+                            </NavItem>
+                        </Nav>)}
+
                 <NavDropdown
                     noCaret
                     disabled={notifications.length == 0}
