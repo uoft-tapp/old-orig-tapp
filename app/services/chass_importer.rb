@@ -93,14 +93,14 @@ class ChassImporter
         }
         application = insertion_helper(applicant.applications, data, ident, exists)
 
-
+        appliedFor = []
         applicant_entry["courses"].each do |position|
           position_ident = {position: position, round_id: @round_id}
           position_row = Position.where(position_ident).select(:id).take
-          Rails.logger.debug position_row
 
           if position_row
             position_id = position_row.id
+            appliedFor.push(position_id)
             pref_ident = {position_id: position_id}
             pref_exists = "preference with application #{application[:id]} & position #{position_id} already exists"
             data = {
@@ -110,8 +110,15 @@ class ChassImporter
             insertion_helper(application.preferences, data, pref_ident, exists)
           end
         end
-
         insert_preference(applicant_entry["course_preferences"], application)
+
+        Preference.where({application_id: application[:id]}).each do |position|
+          if !appliedFor.include?(position[:position_id])
+            Preference.find_by({application_id: application[:id], position_id: position[:position_id]}).destroy
+            Rails.logger.debug "delete Preference with Application #{application[:id]} and Position #{position[:position_id]}"
+          end
+        end
+
       end
     end
 
