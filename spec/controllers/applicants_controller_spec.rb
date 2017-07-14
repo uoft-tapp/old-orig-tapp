@@ -16,6 +16,7 @@ RSpec.describe ApplicantsController, type: :controller do
       let(:applicant) do
         Applicant.create!(
           utorid: "simps169",
+          app_id: "10",
           student_number: 1234567890,
           first_name: "Landy",
           last_name: "Simpson",
@@ -46,6 +47,7 @@ RSpec.describe ApplicantsController, type: :controller do
     let(:applicant) do
       Applicant.create!(
         utorid: "simps169",
+        app_id: "10",
         student_number: 1234567890,
         first_name: "Landy",
         last_name: "Simpson",

@@ -43,9 +43,8 @@ class ChassExporter
           application = get_application(applications, round_id)
           applicant = assignment.applicant
           if application
-            app_id = application[0][:app_id]
             data.push({
-              app_id: app_id,
+              app_id: applicant[:app_id],
               course_id: course_id,
               hours: hours,
               round_id: round_id.to_s,
