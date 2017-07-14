@@ -162,14 +162,6 @@ describe ChassImporter do
   end
 
   context "when importing applications" do
-    context "from a file with duplicate app_id" do
-      let (:mock_json) { File.read("./spec/support/chass_data/duplicate_app_id_applicant.json") }
-      it "raise a descriptive error" do
-        expect { subject }.to raise_error(ActiveRecord::RecordNotUnique,
-          /PG::UniqueViolation: ERROR:  duplicate key value violates unique con/)
-      end
-    end
-
     context "from an expected file" do
       let (:mock_json) { File.read("./spec/support/chass_data/applicant.json") }
       before(:each) do
