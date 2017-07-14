@@ -114,16 +114,21 @@ function onFetchApplicantsSuccess(resp) {
             address: app.address,
             dept: app.dept,
             program: (function(id) {
-                // will need to add 'MScAC', 'MEng', 'OG'
                 switch (id) {
-                    case '7PDF':
-                        return 'PostDoc';
                     case '1PHD':
                         return 'PhD';
                     case '2Msc':
                         return 'MSc';
+                    case '3MScAC':
+                        return 'MScAC';
                     case '4MASc':
                         return 'MASc';
+                    case '5MEng':
+                        return 'MEng';
+                    case '6Other':
+                        return 'OG';
+                    case '7PDF':
+                        return 'PostDoc';
                     case '8UG':
                         return 'UG';
                     default:
