@@ -231,6 +231,28 @@ describe ChassImporter do
       end
     end
 
+    context "from an expected file with several preferences" do
+      let (:mock_json) { File.read("./spec/support/chass_data/applicant_two_prefs.json") }
+      before(:each) do
+          # Sanity checking -- shouldn't ever fail
+        expect(Applicant.all.count).to eq(0)
+      end
+      before(:each) { subject } # Evaluate subject
+
+      it "updates all preferred courses to rank 1" do
+        applicant = Applicant.where(utorid: "applicant478").take
+        application ||= applicant.applications.take
+        application.preferences.each do |pref|
+          if (pref[Position.find_by(position: "C4M101H1F")[:id]] and
+            pref[Position.find_by(position: "C4M101H1F")[:id]])
+            expect(pref[:rank]).to eq(1)
+          elsif pref[Position.find_by(position: "CSC104H1S")[:id]]
+            expect(pref[:rank]).to eq(2)
+          end
+        end
+      end
+    end
+
     context "from file with non-existent course positions in courses" do
       let (:mock_json) { File.read("./spec/support/chass_data/nonexistent_course_position_applicant.json") }
       before(:each) do
