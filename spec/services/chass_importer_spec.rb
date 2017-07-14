@@ -140,6 +140,7 @@ describe ChassImporter do
       it "sets fields on the applicant record" do
         expect(Applicant.first.attributes.symbolize_keys).to include({
           utorid: "applicant478",
+          app_id: "478",
           student_number: "1425362850",
           first_name: "Luklorizur",
           last_name: "Mrokarczur",
@@ -172,19 +173,15 @@ describe ChassImporter do
 
       it "creates an applicant record" do
         applicant = Applicant.where(utorid: "applicant478").pluck(:id).first
-        expect(Application.where({applicant_id: applicant, app_id: 478}).count).to eq(1)
+        expect(Application.where({applicant_id: applicant}).count).to eq(1)
       end
 
       it "sets fields on the applicant record" do
         applicant = Applicant.where(utorid: "applicant478").pluck(:id).first
         expect(Application.first.attributes.symbolize_keys.as_json(:except => [:id, :created_at, :updated_at])).to include({
           applicant_id: applicant,
-          app_id: "478",
           ta_training: "N",
           access_acad_history: "N",
-          # dept: "Physics",
-          # program_id: "8UG",
-          # yip: 10,
           round_id: "110",
           ta_experience: "CSC148H5S (9), CSC258H5S (5), CSC300H1S (3), CSC209H1S (2), CSC321H1S (1)",
           academic_qualifications: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget dignissim sem. Curabitur at semper eros. Aenean nec sem lobortis, scelerisque mi at, aliquam diam. Mauris malesuada elit nibh, sed hendrerit nulla mattis sed. Mauris laoreet imperdiet dictum. Pellentesque risus nulla, varius ut massa ut, venenatis fringilla sapien. Cras eget euismod augue, eget dignissim erat. Cras nec nibh ullamcorper ante rutrum dapibus sed nec tellus. In hac habitasse platea dictumst. Suspendisse semper tellus ac sem tincidunt auctor.",
@@ -199,7 +196,7 @@ describe ChassImporter do
       it "does not duplicate application records" do
         # IDEA: run the importer a second time, check number of application is the same
         applicant = Applicant.where(utorid: "applicant478").pluck(:id).first
-        expect(Application.where({applicant_id: applicant, app_id: 478}).count).to eq(1)
+        expect(Application.where({applicant_id: applicant}).count).to eq(1)
       end
     end
   end
