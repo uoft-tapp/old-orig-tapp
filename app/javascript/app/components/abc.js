@@ -4,87 +4,69 @@ import { CourseMenu } from './courseMenu.js';
 import { CoursePanel } from './coursePanel.js';
 
 class ABC extends React.Component {
-    mapLayoutToPanels() {
-        let layoutId = this.props.func.getCoursePanelLayoutAsId();
-        let layout = this.props.func.getCoursePanelLayout();
+    // determine the appropriate styling to produce the specified layout
+    mapLayoutToStyling(layout) {
+        let panel1style, panel2style, panel3style, panel4style;
 
-        let course1, course2, course3, course4, panel1style, panel2style, panel3style, panel4style;
-        let temp;
-
-        switch (layoutId) {
+        switch (layout) {
             case 0:
                 return 0;
 
             case 1:
-                course1 = layout[0];
                 panel1style = { height: '100%', width: '100%' };
                 break;
 
-            case 20:
-                // stacked
-                (course1 = layout[0][0]), (course2 = layout[0][1]);
-                panel1style = panel2style = { height: '50%', width: '100%' };
-                break;
-
-            case 21:
-                // side-by-side
-                (course1 = layout[0]), (course2 = layout[1]);
+            case 2:
+                // side-by-side (default)
                 panel1style = panel2style = { height: '100%', width: '50%' };
                 break;
 
-            case 30:
+            case 2.1:
                 // stacked
-                [course1, course2, course3] = layout[0];
-
-                panel1style = panel2style = panel3style = {
-                    height: 'calc(100%/3)',
-                    width: '100%',
-                };
+                panel1style = panel2style = { height: '50%', width: '100%' };
                 break;
 
-            case 31:
-                // 1 panel left, 2 stacked panels right
-                [course1, [course2, course3]] = layout;
-
-                panel1style = { height: '100%', width: '50%' };
-                panel2style = panel3style = { height: '50%', width: '50%' };
-                break;
-
-            case 32:
-                // 2 stacked panels left, 1 panel right
-                [[course1, course3], course2] = layout;
-
-                panel1style = panel3style = { height: '50%', width: '50%' };
-                panel2style = { height: '100%', width: '50%', float: 'right' };
-                break;
-
-            case 33:
-                // 1 panel on top, 2 side-by-side panels on bottom
-                [[course1, course2], [temp, course3]] = layout;
-
-                panel1style = { height: '50%', width: '100%' };
-                panel2style = panel3style = { height: '50%', width: '50%' };
-                break;
-
-            case 34:
-                // 2 side-by-side panels on top, 1 panel on bottom
-                [[course1, course3], [course2, temp]] = layout;
-
-                panel1style = panel2style = { height: '50%', width: '50%' };
-                panel3style = { height: '50%', width: '100%' };
-                break;
-
-            case 35:
-                // side-by-side
-                [course1, course2, course3] = layout;
+            case 3:
+                // side-by-side (default)
                 panel1style = panel2style = panel3style = {
                     height: '100%',
                     width: 'calc(100%/3)',
                 };
                 break;
 
+            case 3.1:
+                // 1 panel left, 2 stacked panels right
+                panel1style = { height: '100%', width: '50%' };
+                panel2style = panel3style = { height: '50%', width: '50%' };
+                break;
+
+            case 3.2:
+                // 2 stacked panels left, 1 panel right
+                panel1style = panel3style = { height: '50%', width: '50%' };
+                panel2style = { height: '100%', width: '50%', float: 'right' };
+                break;
+
+            case 3.3:
+                // 1 panel on top, 2 side-by-side panels on bottom
+                panel1style = { height: '50%', width: '100%' };
+                panel2style = panel3style = { height: '50%', width: '50%' };
+                break;
+
+            case 3.4:
+                // 2 side-by-side panels on top, 1 panel on bottom
+                panel1style = panel2style = { height: '50%', width: '50%' };
+                panel3style = { height: '50%', width: '100%' };
+                break;
+
+            case 3.5:
+                // stacked
+                panel1style = panel2style = panel3style = {
+                    height: 'calc(100%/3)',
+                    width: '100%',
+                };
+                break;
+
             case 4:
-                [[course1, course2], [course3, course4]] = layout;
                 panel1style = panel2style = panel3style = panel4style = {
                     height: '50%',
                     width: '50%',
@@ -92,56 +74,68 @@ class ABC extends React.Component {
                 break;
         }
 
-        return {
-            course1: course1,
-            course2: course2,
-            course3: course3,
-            course4: course4,
-            panel1style: panel1style,
-            panel2style: panel2style,
-            panel3style: panel3style,
-            panel4style: panel4style,
-        };
+        return [panel1style, panel2style, panel3style, panel4style];
+    }
+
+    generateDefaultLayout() {
+        // check whether the current layout contains the correct number of courses
+        // if not, generate a default layout for the currently selected courses
+        let selected = this.props.func.getSelectedCourses();
+        let currLayout = this.props.func.getCoursePanelLayout();
+
+        if (Math.floor(currLayout) != selected.length) {
+            this.props.func.setCoursePanelLayout(selected.length);
+        }
+    }
+
+    componentWillMount() {
+        this.generateDefaultLayout();
+    }
+
+    componentWillUpdate() {
+        this.generateDefaultLayout();
     }
 
     render() {
-        let layout = this.mapLayoutToPanels();
+        let selected = this.props.func.getSelectedCourses();
+        let layout = this.props.func.getCoursePanelLayout();
+        let styles = this.mapLayoutToStyling(layout);
 
         return (
             <Grid fluid id="abc-grid">
                 <CourseMenu {...this.props} />
                 <div id="course-panel-layout">
-                    {layout == 0 &&
+                    {styles == 0 &&
                         <Well id="no-courses-well">
                             <p>Nothing here yet!</p>
                             <p>Select one or more courses to start.</p>
                         </Well>}
-                    {layout.course1 &&
+                    {selected[0] &&
                         <CoursePanel
                             key="course-panel-1"
-                            panelStyle={layout.panel1style}
-                            course={layout.course1}
+                            panelStyle={styles[0]}
+                            course={selected[0]}
                             {...this.props}
                         />}
-                    {layout.course2 &&
+                    {selected[1] &&
                         <CoursePanel
                             key="course-panel-2"
-                            panelStyle={layout.panel2style}
-                            course={layout.course2}
+                            panelStyle={styles[1]}
+                            course={selected[1]}
                             {...this.props}
                         />}
-                    {layout.course3 &&
+                    {selected[2] &&
                         <CoursePanel
                             key="course-panel-3"
-                            panelStyle={layout.panel3style}
-                            course={layout.course3}
+                            panelStyle={styles[2]}
+                            course={selected[2]}
                             {...this.props}
                         />}
-                    {layout.course4 &&
+                    {selected[3] &&
                         <CoursePanel
                             key="course-panel-4"
-                            panelStyle={layout.panel4style}
-                            course={layout.course4}
+                            panelStyle={styles[3]}
+                            course={selected[3]}
                             {...this.props}
                         />}
                 </div>
