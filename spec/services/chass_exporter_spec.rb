@@ -21,6 +21,7 @@ describe ChassExporter do
   before(:each) do
     @applicant = Applicant.create!(
       utorid: "cookie222",
+      app_id: "1",
       student_number: 1234567890,
       first_name: "Landy",
       last_name: "Simpson",
@@ -33,7 +34,6 @@ describe ChassExporter do
     )
 
     @application = @applicant.applications.create!(
-      app_id: "1",
       round_id: "110",
       ta_training: "N",
       access_acad_history: "Y",
@@ -70,7 +70,7 @@ describe ChassExporter do
             hours: 50
         )
         @data= [{
-          app_id: @application[:app_id],
+          app_id: @applicant[:app_id],
           course_id: position[:position],
           hours: @assignment[:hours],
           round_id: position[:round_id].to_s,

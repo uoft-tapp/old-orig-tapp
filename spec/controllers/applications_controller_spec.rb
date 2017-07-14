@@ -6,6 +6,7 @@ RSpec.describe ApplicationsController, type: :controller do
   let(:applicant) do
     Applicant.create!(
     utorid: "cookie222",
+    app_id: "-111",
     student_number: 1234567890,
     first_name: "Landy",
     last_name: "Simpson",
@@ -19,7 +20,6 @@ RSpec.describe ApplicationsController, type: :controller do
 
   let(:application) do
     applicant.applications.create!(
-    app_id: "-111",
     round_id: "110",
     ta_training: "N",
     access_acad_history: "Y",

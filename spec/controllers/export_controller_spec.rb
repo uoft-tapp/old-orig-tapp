@@ -33,7 +33,8 @@ RSpec.describe ExportController, type: :controller do
     before(:each) do
       @applicant = Applicant.create!(
         utorid: "cookie222",
-        student_number: 1234567890,
+        app_id: "14",
+      student_number: 1234567890,
         first_name: "Landy",
         last_name: "Simpson",
         dept: "Computer Science",
@@ -44,7 +45,6 @@ RSpec.describe ExportController, type: :controller do
         address: "100 Jameson Ave Toronto, ON M65-48H"
       )
       @application = @applicant.applications.create!(
-        app_id: "14",
         round_id: "110",
         ta_training: "N",
         access_acad_history: "Y",

@@ -21,6 +21,7 @@ RSpec.describe AssignmentsController, type: :controller do
 
       @applicant = Applicant.create!(
         utorid: "rocky145",
+        app_id: "-111",
         student_number: 1234567890,
         first_name: "Landy",
         last_name: "Simpson",
@@ -29,8 +30,7 @@ RSpec.describe AssignmentsController, type: :controller do
         address: "100 Jameson Ave Toronto, ON M65-48H"
         )
 
-        @application = @applicant.applications.create!(
-        app_id: "-111",
+      @application = @applicant.applications.create!(
         round_id: "110",
         ta_training: "N",
         access_acad_history: "Y",
@@ -89,6 +89,7 @@ RSpec.describe AssignmentsController, type: :controller do
 
       @applicant = Applicant.create!(
         utorid: "rocky145",
+        app_id: "-111",
         student_number: 1234567890,
         first_name: "Landy",
         last_name: "Simpson",
@@ -98,7 +99,6 @@ RSpec.describe AssignmentsController, type: :controller do
         )
 
         @application = @applicant.applications.create!(
-        app_id: "-111",
         round_id: "110",
         ta_training: "N",
         access_acad_history: "Y",
@@ -177,6 +177,7 @@ RSpec.describe AssignmentsController, type: :controller do
 
       @applicant = Applicant.create!(
         utorid: "rocky145",
+        app_id: "-111",
         student_number: 1234567890,
         first_name: "Landy",
         last_name: "Simpson",
@@ -189,7 +190,6 @@ RSpec.describe AssignmentsController, type: :controller do
         )
 
         @application = @applicant.applications.create!(
-        app_id: "-111",
         round_id: "110",
         ta_training: "N",
         access_acad_history: "Y",
@@ -253,6 +253,7 @@ RSpec.describe AssignmentsController, type: :controller do
 
       @applicant = Applicant.create!(
         utorid: "rocky145",
+        app_id: "-111",
         student_number: 1234567890,
         first_name: "Landy",
         last_name: "Simpson",
@@ -265,7 +266,6 @@ RSpec.describe AssignmentsController, type: :controller do
         )
 
         @application = @applicant.applications.create!(
-        app_id: "-111",
         round_id: "110",
         ta_training: "N",
         access_acad_history: "Y",
@@ -317,6 +317,7 @@ RSpec.describe AssignmentsController, type: :controller do
 
       @applicant = Applicant.create!(
         utorid: "rocky145",
+        app_id: "-111",
         student_number: 1234567890,
         first_name: "Landy",
         last_name: "Simpson",
@@ -329,7 +330,6 @@ RSpec.describe AssignmentsController, type: :controller do
         )
 
         @application = @applicant.applications.create!(
-        app_id: "-111",
         round_id: "110",
         ta_training: "N",
         access_acad_history: "Y",

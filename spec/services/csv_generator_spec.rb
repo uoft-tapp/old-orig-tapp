@@ -23,6 +23,7 @@ describe CSVGenerator do
     let(:applicant) do
       Applicant.create!(
       utorid: "cookie222",
+      app_id: "15",
       student_number: 1234567890,
       first_name: "Landy",
       last_name: "Simpson",
@@ -36,7 +37,6 @@ describe CSVGenerator do
 
     let(:application) do
       applicant.applications.create!(
-        app_id: "15",
         round_id: "110",
         ta_training: "N",
         access_acad_history: "Y",
@@ -96,6 +96,7 @@ describe CSVGenerator do
     let(:applicant) do
       Applicant.create!(
       utorid: "cookie222",
+      app_id: "1",
       student_number: 1234567890,
       first_name: "Landy",
       last_name: "Simpson",
@@ -109,7 +110,6 @@ describe CSVGenerator do
 
     let(:application) do
       applicant.applications.create!(
-        app_id: "1",
         round_id: "110",
         ta_training: "N",
         access_acad_history: "Y",
@@ -185,6 +185,7 @@ describe CSVGenerator do
       before(:each) do
         @applicant= Applicant.create!(
           utorid: "cookie222",
+          app_id: "1",
           student_number: 1234567890,
           first_name: "Landy",
           last_name: "Simpson",
@@ -196,7 +197,6 @@ describe CSVGenerator do
           address: "100 Jameson Ave Toronto, ON M65-48H"
         )
         @application = @applicant.applications.create!(
-          app_id: "1",
           round_id: "110",
           ta_training: "N",
           access_acad_history: "Y",

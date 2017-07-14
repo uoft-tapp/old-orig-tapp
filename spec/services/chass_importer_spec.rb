@@ -225,6 +225,7 @@ describe ChassImporter do
       before(:each) do
           # Sanity checking -- shouldn't ever fail
         expect(Applicant.all.count).to eq(0)
+        expect(Position.all.count).to eq(0)
       end
       before(:each) { subject } # Evaluate subject
 
