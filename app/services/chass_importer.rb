@@ -112,7 +112,7 @@ class ChassImporter
 
   def insert_preference(preferences, application)
     parse_preference(preferences).each do |preference|
-      position_ident = {position: preference, round_id: @round_id}
+      position_ident = {position: preference.strip, round_id: @round_id}
       position = Position.where(position_ident).select(:id).take
       if position
         preference_ident = {position_id: position.id}
