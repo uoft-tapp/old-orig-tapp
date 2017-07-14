@@ -160,6 +160,7 @@ class ChassImporter
       }
       position = insertion_helper(Position, data, ident, exists)
 
+      teaching_instructors = []
       course_entry["instructor"].each do |instructor|
         name = instructor["first_name"].strip+" "+instructor["last_name"].strip
         ident = {name: name}
@@ -170,8 +171,15 @@ class ChassImporter
             utorid: instructor["utorid"],
         }
         instructor = insertion_helper(Instructor, data, ident, exists)
+        teaching_instructors.push(instructor[:id])
         unless position.instructors.where(id: instructor[:id]).exists?
           position.instructors << [instructor]
+        end
+      end
+      position.instructors.each do |instructor|
+        if !teaching_instructors.include?(instructor[:id])
+          position.instructors.delete(instructor)
+          Rails.logger.debug "all instructors for Position #{position[:id]}: #{JSON.pretty_generate(position.instructors.as_json)}"
         end
       end
 
