@@ -31,22 +31,29 @@ class ChassImporter
     end
   end
 
-  def insertion_helper(model, condition, exists)
-    unless condition
-      db_model = model
-      Rails.logger.debug db_model.attributes
+  def insertion_helper(model, data, ident, exists)
+    unless model.where(ident).exists?
+      db_model = model.create(data)
+      Rails.logger.debug "new #{JSON.pretty_generate(db_model.as_json)}\n\n"
       db_model.save!
+      return db_model
     else
       Rails.logger.debug "#{exists}"
+      db_model = model.find_by(ident)
+      Rails.logger.debug "existing model #{JSON.pretty_generate(db_model.as_json)}\n"
+      db_model.update_attributes(data)
+      Rails.logger.debug "update model #{exists}\nupdate to #{JSON.pretty_generate(db_model.as_json)}\n\n"
+      db_model.save!
+      return db_model
     end
   end
 
   def insert_applicant
     @applicant_data.each do |applicant_entry|
       utorid = applicant_entry["utorid"]
-      condition = Applicant.where(utorid: utorid).exists?
-
-      applicant = Applicant.new(
+      ident = {utorid: utorid}
+      exists = "applicant #{utorid} already exists"
+      data = {
           utorid: utorid,
           student_number: applicant_entry["student_no"],
           first_name:applicant_entry["first_name"],
@@ -58,9 +65,8 @@ class ChassImporter
           yip: applicant_entry["yip"],
           address:applicant_entry["address"],
           commentary: ""
-      )
-      exists = "applicant #{utorid} already exists"
-      insertion_helper(applicant, condition, exists)
+      }
+      insertion_helper(Applicant, data, ident, exists)
     end
   end
 
@@ -69,10 +75,10 @@ class ChassImporter
         applicant = Applicant.where(utorid: applicant_entry["utorid"]).take!
 
         app_id = applicant_entry["app_id"].to_i
-        check_duplicate = {app_id: app_id}
+        ident = {app_id: app_id, round_id: @round_id}
+        exists = "application #{app_id}, from round #{round_id} already exists"
 
-        application = applicant.applications.where(check_duplicate).take
-        application ||= applicant.applications.build(
+        data = {
           app_id: app_id,
           round_id: @round_id,
           ta_training: applicant_entry["ta_training"],
@@ -84,9 +90,9 @@ class ChassImporter
           other_info: applicant_entry["other_info"],
           special_needs: applicant_entry["special_needs"],
           raw_prefs: applicant_entry["course_preferences"]
-        )
-        Rails.logger.debug "application #{app_id} already exists" unless application.new_record?
-        application.save!
+        }
+        application = insertion_helper(applicant.applications, data, ident, exists)
+
 
         applicant_entry["courses"].each do |position|
           position_ident = {position: position, round_id: @round_id}
@@ -95,14 +101,13 @@ class ChassImporter
 
           if position_row
             position_id = position_row.id
-            preference_ident = {position_id: position_id}
-            preference = application.preferences.where(preference_ident).take
-            preference ||= application.preferences.build(
+            pref_ident = {position_id: position_id}
+            pref_exists = "preference with application #{application[:id]} & position #{position_id} already exists"
+            data = {
               position_id: position_id,
               rank: 2
-            )
-            Rails.logger.debug "preference #{position_id} already exists" unless preference.new_record?
-            preference.save!
+            }
+            insertion_helper(application.preferences, data, pref_ident, exists)
           end
         end
 
@@ -131,8 +136,9 @@ class ChassImporter
       course_id = posting_id.split("-")[0].strip
       round_id = course_entry["round_id"]
 
-      condition = Position.where(position: posting_id, round_id: round_id).exists?
-      position = Position.new(
+      exists = "Position #{posting_id} already exists"
+      ident = {position: posting_id, round_id: round_id}
+      data = {
         position: posting_id,
         round_id: round_id,
         open: true,
@@ -144,25 +150,21 @@ class ChassImporter
         hours: course_entry["n_hours"],
         estimated_count: course_entry["n_positions"],
         estimated_total_hours: course_entry["total_hours"],
-      )
-      exists = "Position #{posting_id} already exists"
-      insertion_helper(position, condition, exists)
-
-      Rails.logger.debug "#{position.new_record?} #{position.valid?} #{position.attributes.inspect}"
+      }
+      position = insertion_helper(Position, data, ident, exists)
 
       course_entry["instructor"].each do |instructor|
-        name = instructor["first_name"]+" "+instructor["last_name"]
-        instructor_ident = Instructor.find_by(name: name)
-        if !instructor_ident
-          Instructor.create!(
+        name = instructor["first_name"].strip+" "+instructor["last_name"].strip
+        ident = {name: name}
+        exists = "Instructor #{name} alread exists"
+        data = {
             name: name,
             email: instructor["email"],
             utorid: instructor["utorid"],
-          )
-          instructor_ident = Instructor.find_by(name: name)
-        end
-        if instructor_ident
-          position.instructors << [instructor_ident]
+        }
+        instructor = insertion_helper(Instructor, data, ident, exists)
+        unless position.instructors.where(id: instructor[:id]).exists?
+          position.instructors << [instructor]
         end
       end
 

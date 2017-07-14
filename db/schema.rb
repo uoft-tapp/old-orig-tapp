@@ -47,7 +47,6 @@ ActiveRecord::Schema.define(version: 20170707190517) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "round_id"
-    t.index ["app_id"], name: "index_applications_on_app_id", unique: true
     t.index ["applicant_id"], name: "index_applications_on_applicant_id"
   end
 

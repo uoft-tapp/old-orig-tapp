@@ -18,6 +18,5 @@ class CreateApplications < ActiveRecord::Migration[5.1]
 
       t.timestamps
     end
-    add_index :applications, :app_id, unique: true
   end
 end
