@@ -17,6 +17,7 @@ ActiveRecord::Schema.define(version: 20170707190517) do
 
   create_table "applicants", force: :cascade do |t|
     t.string "utorid", null: false
+    t.string "app_id", null: false
     t.string "student_number"
     t.string "first_name"
     t.string "last_name"
@@ -34,7 +35,6 @@ ActiveRecord::Schema.define(version: 20170707190517) do
 
   create_table "applications", force: :cascade do |t|
     t.bigint "applicant_id"
-    t.string "app_id", null: false
     t.text "ta_training"
     t.string "access_acad_history"
     t.text "ta_experience"

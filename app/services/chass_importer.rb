@@ -55,6 +55,7 @@ class ChassImporter
       exists = "applicant #{utorid} already exists"
       data = {
           utorid: utorid,
+          app_id: applicant_entry["app_id"].to_i,
           student_number: applicant_entry["student_no"],
           first_name:applicant_entry["first_name"],
           last_name: applicant_entry["last_name"],
@@ -75,11 +76,10 @@ class ChassImporter
         applicant = Applicant.where(utorid: applicant_entry["utorid"]).take!
 
         app_id = applicant_entry["app_id"].to_i
-        ident = {app_id: app_id, round_id: @round_id}
+        ident = {round_id: @round_id}
         exists = "application #{app_id}, from round #{round_id} already exists"
 
         data = {
-          app_id: app_id,
           round_id: @round_id,
           ta_training: applicant_entry["ta_training"],
           access_acad_history: applicant_entry["access_acad_history"],
