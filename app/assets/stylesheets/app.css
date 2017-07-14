@@ -210,54 +210,94 @@ footer div p {
 }
 
 /* for CourseForm */
+#courses-grid {
+    --text-input-height: 30px;
+    --sep-width: 10px; /* width of margin between columns */
+    --col-1-width: 220px; /* immutable course information */
+    --col-2-width: 120px; /* numerical field labels */
+    --col-3-width: 70px; /* numerical fields */
+    --col-4-width: 220px; /* instructor form */
+    /* qualifications and responsibilities text areas */
+    --col-5-6-width: calc(calc(100vw -
+                               calc(var(--course-list-panel-width) + var(--col-1-width) + var(--col-2-width) +
+                               var(--col-3-width) + var(--col-4-width) + var(--sep-width)*5 + 170px))
+                          / 2);
+}
+
 .form_table{
     width: 100%;
 }
 .form_table td{
-    padding-right: 10px;
     vertical-align: top;
 }
 .form_table .course{
     font-weight: bold;
 }
-.form_table td:first-child{
-    width: 200px;
-}
-.form_table td:first-child input{
-    margin-left: 10px;
-    width: 90%;
-}
-.form_table td:nth-child(2){
-    width: 160px;
-}
-.form_table td:nth-child(2) p{
-    line-height: 30px;
-    margin-bottom: 5px;
-}
-.form_table td:nth-child(3){
-    width: 60px;
-}
-.form_table td:nth-child(3) input{
-    width: 50px;
-}
-.form_table td textarea{
-    height: 80px;
-    width: calc(calc(100vw - calc(12em + 520px)) / 3);
-    float: left;
-    resize: none;
-}
-.form_table p{
-    margin: 0;
-}
-.form_table input{
-    height: 30px;
+/* margin between text boxes in the first three columns */
+.form_table #col-1 p:first-child, .form_table #col-1 p:nth-child(2),
+.form_table #col-2 p:first-child, .form_table #col-2 p:nth-child(2),
+.form_table #col-3 p:first-child, .form_table #col-3 p:nth-child(2) {
     margin-bottom: 5px;
 }
 
+/* right padding for all but last column */
+.form_table td:not(#col-6) {
+    padding-right: var(--sep-width);
+}
+
+.form_table p {
+    margin: 0;
+}
+
+.form_table input {
+    width: 100%;
+    height: var(--text-input-height);
+}
+
+/* immutable course information */
+.form_table #col-1 {
+    width: var(--col-1-width);
+}
+
+/* numerical field labels */
+.form_table #col-2 {
+    width: var(--col-2-width);
+}
+.form_table #col-2 p {
+    height: var(--text-input-height);
+    line-height: var(--text-input-height);
+}
+.form_table #col-2 p b {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 1em;
+}
+
+/* numerical fields */
+.form_table #col-3{
+    width: var(--col-3-width);
+}
+
+/* qualifications and responsibilities text areas */
+.form_table #col-5, .form_table #col-6 {
+    width: var(--col-5-6-width);
+}
+
+/* last 3 columns */
+.form_table textarea {
+    width: 100%;
+    height: 80px;
+    float: left;
+    resize: none;
+}
+
 /* instructor form */
+.form_table #col-4 {
+    width: var(--col-4-width);
+}
+
 .instructor_form{
     border: #CCC 1px solid;
-    width: calc(calc(100vw - calc(12em + 520px)) / 3);
     height: 80px;
     overflow-y: auto;
 }
@@ -275,7 +315,6 @@ footer div p {
     margin: 0;
     height: 0px;
     vertical-align: text-bottom;
-    width: 100%;
     opacity: 0;
 }
 .instructor_form input[type="text"]:focus,

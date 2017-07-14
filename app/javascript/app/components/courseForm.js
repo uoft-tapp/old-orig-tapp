@@ -12,7 +12,7 @@ class CourseForm extends React.Component {
                     <table className="form_table">
                         <tbody>
                             <tr>
-                                <td>
+                                <td id="col-1">
                                     <p>
                                         <input
                                             type="text"
@@ -39,7 +39,7 @@ class CourseForm extends React.Component {
                                         />
                                     </p>
                                 </td>
-                                <td>
+                                <td id="col-2">
                                     <p>
                                         <b>Positions: </b>
                                     </p>
@@ -50,7 +50,7 @@ class CourseForm extends React.Component {
                                         <b>Estimated Enrollment: </b>
                                     </p>
                                 </td>
-                                <td>
+                                <td id="col-3">
                                     <p>
                                         <input
                                             type="number"
@@ -101,7 +101,7 @@ class CourseForm extends React.Component {
                                         />
                                     </p>
                                 </td>
-                                <td>
+                                <td id="col-4">
                                     <p>
                                         <b>Instructors: </b>
                                     </p>
@@ -116,7 +116,7 @@ class CourseForm extends React.Component {
                                         {...this.props}
                                     />
                                 </td>
-                                <td>
+                                <td id="col-5">
                                     <p>
                                         <b>Qualifications: </b>
                                     </p>
@@ -130,7 +130,7 @@ class CourseForm extends React.Component {
                                         value={course[1].qual}
                                     />
                                 </td>
-                                <td>
+                                <td id="col-6">
                                     <p>
                                         <b>Responsibilities: </b>
                                     </p>
