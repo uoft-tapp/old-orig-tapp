@@ -31,7 +31,7 @@ const initialState = {
 
     // id representing the current course panel layout in the ABC view
     // one of: 0, 1, 2, 2.1, 3, 3.1, 3.2, 3.3, 3.4, 3.5, 4
-    panelLayout: null,
+    panelLayout: 0,
 
     // will be populated with mappings of selected courses to their selected sort and filter fields
     panelFields: {},
