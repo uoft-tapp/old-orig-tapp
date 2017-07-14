@@ -159,10 +159,7 @@ class CoursePanel extends React.Component {
                         <i
                             className="fa fa-close"
                             style={{ float: 'right' }}
-                            onClick={() => {
-                                this.props.func.toggleSelectedCourse(this.props.course);
-                                this.props.func.toggleCoursePanel(this.props.course);
-                            }}
+                            onClick={() => this.props.func.toggleSelectedCourse(this.props.course)}
                         />
                     </span>
                 }

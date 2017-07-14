@@ -29,7 +29,9 @@ const initialState = {
         selected: [],
     },
 
-    panelLayout: [],
+    // id representing the current course panel layout in the ABC view
+    // one of: 0, 1, 2, 2.1, 3, 3.1, 3.2, 3.3, 3.4, 3.5, 4
+    panelLayout: null,
 
     // will be populated with mappings of selected courses to their selected sort and filter fields
     panelFields: {},
@@ -85,65 +87,6 @@ class AppState {
     /************************************
      ** view state getters and setters **
      ************************************/
-
-    // add a course panel to the ABC view
-    addCoursePanel(course, selectedCount) {
-        let layout = this._data.get('panelLayout');
-        this._data.unset('panelLayout', { silent: true });
-
-        switch (selectedCount) {
-            case 1:
-                // layout is now [ course ]
-                layout = [course];
-                break;
-
-            case 2:
-                // layout is now [ course1, course2 ]
-                layout.push(course);
-                break;
-
-            case 3:
-                if (layout.length == 2) {
-                    // layout was [ course1, course2 ], is now [ course1, course2, course3 ]
-                    layout.push(course);
-                } else {
-                    // layout was [ [course1, course2] ], is now [ course3, [course1, course2] ]
-                    layout = [course, layout];
-                }
-
-                break;
-
-            case 4:
-                // layout is now [ [course1, course2], [course3, course4] ]
-                let course1, course2, course3;
-
-                if (layout.length == 3) {
-                    // layout was [ course1, course2, course3 ]
-                    [course1, course2, course3] = layout;
-                } else if (layout.length == 1) {
-                    // layout was [ [course1, course2, course3] ]
-                    [course1, course2, course3] = layout[0];
-                } else if (layout[0].length == 1) {
-                    // layout was [ course1, [course2, course3] ]
-                    (course1 = layout[0]), ([course2, course3] = layout[1]);
-                } else if (layout[1].length == 1) {
-                    // layout was [ [course1, course2], course3 ]
-                    ([course1, course2] = layout[0]), (course3 = layout[1]);
-                } else if (layout[0][0] == layout[1][0]) {
-                    // layout was [ [course1, course2] [course1, course3] ]
-                    ([course1, course2] = layout[0]), (course3 = layout[1][1]);
-                } else {
-                    // layout was [ [course1, course2] [course3, course2] ]
-                    ([course1, course2] = layout[0]), (course3 = layout[1][0]);
-                }
-
-                layout = [[course1, course2], [course3, course]];
-
-                break;
-        }
-
-        return layout;
-    }
 
     // apply a sort to the applicant table in a course panel (sorted up initially)
     // note that we do not allow multiple sorts on the same field (incl. in different directions)
@@ -240,52 +183,6 @@ class AppState {
         return this._data.get('panelLayout');
     }
 
-    // return an id that represents the current course panel layout
-    // one of: 0, 1, 20, 21, 30, 31, 32, 33, 34, 35, 4
-    getCoursePanelLayoutAsId() {
-        let selected = this.getSelectedCourses();
-        let layout = this.getCoursePanelLayout();
-
-        switch (selected.length) {
-            case 0:
-                return 0;
-            case 1:
-                return 1;
-            case 2:
-                if (layout.length == 1) {
-                    // stacked
-                    return 20;
-                } else {
-                    // side-by-side
-                    return 21;
-                }
-            case 3:
-                if (layout.length == 1) {
-                    // stacked
-                    return 30;
-                } else if (layout.length == 2) {
-                    if (!(layout[0] instanceof Array) && layout[1] instanceof Array) {
-                        // 1 panel left, 2 stacked panels right
-                        return 31;
-                    } else if (!(layout[1] instanceof Array) && layout[0] instanceof Array) {
-                        // 2 stacked panels left, 1 panel right
-                        return 32;
-                    } else if (layout[0][0] == layout[1][0]) {
-                        // 1 panel on top, 2 side-by-side panels on bottom
-                        return 33;
-                    } else if (layout[0][1] == layout[1][1]) {
-                        // 2 side-by-side panels on top, 1 panel on bottom
-                        return 34;
-                    }
-                } else if (layout.length == 3) {
-                    // side-by-side
-                    return 35;
-                }
-            case 4:
-                return 4;
-        }
-    }
-
     getCoursePanelSortsByCourse(course) {
         return this.getCoursePanelFieldsByCourse(course).selectedSortFields;
     }
@@ -374,65 +271,6 @@ class AppState {
         this._data.set('nav.notifications', []);
     }
 
-    // remove a course panel from the ABC view
-    removeCoursePanel(course, selectedCount) {
-        let layout = this._data.get('panelLayout');
-        let layoutLen = layout.length;
-        this._data.unset('panelLayout', { silent: true });
-
-        switch (selectedCount) {
-            case 0:
-                layout = [];
-                break;
-
-            case 1: // layout is now [ course ]
-                if (layoutLen == 2) {
-                    // layout was [ course1, course2 ]
-                    layout = [layout[0] == course ? layout[1] : layout[0]];
-                } else {
-                    // layout was [ [course1, course2] ]
-                    layout = [layout[0][0] == course ? layout[0][1] : layout[0][0]];
-                }
-
-                break;
-
-            case 2: // layout is now [ course1, course2 ]
-                if (layoutLen == 1) {
-                    // layout was [ [course1, course2, course3] ]
-                    layout[0].splice(layout.indexOf(course), 1);
-                    layout = layout[0];
-                } else if (layoutLen == 2) {
-                    layout = [].concat(layout[0]).concat(layout[1]);
-
-                    if (layout.length == 3) {
-                        // layout was [ course1, [course2, course3] ] or [ [course1, course2], course3 ]
-                        layout.splice(layout.indexOf(course), 1);
-                    } else {
-                        // layout was [ [course1, course2], [course1, course3] ] or
-                        // [ [course1, course2], [course3, course2] ]
-                        layout.splice(layout.indexOf(course), 1);
-
-                        let i = layout.indexOf(course);
-                        if (i != -1) {
-                            layout.splice(i, 1);
-                        }
-                    }
-                } else if (layoutLen == 3) {
-                    // layout was [ course1, course2, course3 ]
-                    layout.splice(layout.indexOf(course), 1);
-                }
-
-                break;
-
-            case 3: // layout is now [ course1, course2, course3 ]
-                layout = layout[0].concat(layout[1]);
-                layout.splice(layout.indexOf(course), 1);
-                break;
-        }
-
-        return layout;
-    }
-
     // remove a sort from the applicant table in a course panel
     removeCoursePanelSort(course, field) {
         let i = this.getCoursePanelSortsByCourse(course).findIndex(([f, _]) => f == field);
@@ -463,68 +301,40 @@ class AppState {
         this._data.set('assignmentForm.assignmentInput', value);
     }
 
-    // set the course panel layout (assumes that the correct number of courses is selected for the specified
-    // layout); id should be one of: 0, 1, 20, 21, 30, 31, 32, 33, 34, 35, 4
-    setCoursePanelLayoutById(id) {
-        let layout,
-            courses = this.getSelectedCourses();
+    // set the course panel layout in the ABC view
+    setCoursePanelLayout(layout) {
+        let selected = this.getSelectedCourses();
+        let panelFields = this.getCoursePanelFields();
 
-        switch (id) {
-            case 0:
-                layout = [];
-                break;
+        // check that panel state trackers exist for exactly the current courses
+        if (selected != Object.keys(panelFields)) {
+            for (var course in panelFields) {
+                // if a tracker is missing, create it (the course was just selected)
+                if (!selected.includes(course)) {
+                    delete panelFields[course];
+                }
+            }
 
-            case 1:
-                layout = courses;
-                break;
+            for (var course = 0; course < selected.length; course++) {
+                // if a tracker is extra, remove it (the course was just unselected)
+                if (!(selected[course] in panelFields)) {
+                    panelFields[selected[course]] = {
+                        selectedSortFields: [],
+                        selectedFilters: {},
+                    };
+                }
+            }
 
-            case 20:
-                // stacked
-                layout = [courses];
-                break;
-
-            case 21:
-                // side-by-side
-                layout = courses;
-                break;
-
-            case 30:
-                // stacked
-                layout = [courses];
-                break;
-
-            case 31:
-                // 1 panel left, 2 stacked panels right
-                layout = [courses[0], courses.slice(1, 3)];
-                break;
-
-            case 32:
-                // 2 stacked panels left, 1 panel right
-                layout = [courses.slice(0, 2), courses[2]];
-                break;
-
-            case 33:
-                // 1 panel on top, 2 side-by-side panels on bottom
-                layout = [courses.slice(0, 2), [courses[0], courses[2]]];
-                break;
-
-            case 34:
-                // 2 side-by-side panels on top, 1 panel on bottom
-                layout = [[courses[0], courses[2]], [courses[1], courses[2]]];
-                break;
-
-            case 35:
-                // side-by-side
-                layout = courses;
-                break;
-
-            case 4:
-                layout = [courses.slice(0, 2), courses.slice(2, 4)];
-                break;
+            this._data.unset('panelFields', { silent: true });
+            this._data.set({ panelLayout: layout, panelFields: panelFields });
+        } else {
+            this._data.set('panelLayout', layout);
         }
+    }
 
-        this._data.unset('panelLayout', { silent: true });
-        this._data.set('panelLayout', layout);
+    setSelectedCourses(courses) {
+        this._data.unset('courseMenu.selected', { silent: true });
+        this._data.set('courseMenu.selected', courses);
     }
 
     // change the number of hours of a temporary assignment
@@ -535,51 +345,20 @@ class AppState {
 
     // switch the places of two courses in the course panel layout in the ABC view
     swapCoursesInLayout(course1, course2) {
-        let layout = this.getCoursePanelLayout();
-        this._data.unset('panelLayout', { silent: true });
+        let selected = this.getSelectedCourses(),
+            i1,
+            i2;
 
-        // find and replaces all instances of course1 in the layout with course2, and vice versa
-        // (assumes that the layout is at most 1 level of nested arrays
-        for (var i = 0; i < layout.length; i++) {
-            if (layout[i] instanceof Array) {
-                for (var j = 0; j < layout[i].length; j++) {
-                    if (layout[i][j] == course1) {
-                        layout[i][j] = course2;
-                    } else if (layout[i][j] == course2) {
-                        layout[i][j] = course1;
-                    }
-                }
-            } else {
-                if (layout[i] == course1) {
-                    layout[i] = course2;
-                } else if (layout[i] == course2) {
-                    layout[i] = course1;
-                }
+        for (var i = 0; i < selected.length; i++) {
+            if (selected[i] == course1) {
+                i1 = i;
+            } else if (selected[i] == course2) {
+                i2 = i;
             }
         }
 
-        this._data.set('panelLayout', layout);
-    }
-
-    // toggle the visibility of a course panel in the ABC view
-    toggleCoursePanel(course) {
-        let selected = this.getSelectedCourses();
-
-        let panelFields = this.getCoursePanelFields();
-
-        if (selected.includes(course)) {
-            // add course to layout
-            this._data.set('panelLayout', this.addCoursePanel(course, selected.length));
-
-            // add panel to panel state tracker
-            this._data.set('panelFields[' + course + ']', {
-                selectedSortFields: [],
-                selectedFilters: {},
-            });
-        } else {
-            // remove course from layout
-            this._data.set('panelLayout', this.removeCoursePanel(course, selected.length));
-        }
+        [selected[i1], selected[i2]] = [selected[i2], selected[i1]];
+        this.setSelectedCourses(selected);
     }
 
     // toggle a filter on the applicant table in a course panel

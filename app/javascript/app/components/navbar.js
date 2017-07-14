@@ -91,43 +91,45 @@ const CoursePanelLayoutTabs = props => {
         return null;
     }
 
-    if ([20, 21].includes(props.layout)) {
+    if ([2, 2.1].includes(props.layout)) {
         return (
             <Nav
                 bsStyle="pills"
-                onSelect={eventKey => props.func.setCoursePanelLayoutById(eventKey)}>
-                <NavItem eventKey={20}>
-                    <img src={img20} alt="layout-20" style={{ height: '16px' }} />
+                activeKey={props.layout}
+                onSelect={eventKey => props.func.setCoursePanelLayout(eventKey)}>
+                <NavItem eventKey={2}>
+                    <img src={img20} alt="layout-2.0" style={{ height: '16px' }} />
                 </NavItem>
-                <NavItem eventKey={21}>
-                    <img src={img21} alt="layout-21" style={{ height: '16px' }} />
+                <NavItem eventKey={2.1}>
+                    <img src={img21} alt="layout-2.1" style={{ height: '16px' }} />
                 </NavItem>
             </Nav>
         );
     }
 
-    if ([30, 31, 32, 33, 34, 35].includes(props.layout)) {
+    if ([3, 3.1, 3.2, 3.3, 3.4, 3.5].includes(props.layout)) {
         return (
             <Nav
                 bsStyle="pills"
-                onSelect={eventKey => props.func.setCoursePanelLayoutById(eventKey)}>
-                <NavItem eventKey={30}>
-                    <img src={img30} alt="layout-30" style={{ height: '16px' }} />
+                activeKey={props.layout}
+                onSelect={eventKey => props.func.setCoursePanelLayout(eventKey)}>
+                <NavItem eventKey={3}>
+                    <img src={img30} alt="layout-3.0" style={{ height: '16px' }} />
                 </NavItem>
-                <NavItem eventKey={31}>
-                    <img src={img31} alt="layout-31" style={{ height: '16px' }} />
+                <NavItem eventKey={3.1}>
+                    <img src={img31} alt="layout-3.1" style={{ height: '16px' }} />
                 </NavItem>
-                <NavItem eventKey={32}>
-                    <img src={img32} alt="layout-32" style={{ height: '16px' }} />
+                <NavItem eventKey={3.2}>
+                    <img src={img32} alt="layout-3.2" style={{ height: '16px' }} />
                 </NavItem>
-                <NavItem eventKey={33}>
-                    <img src={img33} alt="layout-33" style={{ height: '16px' }} />
+                <NavItem eventKey={3.3}>
+                    <img src={img33} alt="layout-3.3" style={{ height: '16px' }} />
                 </NavItem>
-                <NavItem eventKey={34}>
-                    <img src={img34} alt="layout-34" style={{ height: '16px' }} />
+                <NavItem eventKey={3.4}>
+                    <img src={img34} alt="layout-3.4" style={{ height: '16px' }} />
                 </NavItem>
-                <NavItem eventKey={35}>
-                    <img src={img35} alt="layout-35" style={{ height: '16px' }} />
+                <NavItem eventKey={3.5}>
+                    <img src={img35} alt="layout-3.5" style={{ height: '16px' }} />
                 </NavItem>
             </Nav>
         );
@@ -181,9 +183,6 @@ const Auth = props => {
 const NavbarInst = props => {
     let selectedTab = props.func.getSelectedNavTab();
 
-    // used to populate the layout menu in the ABC view
-    let selectedLayout = props.func.getCoursePanelLayoutAsId();
-
     return (
         <Navbar fixedTop fluid>
             <Navbar.Header>
@@ -192,10 +191,10 @@ const NavbarInst = props => {
 
             <ViewTabs selectedTab={selectedTab} {...props} />
 
-            <Nav pullRight activeKey={selectedLayout}>
+            <Nav pullRight>
                 <CoursePanelLayoutTabs
                     selectedTab={selectedTab}
-                    layout={selectedLayout}
+                    layout={props.func.getCoursePanelLayout()}
                     {...props}
                 />
                 <Notifications {...props} />
