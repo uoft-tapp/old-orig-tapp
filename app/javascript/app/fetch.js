@@ -289,24 +289,18 @@ function postAssignment(applicant, course, hours) {
     return postHelper(
         '/applicants/' + applicant + '/assignments',
         { position_id: course, hours: hours },
-        resp => {
-            appState.addAssignment(resp.applicant_id, resp.position_id, resp.hours, resp.id);
-        }
+        getAssignments
     );
 }
 
 // remove an assignment
 function deleteAssignment(applicant, assignment) {
-    return deleteHelper('/applicants/' + applicant + '/assignments/' + assignment, () => {
-        appState.removeAssignment(applicant, assignment);
-    });
+    return deleteHelper('/applicants/' + applicant + '/assignments/' + assignment, getAssignments);
 }
 
 // add/update the notes for an applicant
 function noteApplicant(applicant, notes) {
-    return putHelper('/applicants/' + applicant, { commentary: notes }, () => {
-        getApplicants();
-    });
+    return putHelper('/applicants/' + applicant, { commentary: notes }, getApplicants);
 }
 
 // update the number of hours for an assignment
@@ -314,16 +308,12 @@ function updateAssignmentHours(applicant, assignment, hours) {
     return putHelper(
         '/applicants/' + applicant + '/assignments/' + assignment,
         { hours: hours },
-        () => {
-            appState.setAssignmentHours(applicant, assignment, hours);
-        }
+        getAssignments
     );
 }
 
 function updateCourse(courseId, data, val, attr) {
-    return putHelper('/positions/' + courseId, data, () => {
-        appState.updateCourseAttribute(courseId, val, attr);
-    });
+    return putHelper('/positions/' + courseId, data, getCourses);
 }
 
 export {
