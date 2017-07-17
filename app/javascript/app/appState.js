@@ -524,18 +524,10 @@ class AppState {
      ** data getters and setters **
      ******************************/
 
-    // add an assignment to the assignment list
-    addAssignment(applicant, course, hours, assignment) {
-        let assignments = this.getAssignmentsList();
-
-        if (assignments[applicant]) {
-            assignments[applicant].push({ id: assignment, positionId: course, hours: hours });
-        } else {
-            assignments[applicant] = [{ id: assignment, positionId: course, hours: hours }];
-        }
-
-        this.setAssignmentsList(assignments);
-        this.incrementCourseAssignmentCount(course);
+    addInstructor(courseId, instructorId) {
+        let val = this._data.get('courses.list[' + courseId + '].instructors');
+        val.push(parseInt(instructorId));
+        fetch.updateCourse(courseId, { instructors: val }, val, 'instructors');
     }
 
     // check if any data is still being fetched
@@ -755,17 +747,11 @@ class AppState {
         this.removeTempAssignment(course);
     }
 
-    // remove an assignment from the assignment list
-    removeAssignment(applicant, assignment) {
-        let assignments = this.getAssignmentsList();
-
-        let i = assignments[applicant].findIndex(ass => ass.id == assignment);
-        let course = assignments[applicant][i].positionId;
-
-        assignments[applicant].splice(i, 1);
-
-        this.setAssignmentsList(assignments);
-        this.decrementCourseAssignmentCount(course);
+    removeInstructor(courseId, index) {
+        let val = this._data.get('courses.list[' + courseId + '].instructors');
+        val.splice(index, 1);
+        this._data.unset('courses.list[' + courseId + '].instructors', { silent: true });
+        fetch.updateCourse(courseId, { instructors: val }, val, 'instructors');
     }
 
     setApplicantsList(list) {
@@ -791,11 +777,6 @@ class AppState {
         }
 
         this.setApplicationsList(applications);
-    }
-
-    setAssignmentHours(applicant, assignment, hours) {
-        let i = this.getAssignmentsByApplicant(applicant).findIndex(ass => ass.id == assignment);
-        this._data.set('assignments.list[' + applicant + '][' + i + '].hours', hours);
     }
 
     setAssignmentsList(list) {
@@ -847,10 +828,6 @@ class AppState {
         fetch.updateAssignmentHours(applicant, assignment, hours);
     }
 
-    updateCourseAttribute(courseId, val, attr) {
-        this._data.set('courses.list[' + courseId + '].' + attr, val);
-    }
-
     updateCourse(courseId, val, props) {
         let data = {};
         switch (props) {
@@ -866,19 +843,6 @@ class AppState {
                 data['duties'] = val;
         }
         fetch.updateCourse(courseId, data, val, props);
-    }
-
-    addInstructor(courseId, instructorId) {
-        let val = this._data.get('courses.list[' + courseId + '].instructors');
-        val.push(parseInt(instructorId));
-        fetch.updateCourse(courseId, { instructors: val }, val, 'instructors');
-    }
-
-    removeInstructor(courseId, index) {
-        let val = this._data.get('courses.list[' + courseId + '].instructors');
-        val.splice(index, 1);
-        this._data.unset('courses.list[' + courseId + '].instructors', { silent: true });
-        fetch.updateCourse(courseId, { instructors: val }, val, 'instructors');
     }
 
     updateInstructorInput(courseId, input) {
