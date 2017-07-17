@@ -17,8 +17,9 @@ import { Alert } from 'react-bootstrap';
 
 import { appState } from '../app/appState.js';
 import { fetchAll } from '../app/fetch.js';
+import { routeConfig } from '../app/routeConfig.js';
 
-import { Navbar, navConfig } from '../app/components/navbar.js';
+import { Navbar } from '../app/components/navbar.js';
 import { Courses } from '../app/components/courses.js';
 import { ABC } from '../app/components/abc.js';
 import { Assigned } from '../app/components/assigned.js';
@@ -59,45 +60,44 @@ const RouterInst = props =>
 
             <Switch>
                 <Route
-                    path={navConfig.courses.route}
-                    render={() => <Courses navKey={navConfig.courses.key} {...props} />}
+                    path={routeConfig.courses.route}
+                    render={() => <Courses navKey={routeConfig.courses.key} {...props} />}
                 />
                 <Route
-                    path={navConfig.abc.route}
-                    render={() => <ABC navKey={navConfig.abc.key} {...props} />}
+                    path={routeConfig.abc.route}
+                    render={() => <ABC navKey={routeConfig.abc.key} {...props} />}
                 />
                 <Route
-                    path={navConfig.assigned.route}
-                    render={() => <Assigned navKey={navConfig.assigned.key} {...props} />}
+                    path={routeConfig.assigned.route}
+                    render={() => <Assigned navKey={routeConfig.assigned.key} {...props} />}
                 />
                 <Route
-                    path={navConfig.unassigned.route}
-                    render={() => <Unassigned navKey={navConfig.unassigned.key} {...props} />}
+                    path={routeConfig.unassigned.route}
+                    render={() => <Unassigned navKey={routeConfig.unassigned.key} {...props} />}
                 />
                 <Route
-                    path={navConfig.summary.route}
-                    render={() => <Summary navKey={navConfig.summary.key} {...props} />}
+                    path={routeConfig.summary.route}
+                    render={() => <Summary navKey={routeConfig.summary.key} {...props} />}
                 />
 
-                <Route path={navConfig.logout.route} render={() => <Bye />} />
+                <Route path={routeConfig.logout.route} render={() => <Bye />} />
 
                 <Route
-                    path={navConfig.applicant.route}
+                    path={routeConfig.applicant.route}
                     render={({ match }) =>
-                        <Applicant navKey={navConfig.applicant.key} match={match} {...props} />}
+                        <Applicant navKey={routeConfig.applicant.key} match={match} {...props} />}
                 />
             </Switch>
 
             <div className="container-fluid" id="alert-container">
-                {props.func.getAlerts().map(
-                    alert =>
-                        <Alert
-                            key={'alert-' + alert.id}
-                            bsStyle="danger"
-                            onClick={() => props.func.dismissAlert(alert.id)}
-                            onAnimationEnd={() => props.func.dismissAlert(alert.id)}>
-                            {alert.text}
-                        </Alert>
+                {props.func.getAlerts().map(alert =>
+                    <Alert
+                        key={'alert-' + alert.id}
+                        bsStyle="danger"
+                        onClick={() => props.func.dismissAlert(alert.id)}
+                        onAnimationEnd={() => props.func.dismissAlert(alert.id)}>
+                        {alert.text}
+                    </Alert>
                 )}
             </div>
         </div>

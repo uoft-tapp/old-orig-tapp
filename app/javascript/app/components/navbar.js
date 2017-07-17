@@ -4,6 +4,8 @@ import ReactDOM from 'react-dom';
 import { Link } from 'react-router-dom';
 import { Navbar, Nav, NavItem, NavDropdown, MenuItem } from 'react-bootstrap';
 
+import { routeConfig } from '../routeConfig.js';
+
 /*** Navbar ABC view layout icons ***/
 import img20 from '../img/layout-20.png';
 import img21 from '../img/layout-21.png';
@@ -13,44 +15,6 @@ import img32 from '../img/layout-32.png';
 import img33 from '../img/layout-33.png';
 import img34 from '../img/layout-34.png';
 import img35 from '../img/layout-35.png';
-
-/*** Navbar configuration ***/
-
-const config = {
-    courses: {
-        label: 'Courses',
-        route: '/courses',
-        key: '1',
-    },
-    abc: {
-        label: 'Applicants By Course',
-        route: '/applicantsbycourse',
-        key: '2',
-    },
-    assigned: {
-        label: 'All Assigned',
-        route: '/assigned',
-        key: '3',
-    },
-    unassigned: {
-        label: 'All Unassigned',
-        route: '/unassigned',
-        key: '4',
-    },
-    summary: {
-        label: 'Summary',
-        route: '/summary',
-        key: '5',
-    },
-    applicant: {
-        route: '/applicant/:id',
-        key: '6',
-    },
-    logout: {
-        route: '/bye',
-        key: '7',
-    },
-};
 
 /*** Navbar components ***/
 
@@ -62,23 +26,23 @@ const ViewTabs = props => {
             pullLeft
             activeKey={props.selectedTab}
             onSelect={eventKey => props.func.selectNavTab(eventKey)}>
-            <NavItem eventKey={config.courses.key}>
-                <Link to={config.courses.route}>Courses</Link>
+            <NavItem eventKey={routeConfig.courses.key}>
+                <Link to={routeConfig.courses.route}>Courses</Link>
             </NavItem>
-            <NavItem eventKey={config.abc.key}>
-                <Link to={config.abc.route}>Applicants by Course</Link>
+            <NavItem eventKey={routeConfig.abc.key}>
+                <Link to={routeConfig.abc.route}>Applicants by Course</Link>
             </NavItem>
-            <NavItem eventKey={config.assigned.key}>
-                <Link to={config.assigned.route}>All Assigned</Link>
+            <NavItem eventKey={routeConfig.assigned.key}>
+                <Link to={routeConfig.assigned.route}>All Assigned</Link>
             </NavItem>
-            <NavItem eventKey={config.unassigned.key}>
-                <Link to={config.unassigned.route}>All Unassigned</Link>
+            <NavItem eventKey={routeConfig.unassigned.key}>
+                <Link to={routeConfig.unassigned.route}>All Unassigned</Link>
             </NavItem>
-            <NavItem eventKey={config.summary.key}>
-                <Link to={config.summary.route}>Summary</Link>
+            <NavItem eventKey={routeConfig.summary.key}>
+                <Link to={routeConfig.summary.route}>Summary</Link>
             </NavItem>
             {selectedApplicant &&
-                <NavItem eventKey={config.applicant.key}>
+                <NavItem eventKey={routeConfig.applicant.key}>
                     {props.func.getApplicantById(selectedApplicant).lastName},&nbsp;
                     {props.func.getApplicantById(selectedApplicant).firstName}
                 </NavItem>}
@@ -87,7 +51,7 @@ const ViewTabs = props => {
 };
 
 const CoursePanelLayoutTabs = props => {
-    if (props.selectedTab != config.abc.key) {
+    if (props.selectedTab != routeConfig.abc.key) {
         return null;
     }
 
@@ -168,11 +132,11 @@ const Notifications = props => {
 const Auth = props => {
     return (
         <NavDropdown
-            eventKey={config.logout.key}
+            eventKey={routeConfig.logout.key}
             title={props.func.getCurrentUserRole() + ':' + props.func.getCurrentUserName()}
             id="nav-auth-dropdown">
-            <MenuItem eventKey={config.logout.key + '.1'}>
-                <Link to={config.logout.route}>Logout</Link>
+            <MenuItem eventKey={routeConfig.logout.key + '.1'}>
+                <Link to={routeConfig.logout.route}>Logout</Link>
             </MenuItem>
         </NavDropdown>
     );
@@ -204,4 +168,4 @@ const NavbarInst = props => {
     );
 };
 
-export { NavbarInst as Navbar, config as navConfig };
+export { NavbarInst as Navbar };
