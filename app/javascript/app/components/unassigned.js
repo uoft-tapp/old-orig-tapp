@@ -1,5 +1,6 @@
 import React from 'react';
 import { Grid, Row, Col, ButtonToolbar, Button } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import { ApplicantTableMenu } from './applicantTableMenu.js';
 import { ApplicantTable } from './applicantTable.js';
 
@@ -75,19 +76,21 @@ class Unassigned extends React.Component {
                 data: p =>
                     <ButtonToolbar>
                         {props.func.getApplicationById(p.applicantId).prefs.map(pref =>
-                            <Button
-                                bsSize="xsmall"
-                                style={{ borderColor: '#555' }}
-                                key={'button-' + p.applicantId + '-' + pref.positionId}
-                                href={
-                                    'applicantsbycourse#' +
+                            <Link
+                                to={
+                                    'applicantsbycourse/' +
+                                    pref.positionId +
+                                    '#' +
                                     pref.positionId +
                                     '-' +
                                     p.applicantId +
                                     '-0'
-                                }>
-                                {props.func.getCourseCodeById(pref.positionId)}
-                            </Button>
+                                }
+                                key={'link-' + p.applicantId + '-' + pref.positionId}>
+                                <Button bsSize="xsmall" style={{ borderColor: '#555' }}>
+                                    {props.func.getCourseCodeById(pref.positionId)}
+                                </Button>
+                            </Link>
                         )}
                     </ButtonToolbar>,
 
