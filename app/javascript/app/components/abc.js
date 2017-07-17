@@ -90,7 +90,11 @@ class ABC extends React.Component {
 
     componentWillMount() {
         // render this view with a specific course panel pre-selected
-        if (this.props.selectedCourse) {
+        let selected = this.props.func.getSelectedCourses();
+        if (
+            this.props.selectedCourse &&
+            !(selected.length == 1 && selected[0] == this.props.selectedCourse)
+        ) {
             this.props.func.setSelectedCourses([Number.parseInt(this.props.selectedCourse)]);
         }
 
@@ -100,7 +104,11 @@ class ABC extends React.Component {
 
     componentWillUpdate() {
         // render this view with a specific course panel pre-selected
-        if (this.props.selectedCourse) {
+        let selected = this.props.func.getSelectedCourses();
+        if (
+            this.props.selectedCourse &&
+            !(selected.length == 1 && selected[0] == this.props.selectedCourse)
+        ) {
             this.props.func.setSelectedCourses([Number.parseInt(this.props.selectedCourse)]);
         }
 
