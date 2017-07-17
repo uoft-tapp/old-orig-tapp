@@ -1,7 +1,9 @@
 import Backbone from 'backbone';
 import React from 'react';
 import NestedModel from 'backbone-nested';
+
 import * as fetch from './fetch.js';
+import { routeConfig } from './routeConfig.js';
 
 const initialState = {
     // navbar component
@@ -19,34 +21,36 @@ const initialState = {
     // list of UI alerts (can be text or HTML/JSX)
     alerts: [],
 
-    // course list component
+    // course list component used by courses view
     courseList: {
         selected: null,
     },
 
-    // course menu component
-    courseMenu: {
-        selected: [],
+    // ABC view
+    abcView: {
+        selectedCourses: [],
+
+        // id representing the current course panel layout in the ABC view
+        // one of: 0, 1, 2, 2.1, 3, 3.1, 3.2, 3.3, 3.4, 3.5, 4
+        panelLayout: 0,
+
+        // will be populated with mappings of selected courses to their selected sort and filter fields
+        panelFields: {},
     },
 
-    // id representing the current course panel layout in the ABC view
-    // one of: 0, 1, 2, 2.1, 3, 3.1, 3.2, 3.3, 3.4, 3.5, 4
-    panelLayout: 0,
-
-    // will be populated with mappings of selected courses to their selected sort and filter fields
-    panelFields: {},
-
-    // will be populated with selected sort and filter fields for single-applicant-table views
-    tableFields: {
+    // assigned view
+    assignedView: {
+        // will be populated with selected sort and filter fields
         selectedSortFields: [],
         selectedFilters: {},
     },
 
-    // assigned view
-    assignedView: null,
-
     // unassigned view
-    unassignedView: null,
+    unassignedView: {
+        // will be populated with selected sort and filter fields
+        selectedSortFields: [],
+        selectedFilters: {},
+    },
 
     // assignment form used by applicant view
     assignmentForm: {
@@ -92,7 +96,7 @@ class AppState {
     // note that we do not allow multiple sorts on the same field (incl. in different directions)
     addCoursePanelSort(course, field) {
         if (!this.getCoursePanelSortsByCourse(course).some(([f, _]) => f == field)) {
-            this._data.add('panelFields[' + course + '].selectedSortFields', [field, 1]);
+            this._data.add('abcView.panelFields[' + course + '].selectedSortFields', [field, 1]);
         } else {
             this.alert(
                 <span>
@@ -105,8 +109,10 @@ class AppState {
     // apply a sort to the applicant table in a single-applicant-table view (sorted up initially)
     // note that we do not allow multiple sorts on the same field (incl. in different directions)
     addSort(field) {
+        let view = this.getSelectedViewStateComponent();
+
         if (!this.getSorts().some(([f, _]) => f == field)) {
-            this._data.add('tableFields.selectedSortFields', [field, 1]);
+            this._data.add(view + '.selectedSortFields', [field, 1]);
         } else {
             this.alert(
                 <span>
@@ -125,7 +131,10 @@ class AppState {
     alert(text) {
         let alerts = this.getAlerts();
         // give it an id that is 1 larger than the largest id in the array, or 0 if the array is empty
-        this._data.add('alerts', { id: alerts.length > 0 ? (alerts[alerts.length-1].id+1) : 0, text: text });
+        this._data.add('alerts', {
+            id: alerts.length > 0 ? alerts[alerts.length - 1].id + 1 : 0,
+            text: text,
+        });
     }
 
     // check whether any of the given filters in the category are selected on the applicant table in a course panel
@@ -141,14 +150,16 @@ class AppState {
 
     // remove all selected filters on the applicant table in a course panel
     clearCoursePanelFilters(course) {
-        this._data.unset('panelFields[' + course + '].selectedFilters', { silent: true });
-        this._data.set('panelFields[' + course + '].selectedFilters', {});
+        this._data.unset('abcView.panelFields[' + course + '].selectedFilters', { silent: true });
+        this._data.set('abcView.panelFields[' + course + '].selectedFilters', {});
     }
 
     // remove all selected filters on the applicant table in a single-applicant-table view
     clearFilters() {
-        this._data.unset('tableFields.selectedFilters', { silent: true });
-        this._data.set('tableFields.selectedFilters', {});
+        let view = this.getSelectedViewStateComponent();
+
+        this._data.unset(view + '.selectedFilters', { silent: true });
+        this._data.set(view + '.selectedFilters', {});
     }
 
     createAssignmentForm(panels) {
@@ -161,8 +172,23 @@ class AppState {
         let alerts = this.getAlerts();
         let i = alerts.findIndex(alert => alert.id == id);
 
-        if (i != -1)
+        if (i != -1) {
             this._data.remove('alerts[' + i + ']');
+        }
+    }
+
+    // return the name of the appState component that corresponds to the currently selected view
+    getSelectedViewStateComponent() {
+        switch (this.getSelectedNavTab()) {
+            case routeConfig.abc.key:
+                return 'abcView';
+            case routeConfig.assigned.key:
+                return 'assignedView';
+            case routeConfig.unassigned.key:
+                return 'unassignedView';
+            default:
+                return null;
+        }
     }
 
     getAlerts() {
@@ -174,7 +200,7 @@ class AppState {
     }
 
     getCoursePanelFields() {
-        return this._data.get('panelFields');
+        return this._data.get('abcView.panelFields');
     }
 
     getCoursePanelFieldsByCourse(course) {
@@ -186,7 +212,7 @@ class AppState {
     }
 
     getCoursePanelLayout() {
-        return this._data.get('panelLayout');
+        return this._data.get('abcView.panelLayout');
     }
 
     getCoursePanelSortsByCourse(course) {
@@ -206,7 +232,7 @@ class AppState {
     }
 
     getSelectedCourses() {
-        return this._data.get('courseMenu.selected');
+        return this._data.get('abcView.selectedCourses');
     }
 
     getSelectedNavTab() {
@@ -222,7 +248,8 @@ class AppState {
     }
 
     getTableFields() {
-        return this._data.get('tableFields');
+        let view = this.getSelectedViewStateComponent();
+        return this._data.get(view);
     }
 
     getTempAssignments() {
@@ -280,13 +307,15 @@ class AppState {
     // remove a sort from the applicant table in a course panel
     removeCoursePanelSort(course, field) {
         let i = this.getCoursePanelSortsByCourse(course).findIndex(([f, _]) => f == field);
-        this._data.remove('panelFields[' + course + '].selectedSortFields[' + i + ']');
+        this._data.remove('abcView.panelFields[' + course + '].selectedSortFields[' + i + ']');
     }
 
     // remove a sort from the applicant table in a single-applicant-table view
     removeSort(field) {
+        let view = this.getSelectedViewStateComponent();
+
         let i = this.getSorts().findIndex(([f, _]) => f == field);
-        this._data.remove('tableFields.selectedSortFields[' + i + ']');
+        this._data.remove(view + '.selectedSortFields[' + i + ']');
     }
 
     // remove a temporary assignment from the assignment form of the applicant view
@@ -331,16 +360,16 @@ class AppState {
                 }
             }
 
-            this._data.unset('panelFields', { silent: true });
-            this._data.set({ panelLayout: layout, panelFields: panelFields });
+            this._data.unset('abcView.panelFields', { silent: true });
+            this._data.set({ 'abcView.panelLayout': layout, 'abcView.panelFields': panelFields });
         } else {
-            this._data.set('panelLayout', layout);
+            this._data.set('abcView.panelLayout', layout);
         }
     }
 
     setSelectedCourses(courses) {
-        this._data.unset('courseMenu.selected', { silent: true });
-        this._data.set('courseMenu.selected', courses);
+        this._data.unset('abcView.selectedCourses', { silent: true });
+        this._data.set('abcView.selectedCourses', courses);
     }
 
     // change the number of hours of a temporary assignment
@@ -370,7 +399,7 @@ class AppState {
     // toggle a filter on the applicant table in a course panel
     toggleCoursePanelFilter(course, field, category) {
         let filters = this.getCoursePanelFiltersByCourse(course);
-        this._data.unset('panelFields[' + course + '].selectedFilters', { silent: true });
+        this._data.unset('abcView.panelFields[' + course + '].selectedFilters', { silent: true });
 
         if (filters[field]) {
             let i = filters[field].indexOf(category);
@@ -391,7 +420,7 @@ class AppState {
             filters[field] = [category];
         }
 
-        this._data.set('panelFields[' + course + '].selectedFilters', filters);
+        this._data.set('abcView.panelFields[' + course + '].selectedFilters', filters);
     }
 
     // toggle the sort direction of the sort currently applied to the applicant table in a course panel
@@ -400,17 +429,21 @@ class AppState {
         let i = sortFields.findIndex(([f, _]) => f == field);
 
         if (i != -1) {
-            this._data.unset('panelFields[' + course + '].selectedSortFields', { silent: true });
+            this._data.unset('abcView.panelFields[' + course + '].selectedSortFields', {
+                silent: true,
+            });
 
             sortFields[i][1] = -sortFields[i][1];
-            this._data.set('panelFields[' + course + '].selectedSortFields', sortFields);
+            this._data.set('abcView.panelFields[' + course + '].selectedSortFields', sortFields);
         }
     }
 
     // toggle a filter on the applicant table in a single-applicant-table view
     toggleFilter(field, category) {
+        let view = this.getSelectedViewStateComponent();
+
         let filters = this.getFilters();
-        this._data.unset('tableFields.selectedFilters', { silent: true });
+        this._data.unset(view + '.selectedFilters', { silent: true });
 
         if (filters[field]) {
             let i = filters[field].indexOf(category);
@@ -431,7 +464,7 @@ class AppState {
             filters[field] = [category];
         }
 
-        this._data.set('tableFields.selectedFilters', filters);
+        this._data.set(view + '.selectedFilters', filters);
     }
 
     // toggle the expanded state of a panel in the applicant assignment form component
@@ -450,7 +483,7 @@ class AppState {
 
         if (i == -1) {
             if (selected.length < 4) {
-                this._data.add('courseMenu.selected', course);
+                this._data.add('abcView.selectedCourses', course);
             } else {
                 this.alert(
                     <span>
@@ -459,20 +492,22 @@ class AppState {
                 );
             }
         } else {
-            this._data.remove('courseMenu.selected[' + i + ']');
+            this._data.remove('abcView.selectedCourses[' + i + ']');
         }
     }
 
     // toggle the sort direction of the sort currently applied to the applicant table in a single-applicant-table view
     toggleSortDir(field) {
+        let view = this.getSelectedViewStateComponent();
+
         const sortFields = this.getSorts();
         let i = sortFields.findIndex(([f, _]) => f == field);
 
         if (i != -1) {
-            this._data.unset('tableFields.selectedSortFields', { silent: true });
+            this._data.unset(view + '.selectedSortFields', { silent: true });
 
             sortFields[i][1] = -sortFields[i][1];
-            this._data.set('tableFields.selectedSortFields', sortFields);
+            this._data.set(view + '.selectedSortFields', sortFields);
         }
     }
 
@@ -810,16 +845,16 @@ class AppState {
     updateCourse(courseId, val, props) {
         let data = {};
         switch (props) {
-          case "estimatedPositions":
-            data["estimated_count"] = val;
-          case "positionHours":
-            data["hours"] = val;
-          case "estimatedEnrol":
-            data["estimated_enrolment"] = val;
-          case "qual":
-            data["qualifications"] = val;
-          case "resp":
-            data["duties"] = val;
+            case 'estimatedPositions':
+                data['estimated_count'] = val;
+            case 'positionHours':
+                data['hours'] = val;
+            case 'estimatedEnrol':
+                data['estimated_enrolment'] = val;
+            case 'qual':
+                data['qualifications'] = val;
+            case 'resp':
+                data['duties'] = val;
         }
         fetch.updateCourse(courseId, data, val, props);
     }
@@ -838,8 +873,9 @@ class AppState {
     }
 
     updateInstructorInput(courseId, input) {
-        if(input===undefined)
-          input = "";
+        if (input === undefined) {
+            input = '';
+        }
         this._data.set('courses.list[' + courseId + '].instructor_input', input);
         let visible_input = document.getElementById('input_' + courseId);
         visible_input.innerHTML = input;
