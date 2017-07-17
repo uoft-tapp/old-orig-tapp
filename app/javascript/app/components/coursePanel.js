@@ -145,9 +145,6 @@ class CoursePanel extends React.Component {
 
     render() {
         let course = this.props.func.getCourseById(this.props.course);
-        if (!course) {
-            return null;
-        }
 
         return (
             <Panel

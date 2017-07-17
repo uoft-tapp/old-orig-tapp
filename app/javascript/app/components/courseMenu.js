@@ -21,10 +21,6 @@ class CourseMenu extends React.Component {
     }
 
     render() {
-        if (!this.courses) {
-            return null;
-        }
-
         const list = this.courses.map(([key, val]) => {
             return (
                 <ListGroupItem
