@@ -159,7 +159,7 @@ class CourseForm extends React.Component {
                 if (!this.alreadyAddedInstructor(i, instructors)) {
                     this.props.func.addInstructor(course, i);
                 } else {
-                    alert("You've already added this instructor.");
+                    this.props.func.alert("You've already added this instructor.");
                 }
                 input = '';
                 span.innerHTML = '';
