@@ -2,154 +2,138 @@ import React from 'react';
 import { Panel, ListGroup, ListGroupItem, Badge } from 'react-bootstrap';
 
 class CourseForm extends React.Component {
-    setForms() {
-        if (!this.props.func.anyFetching()) {
-            let courses = this.props.func.getCoursesList();
-            let instructors = this.props.func.getInstructorsList();
-            return Object.entries(courses).map((course, key) =>
-                <ListGroupItem key={key}>
-                    <a name={course[0]} />
-                    <table className="form_table">
-                        <tbody>
-                            <tr>
-                                <td id="col-1">
-                                    <p>
-                                        <input
-                                            type="text"
-                                            value={course[1].code}
-                                            className="course"
-                                            readOnly
-                                            disabled
-                                        />
-                                    </p>
-                                    <p>
-                                        <input
-                                            type="text"
-                                            value={course[1].name}
-                                            readOnly
-                                            disabled
-                                        />
-                                    </p>
-                                    <p>
-                                        <input
-                                            type="text"
-                                            value={course[1].campus}
-                                            readOnly
-                                            disabled
-                                        />
-                                    </p>
-                                </td>
-                                <td id="col-2">
-                                    <p>
-                                        <b>Positions: </b>
-                                    </p>
-                                    <p>
-                                        <b>Hours/Position: </b>
-                                    </p>
-                                    <p>
-                                        <b>Estimated Enrollment: </b>
-                                    </p>
-                                </td>
-                                <td id="col-3">
-                                    <p>
-                                        <input
-                                            type="number"
-                                            value={course[1].estimatedPositions
-                                                  ? course[1].estimatedPositions
-                                                  : 0
-                                            }
-                                            min="0"
-                                            onChange={event =>
-                                                this.props.func.updateCourse(
-                                                    course[0],
-                                                    event.target.value,
-                                                    "estimatedPositions"
-                                                )}
-                                        />
-                                    </p>
-                                    <p>
-                                        <input
-                                            type="number"
-                                            value={course[1].positionHours
-                                                  ? course[1].positionHours
-                                                  : 0
-                                            }
-                                            min="0"
-                                            onChange={event =>
-                                                this.props.func.updateCourse(
-                                                    course[0],
-                                                    event.target.value,
-                                                    'positionHours'
-                                                )}
-                                        />
-                                    </p>
-                                    <p>
-                                        <input
-                                            type="number"
-                                            value={
-                                                course[1].estimatedEnrol
-                                                    ? course[1].estimatedEnrol
-                                                    : 0
-                                            }
-                                            min="0"
-                                            onChange={event =>
-                                                this.props.func.updateCourse(
-                                                    course[0],
-                                                    event.target.value,
-                                                    "estimatedEnrol"
-                                                )}
-                                        />
-                                    </p>
-                                </td>
-                                <td id="col-4">
-                                    <p>
-                                        <b>Instructors: </b>
-                                    </p>
-                                    <InstructorForm
-                                        list={'instructor_' + key}
-                                        course={course[0]}
-                                        input={course[1].instructor_input}
-                                        instructors={course[1].instructors}
-                                        instructor_data={instructors}
-                                        state={this.props.func}
-                                        self={this}
-                                        {...this.props}
+    setForms(courses, instructors) {
+        return Object.entries(courses).map((course, key) =>
+            <ListGroupItem key={key}>
+                <a name={course[0]} />
+                <table className="form_table">
+                    <tbody>
+                        <tr>
+                            <td id="col-1">
+                                <p>
+                                    <input
+                                        type="text"
+                                        value={course[1].code}
+                                        className="course"
+                                        readOnly
+                                        disabled
                                     />
-                                </td>
-                                <td id="col-5">
-                                    <p>
-                                        <b>Qualifications: </b>
-                                    </p>
-                                    <textarea
+                                </p>
+                                <p>
+                                    <input type="text" value={course[1].name} readOnly disabled />
+                                </p>
+                                <p>
+                                    <input type="text" value={course[1].campus} readOnly disabled />
+                                </p>
+                            </td>
+                            <td id="col-2">
+                                <p>
+                                    <b>Positions: </b>
+                                </p>
+                                <p>
+                                    <b>Hours/Position: </b>
+                                </p>
+                                <p>
+                                    <b>Estimated Enrollment: </b>
+                                </p>
+                            </td>
+                            <td id="col-3">
+                                <p>
+                                    <input
+                                        type="number"
+                                        value={
+                                            course[1].estimatedPositions
+                                                ? course[1].estimatedPositions
+                                                : 0
+                                        }
+                                        min="0"
                                         onChange={event =>
                                             this.props.func.updateCourse(
-                                              course[0],
-                                              event.target.value,
-                                              "qual"
+                                                course[0],
+                                                event.target.value,
+                                                'estimatedPositions'
                                             )}
-                                        value={course[1].qual}
                                     />
-                                </td>
-                                <td id="col-6">
-                                    <p>
-                                        <b>Responsibilities: </b>
-                                    </p>
-                                    <textarea
+                                </p>
+                                <p>
+                                    <input
+                                        type="number"
+                                        value={
+                                            course[1].positionHours ? course[1].positionHours : 0
+                                        }
+                                        min="0"
                                         onChange={event =>
                                             this.props.func.updateCourse(
-                                              course[0],
-                                              event.target.value,
-                                              "resp"
+                                                course[0],
+                                                event.target.value,
+                                                'positionHours'
                                             )}
-                                        value={course[1].resp}
                                     />
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </ListGroupItem>
-            );
-        }
+                                </p>
+                                <p>
+                                    <input
+                                        type="number"
+                                        value={
+                                            course[1].estimatedEnrol ? course[1].estimatedEnrol : 0
+                                        }
+                                        min="0"
+                                        onChange={event =>
+                                            this.props.func.updateCourse(
+                                                course[0],
+                                                event.target.value,
+                                                'estimatedEnrol'
+                                            )}
+                                    />
+                                </p>
+                            </td>
+                            <td id="col-4">
+                                <p>
+                                    <b>Instructors: </b>
+                                </p>
+                                <InstructorForm
+                                    list={'instructor_' + key}
+                                    course={course[0]}
+                                    input={course[1].instructor_input}
+                                    instructors={course[1].instructors}
+                                    instructor_data={instructors}
+                                    state={this.props.func}
+                                    self={this}
+                                    {...this.props}
+                                />
+                            </td>
+                            <td id="col-5">
+                                <p>
+                                    <b>Qualifications: </b>
+                                </p>
+                                <textarea
+                                    onChange={event =>
+                                        this.props.func.updateCourse(
+                                            course[0],
+                                            event.target.value,
+                                            'qual'
+                                        )}
+                                    value={course[1].qual}
+                                />
+                            </td>
+                            <td id="col-6">
+                                <p>
+                                    <b>Responsibilities: </b>
+                                </p>
+                                <textarea
+                                    onChange={event =>
+                                        this.props.func.updateCourse(
+                                            course[0],
+                                            event.target.value,
+                                            'resp'
+                                        )}
+                                    value={course[1].resp}
+                                />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </ListGroupItem>
+        );
     }
 
     isInstructor(input, course, instructors, instructor_data) {
@@ -185,10 +169,13 @@ class CourseForm extends React.Component {
     }
 
     render() {
+        let courses = this.props.func.getCoursesList();
+        let instructors = this.props.func.getInstructorsList();
+
         return (
             <Panel id="course-form">
                 <ListGroup fill>
-                    {this.setForms()}
+                    {this.setForms(courses, instructors)}
                 </ListGroup>
             </Panel>
         );

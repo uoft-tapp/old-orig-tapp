@@ -718,6 +718,26 @@ class AppState {
         return this.idEntries(applicants);
     }
 
+    isApplicantsListReady() {
+        return !this.fetchingApplicants() && this.getApplicantsList() != null;
+    }
+
+    isApplicationsListReady() {
+        return !this.fetchingApplications() && this.getApplicationsList() != null;
+    }
+
+    isAssignmentsListReady() {
+        return !this.fetchingAssignments() && this.getAssignmentsList() != null;
+    }
+
+    isCoursesListReady() {
+        return !this.fetchingCourses() && this.getCoursesList() != null;
+    }
+
+    isInstructorsListReady() {
+        return !this.fetchingInstructors() && this.getInstructorsList() != null;
+    }
+
     // add/update the notes for an applicant
     noteApplicant(applicant, notes) {
         fetch.noteApplicant(applicant, notes);
@@ -786,23 +806,23 @@ class AppState {
     }
 
     setFetchingApplicantsList(fetching) {
-        this._data.set('applicants.fetching', fetching, { silent: true });
+        this._data.set('applicants.fetching', fetching);
     }
 
     setFetchingApplicationsList(fetching) {
-        this._data.set('applications.fetching', fetching, { silent: true });
+        this._data.set('applications.fetching', fetching);
     }
 
     setFetchingAssignmentsList(fetching) {
-        this._data.set('assignments.fetching', fetching, { silent: true });
+        this._data.set('assignments.fetching', fetching);
     }
 
     setFetchingCoursesList(fetching) {
-        this._data.set('courses.fetching', fetching, { silent: true });
+        this._data.set('courses.fetching', fetching);
     }
 
     setFetchingInstructorsList(fetching) {
-        this._data.set('instructors.fetching', fetching, { silent: true });
+        this._data.set('instructors.fetching', fetching);
     }
 
     setInstructorsList(list) {
