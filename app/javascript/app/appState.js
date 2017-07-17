@@ -551,13 +551,6 @@ class AppState {
         fetch.postAssignment(applicant, course, hours);
     }
 
-    decrementCourseAssignmentCount(course) {
-        let courses = this.getCoursesList();
-        courses[course].assignmentCount--;
-
-        this.setCoursesList(courses);
-    }
-
     // delete an assignment
     deleteAssignment(applicant, assignment) {
         fetch.deleteAssignment(applicant, assignment);
@@ -725,13 +718,6 @@ class AppState {
         return this.idEntries(applicants);
     }
 
-    incrementCourseAssignmentCount(course) {
-        let courses = this.getCoursesList();
-        courses[course].assignmentCount++;
-
-        this.setCoursesList(courses);
-    }
-
     // add/update the notes for an applicant
     noteApplicant(applicant, notes) {
         fetch.noteApplicant(applicant, notes);
@@ -742,6 +728,7 @@ class AppState {
         let applicant = this.getSelectedApplicant();
         let tempAssignment = this.getTempAssignments().find(ass => ass.positionId == course);
 
+        // note that there are two 'set' calls here
         this.createAssignment(applicant, course, tempAssignment.hours);
 
         this.removeTempAssignment(course);
@@ -750,7 +737,6 @@ class AppState {
     removeInstructor(courseId, index) {
         let val = this._data.get('courses.list[' + courseId + '].instructors');
         val.splice(index, 1);
-        this._data.unset('courses.list[' + courseId + '].instructors', { silent: true });
         fetch.updateCourse(courseId, { instructors: val }, val, 'instructors');
     }
 
@@ -800,23 +786,23 @@ class AppState {
     }
 
     setFetchingApplicantsList(fetching) {
-        this._data.set('applicants.fetching', fetching);
+        this._data.set('applicants.fetching', fetching, { silent: true });
     }
 
     setFetchingApplicationsList(fetching) {
-        this._data.set('applications.fetching', fetching);
+        this._data.set('applications.fetching', fetching, { silent: true });
     }
 
     setFetchingAssignmentsList(fetching) {
-        this._data.set('assignments.fetching', fetching);
+        this._data.set('assignments.fetching', fetching, { silent: true });
     }
 
     setFetchingCoursesList(fetching) {
-        this._data.set('courses.fetching', fetching);
+        this._data.set('courses.fetching', fetching, { silent: true });
     }
 
     setFetchingInstructorsList(fetching) {
-        this._data.set('instructors.fetching', fetching);
+        this._data.set('instructors.fetching', fetching, { silent: true });
     }
 
     setInstructorsList(list) {
