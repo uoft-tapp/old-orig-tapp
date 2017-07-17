@@ -123,7 +123,9 @@ class AppState {
 
     // add an alert to the list of active alerts
     alert(text) {
-        this._data.add('alerts', { text: text, active: true });
+        let alerts = this.getAlerts();
+        // give it an id that is 1 larger than the largest id in the array, or 0 if the array is empty
+        this._data.add('alerts', { id: alerts.length > 0 ? (alerts[alerts.length-1].id+1) : 0, text: text });
     }
 
     // check whether any of the given filters in the category are selected on the applicant table in a course panel
@@ -155,8 +157,12 @@ class AppState {
         }
     }
 
-    dismissAlert(index) {
-        this._data.set('alerts[' + index + '].active', false);
+    dismissAlert(id) {
+        let alerts = this.getAlerts();
+        let i = alerts.findIndex(alert => alert.id == id);
+
+        if (i != -1)
+            this._data.remove('alerts[' + i + ']');
     }
 
     getAlerts() {

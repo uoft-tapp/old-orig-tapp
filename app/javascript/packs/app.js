@@ -90,13 +90,12 @@ const RouterInst = props =>
 
             <div className="container-fluid" id="alert-container">
                 {props.func.getAlerts().map(
-                    (alert, i) =>
-                        alert.active &&
+                    alert =>
                         <Alert
-                            key={'alert-' + i}
+                            key={'alert-' + alert.id}
                             bsStyle="danger"
-                            onClick={() => props.func.dismissAlert(i)}
-                            onAnimationEnd={() => props.func.dismissAlert(i)}>
+                            onClick={() => props.func.dismissAlert(alert.id)}
+                            onAnimationEnd={() => props.func.dismissAlert(alert.id)}>
                             {alert.text}
                         </Alert>
                 )}
