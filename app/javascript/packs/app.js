@@ -13,7 +13,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import { Modal, Alert } from 'react-bootstrap';
+import { Alert } from 'react-bootstrap';
 
 import { appState } from '../app/appState.js';
 import { fetchAll } from '../app/fetch.js';
@@ -25,7 +25,7 @@ import { ABC } from '../app/components/abc.js';
 import { Assigned } from '../app/components/assigned.js';
 import { Unassigned } from '../app/components/unassigned.js';
 import { Summary } from '../app/components/summary.js';
-import { Applicant } from '../app/components/applicant.js';
+import { ApplicantModal } from '../app/components/applicantModal.js';
 
 /*** Main app component ***/
 
@@ -95,21 +95,7 @@ const RouterInst = props => {
                     <Route path={routeConfig.logout.route} render={() => <Bye />} />
                 </Switch>
 
-                {selectedApplicant &&
-                    <Modal
-                        id="applicant-modal"
-                        show={true}
-                        onHide={() => props.func.unselectApplicant()}>
-                        <Modal.Header closeButton>
-                            <Modal.Title>
-                                {props.func.getApplicantById(selectedApplicant).lastName},&nbsp;
-                                {props.func.getApplicantById(selectedApplicant).firstName}
-                            </Modal.Title>
-                        </Modal.Header>
-                        <Modal.Body>
-                            <Applicant applicantId={selectedApplicant} {...props} />
-                        </Modal.Body>
-                    </Modal>}
+                {selectedApplicant && <ApplicantModal applicantId={selectedApplicant} {...props} />}
 
                 <div className="container-fluid" id="alert-container">
                     {props.func.getAlerts().map(alert =>
