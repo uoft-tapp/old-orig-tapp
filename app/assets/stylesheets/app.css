@@ -143,6 +143,11 @@ footer div p {
     overflow: auto;
 }
 
+#assigned-grid .highlightOnHover:hover, #unassigned-grid .highlightOnHover:hover {
+    font-weight: bold;
+    cursor: pointer;
+}
+
 /* for Applicant modal */
 #applicant-modal .modal-dialog {
     width: 98vw;

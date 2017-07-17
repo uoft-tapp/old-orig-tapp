@@ -13,7 +13,9 @@ class Unassigned extends React.Component {
             {
                 header: 'Last Name',
                 data: p =>
-                    <span onClick={() => props.func.selectApplicant(p.applicantId)}>
+                    <span
+                        className="highlightOnHover"
+                        onClick={() => props.func.selectApplicant(p.applicantId)}>
                         {p.applicant.lastName}
                     </span>,
                 sortData: p => p.applicant.lastName,
