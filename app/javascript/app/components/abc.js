@@ -89,10 +89,22 @@ class ABC extends React.Component {
     }
 
     componentWillMount() {
+        // render this view with a specific course panel pre-selected
+        if (this.props.selectedCourse) {
+            this.props.func.setSelectedCourses([Number.parseInt(this.props.selectedCourse)]);
+        }
+
+        // generate a default layout for the selected courses if necessary
         this.generateDefaultLayout();
     }
 
     componentWillUpdate() {
+        // render this view with a specific course panel pre-selected
+        if (this.props.selectedCourse) {
+            this.props.func.setSelectedCourses([Number.parseInt(this.props.selectedCourse)]);
+        }
+
+        // generate a default layout for the selected courses if necessary
         this.generateDefaultLayout();
     }
 
