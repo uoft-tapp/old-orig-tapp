@@ -143,14 +143,20 @@ footer div p {
     overflow: auto;
 }
 
-/* for Applicant view */
-#applicant-grid {
+/* for Applicant modal */
+#applicant-modal .modal-dialog {
+    width: 98vw;
+}
+
+#applicant-modal .modal-body {
+    max-height: calc(98vh - 55px - 60px); /* modal header is 55px high, modal has 30px top and bottom margin */
     overflow: auto;
 }
 
 /* for panels in Applicant view */
-#applicant-grid .panel {
+#applicant-modal .panel {
     margin-bottom: 0;
+    width: 100%;
 }
 
 /* for course panel container in ABC view */

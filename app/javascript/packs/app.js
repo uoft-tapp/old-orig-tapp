@@ -13,7 +13,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import { Alert } from 'react-bootstrap';
+import { Modal, Alert } from 'react-bootstrap';
 
 import { appState } from '../app/appState.js';
 import { fetchAll } from '../app/fetch.js';
@@ -53,16 +53,19 @@ const Bye = props =>
         <h1>Bye!</h1>
     </div>;
 
-const RouterInst = props =>
-    <Router basename="index.html">
-        <div>
-            <Navbar {...props} />
+const RouterInst = props => {
+    let selectedApplicant = props.func.getSelectedApplicant();
 
-            <Switch>
-                <Route
-                    path={routeConfig.courses.route}
-                    render={() => <Courses navKey={routeConfig.courses.key} {...props} />}
-                />
+    return (
+        <Router basename="index.html">
+            <div>
+                <Navbar {...props} />
+
+                <Switch>
+                    <Route
+                        path={routeConfig.courses.route}
+                        render={() => <Courses navKey={routeConfig.courses.key} {...props} />}
+                    />
                 <Route
                     path={routeConfig.abc.route + '/:course'}
                     render={({ match }) =>
@@ -72,45 +75,57 @@ const RouterInst = props =>
                             {...props}
                         />}
                 />
-                <Route
-                    path={routeConfig.abc.route}
-                    render={() => <ABC navKey={routeConfig.abc.key} {...props} />}
-                />
-                <Route
-                    path={routeConfig.assigned.route}
-                    render={() => <Assigned navKey={routeConfig.assigned.key} {...props} />}
-                />
-                <Route
-                    path={routeConfig.unassigned.route}
-                    render={() => <Unassigned navKey={routeConfig.unassigned.key} {...props} />}
-                />
-                <Route
-                    path={routeConfig.summary.route}
-                    render={() => <Summary navKey={routeConfig.summary.key} {...props} />}
-                />
+                    <Route
+                        path={routeConfig.abc.route}
+                        render={() => <ABC navKey={routeConfig.abc.key} {...props} />}
+                    />
+                    <Route
+                        path={routeConfig.assigned.route}
+                        render={() => <Assigned navKey={routeConfig.assigned.key} {...props} />}
+                    />
+                    <Route
+                        path={routeConfig.unassigned.route}
+                        render={() => <Unassigned navKey={routeConfig.unassigned.key} {...props} />}
+                    />
+                    <Route
+                        path={routeConfig.summary.route}
+                        render={() => <Summary navKey={routeConfig.summary.key} {...props} />}
+                    />
 
-                <Route path={routeConfig.logout.route} render={() => <Bye />} />
+                    <Route path={routeConfig.logout.route} render={() => <Bye />} />
+                </Switch>
 
-                <Route
-                    path={routeConfig.applicant.route}
-                    render={({ match }) =>
-                        <Applicant navKey={routeConfig.applicant.key} match={match} {...props} />}
-                />
-            </Switch>
+                {selectedApplicant &&
+                    <Modal
+                        id="applicant-modal"
+                        show={true}
+                        onHide={() => props.func.unselectApplicant()}>
+                        <Modal.Header closeButton>
+                            <Modal.Title>
+                                {props.func.getApplicantById(selectedApplicant).lastName},&nbsp;
+                                {props.func.getApplicantById(selectedApplicant).firstName}
+                            </Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                            <Applicant applicantId={selectedApplicant} {...props} />
+                        </Modal.Body>
+                    </Modal>}
 
-            <div className="container-fluid" id="alert-container">
-                {props.func.getAlerts().map(alert =>
-                    <Alert
-                        key={'alert-' + alert.id}
-                        bsStyle="danger"
-                        onClick={() => props.func.dismissAlert(alert.id)}
-                        onAnimationEnd={() => props.func.dismissAlert(alert.id)}>
-                        {alert.text}
-                    </Alert>
-                )}
+                <div className="container-fluid" id="alert-container">
+                    {props.func.getAlerts().map(alert =>
+                        <Alert
+                            key={'alert-' + alert.id}
+                            bsStyle="danger"
+                            onClick={() => props.func.dismissAlert(alert.id)}
+                            onAnimationEnd={() => props.func.dismissAlert(alert.id)}>
+                            {alert.text}
+                        </Alert>
+                    )}
+                </div>
             </div>
-        </div>
-    </Router>;
+        </Router>
+    );
+};
 
 document.addEventListener('DOMContentLoaded', () => {
     ReactDOM.render(<App />, document.getElementById('root'));

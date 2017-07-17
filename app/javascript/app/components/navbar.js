@@ -19,8 +19,6 @@ import img35 from '../img/layout-35.png';
 /*** Navbar components ***/
 
 const ViewTabs = props => {
-    let selectedApplicant = props.func.getSelectedApplicant();
-
     return (
         <Nav
             pullLeft
@@ -41,11 +39,6 @@ const ViewTabs = props => {
             <NavItem eventKey={routeConfig.summary.key}>
                 <Link to={routeConfig.summary.route}>Summary</Link>
             </NavItem>
-            {selectedApplicant &&
-                <NavItem eventKey={routeConfig.applicant.key}>
-                    {props.func.getApplicantById(selectedApplicant).lastName},&nbsp;
-                    {props.func.getApplicantById(selectedApplicant).firstName}
-                </NavItem>}
         </Nav>
     );
 };

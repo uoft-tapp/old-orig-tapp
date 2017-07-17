@@ -164,7 +164,7 @@ class AssignmentForm extends React.Component {
     }
 
     render() {
-        let applicant = this.props.match.params.id;
+        let applicant = this.props.applicantId;
         let assignments = this.props.func.getAssignmentsByApplicant(applicant);
         let assignmentForm = this.props.func.getAssignmentForm();
         let temp_assignments = this.props.func.getTempAssignments();
