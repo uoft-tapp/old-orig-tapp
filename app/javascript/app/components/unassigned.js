@@ -5,8 +5,11 @@ import { ApplicantTableMenu } from './applicantTableMenu.js';
 import { ApplicantTable } from './applicantTable.js';
 
 class Unassigned extends React.Component {
-    constructor(props) {
-        super(props);
+    render() {
+        let fetchCheck = this.props.func.anyFetching();
+        if (fetchCheck) {
+            return null;
+        }
 
         // table/menu configuration
         this.config = [
@@ -97,18 +100,16 @@ class Unassigned extends React.Component {
                     </ButtonToolbar>,
 
                 filterLabel: 'Course',
-                filterCategories: props.func.getCourseCodes(),
+                filterCategories: this.props.func.getCourseCodes(),
                 // for each course, filter out applicants who did not apply to that course
-                filterFuncs: Object.keys(props.func.getCoursesList()).map(key => p =>
-                    props.func
+                filterFuncs: Object.keys(this.props.func.getCoursesList()).map(key => p =>
+                    this.props.func
                         .getApplicationById(p.applicantId)
                         .prefs.some(pref => pref.positionId == key)
                 ),
             },
         ];
-    }
 
-    render() {
         return (
             <Grid fluid id="unassigned-grid">
                 <ApplicantTableMenu

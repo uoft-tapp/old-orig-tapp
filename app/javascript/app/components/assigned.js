@@ -5,8 +5,11 @@ import { ApplicantTableMenu } from './applicantTableMenu.js';
 import { ApplicantTable } from './applicantTable.js';
 
 class Assigned extends React.Component {
-    constructor(props) {
-        super(props);
+    render() {
+        let fetchCheck = this.props.func.anyFetching();
+        if (fetchCheck) {
+            return null;
+        }
 
         // table/menu configuration
         this.config = [
@@ -99,18 +102,16 @@ class Assigned extends React.Component {
                     </ButtonToolbar>,
 
                 filterLabel: 'Course',
-                filterCategories: props.func.getCourseCodes(),
+                filterCategories: this.props.func.getCourseCodes(),
                 // for each course, filter out applicants who are not assigned to that course
-                filterFuncs: Object.keys(props.func.getCoursesList()).map(key => p =>
-                    props.func
+                filterFuncs: Object.keys(this.props.func.getCoursesList()).map(key => p =>
+                    this.props.func
                         .getAssignmentsByApplicant(p.applicantId)
                         .some(pref => pref.positionId == key)
                 ),
             },
         ];
-    }
-
-    render() {
+        
         return (
             <Grid fluid id="assigned-grid">
                 <ApplicantTableMenu
