@@ -6,6 +6,12 @@ import { CourseForm } from './courseForm.js';
 
 class Courses extends React.Component {
     render() {
+        let fetchCheck =
+            this.props.func.isCoursesListReady() && this.props.func.isInstructorsListReady();
+        if (!fetchCheck) {
+            return null;
+        }
+
         return (
             <Grid fluid id="courses-grid">
                 <CourseList {...this.props} />

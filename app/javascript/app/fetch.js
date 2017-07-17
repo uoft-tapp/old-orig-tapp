@@ -141,7 +141,6 @@ function onFetchApplicantsSuccess(resp) {
     });
 
     appState.setApplicantsList(applicants);
-    appState.setFetchingApplicantsList(false);
 
     return resp;
 }
@@ -245,7 +244,6 @@ function onFetchAssignmentsSuccess(resp) {
     });
 
     appState.setAssignmentsList(assignments);
-    appState.setFetchingAssignmentsList(false);
 
     // return assignmentCounts, to be used to populate the corresponding courses field
     return assignmentCounts;
@@ -259,7 +257,6 @@ function onFetchInstructorsSuccess(resp) {
     });
 
     appState.setInstructorsList(instructors);
-    appState.setFetchingInstructorsList(false);
 
     return resp;
 }
@@ -270,6 +267,10 @@ function fetchAll() {
     let coursePromise = getCourses();
     let assignmentPromise = getAssignments();
     let instructorsPromise = getInstructors();
+
+    applicantPromise.then(() => appState.setFetchingApplicantsList(false));
+    assignmentPromise.then(() => appState.setFetchingAssignmentsList(false));
+    instructorsPromise.then(() => appState.setFetchingInstructorsList(false));
 
     // add rounds to applications from courses, once both have been fetched
     Promise.all([applicationPromise, coursePromise]).then(([_, courses]) => {
