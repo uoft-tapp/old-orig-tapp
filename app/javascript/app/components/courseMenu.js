@@ -31,10 +31,10 @@ class CourseMenu extends React.Component {
                     key={'course-' + key}
                     onClick={() => this.props.func.toggleSelectedCourse(key)}
                     active={this.props.func.isCourseSelected(key)}>
-                    <span className="course-code">
+                    <span className="course-code" title={val.code}>
                         {val.code}
                     </span>
-                    <span className="counts">
+                    <span className="counts" title={val.assignmentCount+' /'+val.estimatedPositions}>
                         {val.assignmentCount} /{val.estimatedPositions}
                     </span>
                 </ListGroupItem>

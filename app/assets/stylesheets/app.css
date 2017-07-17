@@ -106,20 +106,12 @@ footer div p {
     white-space: nowrap;
     text-overflow: ellipsis;
 }
-#courses-grid .course-list-group .list-group-item:hover {
-    overflow: visible;
-    text-overflow: inherit;
-}
 
 /* for CourseMenu contents in ABC view */
 #abc-grid .course-list-group .list-group-item span {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-}
-#abc-grid .course-list-group .list-group-item span:hover {
-    text-overflow: inherit;
-    overflow: visible;
 }
 
 #abc-grid .course-list-group .list-group-item .course-code {
