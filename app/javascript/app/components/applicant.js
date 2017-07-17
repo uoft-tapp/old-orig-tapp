@@ -1,20 +1,8 @@
 import React from 'react';
 import { AssignmentForm } from './assignmentForm.js';
-import { Panel, Grid, Button } from 'react-bootstrap';
+import { Panel, Button } from 'react-bootstrap';
 
 class Applicant extends React.Component {
-    selectThisTab() {
-        this.props.func.selectNavTab(this.props.navKey, this.props.match.params.id);
-    }
-
-    componentDidMount() {
-        this.selectThisTab();
-    }
-
-    componentDidUpdate() {
-        this.selectThisTab();
-    }
-
     setAddress(address) {
         if (address != null) {
             return address.split('\r\n').map((part, key) =>
@@ -49,7 +37,7 @@ class Applicant extends React.Component {
 
     addPanelContent(index) {
         if (!this.props.func.anyFetching()) {
-            let id = this.props.match.params.id;
+            let id = this.props.applicantId;
             let applicant = this.props.func.getApplicantById(id);
             let application = this.props.func.getApplicationById(id);
             let courses = this.props.func.getCoursesList();
@@ -201,7 +189,7 @@ class Applicant extends React.Component {
         }
     }
 
-    render() {
+    createAssignmentForm() {
         let panels = [
             { label: 'Personal Information', expanded: true },
             { label: 'Current Status', expanded: true },
@@ -218,6 +206,17 @@ class Applicant extends React.Component {
             { label: 'Notes', expanded: true },
         ];
         this.props.func.createAssignmentForm(panels);
+    }
+
+    componentWillMount() {
+        this.createAssignmentForm();
+    }
+
+    componentWillUpdate() {
+        this.createAssignmentForm();
+    }
+
+    render() {
         return (
             <CollapsiblePanel
                 assignmentForm={this.props.func.getAssignmentForm()}
@@ -247,7 +246,7 @@ const NotesForm = props => {
 };
 
 const CollapsiblePanel = props =>
-    <Grid fluid id="applicant-grid">
+    <div>
         {props.assignmentForm.panels.map((panel, index) =>
             <Panel
                 key={index}
@@ -264,6 +263,6 @@ const CollapsiblePanel = props =>
                 {props.self.addPanelContent(index)}
             </Panel>
         )}
-    </Grid>;
+    </div>;
 
 export { Applicant };

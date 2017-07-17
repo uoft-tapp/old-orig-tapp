@@ -36,11 +36,11 @@ class CoursePanel extends React.Component {
             },
             {
                 header: 'Last Name',
-                // last name contains a link to the applicant's individual page
+                // last name generates a modal of the applicant's individual page
                 data: p =>
-                    <a href={'applicant/' + p.applicantId}>
+                    <span onClick={() => props.func.selectApplicant(p.applicantId)}>
                         {p.applicant.lastName}
-                    </a>,
+                    </span>,
                 sortData: p => p.applicant.lastName,
 
                 style: () => ({ width: '15%' }),

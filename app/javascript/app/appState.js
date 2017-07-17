@@ -12,7 +12,6 @@ const initialState = {
         user: 'user',
 
         selectedTab: null,
-        selectedApplicant: null,
 
         // list of unread notifications (can be text or HTML/JSX)
         notifications: [],
@@ -20,6 +19,9 @@ const initialState = {
 
     // list of UI alerts (can be text or HTML/JSX)
     alerts: [],
+
+    // applicant to display in applicant view
+    selectedApplicant: null,
 
     // course list component used by courses view
     courseList: {
@@ -240,7 +242,7 @@ class AppState {
     }
 
     getSelectedApplicant() {
-        return this._data.get('nav.selectedApplicant');
+        return this._data.get('selectedApplicant');
     }
 
     getSorts() {
@@ -324,12 +326,14 @@ class AppState {
         this._data.remove('assignmentForm.tempAssignments[' + i + ']');
     }
 
+    // select an applicant to display in the applicant view
+    selectApplicant(applicant) {
+        this._data.set('selectedApplicant', applicant);
+    }
+
     // select a navbar tab
-    selectNavTab(eventKey, applicant) {
-        this._data.set({
-            'nav.selectedTab': eventKey,
-            'nav.selectedApplicant': applicant ? applicant : null,
-        });
+    selectNavTab(eventKey) {
+        this._data.set('nav.selectedTab', eventKey);
     }
 
     setInput(value) {
@@ -509,6 +513,11 @@ class AppState {
             sortFields[i][1] = -sortFields[i][1];
             this._data.set(view + '.selectedSortFields', sortFields);
         }
+    }
+
+    // unselect the applicant displayed in the applicant view
+    unselectApplicant() {
+        this._data.unset('selectedApplicant');
     }
 
     /******************************

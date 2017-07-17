@@ -13,9 +13,9 @@ class Assigned extends React.Component {
             {
                 header: 'Last Name',
                 data: p =>
-                    <a href={'applicant/' + p.applicantId}>
+                    <span onClick={() => props.func.selectApplicant(p.applicantId)}>
                         {p.applicant.lastName}
-                    </a>,
+                    </span>,
                 sortData: p => p.applicant.lastName,
 
                 style: () => ({ width: '10%' }),
