@@ -117,6 +117,11 @@ class ABC extends React.Component {
     }
 
     render() {
+        let fetchCheck = this.props.func.anyFetching();
+        if (fetchCheck) {
+            return null;
+        }
+
         let selected = this.props.func.getSelectedCourses();
         let layout = this.props.func.getCoursePanelLayout();
         let styles = this.mapLayoutToStyling(layout);

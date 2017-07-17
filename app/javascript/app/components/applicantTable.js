@@ -95,10 +95,6 @@ class ApplicantTable extends React.Component {
     }
 
     render() {
-        if (!this.applicants) {
-            return null;
-        }
-
         return (
             <div
                 className={
