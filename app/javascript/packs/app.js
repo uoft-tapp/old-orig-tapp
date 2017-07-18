@@ -63,27 +63,27 @@ const RouterInst = props => {
 
                 <Switch>
                     <Route
-                        path={routeConfig.courses.route}
+                        path={'/' + routeConfig.courses.route}
                         render={() => <Courses navKey={routeConfig.courses.key} {...props} />}
                     />
                     <Route
-                        path={routeConfig.abc.route}
+                        path={'/' + routeConfig.abc.route}
                         render={() => <ABC navKey={routeConfig.abc.key} {...props} />}
                     />
                     <Route
-                        path={routeConfig.assigned.route}
+                        path={'/' + routeConfig.assigned.route}
                         render={() => <Assigned navKey={routeConfig.assigned.key} {...props} />}
                     />
                     <Route
-                        path={routeConfig.unassigned.route}
+                        path={'/' + routeConfig.unassigned.route}
                         render={() => <Unassigned navKey={routeConfig.unassigned.key} {...props} />}
                     />
                     <Route
-                        path={routeConfig.summary.route}
+                        path={'/' + routeConfig.summary.route}
                         render={() => <Summary navKey={routeConfig.summary.key} {...props} />}
                     />
 
-                    <Route path={routeConfig.logout.route} render={() => <Bye />} />
+                    <Route path={'/' + routeConfig.logout.route} render={() => <Bye />} />
                 </Switch>
 
                 {selectedApplicant && <ApplicantModal applicantId={selectedApplicant} {...props} />}
