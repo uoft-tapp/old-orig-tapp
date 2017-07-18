@@ -36,156 +36,153 @@ class Applicant extends React.Component {
     }
 
     addPanelContent(index) {
-        if (!this.props.func.anyFetching()) {
-            let id = this.props.applicantId;
-            let applicant = this.props.func.getApplicantById(id);
-            let application = this.props.func.getApplicationById(id);
-            let courses = this.props.func.getCoursesList();
+        let id = this.props.applicantId;
+        let applicant = this.props.func.getApplicantById(id);
+        let application = this.props.func.getApplicationById(id);
+        let courses = this.props.func.getCoursesList();
 
-            switch (index) {
-                case 0:
-                    return (
-                        <table className="panel_table">
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <p>
-                                            <b>Last Name: </b>
-                                            {applicant.lastName}
-                                        </p>
-                                        <p>
-                                            <b>UTORid: </b>
-                                            {applicant.utorid}
-                                        </p>
-                                        <p>
-                                            <b>Email Address: </b>
-                                            {applicant.email}
-                                        </p>
-                                        <p>
-                                            <b>Phone Number: </b>
-                                            {applicant.phone}
-                                        </p>
-                                    </td>
-                                    <td>
-                                        <p>
-                                            <b>First Name: </b>
-                                            {applicant.firstName}
-                                        </p>
-                                        <p>
-                                            <b>Student ID: </b>
-                                            {applicant.studentNumber}
-                                        </p>
-                                    </td>
-                                    <td>
-                                        <p>
-                                            <b>Address: </b>
-                                        </p>
-                                    </td>
-                                    <td>
-                                        {this.setAddress(applicant.address)}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    );
-                case 1:
-                    return (
-                        <table className="panel_table">
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <b>
-                                            Enrolled as a U of T graduate student for the TA
-                                            session?{' '}
-                                        </b>
-                                        {application.academicAccess ? 'Yes' : 'No'}
-                                    </td>
-                                    <td>
-                                        <b>Completed a U of T TA training session? </b>
-                                        {application.taTraining ? 'Yes' : 'No'}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    );
-                case 2:
-                    return (
-                        <table className="panel_table">
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <b>Department: </b>
-                                        {applicant.dept}
-                                    </td>
-                                    <td>
-                                        <b>Program: </b>
-                                        {applicant.program}
-                                    </td>
-                                    <td>
-                                        <b>Year: </b>
-                                        {applicant.year}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    );
-                case 3:
-                    return <AssignmentForm {...this.props} />;
-                case 4:
-                    return (
-                        <table className="panel_table">
-                            <tbody>
-                                <tr>
-                                    {this.setPrefs(application.prefs, courses)}
-                                </tr>
-                            </tbody>
-                        </table>
-                    );
-                case 5:
-                    return (
-                        <p>
-                            {application.rawPrefs}
-                        </p>
-                    );
-                case 6:
-                    return (
-                        <p>
-                            {application.exp}
-                        </p>
-                    );
-                case 7:
-                    return (
-                        <p>
-                            {application.qual}
-                        </p>
-                    );
-                case 8:
-                    return (
-                        <p>
-                            {application.skills}
-                        </p>
-                    );
-                case 9:
-                    return (
-                        <p>
-                            {application.avail}
-                        </p>
-                    );
-                case 10:
-                    return (
-                        <p>
-                            {application.other}
-                        </p>
-                    );
-                case 11:
-                    return (
-                        <p>
-                            {application.specialNeeds}
-                        </p>
-                    );
-                case 12:
-                    return <NotesForm applicant={id} notes={applicant.notes} {...this.props} />;
-            }
+        switch (index) {
+            case 0:
+                return (
+                    <table className="panel_table">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <p>
+                                        <b>Last Name: </b>
+                                        {applicant.lastName}
+                                    </p>
+                                    <p>
+                                        <b>UTORid: </b>
+                                        {applicant.utorid}
+                                    </p>
+                                    <p>
+                                        <b>Email Address: </b>
+                                        {applicant.email}
+                                    </p>
+                                    <p>
+                                        <b>Phone Number: </b>
+                                        {applicant.phone}
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>
+                                        <b>First Name: </b>
+                                        {applicant.firstName}
+                                    </p>
+                                    <p>
+                                        <b>Student ID: </b>
+                                        {applicant.studentNumber}
+                                    </p>
+                                </td>
+                                <td>
+                                    <p>
+                                        <b>Address: </b>
+                                    </p>
+                                </td>
+                                <td>
+                                    {this.setAddress(applicant.address)}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                );
+            case 1:
+                return (
+                    <table className="panel_table">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <b>
+                                        Enrolled as a U of T graduate student for the TA session?{' '}
+                                    </b>
+                                    {application.academicAccess ? 'Yes' : 'No'}
+                                </td>
+                                <td>
+                                    <b>Completed a U of T TA training session? </b>
+                                    {application.taTraining ? 'Yes' : 'No'}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                );
+            case 2:
+                return (
+                    <table className="panel_table">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <b>Department: </b>
+                                    {applicant.dept}
+                                </td>
+                                <td>
+                                    <b>Program: </b>
+                                    {applicant.program}
+                                </td>
+                                <td>
+                                    <b>Year: </b>
+                                    {applicant.year}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                );
+            case 3:
+                return <AssignmentForm {...this.props} />;
+            case 4:
+                return (
+                    <table className="panel_table">
+                        <tbody>
+                            <tr>
+                                {this.setPrefs(application.prefs, courses)}
+                            </tr>
+                        </tbody>
+                    </table>
+                );
+            case 5:
+                return (
+                    <p>
+                        {application.rawPrefs}
+                    </p>
+                );
+            case 6:
+                return (
+                    <p>
+                        {application.exp}
+                    </p>
+                );
+            case 7:
+                return (
+                    <p>
+                        {application.qual}
+                    </p>
+                );
+            case 8:
+                return (
+                    <p>
+                        {application.skills}
+                    </p>
+                );
+            case 9:
+                return (
+                    <p>
+                        {application.avail}
+                    </p>
+                );
+            case 10:
+                return (
+                    <p>
+                        {application.other}
+                    </p>
+                );
+            case 11:
+                return (
+                    <p>
+                        {application.specialNeeds}
+                    </p>
+                );
+            case 12:
+                return <NotesForm applicant={id} notes={applicant.notes} {...this.props} />;
         }
     }
 
