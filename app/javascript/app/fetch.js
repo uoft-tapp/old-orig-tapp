@@ -6,8 +6,6 @@ function defaultFailure(response) {
     if (response.status === 404 || response.status === 422) {
         console.log('Action Failed:', response.statusText);
         return null;
-    } else if (response.status === 204) {
-        return {};
     } else {
         return response;
     }
