@@ -86,8 +86,7 @@ class Assigned extends React.Component {
                         {this.props.func.getAssignmentsByApplicant(p.applicantId).map(ass =>
                             <Link
                                 to={
-                                    'applicantsbycourse/' +
-                                    ass.positionId +
+                                    'applicantsbycourse' +
                                     '#' +
                                     ass.positionId +
                                     '-' +
@@ -95,7 +94,11 @@ class Assigned extends React.Component {
                                     '-1'
                                 }
                                 key={'link-' + p.applicantId + '-' + ass.positionId}>
-                                <Button bsSize="xsmall" style={{ borderColor: '#555' }}>
+                                <Button
+                                    bsSize="xsmall"
+                                    style={{ borderColor: '#555' }}
+                                    onClick={() =>
+                                        this.props.func.setSelectedCourses([ass.positionId])}>
                                     {this.props.func.getCourseCodeById(
                                         ass.positionId
                                     )}&nbsp;&middot;&nbsp;{ass.hours}
