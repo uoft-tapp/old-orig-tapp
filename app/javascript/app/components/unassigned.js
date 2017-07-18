@@ -6,10 +6,13 @@ import { ApplicantTable } from './applicantTable.js';
 
 class Unassigned extends React.Component {
     render() {
-        let fetchCheck = this.props.func.anyFetching();
-        if (fetchCheck) {
-            return null;
+        let nullCheck = this.props.func.anyNull();
+        if (nullCheck) {
+            return <div id="loader" />;
         }
+
+        let fetchCheck = this.props.func.anyFetching();
+        let cursorStyle = { cursor: fetchCheck ? 'progress' : 'auto' };
 
         // table/menu configuration
         this.config = [

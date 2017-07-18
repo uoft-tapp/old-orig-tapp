@@ -117,17 +117,20 @@ class ABC extends React.Component {
     }
 
     render() {
-        let fetchCheck = this.props.func.anyFetching();
-        if (fetchCheck) {
-            return null;
+        let nullCheck = this.props.func.anyNull();
+        if (nullCheck) {
+            return <div id="loader" />;
         }
+
+        let fetchCheck = this.props.func.anyFetching();
+        let cursorStyle = { cursor: fetchCheck ? 'progress' : 'auto' };
 
         let selected = this.props.func.getSelectedCourses();
         let layout = this.props.func.getCoursePanelLayout();
         let styles = this.mapLayoutToStyling(layout);
 
         return (
-            <Grid fluid id="abc-grid">
+            <Grid fluid id="abc-grid" style={cursorStyle}>
                 <CourseMenu {...this.props} />
                 <div id="course-panel-layout">
                     {styles == 0 &&

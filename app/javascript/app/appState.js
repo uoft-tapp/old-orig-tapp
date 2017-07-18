@@ -63,11 +63,11 @@ const initialState = {
 
     /** DB data **/
 
-    applicants: { fetching: false, list: null },
-    applications: { fetching: false, list: null },
-    assignments: { fetching: false, list: null },
-    courses: { fetching: false, list: null },
-    instructors: { fetching: false, list: null },
+    applicants: { fetching: 0, list: null },
+    applications: { fetching: 0, list: null },
+    assignments: { fetching: 0, list: null },
+    courses: { fetching: 0, list: null },
+    instructors: { fetching: 0, list: null },
 };
 
 class AppState {
@@ -530,20 +530,26 @@ class AppState {
         fetch.updateCourse(courseId, { instructors: val }, val, 'instructors');
     }
 
-    // check if any data is still being fetched
+    // check if any data is being fetched
     anyFetching() {
         return [
-            this.getCoursesList() == null,
             this.fetchingCourses(),
-            this.getInstructorsList() == null,
             this.fetchingInstructors(),
-            this.getApplicantsList() == null,
             this.fetchingApplicants(),
-            this.getApplicationsList() == null,
             this.fetchingApplications(),
-            this.getAssignmentsList() == null,
             this.fetchingAssignments(),
         ].some(val => val);
+    }
+
+    // check if any data has not yet been fetched
+    anyNull() {
+        return [
+            this.getCoursesList(),
+            this.getInstructorsList(),
+            this.getApplicantsList(),
+            this.getApplicationsList(),
+            this.getAssignmentsList(),
+        ].some(val => val == null);
     }
 
     // create a new assignment
@@ -558,27 +564,27 @@ class AppState {
 
     // check if applicants are being fetched
     fetchingApplicants() {
-        return this._data.get('applicants.fetching');
+        return this._data.get('applicants.fetching') > 0;
     }
 
     // check if applications are being fetched
     fetchingApplications() {
-        return this._data.get('applications.fetching');
+        return this._data.get('applications.fetching') > 0;
     }
 
     // check if assignments are being fetched
     fetchingAssignments() {
-        return this._data.get('assignments.fetching');
+        return this._data.get('assignments.fetching') > 0;
     }
 
     // check if courses are being fetched
     fetchingCourses() {
-        return this._data.get('courses.fetching');
+        return this._data.get('courses.fetching') > 0;
     }
 
     // check if instructors are being fetched
     fetchingInstructors() {
-        return this._data.get('instructors.fetching');
+        return this._data.get('instructors.fetching') > 0;
     }
 
     // get applicants who are assigned to course; returns a list of [applicantID, applicantData]
@@ -718,24 +724,24 @@ class AppState {
         return this.idEntries(applicants);
     }
 
-    isApplicantsListReady() {
-        return !this.fetchingApplicants() && this.getApplicantsList() != null;
+    isApplicantsListNull() {
+        return this.getApplicantsList() == null;
     }
 
-    isApplicationsListReady() {
-        return !this.fetchingApplications() && this.getApplicationsList() != null;
+    isApplicationsListNull() {
+        return this.getApplicationsList() == null;
     }
 
-    isAssignmentsListReady() {
-        return !this.fetchingAssignments() && this.getAssignmentsList() != null;
+    isAssignmentsListNull() {
+        return this.getAssignmentsList() == null;
     }
 
-    isCoursesListReady() {
-        return !this.fetchingCourses() && this.getCoursesList() != null;
+    isCoursesListNull() {
+        return this.getCoursesList() == null;
     }
 
-    isInstructorsListReady() {
-        return !this.fetchingInstructors() && this.getInstructorsList() != null;
+    isInstructorsListNull() {
+        return this.getInstructorsList() == null;
     }
 
     // add/update the notes for an applicant
@@ -806,53 +812,62 @@ class AppState {
     }
 
     setFetchingApplicantsList(fetching) {
-        if (this._data.get('applicants.fetching') && !fetching) {
-            this.notify('Finished fetching applicants.');
-        } else if (!this._data.get('applicants.fetching') && fetching) {
+        let init = this._data.get('applicants.fetching');
+        if (fetching) {
             this.notify(<i>Fetching applicants...</i>);
+            this._data.set('applicants.fetching', init + 1);
+        } else {
+            this.notify('Finished fetching applicants.');
+            this._data.set('applicants.fetching', init - 1);
         }
-
-        this._data.set('applicants.fetching', fetching);
     }
 
     setFetchingApplicationsList(fetching) {
-        if (this._data.get('applications.fetching') && !fetching) {
+        if (this.fetchingApplications() && !fetching) {
             this.notify('Finished fetching applications.');
-        } else if (!this._data.get('applications.fetching') && fetching) {
+        } else if (!this.fetchingApplications() && fetching) {
             this.notify(<i>Fetching applications...</i>);
         }
 
-        this._data.set('applications.fetching', fetching);
+        let init = this._data.get('applications.fetching');
+        if (fetching) {
+            this._data.set('applications.fetching', init + 1);
+        } else {
+            this._data.set('applications.fetching', init - 1);
+        }
     }
 
     setFetchingAssignmentsList(fetching) {
-        if (this._data.get('assignments.fetching') && !fetching) {
-            this.notify('Finished fetching assignments.');
-        } else if (!this._data.get('assignments.fetching') && fetching) {
+        let init = this._data.get('assignments.fetching');
+        if (fetching) {
             this.notify(<i>Fetching assignments...</i>);
+            this._data.set('assignments.fetching', init + 1);
+        } else {
+            this.notify('Finished fetching assignments.');
+            this._data.set('assignments.fetching', init - 1);
         }
-
-        this._data.set('assignments.fetching', fetching);
     }
 
     setFetchingCoursesList(fetching) {
-        if (this._data.get('courses.fetching') && !fetching) {
-            this.notify('Finished fetching courses.');
-        } else if (!this._data.get('courses.fetching') && fetching) {
+        let init = this._data.get('courses.fetching');
+        if (fetching) {
             this.notify(<i>Fetching courses...</i>);
+            this._data.set('courses.fetching', init + 1);
+        } else {
+            this.notify('Finished fetching courses.');
+            this._data.set('courses.fetching', init - 1);
         }
-
-        this._data.set('courses.fetching', fetching);
     }
 
     setFetchingInstructorsList(fetching) {
-        if (this._data.get('instructors.fetching') && !fetching) {
-            this.notify('Finished fetching instructors.');
-        } else if (!this._data.get('instructors.fetching') && fetching) {
+        let init = this._data.get('instructors.fetching');
+        if (fetching) {
             this.notify(<i>Fetching instructors...</i>);
+            this._data.set('instructors.fetching', init + 1);
+        } else {
+            this.notify('Finished fetching instructors.');
+            this._data.set('instructors.fetching', init - 1);
         }
-
-        this._data.set('instructors.fetching', fetching);
     }
 
     setInstructorsList(list) {
