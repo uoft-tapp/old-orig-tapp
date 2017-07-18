@@ -38,7 +38,9 @@ class CoursePanel extends React.Component {
                 header: 'Last Name',
                 // last name generates a modal of the applicant's individual page
                 data: p =>
-                    <span onClick={() => props.func.selectApplicant(p.applicantId)}>
+                    <span
+                        className="highlightOnHover"
+                        onClick={() => props.func.selectApplicant(p.applicantId)}>
                         {p.applicant.lastName}
                     </span>,
                 sortData: p => p.applicant.lastName,
