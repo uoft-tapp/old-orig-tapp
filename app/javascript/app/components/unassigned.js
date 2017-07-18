@@ -86,8 +86,7 @@ class Unassigned extends React.Component {
                         {this.props.func.getApplicationById(p.applicantId).prefs.map(pref =>
                             <Link
                                 to={
-                                    'applicantsbycourse/' +
-                                    pref.positionId +
+                                    'applicantsbycourse' +
                                     '#' +
                                     pref.positionId +
                                     '-' +
@@ -95,7 +94,11 @@ class Unassigned extends React.Component {
                                     '-0'
                                 }
                                 key={'link-' + p.applicantId + '-' + pref.positionId}>
-                                <Button bsSize="xsmall" style={{ borderColor: '#555' }}>
+                                <Button
+                                    bsSize="xsmall"
+                                    style={{ borderColor: '#555' }}
+                                    onClick={() =>
+                                        this.props.func.setSelectedCourses([pref.positionId])}>
                                     {this.props.func.getCourseCodeById(pref.positionId)}
                                 </Button>
                             </Link>
