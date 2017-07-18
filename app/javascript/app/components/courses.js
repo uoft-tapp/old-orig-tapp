@@ -6,11 +6,14 @@ import { CourseForm } from './courseForm.js';
 
 class Courses extends React.Component {
     render() {
-        let fetchCheck =
-            this.props.func.isCoursesListReady() && this.props.func.isInstructorsListReady();
-        if (!fetchCheck) {
-            return null;
+        let nullCheck =
+            this.props.func.isCoursesListNull() || this.props.func.isInstructorsListNull();
+        if (nullCheck) {
+            return <div id="loader" />;
         }
+
+        let fetchCheck = this.props.func.fetchingCourses() || this.props.func.fetchingInstructors();
+        let cursorStyle = { cursor: fetchCheck ? 'progress' : 'auto' };
 
         return (
             <Grid fluid id="courses-grid">

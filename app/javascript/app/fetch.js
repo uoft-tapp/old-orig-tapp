@@ -1,10 +1,16 @@
+import React from 'react';
 import { appState } from './appState.js';
 
 /* General helpers */
 
 function defaultFailure(response) {
+    appState.notify(
+        <span>
+            <b>Action Failed:</b> {response.statusText}
+        </span>
+    );
+
     if (response.status === 404 || response.status === 422) {
-        console.log('Action Failed:', response.statusText);
         return null;
     } else {
         return response;
@@ -26,7 +32,11 @@ function fetchHelper(URL, init, success, failure = defaultFailure) {
             return failure(response);
         })
         .catch(function(error) {
-            console.log(error);
+            appState.notify(
+                <span>
+                    <b>Error:</b> {URL} {error.message}
+                </span>
+            );
         });
 }
 
