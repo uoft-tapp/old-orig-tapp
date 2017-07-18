@@ -20,39 +20,34 @@ import img35 from '../img/layout-35.png';
 
 const ViewTabs = props => {
     return (
-        <Nav
-            pullLeft
-            activeKey={props.selectedTab}
-            onSelect={eventKey => props.func.selectNavTab(eventKey)}>
-            <NavItem eventKey={routeConfig.courses.key}>
-                <Link to={routeConfig.courses.route}>Courses</Link>
+        <Nav pullLeft activeKey={props.func.getSelectedNavTab()}>
+            <NavItem eventKey={routeConfig.courses.key} href={routeConfig.courses.route}>
+                Courses
             </NavItem>
-            <NavItem eventKey={routeConfig.abc.key}>
-                <Link to={routeConfig.abc.route}>Applicants by Course</Link>
+            <NavItem eventKey={routeConfig.abc.key} href={routeConfig.abc.route}>
+                Applicants by Course
             </NavItem>
-            <NavItem eventKey={routeConfig.assigned.key}>
-                <Link to={routeConfig.assigned.route}>All Assigned</Link>
+            <NavItem eventKey={routeConfig.assigned.key} href={routeConfig.assigned.route}>
+                All Assigned
             </NavItem>
-            <NavItem eventKey={routeConfig.unassigned.key}>
-                <Link to={routeConfig.unassigned.route}>All Unassigned</Link>
+            <NavItem eventKey={routeConfig.unassigned.key} href={routeConfig.unassigned.route}>
+                All Unassigned
             </NavItem>
-            <NavItem eventKey={routeConfig.summary.key}>
-                <Link to={routeConfig.summary.route}>Summary</Link>
+            <NavItem eventKey={routeConfig.summary.key} href={routeConfig.summary.route}>
+                Summary
             </NavItem>
         </Nav>
     );
 };
 
 const CoursePanelLayoutTabs = props => {
-    if (props.selectedTab != routeConfig.abc.key) {
-        return null;
-    }
+    let layout = props.func.getCoursePanelLayout();
 
-    if ([2, 2.1].includes(props.layout)) {
+    if ([2, 2.1].includes(layout)) {
         return (
             <Nav
                 bsStyle="pills"
-                activeKey={props.layout}
+                activeKey={layout}
                 onSelect={eventKey => props.func.setCoursePanelLayout(eventKey)}>
                 <NavItem eventKey={2}>
                     <img src={img20} alt="layout-2.0" style={{ height: '16px' }} />
@@ -64,11 +59,11 @@ const CoursePanelLayoutTabs = props => {
         );
     }
 
-    if ([3, 3.1, 3.2, 3.3, 3.4, 3.5].includes(props.layout)) {
+    if ([3, 3.1, 3.2, 3.3, 3.4, 3.5].includes(layout)) {
         return (
             <Nav
                 bsStyle="pills"
-                activeKey={props.layout}
+                activeKey={layout}
                 onSelect={eventKey => props.func.setCoursePanelLayout(eventKey)}>
                 <NavItem eventKey={3}>
                     <img src={img30} alt="layout-3.0" style={{ height: '16px' }} />
@@ -128,8 +123,8 @@ const Auth = props => {
             eventKey={routeConfig.logout.key}
             title={props.func.getCurrentUserRole() + ':' + props.func.getCurrentUserName()}
             id="nav-auth-dropdown">
-            <MenuItem eventKey={routeConfig.logout.key + '.1'}>
-                <Link to={routeConfig.logout.route}>Logout</Link>
+            <MenuItem eventKey={routeConfig.logout.key + '.1'} href={routeConfig.logout.route}>
+                Logout
             </MenuItem>
         </NavDropdown>
     );
@@ -138,22 +133,17 @@ const Auth = props => {
 /*** Navbar ***/
 
 const NavbarInst = props => {
-    let selectedTab = props.func.getSelectedNavTab();
-
     return (
         <Navbar fixedTop fluid>
             <Navbar.Header>
                 <Navbar.Brand>TAPP</Navbar.Brand>
             </Navbar.Header>
 
-            <ViewTabs selectedTab={selectedTab} {...props} />
+            <ViewTabs {...props} />
 
             <Nav pullRight>
-                <CoursePanelLayoutTabs
-                    selectedTab={selectedTab}
-                    layout={props.func.getCoursePanelLayout()}
-                    {...props}
-                />
+                {props.func.getSelectedNavTab() == routeConfig.abc.key &&
+                    <CoursePanelLayoutTabs {...props} />}
                 <Notifications {...props} />
                 <Auth {...props} />
             </Nav>

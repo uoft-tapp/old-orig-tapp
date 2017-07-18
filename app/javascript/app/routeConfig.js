@@ -2,31 +2,27 @@
 
 const routeConfig = {
     courses: {
-        route: '/courses',
+        route: 'courses',
         key: 'courses',
     },
     abc: {
-        route: '/applicantsbycourse',
+        route: 'applicantsbycourse',
         key: 'abc',
     },
     assigned: {
-        route: '/assigned',
+        route: 'assigned',
         key: 'assigned',
     },
     unassigned: {
-        route: '/unassigned',
+        route: 'unassigned',
         key: 'unassigned',
     },
     summary: {
-        route: '/summary',
+        route: 'summary',
         key: 'summary',
     },
-    applicant: {
-        route: '/applicant/:id',
-        key: 'applicant',
-    },
     logout: {
-        route: '/bye',
+        route: 'bye',
         key: 'logout',
     },
 };
