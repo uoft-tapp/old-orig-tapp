@@ -1,5 +1,7 @@
 import { appState } from './appState.js';
 
+/* General helpers */
+
 function defaultFailure(response) {
     if (response.status === 404 || response.status === 422) {
         console.log('Action Failed:', response.statusText);
@@ -70,35 +72,19 @@ function putHelper(URL, body, success, failure) {
     return fetchHelper(URL, init, success, failure);
 }
 
-function getApplicants() {
-    appState.setFetchingApplicantsList(true);
+/* Resource GETters */
 
-    return getHelper('/applicants', onFetchApplicantsSuccess);
-}
+const getApplicants = () => getHelper('/applicants', onFetchApplicantsSuccess);
 
-function getApplications() {
-    appState.setFetchingApplicationsList(true);
+const getApplications = () => getHelper('/applications', onFetchApplicationsSuccess);
 
-    return getHelper('/applications', onFetchApplicationsSuccess);
-}
+const getCourses = () => getHelper('/positions', onFetchCoursesSuccess);
 
-function getCourses() {
-    appState.setFetchingCoursesList(true);
+const getAssignments = () => getHelper('/assignments', onFetchAssignmentsSuccess);
 
-    return getHelper('/positions', onFetchCoursesSuccess);
-}
+const getInstructors = () => getHelper('/instructors', onFetchInstructorsSuccess);
 
-function getAssignments() {
-    appState.setFetchingAssignmentsList(true);
-
-    return getHelper('/assignments', onFetchAssignmentsSuccess);
-}
-
-function getInstructors() {
-    appState.setFetchingInstructorsList(true);
-
-    return getHelper('/instructors', onFetchInstructorsSuccess);
-}
+/* Success callbacks for resource GETters */
 
 function onFetchApplicantsSuccess(resp) {
     let applicants = {};
@@ -261,7 +247,15 @@ function onFetchInstructorsSuccess(resp) {
     return resp;
 }
 
+/* Function to GET all resources */
+
 function fetchAll() {
+    appState.setFetchingApplicantsList(true);
+    appState.setFetchingApplicationsList(true);
+    appState.setFetchingCoursesList(true);
+    appState.setFetchingAssignmentsList(true);
+    appState.setFetchingInstructorsList(true);
+
     let applicantPromise = getApplicants();
     let applicationPromise = getApplications();
     let coursePromise = getCourses();
@@ -285,36 +279,55 @@ function fetchAll() {
     });
 }
 
+/* Task-specific resource modifiers */
+
 // create a new assignment
 function postAssignment(applicant, course, hours) {
+    appState.setFetchingAssignmentsList(true);
+
     return postHelper(
         '/applicants/' + applicant + '/assignments',
         { position_id: course, hours: hours },
         getAssignments
-    );
+    ).then(() => appState.setFetchingAssignmentsList(false));
 }
 
 // remove an assignment
 function deleteAssignment(applicant, assignment) {
-    return deleteHelper('/applicants/' + applicant + '/assignments/' + assignment, getAssignments);
+    appState.setFetchingAssignmentsList(true);
+
+    return deleteHelper(
+        '/applicants/' + applicant + '/assignments/' + assignment,
+        getAssignments
+    ).then(() => appState.setFetchingAssignmentsList(false));
 }
 
 // add/update the notes for an applicant
 function noteApplicant(applicant, notes) {
-    return putHelper('/applicants/' + applicant, { commentary: notes }, getApplicants);
+    appState.setFetchingApplicantsList(true);
+
+    return putHelper('/applicants/' + applicant, { commentary: notes }, getApplicants).then(() =>
+        appState.setFetchingApplicantsList(false)
+    );
 }
 
 // update the number of hours for an assignment
 function updateAssignmentHours(applicant, assignment, hours) {
+    appState.setFetchingAssignmentsList(true);
+
     return putHelper(
         '/applicants/' + applicant + '/assignments/' + assignment,
         { hours: hours },
         getAssignments
-    );
+    ).then(() => appState.setFetchingAssignmentsList(false));
 }
 
 function updateCourse(courseId, data, val, attr) {
-    return putHelper('/positions/' + courseId, data, getCourses);
+    appState.setFetchingCoursesList(true);
+
+    return putHelper('/positions/' + courseId, data, getCourses).then(() =>
+        appState.setFetchingCoursesList(false)
+    );
 }
 
 export {
