@@ -806,22 +806,52 @@ class AppState {
     }
 
     setFetchingApplicantsList(fetching) {
+        if (this._data.get('applicants.fetching') && !fetching) {
+            this.notify('Finished fetching applicants.');
+        } else if (!this._data.get('applicants.fetching') && fetching) {
+            this.notify(<i>Fetching applicants...</i>);
+        }
+
         this._data.set('applicants.fetching', fetching);
     }
 
     setFetchingApplicationsList(fetching) {
+        if (this._data.get('applications.fetching') && !fetching) {
+            this.notify('Finished fetching applications.');
+        } else if (!this._data.get('applications.fetching') && fetching) {
+            this.notify(<i>Fetching applications...</i>);
+        }
+
         this._data.set('applications.fetching', fetching);
     }
 
     setFetchingAssignmentsList(fetching) {
+        if (this._data.get('assignments.fetching') && !fetching) {
+            this.notify('Finished fetching assignments.');
+        } else if (!this._data.get('assignments.fetching') && fetching) {
+            this.notify(<i>Fetching assignments...</i>);
+        }
+
         this._data.set('assignments.fetching', fetching);
     }
 
     setFetchingCoursesList(fetching) {
+        if (this._data.get('courses.fetching') && !fetching) {
+            this.notify('Finished fetching courses.');
+        } else if (!this._data.get('courses.fetching') && fetching) {
+            this.notify(<i>Fetching courses...</i>);
+        }
+
         this._data.set('courses.fetching', fetching);
     }
 
     setFetchingInstructorsList(fetching) {
+        if (this._data.get('instructors.fetching') && !fetching) {
+            this.notify('Finished fetching instructors.');
+        } else if (!this._data.get('instructors.fetching') && fetching) {
+            this.notify(<i>Fetching instructors...</i>);
+        }
+
         this._data.set('instructors.fetching', fetching);
     }
 
