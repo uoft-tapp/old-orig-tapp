@@ -21,7 +21,7 @@ class Assigned extends React.Component {
                 data: p =>
                     <span
                         className="highlightOnHover"
-                        onClick={() => props.func.selectApplicant(p.applicantId)}>
+                        onClick={() => this.props.func.selectApplicant(p.applicantId)}>
                         {p.applicant.lastName}
                     </span>,
                 sortData: p => p.applicant.lastName,
@@ -83,7 +83,7 @@ class Assigned extends React.Component {
                 header: 'Course(s)',
                 data: p =>
                     <ButtonToolbar>
-                        {props.func.getAssignmentsByApplicant(p.applicantId).map(ass =>
+                        {this.props.func.getAssignmentsByApplicant(p.applicantId).map(ass =>
                             <Link
                                 to={
                                     'applicantsbycourse/' +
@@ -96,7 +96,7 @@ class Assigned extends React.Component {
                                 }
                                 key={'link-' + p.applicantId + '-' + ass.positionId}>
                                 <Button bsSize="xsmall" style={{ borderColor: '#555' }}>
-                                    {props.func.getCourseCodeById(
+                                    {this.props.func.getCourseCodeById(
                                         ass.positionId
                                     )}&nbsp;&middot;&nbsp;{ass.hours}
                                 </Button>

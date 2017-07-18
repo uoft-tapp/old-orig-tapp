@@ -21,7 +21,7 @@ class Unassigned extends React.Component {
                 data: p =>
                     <span
                         className="highlightOnHover"
-                        onClick={() => props.func.selectApplicant(p.applicantId)}>
+                        onClick={() => this.props.func.selectApplicant(p.applicantId)}>
                         {p.applicant.lastName}
                     </span>,
                 sortData: p => p.applicant.lastName,
@@ -83,7 +83,7 @@ class Unassigned extends React.Component {
                 header: 'Course Preferences',
                 data: p =>
                     <ButtonToolbar>
-                        {props.func.getApplicationById(p.applicantId).prefs.map(pref =>
+                        {this.props.func.getApplicationById(p.applicantId).prefs.map(pref =>
                             <Link
                                 to={
                                     'applicantsbycourse/' +
@@ -96,7 +96,7 @@ class Unassigned extends React.Component {
                                 }
                                 key={'link-' + p.applicantId + '-' + pref.positionId}>
                                 <Button bsSize="xsmall" style={{ borderColor: '#555' }}>
-                                    {props.func.getCourseCodeById(pref.positionId)}
+                                    {this.props.func.getCourseCodeById(pref.positionId)}
                                 </Button>
                             </Link>
                         )}
