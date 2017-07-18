@@ -66,15 +66,15 @@ const RouterInst = props => {
                         path={routeConfig.courses.route}
                         render={() => <Courses navKey={routeConfig.courses.key} {...props} />}
                     />
-                <Route
-                    path={routeConfig.abc.route + '/:course'}
-                    render={({ match }) =>
-                        <ABC
-                            navKey={routeConfig.abc.key}
-                            selectedCourse={match.params.course}
-                            {...props}
-                        />}
-                />
+                    <Route
+                        path={routeConfig.abc.route + '/:course'}
+                        render={({ match }) =>
+                            <ABC
+                                navKey={routeConfig.abc.key}
+                                selectedCourse={match.params.course}
+                                {...props}
+                            />}
+                    />
                     <Route
                         path={routeConfig.abc.route}
                         render={() => <ABC navKey={routeConfig.abc.key} {...props} />}
