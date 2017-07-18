@@ -164,11 +164,6 @@ footer div p {
     overflow: auto;
 }
 
-#assigned-grid .highlightOnHover:hover, #unassigned-grid .highlightOnHover:hover {
-    font-weight: bold;
-    cursor: pointer;
-}
-
 /* for Applicant modal */
 #applicant-modal .modal-dialog {
     width: 98vw;
@@ -218,6 +213,11 @@ footer div p {
 /* for ApplicantTables*/
 .unassigned-table table, .assigned-table table {
     margin: 0;
+}
+
+.highlightOnHover:hover {
+    font-weight: bold;
+    cursor: pointer;
 }
 
 /* for body of ApplicantTable of assigned applicants in ABC view */
