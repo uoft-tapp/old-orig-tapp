@@ -262,21 +262,36 @@ function fetchAll() {
     let assignmentPromise = getAssignments();
     let instructorsPromise = getInstructors();
 
-    applicantPromise.then(() => appState.setFetchingApplicantsList(false));
-    assignmentPromise.then(() => appState.setFetchingAssignmentsList(false));
-    instructorsPromise.then(() => appState.setFetchingInstructorsList(false));
+    applicantPromise.then(
+        () => appState.setFetchingApplicantsList(false),
+        () => appState.setFetchingApplicantsList(false)
+    );
+    assignmentPromise.then(
+        () => appState.setFetchingAssignmentsList(false),
+        () => appState.setFetchingAssignmentsList(false)
+    );
+    instructorsPromise.then(
+        () => appState.setFetchingInstructorsList(false),
+        () => appState.setFetchingInstructorsList(false)
+    );
 
     // add rounds to applications from courses, once both have been fetched
-    Promise.all([applicationPromise, coursePromise]).then(([_, courses]) => {
-        appState.setApplicationRounds(courses);
-        appState.setFetchingApplicationsList(false);
-    });
+    Promise.all([applicationPromise, coursePromise]).then(
+        ([_, courses]) => {
+            appState.setApplicationRounds(courses);
+            appState.setFetchingApplicationsList(false);
+        },
+        () => appState.setFetchingApplicationsList(false)
+    );
 
     // add assignment counts to courses, once both have been fetched
-    Promise.all([coursePromise, assignmentPromise]).then(([_, assignmentCounts]) => {
-        appState.setCoursesAssignmentCount(assignmentCounts);
-        appState.setFetchingCoursesList(false);
-    });
+    Promise.all([coursePromise, assignmentPromise]).then(
+        ([_, assignmentCounts]) => {
+            appState.setCoursesAssignmentCount(assignmentCounts);
+            appState.setFetchingCoursesList(false);
+        },
+        () => appState.setFetchingCoursesList(false)
+    );
 }
 
 /* Task-specific resource modifiers */
@@ -289,7 +304,10 @@ function postAssignment(applicant, course, hours) {
         '/applicants/' + applicant + '/assignments',
         { position_id: course, hours: hours },
         getAssignments
-    ).then(() => appState.setFetchingAssignmentsList(false));
+    ).then(
+        () => appState.setFetchingAssignmentsList(false),
+        () => appState.setFetchingAssignmentsList(false)
+    );
 }
 
 // remove an assignment
@@ -299,15 +317,19 @@ function deleteAssignment(applicant, assignment) {
     return deleteHelper(
         '/applicants/' + applicant + '/assignments/' + assignment,
         getAssignments
-    ).then(() => appState.setFetchingAssignmentsList(false));
+    ).then(
+        () => appState.setFetchingAssignmentsList(false),
+        () => appState.setFetchingAssignmentsList(false)
+    );
 }
 
 // add/update the notes for an applicant
 function noteApplicant(applicant, notes) {
     appState.setFetchingApplicantsList(true);
 
-    return putHelper('/applicants/' + applicant, { commentary: notes }, getApplicants).then(() =>
-        appState.setFetchingApplicantsList(false)
+    return putHelper('/applicants/' + applicant, { commentary: notes }, getApplicants).then(
+        () => appState.setFetchingApplicantsList(false),
+        () => appState.setFetchingApplicantsList(false)
     );
 }
 
@@ -319,14 +341,18 @@ function updateAssignmentHours(applicant, assignment, hours) {
         '/applicants/' + applicant + '/assignments/' + assignment,
         { hours: hours },
         getAssignments
-    ).then(() => appState.setFetchingAssignmentsList(false));
+    ).then(
+        () => appState.setFetchingAssignmentsList(false),
+        () => appState.setFetchingAssignmentsList(false)
+    );
 }
 
 function updateCourse(courseId, data, val, attr) {
     appState.setFetchingCoursesList(true);
 
-    return putHelper('/positions/' + courseId, data, getCourses).then(() =>
-        appState.setFetchingCoursesList(false)
+    return putHelper('/positions/' + courseId, data, getCourses).then(
+        () => appState.setFetchingCoursesList(false),
+        () => appState.setFetchingCoursesList(false)
     );
 }
 
