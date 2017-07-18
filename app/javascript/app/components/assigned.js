@@ -3,6 +3,7 @@ import { Grid, Row, Col, ButtonToolbar, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { ApplicantTableMenu } from './applicantTableMenu.js';
 import { ApplicantTable } from './applicantTable.js';
+import { routeConfig } from '../routeConfig.js';
 
 class Assigned extends React.Component {
     render() {
@@ -86,7 +87,8 @@ class Assigned extends React.Component {
                         {this.props.func.getAssignmentsByApplicant(p.applicantId).map(ass =>
                             <Link
                                 to={
-                                    'applicantsbycourse' +
+                                    '/' +
+                                    routeConfig.abc.route +
                                     '#' +
                                     ass.positionId +
                                     '-' +
