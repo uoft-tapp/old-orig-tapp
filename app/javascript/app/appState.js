@@ -13,11 +13,11 @@ const initialState = {
 
         selectedTab: null,
 
-        // list of unread notifications (can be text or HTML/JSX)
+        // list of unread notifications (string can contain HTML, but be careful because it is not sanitized!)
         notifications: [],
     },
 
-    // list of UI alerts (can be text or HTML/JSX)
+    // list of UI alerts (string can contain HTML, but be careful because it is not sanitized!)
     alerts: [],
 
     // applicant to display in applicant view
@@ -74,31 +74,36 @@ class AppState {
     constructor() {
         // container for application state
         var _data = new Backbone.NestedModel(initialState);
-
-        // getter for appState object
+        // getter for an appState object that deep-copies the value returned by Backbone's get()
         this.get = function(property) {
-            return _data.get(property);
+            let value = _data.get(property);
+
+            // JSON.parse(JSON.stringify(undefined)) does not work
+            if (value == undefined) {
+                return value;
+            }
+            return JSON.parse(JSON.stringify(value));
         };
 
-        // setters for appState object
-        
+        // setters for an appState object that deep-copy the value provided before passing it to
+        // Backbone's set()/add()/remove()
         this.set = function(property, value) {
             if (arguments.length == 1) {
-                _data.set(property);
+                _data.set(JSON.parse(JSON.stringify(property)));
             } else {
-                _data.set(property, value);
+                _data.set(property, JSON.parse(JSON.stringify(value)));
             }
         };
 
         this.add = function(property, value) {
-            _data.add(property, value);
+            _data.add(property, JSON.parse(JSON.stringify(value)));
         };
 
         this.remove = function(property) {
             _data.remove(property);
         };
 
-        // wrapper for Backbone's unset
+        // wrapper for Backbone's unset()
         this.unset = function(property, params) {
             _data.unset(property, params);
         };
@@ -124,11 +129,7 @@ class AppState {
         if (!this.getCoursePanelSortsByCourse(course).some(([f, _]) => f == field)) {
             this.add('abcView.panelFields[' + course + '].selectedSortFields', [field, 1]);
         } else {
-            this.alert(
-                <span>
-                    <b>Applicant Table</b>&ensp;Cannot apply the same sort more than once.
-                </span>
-            );
+            this.alert('<b>Applicant Table</b>&ensp;Cannot apply the same sort more than once.');
         }
     }
 
@@ -140,11 +141,7 @@ class AppState {
         if (!this.getSorts().some(([f, _]) => f == field)) {
             this.add(view + '.selectedSortFields', [field, 1]);
         } else {
-            this.alert(
-                <span>
-                    <b>Applicant Table</b>&ensp;Cannot apply the same sort more than once.
-                </span>
-            );
+            this.alert('<b>Applicant Table</b>&ensp;Cannot apply the same sort more than once.');
         }
     }
 
@@ -485,11 +482,7 @@ class AppState {
             if (selected.length < 4) {
                 this.add('abcView.selectedCourses', course);
             } else {
-                this.alert(
-                    <span>
-                        <b>Courses Menu</b>&ensp;Cannot select more than 4 courses.
-                    </span>
-                );
+                this.alert('<b>Courses Menu</b>&ensp;Cannot select more than 4 courses.');
             }
         } else {
             this.remove('abcView.selectedCourses[' + i + ']');
@@ -845,6 +838,19 @@ class AppState {
         this.set('applications.list', list);
     }
 
+    setApplicationRounds(applications, courses) {
+        // assumes that all courses in a single application will be part of the same round
+        for (var applicant in applications) {
+            applications[applicant].forEach((app, index) => {
+                if (app.prefs && app.prefs.length > 0) {
+                    applications[applicant][index].round = courses[app.prefs[0].positionId].round;
+                }
+            });
+        }
+
+        this.setApplicationsList(applications);
+    }
+
     setAssignmentsList(list) {
         this.unset('assignments.list', { silent: true });
         this.set('assignments.list', list);
@@ -858,7 +864,7 @@ class AppState {
     setFetchingApplicantsList(fetching) {
         let init = this.get('applicants.fetching');
         if (fetching) {
-            this.notify(<i>Fetching applicants...</i>);
+            this.notify('<i>Fetching applicants...</i>');
             this.set('applicants.fetching', init + 1);
         } else {
             this.set('applicants.fetching', init - 1);
@@ -868,7 +874,7 @@ class AppState {
     setFetchingApplicationsList(fetching) {
         let init = this.get('applications.fetching');
         if (fetching) {
-            this.notify(<i>Fetching applications...</i>);
+            this.notify('<i>Fetching applications...</i>');
             this.set('applications.fetching', init + 1);
         } else {
             this.set('applications.fetching', init - 1);
@@ -878,7 +884,7 @@ class AppState {
     setFetchingAssignmentsList(fetching) {
         let init = this.get('assignments.fetching');
         if (fetching) {
-            this.notify(<i>Fetching assignments...</i>);
+            this.notify('<i>Fetching assignments...</i>');
             this.set('assignments.fetching', init + 1);
         } else {
             this.set('assignments.fetching', init - 1);
@@ -888,7 +894,7 @@ class AppState {
     setFetchingCoursesList(fetching) {
         let init = this.get('courses.fetching');
         if (fetching) {
-            this.notify(<i>Fetching courses...</i>);
+            this.notify('<i>Fetching courses...</i>');
             this.set('courses.fetching', init + 1);
         } else {
             this.set('courses.fetching', init - 1);
@@ -898,7 +904,7 @@ class AppState {
     setFetchingInstructorsList(fetching) {
         let init = this.get('instructors.fetching');
         if (fetching) {
-            this.notify(<i>Fetching instructors...</i>);
+            this.notify('<i>Fetching instructors...</i>');
             this.set('instructors.fetching', init + 1);
         } else {
             this.set('instructors.fetching', init - 1);
