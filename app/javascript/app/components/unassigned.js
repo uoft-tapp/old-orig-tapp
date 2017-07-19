@@ -87,7 +87,6 @@ class Unassigned extends React.Component {
                         {this.props.func.getApplicationById(p.applicantId).prefs.map(pref =>
                             <Link
                                 to={
-                                    '/' +
                                     routeConfig.abc.route +
                                     '#' +
                                     pref.positionId +

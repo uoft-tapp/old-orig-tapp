@@ -63,27 +63,27 @@ const RouterInst = props => {
 
                 <Switch>
                     <Route
-                        path={'/' + routeConfig.courses.route}
-                        render={() => <Courses navKey={routeConfig.courses.key} {...props} />}
+                        path={routeConfig.courses.route}
+                        render={() => <Courses navKey={routeConfig.courses.id} {...props} />}
                     />
                     <Route
-                        path={'/' + routeConfig.abc.route}
-                        render={() => <ABC navKey={routeConfig.abc.key} {...props} />}
+                        path={routeConfig.abc.route}
+                        render={() => <ABC navKey={routeConfig.abc.id} {...props} />}
                     />
                     <Route
-                        path={'/' + routeConfig.assigned.route}
-                        render={() => <Assigned navKey={routeConfig.assigned.key} {...props} />}
+                        path={routeConfig.assigned.route}
+                        render={() => <Assigned navKey={routeConfig.assigned.id} {...props} />}
                     />
                     <Route
-                        path={'/' + routeConfig.unassigned.route}
-                        render={() => <Unassigned navKey={routeConfig.unassigned.key} {...props} />}
+                        path={routeConfig.unassigned.route}
+                        render={() => <Unassigned navKey={routeConfig.unassigned.id} {...props} />}
                     />
                     <Route
-                        path={'/' + routeConfig.summary.route}
-                        render={() => <Summary navKey={routeConfig.summary.key} {...props} />}
+                        path={routeConfig.summary.route}
+                        render={() => <Summary navKey={routeConfig.summary.id} {...props} />}
                     />
 
-                    <Route path={'/' + routeConfig.logout.route} render={() => <Bye />} />
+                    <Route path={routeConfig.logout.route} render={() => <Bye />} />
                 </Switch>
 
                 {selectedApplicant && <ApplicantModal applicantId={selectedApplicant} {...props} />}
