@@ -776,9 +776,7 @@ class AppState {
         this._data.set('applications.list', list);
     }
 
-    setApplicationRounds(courses) {
-        let applications = this.getApplicationsList();
-
+    setApplicationRounds(applications, courses) {
         // assumes that all courses in a single application will be part of the same round
         for (var applicant in applications) {
             applications[applicant].forEach((app, index) => {
@@ -796,9 +794,7 @@ class AppState {
         this._data.set('assignments.list', list);
     }
 
-    setCoursesAssignmentCount(counts) {
-        let courses = this.getCoursesList();
-
+    setCoursesAssignmentCount(courses, counts) {
         for (var course in counts) {
             courses[course].assignmentCount = counts[course];
         }
