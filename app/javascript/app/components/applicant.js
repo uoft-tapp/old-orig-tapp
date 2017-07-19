@@ -88,8 +88,11 @@ class Applicant extends React.Component {
     }
 
     render() {
+        let fetchCheck = this.props.func.anyFetching();
+        let cursorStyle = { cursor: fetchCheck ? 'progress' : 'auto' };
+        
         return (
-            <div>
+                <div style={cursorStyle}>
                 {this.props.func.getAssignmentForm().panels.map((panel, index) =>
                     <Panel
                         collapsible
