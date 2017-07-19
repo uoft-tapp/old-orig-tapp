@@ -880,14 +880,19 @@ class AppState {
         switch (props) {
             case 'estimatedPositions':
                 data['estimated_count'] = val;
+                break;
             case 'positionHours':
                 data['hours'] = val;
+                break;
             case 'estimatedEnrol':
                 data['estimated_enrolment'] = val;
+                break;
             case 'qual':
                 data['qualifications'] = val;
+                break;
             case 'resp':
                 data['duties'] = val;
+                break;
         }
         fetch.updateCourse(courseId, data, val, props);
     }

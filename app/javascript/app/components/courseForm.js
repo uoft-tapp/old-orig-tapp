@@ -44,13 +44,12 @@ class CourseForm extends React.Component {
                                         defaultValue={
                                             course[1].estimatedPositions
                                                 ? course[1].estimatedPositions
-                                                : 0
+                                                : ''
                                         }
                                         min="0"
                                         onBlur={event => {
                                             if (
-                                                event.target.value !=
-                                                course[1].estimatedPositions
+                                                event.target.value != course[1].estimatedPositions
                                             ) {
                                                 this.props.func.updateCourse(
                                                     course[0],
@@ -65,7 +64,7 @@ class CourseForm extends React.Component {
                                     <input
                                         type="number"
                                         defaultValue={
-                                            course[1].positionHours ? course[1].positionHours : 0
+                                            course[1].positionHours ? course[1].positionHours : ''
                                         }
                                         min="0"
                                         onBlur={event => {
@@ -77,19 +76,17 @@ class CourseForm extends React.Component {
                                                 );
                                             }
                                         }}
-                                     />
+                                    />
                                 </p>
                                 <p>
                                     <input
                                         type="number"
                                         defaultValue={
-                                            course[1].estimatedEnrol ? course[1].estimatedEnrol : 0
+                                            course[1].estimatedEnrol ? course[1].estimatedEnrol : ''
                                         }
                                         min="0"
                                         onBlur={event => {
-                                            if (
-                                                event.target.value != course[1].estimatedEnrol
-                                            ) {
+                                            if (event.target.value != course[1].estimatedEnrol) {
                                                 this.props.func.updateCourse(
                                                     course[0],
                                                     event.target.value,
@@ -120,14 +117,14 @@ class CourseForm extends React.Component {
                                     <b>Qualifications: </b>
                                 </p>
                                 <textarea
-                                     onBlur={event => {
-                                         if (event.target.value != course[1].qual) {
+                                    onBlur={event => {
+                                        if (event.target.value != course[1].qual) {
                                             this.props.func.updateCourse(
                                                 course[0],
                                                 event.target.value,
                                                 'qual'
                                             );
-                                         }
+                                        }
                                     }}
                                     defaultValue={course[1].qual}
                                 />
