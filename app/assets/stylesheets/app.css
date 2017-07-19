@@ -85,12 +85,6 @@ footer div p {
     width: 100%;
 }
 
-.panel_table td{
-    padding-right: 50px;
-    margin-top: 0;
-    vertical-align: top;
-}
-
 /* for ApplicantTableMenu */
 .applicant-table-menu {
     margin: 0;
@@ -178,6 +172,12 @@ footer div p {
 #applicant-modal .panel {
     margin-bottom: 0;
     width: 100%;
+}
+
+#applicant-modal .panel_table td {
+    padding-right: 50px;
+    margin-top: 0;
+    vertical-align: top;
 }
 
 /* for course panel container in ABC view */

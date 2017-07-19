@@ -179,20 +179,6 @@ class AppState {
         }
     }
 
-    // return the name of the appState component that corresponds to the currently selected view
-    getSelectedViewStateComponent() {
-        switch (this.getSelectedNavTab()) {
-            case routeConfig.abc.id:
-                return 'abcView';
-            case routeConfig.assigned.id:
-                return 'assignedView';
-            case routeConfig.unassigned.id:
-                return 'unassignedView';
-            default:
-                return null;
-        }
-    }
-
     getAlerts() {
         return this._data.get('alerts');
     }
@@ -233,6 +219,10 @@ class AppState {
         return this.getTableFields().selectedFilters;
     }
 
+    getSelectedApplicant() {
+        return this._data.get('selectedApplicant');
+    }
+
     getSelectedCourses() {
         return this._data.get('abcView.selectedCourses');
     }
@@ -241,8 +231,18 @@ class AppState {
         return this._data.get('nav.selectedTab');
     }
 
-    getSelectedApplicant() {
-        return this._data.get('selectedApplicant');
+    // return the name of the appState component that corresponds to the currently selected view
+    getSelectedViewStateComponent() {
+        switch (this.getSelectedNavTab()) {
+            case routeConfig.abc.id:
+                return 'abcView';
+            case routeConfig.assigned.id:
+                return 'assignedView';
+            case routeConfig.unassigned.id:
+                return 'unassignedView';
+            default:
+                return null;
+        }
     }
 
     getSorts() {
