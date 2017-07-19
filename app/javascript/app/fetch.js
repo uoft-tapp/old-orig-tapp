@@ -134,9 +134,7 @@ function onFetchApplicantsSuccess(resp) {
         };
     });
 
-    appState.setApplicantsList(applicants);
-
-    return resp;
+    return applicants;
 }
 
 function onFetchApplicationsSuccess(resp) {
@@ -170,9 +168,7 @@ function onFetchApplicationsSuccess(resp) {
         }
     });
 
-    appState.setApplicationsList(applications);
-
-    return resp;
+    return applications;
 }
 
 function onFetchCoursesSuccess(resp) {
@@ -209,9 +205,7 @@ function onFetchCoursesSuccess(resp) {
         rounds[course.id] = course.round_id;
     });
 
-    appState.setCoursesList(courses);
-
-    return courses;
+   return courses;
 }
 
 function onFetchAssignmentsSuccess(resp) {
@@ -237,10 +231,8 @@ function onFetchAssignmentsSuccess(resp) {
         assignmentCounts[ass.position_id] = count ? count + 1 : 1;
     });
 
-    appState.setAssignmentsList(assignments);
-
-    // return assignmentCounts, to be used to populate the corresponding courses field
-    return assignmentCounts;
+    // also return assignmentCounts, to be used to populate the corresponding courses field
+    return { assignments: assignments, assignmentCounts: assignmentCounts };
 }
 
 function onFetchInstructorsSuccess(resp) {
@@ -250,9 +242,7 @@ function onFetchInstructorsSuccess(resp) {
         instructors[instr.id] = instr.name;
     });
 
-    appState.setInstructorsList(instructors);
-
-    return resp;
+    return instructors;
 }
 
 /* Function to GET all resources */
@@ -271,22 +261,33 @@ function fetchAll() {
     let instructorsPromise = getInstructors();
 
     applicantPromise.then(
-        () => appState.setFetchingApplicantsList(false),
+        applicants => {
+            appState.setApplicantsList(applicants);
+            appState.setFetchingApplicantsList(false);
+        },
         () => appState.setFetchingApplicantsList(false)
     );
+    
     assignmentPromise.then(
-        () => appState.setFetchingAssignmentsList(false),
+        a => {
+            appState.setAssignmentsList(a.assignments);
+            appState.setFetchingAssignmentsList(false);
+        },
         () => appState.setFetchingAssignmentsList(false)
     );
+    
     instructorsPromise.then(
-        () => appState.setFetchingInstructorsList(false),
+        instructors => {
+            appState.setInstructorsList(instructors);
+            appState.setFetchingInstructorsList(false);
+        },
         () => appState.setFetchingInstructorsList(false)
     );
 
     // add rounds to applications from courses, once both have been fetched
     Promise.all([applicationPromise, coursePromise]).then(
-        ([_, courses]) => {
-            appState.setApplicationRounds(courses);
+        ([applications, courses]) => {
+            appState.setApplicationRounds(applications, courses);
             appState.setFetchingApplicationsList(false);
         },
         () => appState.setFetchingApplicationsList(false)
@@ -294,8 +295,8 @@ function fetchAll() {
 
     // add assignment counts to courses, once both have been fetched
     Promise.all([coursePromise, assignmentPromise]).then(
-        ([_, assignmentCounts]) => {
-            appState.setCoursesAssignmentCount(assignmentCounts);
+        ([courses, a]) => {
+            appState.setCoursesAssignmentCount(courses, a.assignmentCounts);
             appState.setFetchingCoursesList(false);
         },
         () => appState.setFetchingCoursesList(false)
@@ -313,7 +314,10 @@ function postAssignment(applicant, course, hours) {
         { position_id: course, hours: hours },
         getAssignments
     ).then(
-        () => appState.setFetchingAssignmentsList(false),
+        a => {
+            appState.setAssignmentsList(a.assignments);
+            appState.setFetchingAssignmentsList(false);
+        },
         () => appState.setFetchingAssignmentsList(false)
     );
 }
@@ -326,7 +330,10 @@ function deleteAssignment(applicant, assignment) {
         '/applicants/' + applicant + '/assignments/' + assignment,
         getAssignments
     ).then(
-        () => appState.setFetchingAssignmentsList(false),
+        a => {
+            appState.setAssignmentsList(a.assignments);
+            appState.setFetchingAssignmentsList(false);
+        },
         () => appState.setFetchingAssignmentsList(false)
     );
 }
@@ -336,7 +343,10 @@ function noteApplicant(applicant, notes) {
     appState.setFetchingApplicantsList(true);
 
     return putHelper('/applicants/' + applicant, { commentary: notes }, getApplicants).then(
-        () => appState.setFetchingApplicantsList(false),
+        applicants => {
+            appState.setApplicantsList(applicants);
+            appState.setFetchingApplicantsList(false);
+        },
         () => appState.setFetchingApplicantsList(false)
     );
 }
@@ -350,7 +360,10 @@ function updateAssignmentHours(applicant, assignment, hours) {
         { hours: hours },
         getAssignments
     ).then(
-        () => appState.setFetchingAssignmentsList(false),
+        a => {
+            appState.setAssignmentsList(a.assignments);
+            appState.setFetchingAssignmentsList(false);
+        },
         () => appState.setFetchingAssignmentsList(false)
     );
 }
@@ -359,7 +372,10 @@ function updateCourse(courseId, data, val, attr) {
     appState.setFetchingCoursesList(true);
 
     return putHelper('/positions/' + courseId, data, getCourses).then(
-        () => appState.setFetchingCoursesList(false),
+        courses => {
+            appState.setCoursesList(courses);
+            appState.setFetchingCoursesList(false);
+        },
         () => appState.setFetchingCoursesList(false)
     );
 }
