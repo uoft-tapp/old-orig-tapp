@@ -87,7 +87,6 @@ class Assigned extends React.Component {
                         {this.props.func.getAssignmentsByApplicant(p.applicantId).map(ass =>
                             <Link
                                 to={
-                                    '/' +
                                     routeConfig.abc.route +
                                     '#' +
                                     ass.positionId +

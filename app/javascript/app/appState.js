@@ -182,11 +182,11 @@ class AppState {
     // return the name of the appState component that corresponds to the currently selected view
     getSelectedViewStateComponent() {
         switch (this.getSelectedNavTab()) {
-            case routeConfig.abc.key:
+            case routeConfig.abc.id:
                 return 'abcView';
-            case routeConfig.assigned.key:
+            case routeConfig.assigned.id:
                 return 'assignedView';
-            case routeConfig.unassigned.key:
+            case routeConfig.unassigned.id:
                 return 'unassignedView';
             default:
                 return null;

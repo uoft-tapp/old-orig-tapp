@@ -18,25 +18,24 @@ import img35 from '../img/layout-35.png';
 
 /*** Navbar components ***/
 
+const ViewTab = props =>
+    <li role="presentation" className={props.activeKey == props.id ? 'active' : ''}>
+        <Link to={props.route} className="navbar-link">
+            {props.label}
+        </Link>
+    </li>;
+
 const ViewTabs = props => {
+    let activeKey = props.func.getSelectedNavTab();
+
     return (
-        <Nav pullLeft activeKey={props.func.getSelectedNavTab()}>
-            <NavItem eventKey={routeConfig.courses.key} href={routeConfig.courses.route}>
-                Courses
-            </NavItem>
-            <NavItem eventKey={routeConfig.abc.key} href={routeConfig.abc.route}>
-                Applicants by Course
-            </NavItem>
-            <NavItem eventKey={routeConfig.assigned.key} href={routeConfig.assigned.route}>
-                All Assigned
-            </NavItem>
-            <NavItem eventKey={routeConfig.unassigned.key} href={routeConfig.unassigned.route}>
-                All Unassigned
-            </NavItem>
-            <NavItem eventKey={routeConfig.summary.key} href={routeConfig.summary.route}>
-                Summary
-            </NavItem>
-        </Nav>
+        <ul className="nav navbar-nav navbar-left">
+            <ViewTab activeKey={activeKey} {...routeConfig.courses} />
+            <ViewTab activeKey={activeKey} {...routeConfig.abc} />
+            <ViewTab activeKey={activeKey} {...routeConfig.assigned} />
+            <ViewTab activeKey={activeKey} {...routeConfig.unassigned} />
+            <ViewTab activeKey={activeKey} {...routeConfig.summary} />
+        </ul>
     );
 };
 
@@ -120,10 +119,10 @@ const Notifications = props => {
 const Auth = props => {
     return (
         <NavDropdown
-            eventKey={routeConfig.logout.key}
+            eventKey={routeConfig.logout.id}
             title={props.func.getCurrentUserRole() + ':' + props.func.getCurrentUserName()}
             id="nav-auth-dropdown">
-            <MenuItem eventKey={routeConfig.logout.key + '.1'} href={routeConfig.logout.route}>
+            <MenuItem eventKey={routeConfig.logout.id + '.1'} href={routeConfig.logout.route}>
                 Logout
             </MenuItem>
         </NavDropdown>
@@ -142,7 +141,7 @@ const NavbarInst = props => {
             <ViewTabs {...props} />
 
             <Nav pullRight>
-                {props.func.getSelectedNavTab() == routeConfig.abc.key &&
+                {props.func.getSelectedNavTab() == routeConfig.abc.id &&
                     <CoursePanelLayoutTabs {...props} />}
                 <Notifications {...props} />
                 <Auth {...props} />
