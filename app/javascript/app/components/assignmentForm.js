@@ -9,7 +9,7 @@ class AssignmentForm extends React.Component {
         if (this.noAssignments(assignments, temp_assignments)) {
             return (
                 <tr>
-                    <td>No Assignments</td>
+                    <td><i>No Assignments</i></td>
                 </tr>
             );
         }
