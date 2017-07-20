@@ -88,7 +88,13 @@ class ABC extends React.Component {
         }
     }
 
+    selectThisTab() {
+        this.props.func.selectNavTab(this.props.navKey);
+    }
+
     componentWillMount() {
+        this.selectThisTab();
+
         // render this view with a specific course panel pre-selected
         let selected = this.props.func.getSelectedCourses();
         if (
@@ -103,6 +109,8 @@ class ABC extends React.Component {
     }
 
     componentWillUpdate() {
+        this.selectThisTab();
+
         // render this view with a specific course panel pre-selected
         let selected = this.props.func.getSelectedCourses();
         if (
@@ -169,18 +177,6 @@ class ABC extends React.Component {
                 </div>
             </Grid>
         );
-    }
-
-    selectThisTab() {
-        this.props.func.selectNavTab(this.props.navKey);
-    }
-
-    componentDidMount() {
-        this.selectThisTab();
-    }
-
-    componentDidUpdate() {
-        this.selectThisTab();
     }
 }
 

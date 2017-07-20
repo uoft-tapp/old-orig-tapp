@@ -27,11 +27,11 @@ class Courses extends React.Component {
         this.props.func.selectNavTab(this.props.navKey);
     }
 
-    componentDidMount() {
+    componentWillMount() {
         this.selectThisTab();
     }
 
-    componentDidUpdate() {
+    componentWillUpdate() {
         this.selectThisTab();
     }
 }

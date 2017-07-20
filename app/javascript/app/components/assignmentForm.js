@@ -137,7 +137,7 @@ class AssignmentForm extends React.Component {
                     this.props.func.setInput('');
                 } else {
                     this.props.func.setInput('');
-                    alert(courses[course].code + ' has already been assigned.');
+                    this.props.func.alert(courses[course].code + ' has already been assigned.');
                 }
             }
         }
