@@ -340,33 +340,7 @@ class AppState {
 
     // set the course panel layout in the ABC view
     setCoursePanelLayout(layout) {
-        let selected = this.getSelectedCourses();
-        let panelFields = this.getCoursePanelFields();
-
-        // check that panel state trackers exist for exactly the current courses
-        if (selected != Object.keys(panelFields)) {
-            for (var course in panelFields) {
-                // if a tracker is missing, create it (the course was just selected)
-                if (!selected.includes(course)) {
-                    delete panelFields[course];
-                }
-            }
-
-            for (var course = 0; course < selected.length; course++) {
-                // if a tracker is extra, remove it (the course was just unselected)
-                if (!(selected[course] in panelFields)) {
-                    panelFields[selected[course]] = {
-                        selectedSortFields: [],
-                        selectedFilters: {},
-                    };
-                }
-            }
-
-            this._data.unset('abcView.panelFields', { silent: true });
-            this._data.set({ 'abcView.panelLayout': layout, 'abcView.panelFields': panelFields });
-        } else {
-            this._data.set('abcView.panelLayout', layout);
-        }
+        this._data.set('abcView.panelLayout', layout);
     }
 
     setSelectedCourses(courses) {
@@ -516,6 +490,36 @@ class AppState {
     // unselect the applicant displayed in the applicant view
     unselectApplicant() {
         this._data.unset('selectedApplicant');
+    }
+
+    // check whether a panelFields object exists for each of the currently selected courses
+    // if not, create the appropriate panelFields
+    updateCoursePanelFields(selected, panelFields) {
+        let update = false;
+
+        for (var course in panelFields) {
+            // if a tracker is extra, remove it (the course was just unselected)
+            if (!selected.includes(parseInt(course))) {
+                delete panelFields[course];
+                update = true;
+            }
+        }
+
+        for (var course = 0; course < selected.length; course++) {
+            // if a tracker is missing, create it (the course was just selected)
+            if (!(selected[course] in panelFields)) {
+                panelFields[selected[course]] = {
+                    selectedSortFields: [],
+                    selectedFilters: {},
+                };
+                update = true;
+            }
+        }
+
+        if (update) {
+            this._data.unset('abcView.panelFields', { silent: true });
+            this._data.set('abcView.panelFields', panelFields);
+        }
     }
 
     /******************************
