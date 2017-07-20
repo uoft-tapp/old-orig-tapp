@@ -556,6 +556,49 @@ class AppState {
         fetch.updateCourse(courseId, { instructors: val }, val, 'instructors');
     }
 
+    // accepts an (optional) courses list and an (optional) list of assignment counts in an object, and returns the
+    // courses list with assignment counts updated
+    addAssignmentCountsToCourses(args) {
+        let assignmentCounts = args.assignmentCounts,
+            courses = args.courses ? args.courses : this.getCoursesList();
+
+        // if assignment counts are not given, compute them
+        if (!assignmentCounts) {
+            let assignments = this.getAssignmentsList(),
+                assignmentCounts = {};
+
+            let count;
+            for (var ass in assignments) {
+                count = assignmentCounts[ass.position_id];
+                assignmentCounts[ass.position_id] = count ? count + 1 : 1;
+            }
+        }
+
+        // add assignment counts to courses
+        for (var course in assignmentCounts) {
+            if (courses[course]) {
+                courses[course].assignmentCount = assignmentCounts[course];
+            }
+        }
+
+        return courses;
+    }
+
+    // accepts a list of applications and an (optional list of courses), and returns the applications list with
+    // rounds updated
+    addRoundsToApplications(applications, courses = this.getCoursesList()) {
+        // assumes that all courses in a single application will be part of the same round
+        for (var applicant in applications) {
+            applications[applicant].forEach((app, index) => {
+                if (app.prefs && app.prefs.length > 0) {
+                    applications[applicant][index].round = courses[app.prefs[0].positionId].round;
+                }
+            });
+        }
+
+        return applications;
+    }
+
     // check if any data is being fetched
     anyFetching() {
         return [
@@ -802,30 +845,9 @@ class AppState {
         this.set('applications.list', list);
     }
 
-    setApplicationRounds(applications, courses) {
-        // assumes that all courses in a single application will be part of the same round
-        for (var applicant in applications) {
-            applications[applicant].forEach((app, index) => {
-                if (app.prefs && app.prefs.length > 0) {
-                    applications[applicant][index].round = courses[app.prefs[0].positionId].round;
-                }
-            });
-        }
-
-        this.setApplicationsList(applications);
-    }
-
     setAssignmentsList(list) {
         this.unset('assignments.list', { silent: true });
         this.set('assignments.list', list);
-    }
-
-    setCoursesAssignmentCount(courses, counts) {
-        for (var course in counts) {
-            courses[course].assignmentCount = counts[course];
-        }
-
-        this.setCoursesList(courses);
     }
 
     setCoursesList(list) {
@@ -839,20 +861,14 @@ class AppState {
             this.notify(<i>Fetching applicants...</i>);
             this.set('applicants.fetching', init + 1);
         } else {
-            this.notify('Finished fetching applicants.');
             this.set('applicants.fetching', init - 1);
         }
     }
 
     setFetchingApplicationsList(fetching) {
-        if (this.fetchingApplications() && !fetching) {
-            this.notify('Finished fetching applications.');
-        } else if (!this.fetchingApplications() && fetching) {
-            this.notify(<i>Fetching applications...</i>);
-        }
-
         let init = this.get('applications.fetching');
         if (fetching) {
+            this.notify(<i>Fetching applications...</i>);
             this.set('applications.fetching', init + 1);
         } else {
             this.set('applications.fetching', init - 1);
@@ -865,7 +881,6 @@ class AppState {
             this.notify(<i>Fetching assignments...</i>);
             this.set('assignments.fetching', init + 1);
         } else {
-            this.notify('Finished fetching assignments.');
             this.set('assignments.fetching', init - 1);
         }
     }
@@ -876,7 +891,6 @@ class AppState {
             this.notify(<i>Fetching courses...</i>);
             this.set('courses.fetching', init + 1);
         } else {
-            this.notify('Finished fetching courses.');
             this.set('courses.fetching', init - 1);
         }
     }
@@ -887,7 +901,6 @@ class AppState {
             this.notify(<i>Fetching instructors...</i>);
             this.set('instructors.fetching', init + 1);
         } else {
-            this.notify('Finished fetching instructors.');
             this.set('instructors.fetching', init - 1);
         }
     }
@@ -895,6 +908,31 @@ class AppState {
     setInstructorsList(list) {
         this.unset('instructors.list', { silent: true });
         this.set('instructors.list', list);
+    }
+
+    successFetchingApplicantsList() {
+        this.notify('Finished fetching applicants.');
+        this.setFetchingApplicantsList(false);
+    }
+
+    successFetchingApplicationsList() {
+        this.notify('Finished fetching applications.');
+        this.setFetchingApplicationsList(false);
+    }
+
+    successFetchingAssignmentsList() {
+        this.notify('Finished fetching assignments.');
+        this.setFetchingAssignmentsList(false);
+    }
+
+    successFetchingCoursesList() {
+        this.notify('Finished fetching courses.');
+        this.setFetchingCoursesList(false);
+    }
+
+    successFetchingInstructorsList() {
+        this.notify('Finished fetching instructors.');
+        this.setFetchingInstructorsList(false);
     }
 
     updateAssignment(applicant, assignment, hours) {
