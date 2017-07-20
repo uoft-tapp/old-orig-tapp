@@ -584,7 +584,7 @@ class AppState {
         return courses;
     }
 
-    // accepts a list of applications and an (optional list of courses), and returns the applications list with
+    // accepts a list of applications and a (optional) list of courses, and returns the applications list with
     // rounds updated
     addRoundsToApplications(applications, courses = this.getCoursesList()) {
         // assumes that all courses in a single application will be part of the same round
