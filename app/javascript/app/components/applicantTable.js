@@ -25,12 +25,6 @@ const ApplicantRow = props =>
     </tr>;
 
 class ApplicantTable extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.filterApplicants();
-    }
-
     // acquire and process list of applicants
     filterApplicants() {
         this.applicants = this.props.getApplicants();
@@ -88,6 +82,10 @@ class ApplicantTable extends React.Component {
 
         // if the applicant values for this field are equal, apply the next sort criterion
         return this.sortApplicants(a, b, criteria.slice(1));
+    }
+
+    componentWillMount() {
+        this.filterApplicants();
     }
 
     componentWillUpdate() {

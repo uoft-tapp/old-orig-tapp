@@ -154,7 +154,7 @@ class CoursePanel extends React.Component {
                 style={this.props.panelStyle}
                 header={
                     <span>
-                        {course.code}&emsp;{course.assignmentCount} /{course.estimatedPositions}
+                        {course.code}&emsp;{course.assignmentCount}&nbsp;/{course.estimatedPositions}
                         <i
                             className="fa fa-close"
                             style={{ float: 'right' }}
