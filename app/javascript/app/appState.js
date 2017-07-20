@@ -165,9 +165,7 @@ class AppState {
     }
 
     createAssignmentForm(panels) {
-        if (this.getAssignmentForm().panels.length == 0) {
-            this._data.set('assignmentForm.panels', panels);
-        }
+        this._data.set('assignmentForm.panels', panels);
     }
 
     dismissAlert(id) {
