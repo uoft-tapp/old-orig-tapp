@@ -124,17 +124,35 @@ class ChassImporter
 
   def insert_preference(preferences, application)
     parse_preference(preferences).each do |preference|
-      position_ident = {position: preference.strip, round_id: @round_id}
-      position = Position.where(position_ident).select(:id).take
-      if position
-        preference_ident = {position_id: position.id}
-        application.preferences.where(preference_ident).update(rank: 1)
+      preference=preference.strip
+      if preference.downcase!="and" && preference.size>1
+        pref = get_pref(application, preference.downcase)
+        if pref
+          pref.update(rank: 1)
+        end
       end
     end
   end
 
+  def get_pref(application, parsed_data)
+    Preference.where({application_id: application[:id]}).each do |preference|
+      position = Position.find(preference[:position_id])
+      code = position[:position].downcase
+      name = position[:course_name].downcase
+      if (code.include? parsed_data) || (name.include? parsed_data)
+        return preference
+      end
+    end
+    return nil
+  end
+
   def parse_preference(pref)
-    list = pref.split(',')
+    list = pref.split(/[.,'&;\r\n():\t]/)
+    if list.size > 1 && list[0].size < 20
+      return list
+    else
+      return pref.split(/and/)
+    end
   end
 
   def insert_positions
