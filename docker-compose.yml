@@ -1,6 +1,7 @@
 version: '2'
 services:
   rails-app:
+    container_name: tapp_rails-app
     build: .
     environment:
       POSTGRES_HOST: postgres
@@ -10,6 +11,9 @@ services:
       SECRET_KEY_BASE: ${SECRET_KEY_BASE}
     volumes:
       - .:/srv/app
+    networks:
+      - internal
+      - external
     ports:
       - "3000:3000"
     links:
@@ -25,12 +29,23 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - /var/lib/postgresql/data
+    networks:
+      - internal
 
   webpack-dev-server:
     build: .
     volumes:
       - .:/srv/app
+    networks:
+      - internal
     ports:
       - "8080:8080"
     command: >
       ./bin/webpack-dev-server-entrypoint --host 0.0.0.0
+
+networks:
+  # Names of the networks will be prefixed with project name by docker
+  internal:
+    driver: bridge
+  external:
+    driver: bridge
