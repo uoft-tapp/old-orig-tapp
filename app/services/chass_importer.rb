@@ -123,12 +123,15 @@ class ChassImporter
     end
 
   def insert_preference(preferences, application)
-    parse_preference(preferences).each do |preference|
-      preference=preference.strip
-      if preference.size>1
-        pref = get_pref(application, preference.downcase)
-        if pref
-          pref.update(rank: 1)
+    prefs = parse_preference(preferences)
+    if prefs
+      prefs.each do |preference|
+        preference=preference.strip
+        if preference.size>1
+          pref = get_pref(application, preference.downcase)
+          if pref
+            pref.update(rank: 1)
+          end
         end
       end
     end
@@ -143,12 +146,12 @@ class ChassImporter
         return preference
       end
     end
-    return nil
+    return false
   end
 
   def parse_preference(pref)
     list = pref.split(/[.,'&;\r\n():\t]/)
-    if list.size >1
+    if list.size > 1
       return list
     else
       if list[0].include?"and"
@@ -159,6 +162,8 @@ class ChassImporter
         temp = list[0].split(/or/)
         temp.push(list[0])
         return temp
+      else
+        return list
       end
     end
   end
