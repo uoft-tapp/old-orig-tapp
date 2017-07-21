@@ -151,16 +151,14 @@ class ChassImporter
     if list.size >1
       return list
     else
-      if (list[0].include?"and") || (list[0].include?"or")
-        if list[0].include?"and"
-          temp =list[0].split(/and/)
-          temp.push(list[0])
-          return temp
-        elsif list[0].include?"or"
-          temp = list[0].split(/or/)
-          temp.push(list[0])
-          return temp
-        end
+      if list[0].include?"and"
+        temp =list[0].split(/and/)
+        temp.push(list[0])
+        return temp
+      elsif list[0].include?"or"
+        temp = list[0].split(/or/)
+        temp.push(list[0])
+        return temp
       end
     end
   end
