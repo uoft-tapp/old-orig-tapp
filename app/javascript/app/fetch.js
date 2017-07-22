@@ -265,6 +265,14 @@ function fetchAll() {
         })
         .catch(() => appState.setFetchingApplicantsList(false));
 
+    // when assignments are successfully fetched, update the assignments list; set fetching flag to false either way
+    assignmentPromise
+        .then(([assignments, _]) => {
+            appState.setAssignmentsList(assignments);
+            appState.successFetchingAssignmentsList();
+        })
+        .catch(() => appState.setFetchingAssignmentsList(false));
+    
     // when instructors are successfully fetched, update the instructors list; set fetching flag to false either way
     instructorsPromise
         .then(instructors => {
@@ -295,18 +303,14 @@ function fetchAll() {
         });
 
     // if both courses and assignments are successfully fetched, add assignment counts to courses, update the
-    // courses and assignments lists, and set both fetching flags to false
+    // courses list, and set both fetching flags to false
     Promise.all([coursePromise, assignmentPromise])
-        .then(([courses, [assignments, assignmentCounts]]) => {
+        .then(([courses, [_, assignmentCounts]]) => {
             courses = appState.addAssignmentCountsToCourses({
                 assignmentCounts: assignmentCounts,
                 courses: courses,
             });
             appState.setCoursesList(courses);
-
-            appState.setAssignmentsList(assignments);
-
-            appState.successFetchingAssignmentsList();
             appState.successFetchingCoursesList();
         })
         .catch(() => {
@@ -319,16 +323,6 @@ function fetchAll() {
                 })
                 // if both fail to fetch, set the fetching flag to false regardless
                 .catch(() => appState.setFetchingCoursesList(false));
-
-            // if courses are not successfully fetched but assignments are, update the assignments list and set fetching
-            // flag to false
-            assignmentPromise
-                .then(([assignments, _]) => {
-                    appState.setAssignmentsList(assignments);
-                    appState.successFetchingAssignmentsList();
-                })
-                // if both fail to fetch, set the fetching flag to false regardless
-                .catch(() => appState.setFetchingAssignmentsList(false));
         });
 }
 
