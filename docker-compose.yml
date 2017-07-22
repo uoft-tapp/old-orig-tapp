@@ -1,5 +1,11 @@
+#### this is a hacky attempt to glue the tapp and cp git repo's.
+#### there are two techniques in play:
+# linking (good, best practice)
+# assuming path to another rails app (bad, probably hack)
+
 version: '2'
 services:
+  #Our TA assignment (ABC) app. We could rename this to tapp-rails-app.
   rails-app:
     container_name: tapp_rails-app
     build: .
@@ -21,6 +27,7 @@ services:
     command: >
       ./bin/rails-server-entrypoint -b 0.0.0.0 -p 3000 -P /dev/null
 
+  #this database service is the DB for the TAPP rails app
   postgres:
     image: postgres:9.6-alpine
     environment:
@@ -31,6 +38,43 @@ services:
       - /var/lib/postgresql/data
     networks:
       - internal
+
+  #second rails app, CP, is does contract presentment
+  cp-rails-app:
+    build: .
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+    # idea is that we always clone the tapp and cp git repos at the same relative path to each other
+    # CAUTION!! not sure how else to do this right
+    volumes:
+      - ../cp/:/srv/app
+    ports:
+      - "3001:3001"
+	#this magically causes postgress and rails-app to appear on the docker bridge network
+	#as well as in the /etc/hosts file of the container
+	#hence https://rails-app:3000 will reach tapp container
+    links:
+      - postgres
+      - rails-app
+    command: >
+      ./bin/rails-server-entrypoint -b 0.0.0.0 -p 3001 -P /dev/null
+
+  #this database service is the DB for the CP app
+  postgres-cp:
+    image: postgres:9.6-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      #TODO: I'm not sure what this does,
+	  # but suspect we make sure that mounts a different dir for the second DB
+	  # probably should be to another directory so cp postgress has own place.
+      - /var/lib/postgresql/data
 
   webpack-dev-server:
     build: .
