@@ -541,8 +541,8 @@ class AppState {
         }
 
         if (update) {
-            this._data.unset('abcView.panelFields', { silent: true });
-            this._data.set('abcView.panelFields', panelFields);
+            this.unset('abcView.panelFields', { silent: true });
+            this.set('abcView.panelFields', panelFields);
         }
     }
 
