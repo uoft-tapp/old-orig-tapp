@@ -361,7 +361,7 @@ function deleteAssignment(applicant, assignment) {
             appState.setCoursesList(courses);
 
             appState.setAssignmentsList(assignments);
-            appState.setFetchingAssignmentsList(false);
+            appState.successFetchingAssignmentsList();
         })
         .catch(() => appState.setFetchingAssignmentsList(false));
 }
@@ -373,7 +373,7 @@ function noteApplicant(applicant, notes) {
     return putHelper('/applicants/' + applicant, { commentary: notes }, getApplicants)
         .then(applicants => {
             appState.setApplicantsList(applicants);
-            appState.setFetchingApplicantsList(false);
+            appState.successFetchingApplicantsList();
         })
         .catch(() => appState.setFetchingApplicantsList(false));
 }
@@ -394,7 +394,7 @@ function updateAssignmentHours(applicant, assignment, hours) {
             appState.setCoursesList(courses);
 
             appState.setAssignmentsList(assignments);
-            appState.setFetchingAssignmentsList(false);
+            appState.successFetchingAssignmentsList();
         })
         .catch(() => appState.setFetchingAssignmentsList(false));
 }
@@ -406,7 +406,7 @@ function updateCourse(courseId, data, val, attr) {
         .then(courses => {
             courses = appState.addAssignmentCountsToCourses({ courses: courses });
             appState.setCoursesList(courses);
-            appState.setFetchingCoursesList(false);
+            appState.successFetchingCoursesList();
         })
         .catch(() => appState.setFetchingCoursesList(false));
 }
