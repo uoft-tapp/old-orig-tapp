@@ -1,6 +1,7 @@
 import Backbone from 'backbone';
 import React from 'react';
 import NestedModel from 'backbone-nested';
+import _ from 'lodash';
 
 import * as fetch from './fetch.js';
 import { routeConfig } from './routeConfig.js';
@@ -77,21 +78,21 @@ class AppState {
 
         // getter for appState object
         this.get = function(property) {
-            return _data.get(property);
+            return _.cloneDeep(_data.get(property));
         };
 
         // setters for appState object
         
         this.set = function(property, value) {
             if (arguments.length == 1) {
-                _data.set(property);
+                _data.set(_.cloneDeep(property));
             } else {
-                _data.set(property, value);
+                _data.set(property, _.cloneDeep(value));
             }
         };
 
         this.add = function(property, value) {
-            _data.add(property, value);
+            _data.add(property, _.cloneDeep(value));
         };
 
         this.remove = function(property) {
