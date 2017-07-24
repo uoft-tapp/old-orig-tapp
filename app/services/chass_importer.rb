@@ -124,11 +124,12 @@ class ChassImporter
 
   def insert_preference(preferences, application)
     prefs = parse_preference(preferences)
+    mapping = get_pref_mapping(application)
     if prefs
       prefs.each do |preference|
         preference=preference.strip
         if preference.size>1
-          pref = get_pref(application, preference.downcase)
+          pref = get_pref(mapping, preference.downcase)
           if pref
             pref.update(rank: 1)
           end
@@ -137,35 +138,51 @@ class ChassImporter
     end
   end
 
-  def get_pref(application, parsed_data)
-    Preference.where({application_id: application[:id]}).each do |preference|
-      position = Position.find(preference[:position_id])
-      code = position[:position].downcase
-      name = position[:course_name].downcase
-      if (code.include? parsed_data) || (name.include? parsed_data)
-        return preference
+  def get_pref(mapping, parsed_data)
+    mapping.each do |key|
+      if parsed_data.include? key[0]
+        return Preference.find(key[1])
       end
     end
     return false
   end
 
-  def parse_preference(pref)
-    list = pref.split(/[.,'&;\r\n():\t]/)
-    if list.size > 1
-      return list
-    else
-      if list[0].include?"and"
-        temp =list[0].split(/and/)
-        temp.push(list[0])
-        return temp
-      elsif list[0].include?"or"
-        temp = list[0].split(/or/)
-        temp.push(list[0])
-        return temp
-      else
-        return list
+  def get_pref_mapping(application)
+    mapping = {}
+    Preference.where({application_id: application[:id]}).each do |preference|
+      position = Position.find(preference[:position_id])
+      id = preference[:id]
+      code = position[:position].downcase
+      split_code = code.split("/")
+      name = position[:course_name].downcase
+      mapping[code] = id
+      mapping[name] = id
+      mapping[split_code[0]] = id
+      mapping[code[/[a-z0-9]{3}\d{3,4}/]] = id
+      mapping[code[/\d{3,4}/]] = id
+      mapping[code[/[a-z0-9]{3}\d{3,4}[a-z0-9]/]] = id
+      if code[/[a-z0-9]{3}\d{3,4}[a-z0-9]\d/]
+        mapping[code[/[a-z0-9]{3}\d{3,4}[a-z0-9]\d/]] = id
+      end
+      if code[/[a-z0-9]{3}\d{3,4}[a-z0-9]\d[a-z]/]
+        mapping[code[/[a-z0-9]{3}\d{3,4}[a-z0-9]\d[a-z]/]] = id
+      end
+      if name.include? code[/[a-z0-9]{3}\d{3,4}/]
+        index = name.index(code[/[a-z0-9]{3}\d{3,4}/])-1
+        mapping[name[0..index].strip] = id
+      end
+      if split_code.size > 1
+        mapping[split_code[1]] = id
+        mapping[split_code[1][/\d{3,4}/]] = id
+        mapping[split_code[0][/[a-z0-9]{3}/]+split_code[1]] = id
+        mapping[split_code[0][/[a-z0-9]{3}/]+split_code[1][/\d{3,4}/]] = id
       end
     end
+    return mapping
+  end
+
+  def parse_preference(pref)
+    return pref.split(/[.,'&;\r\n():\t]/)
   end
 
   def insert_positions
@@ -181,7 +198,7 @@ class ChassImporter
         round_id: round_id,
         open: true,
         campus_code: course_id[course_id[/[A-Za-z0-9]{3}\d{3,4}/].size+1].to_i,
-        course_name: course_entry["course_name"],
+        course_name: course_entry["course_name"].strip,
         estimated_enrolment: course_entry["enrollment"],
         duties: course_entry["duties"],
         qualifications: course_entry["qualifications"],
