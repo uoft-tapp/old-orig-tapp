@@ -182,7 +182,22 @@ class ChassImporter
   end
 
   def parse_preference(pref)
-    return pref.split(/[.,'&;\r\n():\t]/)
+    list = pref.split(/[.,'&;\r\n():\t]/)
+    list.each do |list_item|
+      if list_item.include?"and"
+        temp = list_item.split(/and/)
+        temp.each do |item|
+          list.push(item)
+        end
+      end
+      if list_item.include?"or"
+        temp = list_item.split(/or/)
+        temp.each do |item|
+          list.push(item)
+        end
+      end
+    end
+    return list
   end
 
   def insert_positions
