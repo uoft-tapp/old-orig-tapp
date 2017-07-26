@@ -74,15 +74,11 @@ const AssignmentRow = props =>
         <td>
             <form
                 onSubmit={event => {
-                    event.preventDefault();
-                    console.log(event);
-                    if (event.target.value != props.assignment.hours) {
-                        props.func.updateAssignment(
-                            props.applicant,
-                            props.assignment.id,
-                            event.target.value
-                        );
+                    let value = event.target.elements[0].value;
+                    if (value != props.assignment.hours) {
+                        props.func.updateAssignment(props.applicant, props.assignment.id, value);
                     }
+                    event.preventDefault();
                 }}>
                 <input
                     type="number"
@@ -115,12 +111,11 @@ const TempAssignmentRow = props =>
         <td>
             <form
                 onSubmit={event => {
-                    if (event.target.value != props.assignment.hours) {
-                        props.func.setTempAssignmentHours(
-                            props.assignment.positionId,
-                            event.target.value
-                        );
+                    let value = event.target.elements[0].value;
+                    if (value != props.assignment.hours) {
+                        props.func.setTempAssignmentHours(props.assignment.positionId, value);
                     }
+                    event.preventDefault();
                 }}>
                 <input
                     type="number"
@@ -192,7 +187,7 @@ class AssignmentInput extends React.Component {
                 onSubmit={event => {
                     let input = event.target.elements[0];
                     let course = this.detectCourse(input.value, this.props.courses);
-                    
+
                     if (course) {
                         if (
                             this.existingAssignment(
@@ -210,7 +205,7 @@ class AssignmentInput extends React.Component {
                                 this.props.courses[course].positionHours
                             );
                         }
-                        
+
                         input.value = '';
                     } else {
                         this.props.func.alert('Course code ' + input.value + ' does not exist.');
