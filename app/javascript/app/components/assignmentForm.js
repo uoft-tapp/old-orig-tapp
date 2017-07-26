@@ -6,7 +6,9 @@ const cross = 'fa fa-times-circle-o';
 
 class AssignmentForm extends React.Component {
     setAssignments(applicant, assignments, temp_assignments, courses) {
-        if (this.noAssignments(assignments, temp_assignments)) {
+        // no assignments or temporary assignments
+        if ((!assignments || assignments.length == 0) &&
+            (!temp_assignments || temp_assignments.length == 0)) {
             return (
                 <tr>
                     <td><i>No Assignments</i></td>
@@ -33,40 +35,6 @@ class AssignmentForm extends React.Component {
                     {...this}
                 />
             );
-        }
-    }
-
-    noAssignments(assignments, temp_assignments) {
-        if (assignments === undefined && temp_assignments === undefined) {
-            return true;
-        } else if (assignments === undefined) {
-            if (temp_assignments !== undefined) {
-                if (temp_assignments.length == 0) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        } else if (temp_assignments === undefined) {
-            if (assignments !== undefined) {
-                if (assignments.length == 0) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        } else if (assignments !== undefined && temp_assignments !== undefined) {
-            if (assignments.length == 0 && temp_assignments == 0) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
         }
     }
 
