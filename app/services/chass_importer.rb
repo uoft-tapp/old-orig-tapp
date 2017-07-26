@@ -157,25 +157,25 @@ class ChassImporter
       name = position[:course_name].downcase
       mapping[code] = id
       mapping[name] = id
-      mapping[split_code[0]] = id
-      mapping[code[/[a-z0-9]{3}\d{3,4}/]] = id
-      mapping[code[/\d{3,4}/]] = id
-      mapping[code[/[a-z0-9]{3}\d{3,4}[a-z0-9]/]] = id
-      if code[/[a-z0-9]{3}\d{3,4}[a-z0-9]\d/]
-        mapping[code[/[a-z0-9]{3}\d{3,4}[a-z0-9]\d/]] = id
+      mapping[split_code[0]] = id #i.e. in CSC142H1S/2400H1S, the part before slash
+      mapping[code[/[a-z0-9]{3}\d{3,4}/]] = id #i.e. csc108
+      mapping[code[/\d{3,4}/]] = id #i.e. 108
+      mapping[code[/[a-z0-9]{3}\d{3,4}[a-z0-9]/]] = id #i.e. csc108h
+      if code[/[a-z0-9]{3}\d{3,4}[a-z0-9]\d/] #i.e. csc108h1
+        mapping[code[/[a-z0-9]{3}\d{3,4}[a-z0-9]\d/]] = id #i.e. csc108h1
       end
-      if code[/[a-z0-9]{3}\d{3,4}[a-z0-9]\d[a-z]/]
-        mapping[code[/[a-z0-9]{3}\d{3,4}[a-z0-9]\d[a-z]/]] = id
+      if code[/[a-z0-9]{3}\d{3,4}[a-z0-9]\d[a-z]/] #i.e. csc108h1s
+        mapping[code[/[a-z0-9]{3}\d{3,4}[a-z0-9]\d[a-z]/]] = id #i.e. csc108h1s
       end
-      if name.include? code[/[a-z0-9]{3}\d{3,4}/]
-        index = name.index(code[/[a-z0-9]{3}\d{3,4}/])-1
-        mapping[name[0..index].strip] = id
+      if name.include? code[/[a-z0-9]{3}\d{3,4}/] #i.e. in course name: "Learning a subject csc108" a course code exists
+        index = name.index(code[/[a-z0-9]{3}\d{3,4}/])-1 #takes index of course code in course name
+        mapping[name[0..index].strip] = id #remove course code from course name and assign course name (without course code) to id
       end
-      if split_code.size > 1
-        mapping[split_code[1]] = id
-        mapping[split_code[1][/\d{3,4}/]] = id
-        mapping[split_code[0][/[a-z0-9]{3}/]+split_code[1]] = id
-        mapping[split_code[0][/[a-z0-9]{3}/]+split_code[1][/\d{3,4}/]] = id
+      if split_code.size > 1 #i.e. in CSC142H1S/2400H1S, the part after slash exists
+        mapping[split_code[1]] = id #i.e. 2400H1S
+        mapping[split_code[1][/\d{3,4}/]] = id #i.e. 2400
+        mapping[split_code[0][/[a-z0-9]{3}/]+split_code[1]] = id #i.e. CSC2400H1S
+        mapping[split_code[0][/[a-z0-9]{3}/]+split_code[1][/\d{3,4}/]] = id #i.e. CSC2400
       end
     end
     return mapping
