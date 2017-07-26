@@ -24,6 +24,15 @@ class Applicant extends React.Component {
         ];
     }
 
+    // convert linefeed/carriage return characters to HTML line breaks
+    format(text) {
+        return (
+            <span style={{ whiteSpace: 'pre-wrap' }}>
+                {text.replace(/\\r*\\n/, <br />)}
+            </span>
+        );
+    }
+
     addPanelContent(panel) {
         let application = this.props.func.getApplicationById(this.props.applicantId);
 
@@ -44,25 +53,25 @@ class Applicant extends React.Component {
                 return <Prefs applicant={this.props.applicantId} {...this.props} />;
 
             case 'Course Preferences (Raw Text)':
-                return application.rawPrefs;
+                return this.format(application.rawPrefs);
 
             case 'Teaching Experience':
-                return application.exp;
+                return this.format(application.exp);
 
             case 'Academic Qualifications':
-                return application.qual;
+                return this.format(application.qual);
 
             case 'Technical Skills':
-                return application.skills;
+                return this.format(application.skills);
 
             case 'Availability':
-                return application.avail;
+                return this.format(application.avail);
 
             case 'Other Information':
-                return application.other;
+                return this.format(application.other);
 
             case 'Special Needs Issues':
-                return application.specialNeeds;
+                return this.format(application.specialNeeds);
 
             case 'Notes':
                 return <NotesForm applicant={this.props.applicantId} {...this.props} />;
@@ -90,9 +99,9 @@ class Applicant extends React.Component {
     render() {
         let fetchCheck = this.props.func.anyFetching();
         let cursorStyle = { cursor: fetchCheck ? 'progress' : 'auto' };
-        
+
         return (
-                <div style={cursorStyle}>
+            <div style={cursorStyle}>
                 {this.props.func.getAssignmentForm().panels.map((panel, index) =>
                     <Panel
                         collapsible
