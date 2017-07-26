@@ -3,8 +3,13 @@ import React from 'react';
 class AssignmentForm extends React.Component {
     render() {
         let applicant = this.props.applicantId;
+
         let assignments = this.props.func.getAssignmentsByApplicant(applicant);
         let tempAssignments = this.props.func.getTempAssignments();
+        // sort assignments and temp assignments by the course ID
+        assignments.sort((a, b) => (a.positionId > b.positionId ? 1 : -1));
+        tempAssignments.sort((a, b) => (a.positionId > b.positionId ? 1 : -1));
+
         let assignmentForm = this.props.func.getAssignmentForm();
         let courses = this.props.func.getCoursesList();
 
@@ -20,16 +25,6 @@ class AssignmentForm extends React.Component {
                                 </td>
                             </tr>}
 
-                        {tempAssignments &&
-                            tempAssignments.map((assignment, index) =>
-                                <TempAssignmentRow
-                                    assignment={assignment}
-                                    key={index}
-                                    course={courses[assignment.positionId].code}
-                                    {...this.props}
-                                />
-                            )}
-
                         {assignments &&
                             assignments.map((assignment, index) =>
                                 <AssignmentRow
@@ -37,6 +32,16 @@ class AssignmentForm extends React.Component {
                                     key={index}
                                     course={courses[assignment.positionId].code}
                                     applicant={applicant}
+                                    {...this.props}
+                                />
+                            )}
+
+                        {tempAssignments &&
+                            tempAssignments.map((assignment, index) =>
+                                <TempAssignmentRow
+                                    assignment={assignment}
+                                    key={index}
+                                    course={courses[assignment.positionId].code}
                                     {...this.props}
                                 />
                             )}
@@ -186,6 +191,7 @@ class AssignmentInput extends React.Component {
             <form
                 onSubmit={event => {
                     let input = event.target.elements[0];
+                    // check that the input matches an existing course code
                     let course = this.detectCourse(input.value, this.props.courses);
 
                     if (course) {
@@ -205,7 +211,7 @@ class AssignmentInput extends React.Component {
                                 this.props.courses[course].positionHours
                             );
                         }
-
+                        // clear the input field
                         input.value = '';
                     } else {
                         this.props.func.alert('Course code ' + input.value + ' does not exist.');
