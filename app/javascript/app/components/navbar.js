@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { Link } from 'react-router-dom';
-import { Navbar, Nav, NavItem, NavDropdown, MenuItem } from 'react-bootstrap';
+import { Navbar, Nav, NavItem, NavDropdown, MenuItem, DropdownButton } from 'react-bootstrap';
 
 import { routeConfig } from '../routeConfig.js';
 
@@ -89,6 +89,40 @@ const CoursePanelLayoutTabs = props => {
     return null;
 };
 
+const Round = props => {
+    let selectedRound = props.func.getSelectedRound();
+
+    return (
+        <NavDropdown
+            title={
+                <span
+                    style={{
+                        color: '#fff',
+                        backgroundColor: '#5bc0de',
+                        padding: '6px 12px',
+                        borderRadius: '4px',
+                    }}>
+                    {selectedRound ? 'Round ' + selectedRound : 'All Rounds'}
+                </span>
+            }
+            noCaret
+            id="nav-round-dropdown"
+            onSelect={eventKey => props.func.selectRound(eventKey)}>
+            {selectedRound &&
+                <MenuItem eventKey={null} key="all">
+                    All Rounds
+                </MenuItem>}
+            {props.func.getRounds().map(
+                round =>
+                    round != selectedRound &&
+                    <MenuItem eventKey={round} key={round}>
+                        Round {round}
+                    </MenuItem>
+            )}
+        </NavDropdown>
+    );
+};
+
 const Notifications = props => {
     let notifications = props.func.getUnreadNotifications();
 
@@ -116,18 +150,15 @@ const Notifications = props => {
     );
 };
 
-const Auth = props => {
-    return (
-        <NavDropdown
-            eventKey={routeConfig.logout.id}
-            title={props.func.getCurrentUserRole() + ':' + props.func.getCurrentUserName()}
-            id="nav-auth-dropdown">
-            <MenuItem eventKey={routeConfig.logout.id + '.1'} href={routeConfig.logout.route}>
-                Logout
-            </MenuItem>
-        </NavDropdown>
-    );
-};
+const Auth = props =>
+    <NavDropdown
+        eventKey={routeConfig.logout.id}
+        title={props.func.getCurrentUserRole() + ':' + props.func.getCurrentUserName()}
+        id="nav-auth-dropdown">
+        <MenuItem eventKey={routeConfig.logout.id + '.1'} href={routeConfig.logout.route}>
+            Logout
+        </MenuItem>
+    </NavDropdown>;
 
 /*** Navbar ***/
 
@@ -143,6 +174,7 @@ const NavbarInst = props => {
             <Nav pullRight>
                 {props.func.getSelectedNavTab() == routeConfig.abc.id &&
                     <CoursePanelLayoutTabs {...props} />}
+                <Round {...props} />
                 <Notifications {...props} />
                 <Auth {...props} />
             </Nav>

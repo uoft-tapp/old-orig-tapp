@@ -23,6 +23,9 @@ const initialState = {
     // applicant to display in applicant view
     selectedApplicant: null,
 
+    // application round to display
+    selectedRound: null,
+
     // course list component used by courses view
     courseList: {
         selected: null,
@@ -81,7 +84,7 @@ class AppState {
         };
 
         // setters for appState object
-        
+
         this.set = function(property, value) {
             if (arguments.length == 1) {
                 _data.set(property);
@@ -253,6 +256,10 @@ class AppState {
         return this.get('nav.selectedTab');
     }
 
+    getSelectedRound() {
+        return this.get('selectedRound');
+    }
+
     // return the name of the appState component that corresponds to the currently selected view
     getSelectedViewStateComponent() {
         switch (this.getSelectedNavTab()) {
@@ -356,6 +363,10 @@ class AppState {
     // select a navbar tab
     selectNavTab(eventKey) {
         this.set('nav.selectedTab', eventKey);
+    }
+
+    selectRound(round) {
+        this.set('selectedRound', round);
     }
 
     setInput(value) {
@@ -469,10 +480,7 @@ class AppState {
 
     // toggle the expanded state of a panel in the applicant assignment form component
     togglePanelExpanded(index) {
-        this.set(
-            'assignmentForm.panels[' + index + '].expanded',
-            !this.isPanelExpanded(index)
-        );
+        this.set('assignmentForm.panels[' + index + '].expanded', !this.isPanelExpanded(index));
     }
 
     // toggle the selected state of the course that is clicked
@@ -779,6 +787,16 @@ class AppState {
 
     getInstructorsList() {
         return this.get('instructors.list');
+    }
+
+    getRounds() {
+        let courses = this.getCoursesList(),
+            rounds = new Set();
+        for (var course in courses) {
+            rounds.add(courses[course].round);
+        }
+
+        return [...rounds];
     }
 
     // get all applicants who have not been assigned to a course; returns a list of [applicantID, applicantData]
