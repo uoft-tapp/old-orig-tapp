@@ -123,6 +123,11 @@ footer div p {
 }
 
 /* for CourseMenu contents in ABC view */
+#abc-grid .course-list-group .list-group-item {
+    display: flex;
+    justify-content: space-between;
+}
+
 #abc-grid .course-list-group .list-group-item span {
     overflow: hidden;
     white-space: nowrap;
@@ -130,12 +135,10 @@ footer div p {
 }
 
 #abc-grid .course-list-group .list-group-item .course-code {
-    float: left;
     max-width: 10em;
 }
 
 #abc-grid .course-list-group .list-group-item .counts {
-    float: right;
     max-width: calc(100% - 10em);
 }
 
