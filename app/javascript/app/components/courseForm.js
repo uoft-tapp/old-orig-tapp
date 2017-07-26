@@ -3,9 +3,9 @@ import { Panel, ListGroup, ListGroupItem, Badge } from 'react-bootstrap';
 
 class CourseForm extends React.Component {
     setForms(courses, instructors) {
-        return Object.entries(courses).map((course, key) =>
-            <ListGroupItem key={key}>
-                <a name={course[0]} />
+        return Object.entries(courses).map(([id, course]) =>
+            <ListGroupItem key={id}>
+                <a name={id} />
                 <table className="form_table">
                     <tbody>
                         <tr>
@@ -13,17 +13,17 @@ class CourseForm extends React.Component {
                                 <p>
                                     <input
                                         type="text"
-                                        value={course[1].code}
+                                        value={course.code}
                                         className="course"
                                         readOnly
                                         disabled
                                     />
                                 </p>
                                 <p>
-                                    <input type="text" value={course[1].name} readOnly disabled />
+                                    <input type="text" value={course.name} readOnly disabled />
                                 </p>
                                 <p>
-                                    <input type="text" value={course[1].campus} readOnly disabled />
+                                    <input type="text" value={course.campus} readOnly disabled />
                                 </p>
                             </td>
                             <td id="col-2">
@@ -38,74 +38,45 @@ class CourseForm extends React.Component {
                                 </p>
                             </td>
                             <td id="col-3">
-                                <p>
-                                    <input
-                                        type="number"
-                                        defaultValue={
-                                            course[1].estimatedPositions
-                                                ? course[1].estimatedPositions
-                                                : ''
+                                <NumForm
+                                    defaultVal={
+                                        course.estimatedPositions ? course.estimatedPositions : ''
+                                    }
+                                    update={val => {
+                                        if (val != course.estimatedPositions) {
+                                            this.props.func.updateCourse(
+                                                id,
+                                                val,
+                                                'estimatedPositions'
+                                            );
                                         }
-                                        min="0"
-                                        onBlur={event => {
-                                            if (
-                                                event.target.value != course[1].estimatedPositions
-                                            ) {
-                                                this.props.func.updateCourse(
-                                                    course[0],
-                                                    event.target.value,
-                                                    'estimatedPositions'
-                                                );
-                                            }
-                                        }}
-                                    />
-                                </p>
-                                <p>
-                                    <input
-                                        type="number"
-                                        defaultValue={
-                                            course[1].positionHours ? course[1].positionHours : ''
+                                    }}
+                                />
+                                <NumForm
+                                    defaultVal={course.positionHours ? course.positionHours : ''}
+                                    update={val => {
+                                        if (val != course.positionHours) {
+                                            this.props.func.updateCourse(id, val, 'positionHours');
                                         }
-                                        min="0"
-                                        onBlur={event => {
-                                            if (event.target.value != course[1].positionHours) {
-                                                this.props.func.updateCourse(
-                                                    course[0],
-                                                    event.target.value,
-                                                    'positionHours'
-                                                );
-                                            }
-                                        }}
-                                    />
-                                </p>
-                                <p>
-                                    <input
-                                        type="number"
-                                        defaultValue={
-                                            course[1].estimatedEnrol ? course[1].estimatedEnrol : ''
+                                    }}
+                                />
+                                <NumForm
+                                    defaultVal={course.estimatedEnrol ? course.estimatedEnrol : ''}
+                                    update={val => {
+                                        if (val != course.estimatedEnrol) {
+                                            this.props.func.updateCourse(id, val, 'estimatedEnrol');
                                         }
-                                        min="0"
-                                        onBlur={event => {
-                                            if (event.target.value != course[1].estimatedEnrol) {
-                                                this.props.func.updateCourse(
-                                                    course[0],
-                                                    event.target.value,
-                                                    'estimatedEnrol'
-                                                );
-                                            }
-                                        }}
-                                    />
-                                </p>
+                                    }}
+                                />
                             </td>
                             <td id="col-4">
                                 <p>
                                     <b>Instructors: </b>
                                 </p>
                                 <InstructorForm
-                                    list={'instructor_' + key}
-                                    course={course[0]}
-                                    input={course[1].instructor_input}
-                                    instructors={course[1].instructors}
+                                    course={id}
+                                    input={course.instructor_input}
+                                    instructors={course.instructors}
                                     instructor_data={instructors}
                                     state={this.props.func}
                                     self={this}
@@ -118,15 +89,15 @@ class CourseForm extends React.Component {
                                 </p>
                                 <textarea
                                     onBlur={event => {
-                                        if (event.target.value != course[1].qual) {
+                                        if (event.target.value != course.qual) {
                                             this.props.func.updateCourse(
-                                                course[0],
+                                                id,
                                                 event.target.value,
                                                 'qual'
                                             );
                                         }
                                     }}
-                                    defaultValue={course[1].qual}
+                                    defaultValue={course.qual}
                                 />
                             </td>
                             <td id="col-6">
@@ -135,15 +106,15 @@ class CourseForm extends React.Component {
                                 </p>
                                 <textarea
                                     onBlur={event => {
-                                        if (event.target.value != course[1].resp) {
+                                        if (event.target.value != course.resp) {
                                             this.props.func.updateCourse(
-                                                course[0],
+                                                id,
                                                 event.target.value,
                                                 'resp'
                                             );
                                         }
                                     }}
-                                    defaultValue={course[1].resp}
+                                    defaultValue={course.resp}
                                 />
                             </td>
                         </tr>
@@ -199,6 +170,21 @@ class CourseForm extends React.Component {
     }
 }
 
+// numerical input that allows submission by pressing enter
+const NumForm = props =>
+    <form
+        onSubmit={event => {
+            props.update(event.target.elements[0].value);
+            event.preventDefault();
+        }}>
+        <input
+            type="number"
+            defaultValue={props.defaultVal}
+            min="0"
+            onBlur={event => props.update(event.target.value)}
+        />
+    </form>;
+
 const InstructorForm = props =>
     <div className="instructor_form">
         <div>
@@ -218,7 +204,7 @@ const InstructorForm = props =>
         </div>
         <input
             type="text"
-            list={props.list}
+            list="instructors"
             value={props.input}
             autoComplete="on"
             id={'hidden_input_' + props.course}
@@ -230,7 +216,7 @@ const InstructorForm = props =>
                     props.instructor_data
                 )}
         />
-        <datalist id={props.list}>
+        <datalist id="instructors">
             {Object.entries(props.instructor_data).map((instructor, key) =>
                 <option key={key} value={instructor[1]} />
             )}

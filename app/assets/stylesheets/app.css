@@ -260,7 +260,7 @@ footer div p {
 /* margin between text boxes in the first three columns */
 .form_table #col-1 p:first-child, .form_table #col-1 p:nth-child(2),
 .form_table #col-2 p:first-child, .form_table #col-2 p:nth-child(2),
-.form_table #col-3 p:first-child, .form_table #col-3 p:nth-child(2) {
+.form_table #col-3 form:first-child, .form_table #col-3 form:nth-child(2) {
     margin-bottom: 5px;
 }
 
