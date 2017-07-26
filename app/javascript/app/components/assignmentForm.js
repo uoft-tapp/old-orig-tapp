@@ -1,45 +1,10 @@
 import React from 'react';
 
 class AssignmentForm extends React.Component {
-    detectCourse(evt, id, courses, assignments, temp_assignments) {
-        this.props.func.setInput(evt.target.value);
-        for (let course in courses) {
-            if (courses[course].code == evt.target.value) {
-                if (!this.existingAssignment(course, assignments, temp_assignments)) {
-                    this.props.func.addTempAssignment(course, courses[course].positionHours);
-                    this.props.func.setInput('');
-                } else {
-                    this.props.func.setInput('');
-                    this.props.func.alert(courses[course].code + ' has already been assigned.');
-                }
-            }
-        }
-    }
-
-    existingAssignment(positionId, assignments, temp_assignments) {
-        for (let assignment in assignments) {
-            if (assignments[assignment].positionId == positionId) {
-                return true;
-            }
-        }
-        for (let assignment in temp_assignments) {
-            if (temp_assignments[assignment].positionId == positionId) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    setCourses(courses) {
-        return Object.entries(courses).map((key, index) =>
-            <option value={key[1].code} key={index} />
-        );
-    }
-
     render() {
         let applicant = this.props.applicantId;
         let assignments = this.props.func.getAssignmentsByApplicant(applicant);
-        let temp_assignments = this.props.func.getTempAssignments();
+        let tempAssignments = this.props.func.getTempAssignments();
         let assignmentForm = this.props.func.getAssignmentForm();
         let courses = this.props.func.getCoursesList();
 
@@ -48,15 +13,15 @@ class AssignmentForm extends React.Component {
                 <table className="panel_table">
                     <tbody>
                         {(!assignments || assignments.length == 0) &&
-                            (!temp_assignments || temp_assignments.length == 0) &&
+                            (!tempAssignments || tempAssignments.length == 0) &&
                             <tr>
                                 <td>
                                     <i>No Assignments</i>
                                 </td>
                             </tr>}
 
-                        {temp_assignments &&
-                            temp_assignments.map((assignment, index) =>
+                        {tempAssignments &&
+                            tempAssignments.map((assignment, index) =>
                                 <TempAssignmentRow
                                     assignment={assignment}
                                     key={index}
@@ -75,28 +40,27 @@ class AssignmentForm extends React.Component {
                                     {...this.props}
                                 />
                             )}
+
+                        <tr>
+                            <td
+                                style={{
+                                    paddingRight: '25px',
+                                    paddingTop: '10px',
+                                    verticalAlign: 'middle',
+                                }}>
+                                <b>Add assignment:&nbsp;</b>
+                            </td>
+                            <td style={{ paddingTop: '10px' }}>
+                                <AssignmentInput
+                                    courses={courses}
+                                    assignments={assignments}
+                                    tempAssignments={tempAssignments}
+                                    {...this.props}
+                                />
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
-
-                <p style={{ marginTop: '10px' }}>
-                    <b>Add assignment: </b>
-                    <input
-                        type="text"
-                        list="courses"
-                        value={assignmentForm.assignmentInput}
-                        onChange={eventKey =>
-                            this.detectCourse(
-                                eventKey,
-                                applicant,
-                                courses,
-                                assignments,
-                                temp_assignments
-                            )}
-                    />
-                </p>
-                <datalist id="courses">
-                    {this.setCourses(courses)}
-                </datalist>
             </div>
         );
     }
@@ -104,72 +68,165 @@ class AssignmentForm extends React.Component {
 
 const AssignmentRow = props =>
     <tr>
-        <td>
+        <td style={{ verticalAlign: 'middle' }}>
             {props.course}
         </td>
         <td>
-            <input
-                type="number"
-                style={{ width: '50px' }}
-                min="0"
-                onBlur={eventKey => {
-                    if (eventKey.target.value != props.assignment.hours) {
+            <form
+                onSubmit={event => {
+                    event.preventDefault();
+                    console.log(event);
+                    if (event.target.value != props.assignment.hours) {
                         props.func.updateAssignment(
                             props.applicant,
                             props.assignment.id,
-                            eventKey.target.value
+                            event.target.value
                         );
                     }
-                }}
-                defaultValue={props.assignment.hours}
-            />
-        </td>
-        <td>
-            <X click={() => props.func.deleteAssignment(props.applicant, props.assignment.id)} />
+                }}>
+                <input
+                    type="number"
+                    style={{ width: '50px' }}
+                    min="0"
+                    onBlur={event => {
+                        if (event.target.value != props.assignment.hours) {
+                            props.func.updateAssignment(
+                                props.applicant,
+                                props.assignment.id,
+                                event.target.value
+                            );
+                        }
+                    }}
+                    defaultValue={props.assignment.hours}
+                />
+                &emsp;
+                <X
+                    click={() => props.func.deleteAssignment(props.applicant, props.assignment.id)}
+                />
+            </form>
         </td>
     </tr>;
 
 const TempAssignmentRow = props =>
     <tr>
-        <td>
+        <td style={{ verticalAlign: 'middle' }}>
             {props.course}
         </td>
         <td>
-            <input
-                type="number"
-                style={{ width: '50px' }}
-                min="0"
-                onBlur={eventKey => {
-                    if (eventKey.target.value != props.assignment.hours) {
+            <form
+                onSubmit={event => {
+                    if (event.target.value != props.assignment.hours) {
                         props.func.setTempAssignmentHours(
                             props.assignment.positionId,
-                            eventKey.target.value
+                            event.target.value
                         );
                     }
-                }}
-                defaultValue={props.assignment.hours}
-            />
-        </td>
-        <td>
-            <Check click={() => props.func.permAssignment(props.assignment.positionId)} />
-        </td>
-        <td>
-            <X click={() => props.func.removeTempAssignment(props.assignment.positionId)} />
+                }}>
+                <input
+                    type="number"
+                    style={{ width: '50px' }}
+                    min="0"
+                    onBlur={event => {
+                        if (event.target.value != props.assignment.hours) {
+                            props.func.setTempAssignmentHours(
+                                props.assignment.positionId,
+                                event.target.value
+                            );
+                        }
+                    }}
+                    defaultValue={props.assignment.hours}
+                />
+                &emsp;
+                <X click={() => props.func.removeTempAssignment(props.assignment.positionId)} />
+                &emsp;
+                <Check click={() => props.func.permAssignment(props.assignment.positionId)} />
+            </form>
         </td>
     </tr>;
 
+// green check icon/button
 const Check = props =>
     <i
         className="fa fa-check-circle-o"
-        style={{ color: 'green', fontSize: '20px' }}
+        style={{ color: 'green', fontSize: '20px', verticalAlign: 'middle' }}
         onClick={props.click}
     />;
 
+// red x icon/button
 const X = props =>
     <i
         className="fa fa-times-circle-o"
-        style={{ color: 'red', fontSize: '20px' }}
+        style={{ color: 'red', fontSize: '20px', verticalAlign: 'middle' }}
         onClick={props.click}
     />;
+
+class AssignmentInput extends React.Component {
+    // check that the user input matches an existing course
+    detectCourse(input, courses) {
+        for (var course in courses) {
+            if (courses[course].code == input) {
+                return course;
+            }
+        }
+        return false;
+    }
+
+    // check whether an assignment or temporary assignment to this course already exists
+    existingAssignment(positionId, assignments, tempAssignments) {
+        for (var assignment in assignments) {
+            if (assignments[assignment].positionId == positionId) {
+                return true;
+            }
+        }
+        for (var assignment in tempAssignments) {
+            if (tempAssignments[assignment].positionId == positionId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    render() {
+        return (
+            <form
+                onSubmit={event => {
+                    let input = event.target.elements[0];
+                    let course = this.detectCourse(input.value, this.props.courses);
+                    
+                    if (course) {
+                        if (
+                            this.existingAssignment(
+                                course,
+                                this.props.assignments,
+                                this.props.tempAssignments
+                            )
+                        ) {
+                            this.props.func.alert(
+                                'Assignment to ' + input.value + ' already exists.'
+                            );
+                        } else {
+                            this.props.func.addTempAssignment(
+                                course,
+                                this.props.courses[course].positionHours
+                            );
+                        }
+                        
+                        input.value = '';
+                    } else {
+                        this.props.func.alert('Course code ' + input.value + ' does not exist.');
+                    }
+
+                    event.preventDefault();
+                }}>
+                <input list="courses" />
+                <datalist id="courses">
+                    {Object.entries(this.props.courses).map(([key, value]) =>
+                        <option value={value.code} key={key} />
+                    )}
+                </datalist>
+            </form>
+        );
+    }
+}
 
 export { AssignmentForm };

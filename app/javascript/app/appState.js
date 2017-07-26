@@ -58,7 +58,6 @@ const initialState = {
     assignmentForm: {
         panels: [],
         tempAssignments: [],
-        assignmentInput: '',
     },
 
     /** DB data **/
@@ -356,10 +355,6 @@ class AppState {
     // select a navbar tab
     selectNavTab(eventKey) {
         this.set('nav.selectedTab', eventKey);
-    }
-
-    setInput(value) {
-        this.set('assignmentForm.assignmentInput', value);
     }
 
     // set the course panel layout in the ABC view
