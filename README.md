@@ -3,6 +3,16 @@
 
 TA assignment and matching application.
 
+## Deployment instructions (for Alan)
+
+```
+git clone git@github.com:uoft-tapp/tapp.git #this repo
+cp .env file # or something
+docker-compose run rails-app #database migrate? import ? What?
+..
+docker-compose up
+```
+
 ## Starting application
 You should have a reasonably recent version of Docker
 [installed](https://docs.docker.com/engine/installation/). Also, check that
