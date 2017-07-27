@@ -1,6 +1,7 @@
 import Backbone from 'backbone';
 import React from 'react';
 import NestedModel from 'backbone-nested';
+import _ from 'lodash';
 
 import * as fetch from './fetch.js';
 import { routeConfig } from './routeConfig.js';
@@ -75,9 +76,20 @@ class AppState {
         // container for application state
         var _data = new Backbone.NestedModel(initialState);
 
-        // getter for appState object
-        this.get = function(property) {
-            return _data.get(property);
+        // getter for appState object; accepts an optional filter argument applied to the data
+        // before it is returned
+        this.get = function(property, filter) {
+            let value = _data.get(property);
+
+            if (filter) {
+                // if the data is an array, apply the filter function as an array filter
+                if (value instanceof Array) {
+                    return value.filter(filter);
+                }
+                // otherwise, assume that the data is an object and apply the filter function as an object filter
+                return _.pickBy(value, filter);
+            }
+            return value;
         };
 
         // setters for appState object
