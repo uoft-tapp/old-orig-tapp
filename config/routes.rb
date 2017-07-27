@@ -16,4 +16,5 @@ Rails.application.routes.draw do
   get "/export/cdf-info", to: "export#cdf"
   get "/export/transcript-access", to: "export#transcript_access"
   get "/export/offers", to: "export#offers"
+  post "/import/chass", to: "import#chass"
 end
