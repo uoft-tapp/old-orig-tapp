@@ -123,18 +123,81 @@ class ChassImporter
     end
 
   def insert_preference(preferences, application)
-    parse_preference(preferences).each do |preference|
-      position_ident = {position: preference.strip, round_id: @round_id}
-      position = Position.where(position_ident).select(:id).take
-      if position
-        preference_ident = {position_id: position.id}
-        application.preferences.where(preference_ident).update(rank: 1)
+    prefs = parse_preference(preferences)
+    mapping = get_pref_mapping(application)
+    if prefs
+      prefs.each do |preference|
+        preference=preference.strip
+        if preference.size>1
+          pref = get_pref(mapping, preference.downcase)
+          if pref
+            pref.update(rank: 1)
+          end
+        end
       end
     end
   end
 
+  def get_pref(mapping, parsed_data)
+    mapping.each do |key|
+      if parsed_data.include? key[0]
+        return Preference.find(key[1])
+      end
+    end
+    return false
+  end
+
+  def get_pref_mapping(application)
+    mapping = {}
+    Preference.where({application_id: application[:id]}).each do |preference|
+      position = Position.find(preference[:position_id])
+      id = preference[:id]
+      code = position[:position].downcase
+      split_code = code.split("/")
+      name = position[:course_name].downcase
+      mapping[code] = id
+      mapping[name] = id
+      mapping[split_code[0]] = id #i.e. in CSC142H1S/2400H1S, the part before slash
+      mapping[code[/[a-z0-9]{3}\d{3,4}/]] = id #i.e. csc108
+      mapping[code[/\d{3,4}/]] = id #i.e. 108
+      mapping[code[/[a-z0-9]{3}\d{3,4}[a-z0-9]/]] = id #i.e. csc108h
+      if code[/[a-z0-9]{3}\d{3,4}[a-z0-9]\d/] #i.e. csc108h1
+        mapping[code[/[a-z0-9]{3}\d{3,4}[a-z0-9]\d/]] = id #i.e. csc108h1
+      end
+      if code[/[a-z0-9]{3}\d{3,4}[a-z0-9]\d[a-z]/] #i.e. csc108h1s
+        mapping[code[/[a-z0-9]{3}\d{3,4}[a-z0-9]\d[a-z]/]] = id #i.e. csc108h1s
+      end
+      if name.include? code[/[a-z0-9]{3}\d{3,4}/] #i.e. in course name: "Learning a subject csc108" a course code exists
+        index = name.index(code[/[a-z0-9]{3}\d{3,4}/])-1 #takes index of course code in course name
+        mapping[name[0..index].strip] = id #remove course code from course name and assign course name (without course code) to id
+      end
+      if split_code.size > 1 #i.e. in CSC142H1S/2400H1S, the part after slash exists
+        mapping[split_code[1]] = id #i.e. 2400H1S
+        mapping[split_code[1][/\d{3,4}/]] = id #i.e. 2400
+        mapping[split_code[0][/[a-z0-9]{3}/]+split_code[1]] = id #i.e. CSC2400H1S
+        mapping[split_code[0][/[a-z0-9]{3}/]+split_code[1][/\d{3,4}/]] = id #i.e. CSC2400
+      end
+    end
+    return mapping
+  end
+
   def parse_preference(pref)
-    list = pref.split(',')
+    list = pref.split(/[.,'&;\r\n():\t]/)
+    list.each do |list_item|
+      if list_item.include?"and"
+        temp = list_item.split(/and/)
+        temp.each do |item|
+          list.push(item)
+        end
+      end
+      if list_item.include?"or"
+        temp = list_item.split(/or/)
+        temp.each do |item|
+          list.push(item)
+        end
+      end
+    end
+    return list
   end
 
   def insert_positions
@@ -150,7 +213,7 @@ class ChassImporter
         round_id: round_id,
         open: true,
         campus_code: course_id[course_id[/[A-Za-z0-9]{3}\d{3,4}/].size+1].to_i,
-        course_name: course_entry["course_name"],
+        course_name: course_entry["course_name"].strip,
         estimated_enrolment: course_entry["enrollment"],
         duties: course_entry["duties"],
         qualifications: course_entry["qualifications"],
