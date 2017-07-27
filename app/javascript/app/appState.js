@@ -575,10 +575,8 @@ class AppState {
         }
 
         // add assignment counts to courses
-        for (var course in assignmentCounts) {
-            if (courses[course]) {
-                courses[course].assignmentCount = assignmentCounts[course];
-            }
+        for (var course in courses) {
+            courses[course].assignmentCount = assignmentCounts[course] ? assignmentCounts[course] : 0;
         }
 
         return courses;
