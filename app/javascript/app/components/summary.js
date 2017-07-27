@@ -24,6 +24,14 @@ class Summary extends React.Component {
 
         return (
             <Grid fluid id="summary-grid" style={cursorStyle}>
+                <form encType="multipart/form-data">
+                    <input
+                        id="uploader"
+                        type="file"
+                        name="chass_json"
+                        onChange={() => this.loadFile()}
+                    />
+                </form>
                 <PanelGroup>
                     <Utilities {...this.props} />
                     <Stats {...this.props} />
@@ -44,6 +52,29 @@ class Summary extends React.Component {
 
     componentWillUpdate() {
         this.selectThisTab();
+    }
+
+    loadFile() {
+        let files = document.getElementById('uploader').files;
+        let message = 'Are you sure you want to import "' + files[0].name + '" into the database?';
+        if (files[0].type == 'application/json') {
+            if (confirm(message)) this.uploadFile(files[0]);
+        } else {
+            alert('The file you uploaded is not a JSON.');
+        }
+    }
+
+    uploadFile(file) {
+        let reader = new FileReader();
+        //reader.onload = upload;
+        reader.onload = function(event) {
+            let data = JSON.parse(event.target.result);
+            fetch('/import/chass', {
+                method: 'POST',
+                body: JSON.stringify({ chass_json: data }),
+            });
+        };
+        reader.readAsText(file);
     }
 }
 
@@ -100,7 +131,7 @@ class ExportForm extends React.Component {
                 window.open(route);
             }
         } else {
-            // export other data in CSV format
+            // export other data in CS>>>>>>> set up upload buttonV format
             if (format == 'csv') {
                 window.open('/export/' + data);
             } else {
@@ -123,7 +154,8 @@ class ExportForm extends React.Component {
                         componentClass="select"
                         inputRef={ref => {
                             this.data = ref;
-                        }}>
+                        }}
+                    >
                         <option value="offers">Offers</option>
                         <option value="cdf-info">CDF info</option>
                         <option value="transcript-access">
@@ -139,7 +171,8 @@ class ExportForm extends React.Component {
                         componentClass="select"
                         inputRef={ref => {
                             this.format = ref;
-                        }}>
+                        }}
+                    >
                         <option value="csv">CSV</option>
                         <option value="json">JSON</option>
                     </FormControl>
@@ -166,7 +199,8 @@ const ReleaseForm = props =>
                     <span>
                         <b>Release assignments</b> This functionality is not currently supported.
                     </span>
-                )}>
+                )}
+        >
             Release assignments
         </Button>
     </Form>;
