@@ -24,7 +24,9 @@ class Courses extends React.Component {
     }
 
     selectThisTab() {
-        this.props.func.selectNavTab(this.props.navKey);
+        if (this.props.func.getSelectedNavTab() != this.props.navKey) {
+            this.props.func.selectNavTab(this.props.navKey);
+        }
     }
 
     componentWillMount() {
