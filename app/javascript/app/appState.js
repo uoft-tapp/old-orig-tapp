@@ -58,7 +58,6 @@ const initialState = {
     assignmentForm: {
         panels: [],
         tempAssignments: [],
-        assignmentInput: '',
     },
 
     /** DB data **/
@@ -358,10 +357,6 @@ class AppState {
         this.set('nav.selectedTab', eventKey);
     }
 
-    setInput(value) {
-        this.set('assignmentForm.assignmentInput', value);
-    }
-
     // set the course panel layout in the ABC view
     setCoursePanelLayout(layout) {
         this.set('abcView.panelLayout', layout);
@@ -575,10 +570,8 @@ class AppState {
         }
 
         // add assignment counts to courses
-        for (var course in assignmentCounts) {
-            if (courses[course]) {
-                courses[course].assignmentCount = assignmentCounts[course];
-            }
+        for (var course in courses) {
+            courses[course].assignmentCount = assignmentCounts[course] ? assignmentCounts[course] : 0;
         }
 
         return courses;
