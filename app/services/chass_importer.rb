@@ -1,13 +1,9 @@
 class ChassImporter
   attr_reader :course_data, :applicant_data, :round_id
 
-  def initialize(file)
-    @data = File.read("#{Rails.root}/db/#{file}.json")
-    raise JSON::ParserError.new("the source file is empty") if @data.strip.length == 0
-
-    parsed_data = JSON.parse(@data)
-    @course_data = parsed_data.fetch("courses")
-    @applicant_data = parsed_data.fetch("applicants")
+  def initialize(data)
+    @course_data = data["courses"]
+    @applicant_data = data["applicants"]
     @round_id = get_round_id
     insert_data
   end
