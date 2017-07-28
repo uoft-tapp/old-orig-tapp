@@ -11,6 +11,7 @@ import {
     Well,
     Table,
 } from 'react-bootstrap';
+import * as fetch from '../fetch.js';
 
 class Summary extends React.Component {
     render() {
@@ -31,6 +32,10 @@ class Summary extends React.Component {
                         name="chass_json"
                         onChange={() => this.loadFile()}
                     />
+                    <button onClick={() => this.popup()}>HELP</button>
+                    <div id="help" className="helpBox">
+                        <textarea value={chassFormat} disabled />
+                    </div>
                 </form>
                 <PanelGroup>
                     <Utilities {...this.props} />
@@ -60,21 +65,27 @@ class Summary extends React.Component {
         if (files[0].type == 'application/json') {
             if (confirm(message)) this.uploadFile(files[0]);
         } else {
-            alert('The file you uploaded is not a JSON.');
+            alert('Error: The file you uploaded is not a JSON.');
         }
     }
 
     uploadFile(file) {
         let reader = new FileReader();
-        //reader.onload = upload;
         reader.onload = function(event) {
             let data = JSON.parse(event.target.result);
-            fetch('/import/chass', {
-                method: 'POST',
-                body: JSON.stringify({ chass_json: data }),
-            });
+            if (data['courses'] !== undefined && data['applicants'] !== undefined) {
+                data = { chass_json: data };
+                fetch.importChass(data, alert, alert);
+            } else {
+                alert('Error: This is not a CHASS JSON.');
+            }
         };
         reader.readAsText(file);
+    }
+
+    popup() {
+        let popup = document.getElementById('help');
+        popup.style.display = 'block';
     }
 }
 
@@ -313,5 +324,52 @@ const PerCourseStats = props => {
         </tr>
     );
 };
+const chassFormat = `{
+    "courses": [
+      {
+        "instructor": [{},...],
+        "last_updated": datetime,
+        "end_nominations": string,
+        "status": integer,
+        "end_posting": timedate,
+        "start_posting": timedate,
+        "total_hours": integer,
+        "duties": string,
+        "qualifications": string,
+        "tutorials": string,
+        "dates": string,
+        "n_hours": string,
+        "n_positions": integer,
+        "enrollment": integer,
+        "round_id": ,
+        "course_name": string,
+        "course_id": string
+      },...],
+    "applicants": [
+      {
+        "app_id": string,
+        "utorid": string,
+        "first_name": string,
+        "last_name": string,
+        "email": string,
+        "phone": string,
+        "student_no": string,
+        "address": string,
+        "ta_training": (Y/N),
+        "access_acad_history": (Y/N),
+        "dept": string,
+        "program_id": string,
+        "yip": string,
+        "course_preferences": string,
+        "ta_experience": "string,
+        "academic_qualifications": string,
+        "technical_skills": string,
+        "availability": string,
+        "other_info": string,
+        "special_needs": string,
+        "last_updated": datetime,
+        "courses": [string, ...]
+      },...]
+  }`;
 
 export { Summary };

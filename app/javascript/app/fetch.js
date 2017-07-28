@@ -272,7 +272,7 @@ function fetchAll() {
             appState.successFetchingAssignmentsList();
         })
         .catch(() => appState.setFetchingAssignmentsList(false));
-    
+
     // when instructors are successfully fetched, update the instructors list; set fetching flag to false either way
     instructorsPromise
         .then(instructors => {
@@ -411,6 +411,10 @@ function updateCourse(courseId, data, val, attr) {
         .catch(() => appState.setFetchingCoursesList(false));
 }
 
+function importChass(data, success, failure) {
+    return postHelper('/import/chass', data, success, failure);
+}
+
 export {
     fetchAll,
     postAssignment,
@@ -418,4 +422,5 @@ export {
     updateAssignmentHours,
     updateCourse,
     noteApplicant,
+    importChass,
 };
