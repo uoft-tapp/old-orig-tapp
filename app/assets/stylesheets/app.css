@@ -459,19 +459,33 @@ footer div p {
 #summary-grid #per-course {
     margin-bottom: 0;
 }
-.helpBox {
-    display: none;
+.info-button {
+    padding: 0;
+    border: none;
+    background: none;
+    outline: 0;
+}
+#help {
+    top: 76px !important;
+}
+#help .popover-content {
+    padding: 0 !important;
     width: 300px;
     height: 200px;
-    border-radius: 6px;
-    background: #444;
 }
-.helpBox textarea {
-    width: calc(100% - 6px);
+#help .popover-content textarea {
+    width: calc(100% - 27px);
     height: 100%;
     resize: none;
     outline: 0;
     border: none;
-    color: #fff;
     background: none;
+    overflow-y: auto;
+    cursor: default;
+}
+#help .arrow {
+    top: 20px !important;
+}
+#help .arrow::after {
+    border-right-color: #f7f7f7 !important;
 }
