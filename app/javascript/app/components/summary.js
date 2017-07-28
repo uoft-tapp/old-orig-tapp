@@ -106,12 +106,19 @@ const ExportForm = props =>
                 style={{ fontSize: '20px', color: 'blue' }}
                 onClick={() => {
                     if (this.data.value == 'offers') {
+                        if (this.data.format == 'csv') {
+                            route = '/export/' + this.data.value;
+                        } else {
+                            // this will be non-functional until round IDs are incorporated!
+                            route = '/export/chass/' + props.func.getSelectedRound();
+                        }
+
                         if (
-                            window.confirm(
+                            confirm(
                                 'This will lock all exported assignments.\nAre you sure you want to proceed?'
                             )
                         ) {
-                            window.open('/export/' + this.data.value);
+                            window.open(route);
                         }
                     } else {
                         window.open('/export/' + this.data.value);
