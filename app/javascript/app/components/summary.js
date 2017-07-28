@@ -77,11 +77,6 @@ class Summary extends React.Component {
         };
         reader.readAsText(file);
     }
-
-    popup() {
-        let popup = document.getElementById('help');
-        popup.style.display = 'block';
-    }
 }
 
 const Utilities = props => {
