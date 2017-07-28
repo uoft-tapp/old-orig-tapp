@@ -104,7 +104,19 @@ const ExportForm = props =>
             &emsp;<i
                 className="fa fa-download"
                 style={{ fontSize: '20px', color: 'blue' }}
-                onClick={() => window.open('/export/' + this.data.value)}
+                onClick={() => {
+                    if (this.data.value == 'offers') {
+                        if (
+                            window.confirm(
+                                'This will lock all exported assignments.\nAre you sure you want to proceed?'
+                            )
+                        ) {
+                            window.open('/export/' + this.data.value);
+                        }
+                    } else {
+                        window.open('/export/' + this.data.value);
+                    }
+                }}
             />
         </FormControl.Static>
     </Form>;
