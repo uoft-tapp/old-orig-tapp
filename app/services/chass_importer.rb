@@ -2,10 +2,17 @@ class ChassImporter
   attr_reader :course_data, :applicant_data, :round_id
 
   def initialize(data)
+    @done = false
     @course_data = data["courses"]
     @applicant_data = data["applicants"]
     @round_id = get_round_id
     insert_data
+  end
+
+  def done
+    if @done
+      return "CHASS import completed."
+    end
   end
 
   private
@@ -13,6 +20,7 @@ class ChassImporter
     insert_positions
     insert_applicant
     insert_application
+    @done = true
   end
 
   def get_round_id
