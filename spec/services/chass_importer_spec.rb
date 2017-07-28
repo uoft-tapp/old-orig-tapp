@@ -19,6 +19,7 @@ describe ChassImporter do
   end
 
   context "when parsing courses" do
+
     context "with a plain course" do
       let(:mock_json) { File.read("./spec/support/chass_data/plain_course.json") }
 

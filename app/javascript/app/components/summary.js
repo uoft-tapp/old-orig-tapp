@@ -27,20 +27,8 @@ class Summary extends React.Component {
 
         return (
             <Grid fluid id="summary-grid" style={cursorStyle}>
-                <form encType="multipart/form-data">
-                    <input
-                        id="uploader"
-                        type="file"
-                        name="chass_json"
-                        onChange={() => this.loadFile()}
-                    />
-                    <button onClick={() => this.popup()}>HELP</button>
-                    <div id="help" className="helpBox">
-                        <textarea value={chassFormat} disabled />
-                    </div>
-                </form>
                 <PanelGroup>
-                    <Utilities {...this.props} />
+                    <Utilities loadFile={() => this.loadFile()} {...this.props} />
                     <Stats {...this.props} />
                 </PanelGroup>
             </Grid>
@@ -62,12 +50,17 @@ class Summary extends React.Component {
     }
 
     loadFile() {
-        let files = document.getElementById('uploader').files;
-        let message = 'Are you sure you want to import "' + files[0].name + '" into the database?';
-        if (files[0].type == 'application/json') {
-            if (confirm(message)) this.uploadFile(files[0]);
+        let files = document.getElementById('import').files;
+        if (files.length > 0) {
+            let message =
+                'Are you sure you want to import "' + files[0].name + '" into the database?';
+            if (files[0].type == 'application/json') {
+                if (confirm(message)) this.uploadFile(files[0]);
+            } else {
+                alert('Error: The file you uploaded is not a JSON.');
+            }
         } else {
-            alert('Error: The file you uploaded is not a JSON.');
+            alert('Error: No file chosen.');
         }
     }
 
@@ -77,7 +70,7 @@ class Summary extends React.Component {
             let data = JSON.parse(event.target.result);
             if (data['courses'] !== undefined && data['applicants'] !== undefined) {
                 data = { chass_json: data };
-                fetch.importChass(data, alert, alert);
+                fetch.importChass(data, console.log, console.log);
             } else {
                 alert('Error: This is not a CHASS JSON.');
             }
@@ -94,7 +87,7 @@ class Summary extends React.Component {
 const Utilities = props => {
     return (
         <Panel header="Utilities" id="utils">
-            <ImportForm {...props} />
+            <ImportForm loadFile={props.loadFile} {...props} />
             <ExportForm {...props} />
             <ReleaseForm {...props} />
         </Panel>
@@ -102,7 +95,6 @@ const Utilities = props => {
 };
 
 // form for importing data from a file and persisting it to the database
-
 class ImportForm extends React.Component {
     loadFile() {
         let files = document.getElementById('import').files;
@@ -129,7 +121,6 @@ class ImportForm extends React.Component {
         let reader = new FileReader();
         reader.onload = function(event) {
             let data = JSON.parse(event.target.result);
-            console.log(data);
             if (data['courses'] !== undefined && data['applicants'] !== undefined) {
                 data = { chass_json: data };
                 waitAlert();
