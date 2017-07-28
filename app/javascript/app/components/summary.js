@@ -160,13 +160,17 @@ const Stats = props => {
     );
     let dcsGradApplicants = gradApplicants.filter(([_, app]) => app.dept == 'Computer Science');
 
+    let assignments = props.func.getAssignmentsList();   
+    let unassGradApplicants = gradApplicants.filter(([id, _]) => assignments[id]);
+    let unassDcsGradApplicants = dcsGradApplicants.filter(([id, _]) => assignments[id]);
+    
     let courses = props.func.getCoursesList();
     let orderedCourses = props.func.idEntries(courses);
     orderedCourses.sort(([A, valA], [B, valB]) => (valA.code < valB.code ? -1 : 1));
 
-    let assignments = props.func.idEntries(props.func.getAssignmentsList());
-    let applications = props.func.idEntries(props.func.getApplicationsList());
-
+    let assignmentsList = props.func.idEntries(assignments);
+    let applicationsList = props.func.idEntries(props.func.getApplicationsList());
+    
     return (
         <Panel header="Assignment Statistics" id="stats">
             <Well id="gen-stats">
@@ -181,17 +185,25 @@ const Stats = props => {
                 <span>
                     <h2>{dcsGradApplicants.length}</h2> DCS graduate applicants
                 </span>
+                <i className="fa fa-angle-right" />
+                <span>
+                    <h2>{unassDcsGradApplicants.length}</h2> unassigned DCS graduate applicants
+                </span>
+                <i className="fa fa-angle-left" />        
+                <span>
+                    <h2>{unassGradApplicants.length}</h2> unassigned graduate applicants
+                </span>
             </Well>
 
             <Table striped hover condensed id="per-course">
                 <thead>
                     <tr>
                         <th>Course</th>
-                        <th>Est. enrollment</th>
-                        <th>Total applicants</th>
-                        <th>Total assignments</th>
-                        <th>Total TA hours</th>
-                        <th>TA density</th>
+                        <th>Est. enrolment</th>
+                        <th>Applicants</th>
+                        <th>Assignments</th>
+                        <th>Assigned hours</th>
+                        <th>Density</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -200,8 +212,8 @@ const Stats = props => {
                             key={id + '-stats'}
                             course={id}
                             courses={courses}
-                            applications={applications}
-                            assignments={assignments}
+                            applications={applicationsList}
+                            assignments={assignmentsList}
                         />
                     )}
                 </tbody>
@@ -244,7 +256,7 @@ const PerCourseStats = props => {
             {props.courses[props.course].estimatedEnrol == null
                 ? <td />
                 : <td>
-                      {taHours / props.courses[props.course].estimatedEnrol}
+                      {(taHours / props.courses[props.course].estimatedEnrol).toFixed(2)}
                   </td>}
         </tr>
     );
