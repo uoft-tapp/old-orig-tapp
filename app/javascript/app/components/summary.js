@@ -10,6 +10,9 @@ import {
     Button,
     Well,
     Table,
+    OverlayTrigger,
+    Overlay,
+    Popover,
 } from 'react-bootstrap';
 import * as fetch from '../fetch.js';
 
@@ -75,11 +78,6 @@ class Summary extends React.Component {
         };
         reader.readAsText(file);
     }
-
-    popup() {
-        let popup = document.getElementById('help');
-        popup.style.display = 'block';
-    }
 }
 
 const Utilities = props => {
@@ -105,17 +103,30 @@ class ImportForm extends React.Component {
                     />&emsp;
                 </FormControl.Static>
                 <FormGroup>
-                    <ControlLabel>Import from file:</ControlLabel>
+                    <ControlLabel>
+                        Import from file:&nbsp;
+                        <OverlayTrigger
+                            trigger="click"
+                            rootClose
+                            placement="right"
+                            overlay={InfoDialog(chassFormat)}
+                        >
+                            <button className="info-button" type="button">
+                                <i className="fa fa-info-circle" style={{ color: 'blue' }} />
+                            </button>
+                        </OverlayTrigger>
+                    </ControlLabel>
                     <FormControl id="import" type="file" accept="application/json" />
-                    <button onClick={() => this.popup()}>HELP</button>
-                    <div id="help" className="helpBox">
-                        <textarea value={chassFormat} disabled />
-                    </div>
                 </FormGroup>
             </Form>
         );
     }
 }
+
+const InfoDialog = chassFormat =>
+    <Popover id="help" placement="right" title="CHASS JSON format">
+        <textarea value={chassFormat} disabled />
+    </Popover>;
 
 // form for exporting app data to a file
 class ExportForm extends React.Component {
