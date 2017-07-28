@@ -61,7 +61,7 @@ const Utilities = props => {
 const ImportForm = props =>
     <Form inline id="import">
         <FormControl.Static style={{ verticalAlign: 'middle' }}>
-            <i className="fa fa-upload" style={{ fontSize: '20px' }} />&emsp;
+            <i className="fa fa-upload" style={{ fontSize: '20px', color: 'blue' }} />&emsp;
         </FormControl.Static>
         <FormGroup id="import">
             <ControlLabel>Import from file:</ControlLabel>
@@ -74,10 +74,15 @@ const ExportForm = props =>
     <Form inline id="export">
         <FormGroup id="data">
             <ControlLabel>Export&ensp;</ControlLabel>
-            <FormControl id="data" componentClass="select">
-                <option value="assignments">Assignments</option>
-                <option value="cdf">CDF info</option>
-                <option value="academicHist">
+            <FormControl
+                id="data"
+                componentClass="select"
+                inputRef={ref => {
+                    this.data = ref;
+                }}>
+                <option value="offers">Offers</option>
+                <option value="cdf-info">CDF info</option>
+                <option value="transcript-access">
                     Undergraduate applicants granting access to academic history
                 </option>
             </FormControl>
@@ -85,13 +90,22 @@ const ExportForm = props =>
 
         <FormGroup id="format">
             <ControlLabel>&ensp;to&ensp;</ControlLabel>
-            <FormControl id="format" componentClass="select">
+            <FormControl
+                id="format"
+                componentClass="select"
+                inputRef={ref => {
+                    this.format = ref;
+                }}>
                 <option value="csv">CSV</option>
                 <option value="json">JSON</option>
             </FormControl>
         </FormGroup>
         <FormControl.Static style={{ verticalAlign: 'middle' }}>
-            &emsp;<i className="fa fa-download" style={{ fontSize: '20px' }} />
+            &emsp;<i
+                className="fa fa-download"
+                style={{ fontSize: '20px', color: 'blue' }}
+                onClick={() => window.open('/export/' + this.data.value)}
+            />
         </FormControl.Static>
     </Form>;
 
