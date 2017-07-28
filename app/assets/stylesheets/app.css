@@ -6,6 +6,7 @@
     --main-div-height: calc(100vh - var(--navbar-height) - var(--footer-height));
     --min-row-height: 32px;
     --course-list-panel-width: calc(15em + 8px); /* includes margins */
+    --closed-panel-height: 47px; /* includes top margin */
 }
 
 html {
@@ -361,4 +362,67 @@ footer div p {
 }
 .instructor_form span{
     margin-left: 2px;
+}
+
+/* for summary view */
+#summary-grid .panel-group {
+    max-height: var(--main-div-height);
+}
+
+#summary-grid .panel {
+    margin-bottom: 0;
+    width: 100%;
+}
+
+/* for utilities panel in summary view */
+#summary-grid #utils {
+    display: flex;
+}
+
+#summary-grid #utils .panel-body {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+#summary-grid #utils #import {
+    flex: 0.8;
+}
+
+#summary-grid #utils #export {
+    flex: 2;
+}
+
+#summary-grid #utils #release {
+    flex: 0;
+}
+
+/* for statistics panel in summary view */
+#summary-grid #stats .panel-heading {
+    height: 40px;
+}
+
+#summary-grid #stats .panel-body {
+    /* we subtract the height of the utilities panel and stats panel header */
+    max-height: calc(var(--main-div-height) - 77px - 40px - 10px);
+    overflow: auto;
+}
+
+#summary-grid #gen-stats {
+    display: flex;
+    justify-content: space-around;
+    vertical-align: middle;
+}
+
+#summary-grid #gen-stats h2 {
+    margin-top: 0;
+    margin-bottom: 4px;
+}
+
+#summary-grid #gen-stats i {
+    font-size: 45px;
+}
+
+#summary-grid #per-course {
+    margin-bottom: 0;
 }
