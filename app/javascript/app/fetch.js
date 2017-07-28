@@ -415,6 +415,10 @@ function importChass(data, success, failure) {
     return postHelper('/import/chass', data, success, failure);
 }
 
+function showMessage(resp) {
+    alert(resp.message);
+}
+
 export {
     fetchAll,
     postAssignment,
@@ -423,4 +427,5 @@ export {
     updateCourse,
     noteApplicant,
     importChass,
+    showMessage,
 };

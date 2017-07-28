@@ -71,7 +71,7 @@ class Summary extends React.Component {
             let data = JSON.parse(event.target.result);
             if (data['courses'] !== undefined && data['applicants'] !== undefined) {
                 data = { chass_json: data };
-                fetch.importChass(data, console.log, console.log);
+                fetch.importChass(data, fetch.showMessage, fetch.showMessage);
             } else {
                 alert('Error: This is not a CHASS JSON.');
             }
