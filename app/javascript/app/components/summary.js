@@ -106,7 +106,8 @@ const ExportForm = props =>
                 style={{ fontSize: '20px', color: 'blue' }}
                 onClick={() => {
                     if (this.data.value == 'offers') {
-                        if (this.data.format == 'csv') {
+                        let route;
+                        if (this.format.value == 'csv') {
                             route = '/export/' + this.data.value;
                         } else {
                             // this will be non-functional until round IDs are incorporated!
@@ -121,7 +122,16 @@ const ExportForm = props =>
                             window.open(route);
                         }
                     } else {
-                        window.open('/export/' + this.data.value);
+                        if (this.format.value == 'csv') {
+                            window.open('/export/' + this.data.value);
+                        } else {
+                            props.func.alert(
+                                <span>
+                                    <b>Export JSON</b> This functionality is not currently
+                                    supported.
+                                </span>
+                            );
+                        }
                     }
                 }}
             />
@@ -131,7 +141,16 @@ const ExportForm = props =>
 // form for releasing tentative assignments to instructors
 const ReleaseForm = props =>
     <Form id="release">
-        <Button bsStyle="success">Release assignments</Button>
+        <Button
+            bsStyle="success"
+            onClick={() =>
+                props.func.alert(
+                    <span>
+                        <b>Release assignments</b> This functionality is not currently supported.
+                    </span>
+                )}>
+            Release assignments
+        </Button>
     </Form>;
 
 const Stats = props => {
