@@ -13,6 +13,7 @@ import {
     OverlayTrigger,
     Popover,
 } from 'react-bootstrap';
+import * as fetch from '../fetch.js';
 
 class Summary extends React.Component {
     render() {
@@ -33,6 +34,10 @@ class Summary extends React.Component {
                         name="chass_json"
                         onChange={() => this.loadFile()}
                     />
+                    <button onClick={() => this.popup()}>HELP</button>
+                    <div id="help" className="helpBox">
+                        <textarea value={chassFormat} disabled />
+                    </div>
                 </form>
                 <PanelGroup>
                     <Utilities {...this.props} />
@@ -62,21 +67,27 @@ class Summary extends React.Component {
         if (files[0].type == 'application/json') {
             if (confirm(message)) this.uploadFile(files[0]);
         } else {
-            alert('The file you uploaded is not a JSON.');
+            alert('Error: The file you uploaded is not a JSON.');
         }
     }
 
     uploadFile(file) {
         let reader = new FileReader();
-        //reader.onload = upload;
         reader.onload = function(event) {
             let data = JSON.parse(event.target.result);
-            fetch('/import/chass', {
-                method: 'POST',
-                body: JSON.stringify({ chass_json: data }),
-            });
+            if (data['courses'] !== undefined && data['applicants'] !== undefined) {
+                data = { chass_json: data };
+                fetch.importChass(data, alert, alert);
+            } else {
+                alert('Error: This is not a CHASS JSON.');
+            }
         };
         reader.readAsText(file);
+    }
+
+    popup() {
+        let popup = document.getElementById('help');
+        popup.style.display = 'block';
     }
 }
 
