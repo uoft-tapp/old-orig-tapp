@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe SessionsController, type: :controller do
 
-  let(:instructor) do
+  let(:session) do
     Session.create!(
       semester: "Fall",
       year: 2017,
@@ -22,7 +22,7 @@ RSpec.describe SessionsController, type: :controller do
 
     context "when /sessions/{id} exists" do
       it "lists session with {id}" do
-        get :show, params: {id: instructor[:id]}
+        get :show, params: {id: session[:id]}
         expect(response.status).to eq(200)
         expect(response.body).not_to be_empty
       end
