@@ -2,6 +2,15 @@ require 'rails_helper'
 
 RSpec.describe PositionsController, type: :controller do
 
+  let(:session) do
+    Session.create!(
+      semester: "Fall",
+      year: 2017,
+      start_date: "2017-09-01 00:00:00 UTC",
+      end_date: "2017-12-31 00:00:00 UTC",
+    )
+  end
+
   let(:position) do
     Position.create!(
       position: "CSC104H1S",
@@ -14,7 +23,8 @@ RSpec.describe PositionsController, type: :controller do
       qualifications: "Must be enrolled in, or have completed, an undergraduate program in computer science or education (or equivalent). Demonstrated excellent English communication skills. Patience teaching technical concepts to students with a wide variety of non-technical backgrounds. Must have completed or be in the process of completing a course involving functional programming. Must be able to write code in the Intermediate Student Language of Racket, and trace it in the same manner as the Intermediate Student Language Stepper of the DrRacket development environment.",
       hours: 54,
       estimated_count: 17,
-      estimated_total_hours: 918
+      estimated_total_hours: 918,
+      session_id: session.id,
     )
   end
 
@@ -68,7 +78,8 @@ RSpec.describe PositionsController, type: :controller do
           hours: 20,
           estimated_count: 15,
           estimated_total_hours: 300,
-          instructors: [instructor.id]
+          instructors: [instructor.id],
+          session_id: session.id
         }
         expect(position.instructor_ids).to eq([])
         put :update, params: @params
