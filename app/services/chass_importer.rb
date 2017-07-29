@@ -215,7 +215,7 @@ class ChassImporter
       posting_id  = course_entry["course_id"]
       course_id = posting_id.split("-")[0].strip
       round_id = course_entry["round_id"]
-      session_id = get_session_id(course_entry["dates"].split(" to "))
+      session_id = get_session_id(course_entry["dates"])
       if session_id
         exists = "Position #{posting_id} already exists"
         ident = {position: posting_id, round_id: round_id}
@@ -262,19 +262,24 @@ class ChassImporter
   end
 
   def get_session_id(dates)
-    if dates.size == 2
-      start_date = DateTime.parse(dates[0])
-      end_date =  DateTime.parse(dates[1])
-      data ={
-        start_date: start_date,
-        end_date: end_date,
-        year: start_date.strftime("%Y"),
-        semester: get_semester(start_date),
-      }
-      exists = "Session #{data[:semester]}, #{data[:year]} already exists"
-      ident = {year: data[:year], semester: data[:semester]}
-      session = insertion_helper(Session, data, ident, exists)
-      return session.id
+    if dates
+      dates = dates.split(" to ")
+      if dates.size == 2
+        start_date = DateTime.parse(dates[0])
+        end_date =  DateTime.parse(dates[1])
+        data ={
+          start_date: start_date,
+          end_date: end_date,
+          year: start_date.strftime("%Y"),
+          semester: get_semester(start_date),
+        }
+        exists = "Session #{data[:semester]}, #{data[:year]} already exists"
+        ident = {year: data[:year], semester: data[:semester]}
+        session = insertion_helper(Session, data, ident, exists)
+        return session.id
+      else
+        return nil
+      end
     else
       return nil
     end
