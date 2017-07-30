@@ -1,6 +1,5 @@
-import Backbone from 'backbone';
 import React from 'react';
-import NestedModel from 'backbone-nested';
+import _ from 'lodash';
 
 import * as fetch from './fetch.js';
 import { routeConfig } from './routeConfig.js';
@@ -72,39 +71,65 @@ const initialState = {
 class AppState {
     constructor() {
         // container for application state
-        var _data = new Backbone.NestedModel(initialState);
+        var _data = JSON.stringify(initialState);
 
+        // list of change listeners
+	var _listeners = [];
+	// run all listeners
+	var notifyListeners = () => _listeners.forEach(listener => listener());
+
+	// parses a property (keys and indices) into a list
+	var parseProp = prop => prop.split(/\[|\]|[.'"]/) // split on brackets, dots, and quotes
+	    .filter(key => key.length); // remove empty elements
+	
         // getter for appState object
         this.get = function(property) {
-            return _data.get(property);
+            return _.get(JSON.parse(_data), property);
         };
 
         // setters for appState object
         
         this.set = function(property, value) {
+	    // as per the Backbone Model set() syntax, we accept a property and value pair, or
+	    // an object with property and value pairs as keys
             if (arguments.length == 1) {
-                _data.set(property);
+		let init = JSON.parse(_data);
+		
+		for (var prop in property) {
+                    init = _.set(init, prop, property[prop]);
+		}
+		_data = JSON.stringify(init);
+					   
             } else {
-                _data.set(property, value);
+                _data = JSON.stringify(_.set(JSON.parse(_data), property, value));
             }
+
+	    // notify listener(s) of change
+	    notifyListeners();
         };
 
+	 // add an element to an array property
         this.add = function(property, value) {
-            _data.add(property, value);
+	    _data = JSON.stringify(
+		_.update(JSON.parse(_data), property, array => array.concat(value)));
+
+	    // notify listener(s) of change
+	    notifyListeners();
         };
 
         this.remove = function(property) {
-            _data.remove(property);
+	    let path = parseProp(property);
+	    
+	    _data = JSON.stringify(
+		_.update(JSON.parse(_data), path.slice(0,-1), array => array.splice(path.slice(-1))));
+	    
+	    // notify listener(s) of change
+	    notifyListeners();
         };
 
-        // wrapper for Backbone's unset
-        this.unset = function(property, params) {
-            _data.unset(property, params);
-        };
-
-        // subscribe listener to change events on this model
+        // subscribe listener to changes on this data container
         this.subscribe = function(listener) {
-            _data.on('change', listener);
+	    _listeners.push(listener);
         };
     }
 
@@ -175,15 +200,12 @@ class AppState {
 
     // remove all selected filters on the applicant table in a course panel
     clearCoursePanelFilters(course) {
-        this.unset('abcView.panelFields[' + course + '].selectedFilters', { silent: true });
         this.set('abcView.panelFields[' + course + '].selectedFilters', {});
     }
 
     // remove all selected filters on the applicant table in a single-applicant-table view
     clearFilters() {
         let view = this.getSelectedViewStateComponent();
-
-        this.unset(view + '.selectedFilters', { silent: true });
         this.set(view + '.selectedFilters', {});
     }
 
@@ -363,7 +385,6 @@ class AppState {
     }
 
     setSelectedCourses(courses) {
-        this.unset('abcView.selectedCourses', { silent: true });
         this.set('abcView.selectedCourses', courses);
     }
 
@@ -394,7 +415,6 @@ class AppState {
     // toggle a filter on the applicant table in a course panel
     toggleCoursePanelFilter(course, field, category) {
         let filters = this.getCoursePanelFiltersByCourse(course);
-        this.unset('abcView.panelFields[' + course + '].selectedFilters', { silent: true });
 
         if (filters[field]) {
             let i = filters[field].indexOf(category);
@@ -424,10 +444,6 @@ class AppState {
         let i = sortFields.findIndex(([f, _]) => f == field);
 
         if (i != -1) {
-            this.unset('abcView.panelFields[' + course + '].selectedSortFields', {
-                silent: true,
-            });
-
             sortFields[i][1] = -sortFields[i][1];
             this.set('abcView.panelFields[' + course + '].selectedSortFields', sortFields);
         }
@@ -436,9 +452,7 @@ class AppState {
     // toggle a filter on the applicant table in a single-applicant-table view
     toggleFilter(field, category) {
         let view = this.getSelectedViewStateComponent();
-
         let filters = this.getFilters();
-        this.unset(view + '.selectedFilters', { silent: true });
 
         if (filters[field]) {
             let i = filters[field].indexOf(category);
@@ -499,8 +513,6 @@ class AppState {
         let i = sortFields.findIndex(([f, _]) => f == field);
 
         if (i != -1) {
-            this.unset(view + '.selectedSortFields', { silent: true });
-
             sortFields[i][1] = -sortFields[i][1];
             this.set(view + '.selectedSortFields', sortFields);
         }
@@ -508,7 +520,7 @@ class AppState {
 
     // unselect the applicant displayed in the applicant view
     unselectApplicant() {
-        this.unset('selectedApplicant');
+        this.set('selectedApplicant', null);
     }
 
     // check whether a panelFields object exists for each of the currently selected courses
@@ -536,7 +548,6 @@ class AppState {
         }
 
         if (update) {
-            this.unset('abcView.panelFields', { silent: true });
             this.set('abcView.panelFields', panelFields);
         }
     }
@@ -829,22 +840,18 @@ class AppState {
     }
 
     setApplicantsList(list) {
-        this.unset('applicants.list', { silent: true });
         this.set('applicants.list', list);
     }
 
     setApplicationsList(list) {
-        this.unset('applications.list', { silent: true });
         this.set('applications.list', list);
     }
 
     setAssignmentsList(list) {
-        this.unset('assignments.list', { silent: true });
         this.set('assignments.list', list);
     }
 
     setCoursesList(list) {
-        this.unset('courses.list', { silent: true });
         this.set('courses.list', list);
     }
 
@@ -899,7 +906,6 @@ class AppState {
     }
 
     setInstructorsList(list) {
-        this.unset('instructors.list', { silent: true });
         this.set('instructors.list', list);
     }
 
