@@ -58,85 +58,100 @@ const Utilities = props => {
 };
 
 // form for importing data from a file and persisting it to the database
-const ImportForm = props =>
-    <Form inline id="import">
-        <FormControl.Static style={{ verticalAlign: 'middle' }}>
-            <i className="fa fa-upload" style={{ fontSize: '20px', color: 'blue' }} />&emsp;
-        </FormControl.Static>
-        <FormGroup id="import">
-            <ControlLabel>Import from file:</ControlLabel>
-            <FormControl id="import" type="file" accept="application/json" />
-        </FormGroup>
-    </Form>;
+class ImportForm extends React.Component {
+    render() {
+        return (
+            <Form inline id="import">
+                <FormControl.Static style={{ verticalAlign: 'middle' }}>
+                    <i className="fa fa-upload" style={{ fontSize: '20px', color: 'blue' }} />&emsp;
+                </FormControl.Static>
+                <FormGroup id="import">
+                    <ControlLabel>Import from file:</ControlLabel>
+                    <FormControl id="import" type="file" accept="application/json" />
+                </FormGroup>
+            </Form>
+        );
+    }
+}
 
 // form for exporting app data to a file
-const ExportForm = props =>
-    <Form inline id="export">
-        <FormGroup id="data">
-            <ControlLabel>Export&ensp;</ControlLabel>
-            <FormControl
-                id="data"
-                componentClass="select"
-                inputRef={ref => {
-                    this.data = ref;
-                }}>
-                <option value="offers">Offers</option>
-                <option value="cdf-info">CDF info</option>
-                <option value="transcript-access">
-                    Undergraduate applicants granting access to academic history
-                </option>
-            </FormControl>
-        </FormGroup>
+class ExportForm extends React.Component {
+    exportData(data, format) {
+        if (data == 'offers') {
+            // export offers
+            let route;
+            if (format == 'csv') {
+                // export offers in CSV format
+                route = '/export/' + data;
+            } else {
+                // export offers in JSON format
+                // this will be non-functional until round IDs are incorporated!
+                route = '/export/chass/' + props.func.getSelectedRound();
+            }
 
-        <FormGroup id="format">
-            <ControlLabel>&ensp;to&ensp;</ControlLabel>
-            <FormControl
-                id="format"
-                componentClass="select"
-                inputRef={ref => {
-                    this.format = ref;
-                }}>
-                <option value="csv">CSV</option>
-                <option value="json">JSON</option>
-            </FormControl>
-        </FormGroup>
-        <FormControl.Static style={{ verticalAlign: 'middle' }}>
-            &emsp;<i
-                className="fa fa-download"
-                style={{ fontSize: '20px', color: 'blue' }}
-                onClick={() => {
-                    if (this.data.value == 'offers') {
-                        let route;
-                        if (this.format.value == 'csv') {
-                            route = '/export/' + this.data.value;
-                        } else {
-                            // this will be non-functional until round IDs are incorporated!
-                            route = '/export/chass/' + props.func.getSelectedRound();
-                        }
+            if (
+                confirm(
+                    'This will lock all exported assignments.\nAre you sure you want to proceed?'
+                )
+            ) {
+                window.open(route);
+            }
+        } else {
+            // export other data in CSV format
+            if (format == 'csv') {
+                window.open('/export/' + data);
+            } else {
+                props.func.alert(
+                    <span>
+                        <b>Export JSON</b> This functionality is not currently supported.
+                    </span>
+                );
+            }
+        }
+    }
 
-                        if (
-                            confirm(
-                                'This will lock all exported assignments.\nAre you sure you want to proceed?'
-                            )
-                        ) {
-                            window.open(route);
-                        }
-                    } else {
-                        if (this.format.value == 'csv') {
-                            window.open('/export/' + this.data.value);
-                        } else {
-                            props.func.alert(
-                                <span>
-                                    <b>Export JSON</b> This functionality is not currently
-                                    supported.
-                                </span>
-                            );
-                        }
-                    }
-                }}
-            />
-        </FormControl.Static>
-    </Form>;
+    render() {
+        return (
+            <Form inline id="export">
+                <FormGroup id="data">
+                    <ControlLabel>Export&ensp;</ControlLabel>
+                    <FormControl
+                        id="data"
+                        componentClass="select"
+                        inputRef={ref => {
+                            this.data = ref;
+                        }}>
+                        <option value="offers">Offers</option>
+                        <option value="cdf-info">CDF info</option>
+                        <option value="transcript-access">
+                            Undergraduate applicants granting access to academic history
+                        </option>
+                    </FormControl>
+                </FormGroup>
+
+                <FormGroup id="format">
+                    <ControlLabel>&ensp;to&ensp;</ControlLabel>
+                    <FormControl
+                        id="format"
+                        componentClass="select"
+                        inputRef={ref => {
+                            this.format = ref;
+                        }}>
+                        <option value="csv">CSV</option>
+                        <option value="json">JSON</option>
+                    </FormControl>
+                </FormGroup>
+                <FormControl.Static style={{ verticalAlign: 'middle' }}>
+                    &emsp;<i
+                        className="fa fa-download"
+                        style={{ fontSize: '20px', color: 'blue' }}
+                        onClick={() => this.exportData(this.data.value, this.format.value)}
+                    />
+                </FormControl.Static>
+            </Form>
+        );
+    }
+}
 
 // form for releasing tentative assignments to instructors
 const ReleaseForm = props =>
@@ -163,14 +178,14 @@ const Stats = props => {
     let assignments = props.func.getAssignmentsList();
     let unassGradApplicants = gradApplicants.filter(([id, _]) => !assignments[id]);
     let unassDcsGradApplicants = dcsGradApplicants.filter(([id, _]) => !assignments[id]);
-    
+
     let courses = props.func.getCoursesList();
     let orderedCourses = props.func.idEntries(courses);
     orderedCourses.sort(([A, valA], [B, valB]) => (valA.code < valB.code ? -1 : 1));
 
     let assignmentsList = props.func.idEntries(assignments);
     let applicationsList = props.func.idEntries(props.func.getApplicationsList());
-    
+
     return (
         <Panel header="Assignment Statistics" id="stats">
             <Well id="gen-stats">
