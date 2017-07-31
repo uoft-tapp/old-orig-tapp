@@ -411,16 +411,20 @@ footer div p {
 #summary-grid #gen-stats {
     display: flex;
     justify-content: space-around;
-    vertical-align: middle;
+    align-items: center;
+}
+
+#summary-grid #gen-stats span {
+    margin: 0;
+}
+
+#summary-grid #gen-stats .divider {
+    font-size: 40px;
 }
 
 #summary-grid #gen-stats h2 {
     margin-top: 0;
     margin-bottom: 4px;
-}
-
-#summary-grid #gen-stats i {
-    font-size: 45px;
 }
 
 #summary-grid #per-course {
