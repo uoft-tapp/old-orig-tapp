@@ -181,6 +181,14 @@ footer div p {
     vertical-align: top;
 }
 
+#applicant-modal .panel_table td p {
+    margin-bottom: 0;
+}
+
+#applicant-modal .panel_table td p+p {
+    margin-top: 10px;
+}
+
 /* for course panel container in ABC view */
 #abc-grid #course-panel-layout {
     width: calc(100% - var(--course-list-panel-width));
@@ -259,15 +267,13 @@ footer div p {
     font-weight: bold;
 }
 /* margin between text boxes in the first three columns */
-.form_table #col-1 p:first-child, .form_table #col-1 p:nth-child(2),
-.form_table #col-2 p:first-child, .form_table #col-2 p:nth-child(2),
-.form_table #col-3 form:first-child, .form_table #col-3 form:nth-child(2) {
-    margin-bottom: 5px;
+.form_table #col-1 p+p, .form_table #col-2 p+p, .form_table #col-3 form+form {
+    margin-top: 5px;
 }
 
-/* right padding for all but last column */
-.form_table td:not(#col-6) {
-    padding-right: var(--sep-width);
+/* left padding for all but the left column */
+.form_table td+td {
+    padding-left: var(--sep-width);
 }
 
 .form_table p {
