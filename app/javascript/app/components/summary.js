@@ -160,9 +160,9 @@ const Stats = props => {
     );
     let dcsGradApplicants = gradApplicants.filter(([_, app]) => app.dept == 'Computer Science');
 
-    let assignments = props.func.getAssignmentsList();   
-    let unassGradApplicants = gradApplicants.filter(([id, _]) => assignments[id]);
-    let unassDcsGradApplicants = dcsGradApplicants.filter(([id, _]) => assignments[id]);
+    let assignments = props.func.getAssignmentsList();
+    let unassGradApplicants = gradApplicants.filter(([id, _]) => !assignments[id]);
+    let unassDcsGradApplicants = dcsGradApplicants.filter(([id, _]) => !assignments[id]);
     
     let courses = props.func.getCoursesList();
     let orderedCourses = props.func.idEntries(courses);
@@ -174,24 +174,24 @@ const Stats = props => {
     return (
         <Panel header="Assignment Statistics" id="stats">
             <Well id="gen-stats">
-                <span>
+                <span className="stat">
                     <h2>{applicants.length}</h2> applicants
                 </span>
-                <i className="fa fa-angle-right" />
-                <span>
+                <span className="divider">/</span>
+                <span className="stat">
                     <h2>{gradApplicants.length}</h2> graduate applicants
                 </span>
-                <i className="fa fa-angle-right" />
-                <span>
+                <span className="divider">/</span>
+                <span className="stat">
+                    <h2>{unassGradApplicants.length}</h2> unassigned graduate applicants
+                </span>
+                <span className="divider">/</span>
+                <span className="stat">
                     <h2>{dcsGradApplicants.length}</h2> DCS graduate applicants
                 </span>
-                <i className="fa fa-angle-right" />
-                <span>
+                <span className="divider">/</span>
+                <span className="stat">
                     <h2>{unassDcsGradApplicants.length}</h2> unassigned DCS graduate applicants
-                </span>
-                <i className="fa fa-angle-left" />        
-                <span>
-                    <h2>{unassGradApplicants.length}</h2> unassigned graduate applicants
                 </span>
             </Well>
 
