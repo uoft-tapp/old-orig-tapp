@@ -48,7 +48,21 @@ class Summary extends React.Component {
     componentWillUpdate() {
         this.selectThisTab();
     }
+}
 
+const Utilities = props => {
+    return (
+        <Panel header="Utilities" id="utils">
+            <ImportForm loadFile={props.loadFile} {...props} />
+            <ExportForm {...props} />
+            <ReleaseForm {...props} />
+        </Panel>
+    );
+};
+
+// form for importing data from a file and persisting it to the database
+
+class ImportForm extends React.Component {
     loadFile() {
         let files = document.getElementById('import').files;
         if (files.length > 0) {
@@ -79,20 +93,6 @@ class Summary extends React.Component {
         };
         reader.readAsText(file);
     }
-}
-
-const Utilities = props => {
-    return (
-        <Panel header="Utilities" id="utils">
-            <ImportForm loadFile={props.loadFile} {...props} />
-            <ExportForm {...props} />
-            <ReleaseForm {...props} />
-        </Panel>
-    );
-};
-
-// form for importing data from a file and persisting it to the database
-class ImportForm extends React.Component {
     render() {
         return (
             <Form inline>
@@ -100,7 +100,7 @@ class ImportForm extends React.Component {
                     <i
                         className="fa fa-upload"
                         style={{ fontSize: '20px', color: 'blue' }}
-                        onClick={props.loadFile}
+                        onClick={() => this.loadFile()}
                     />&emsp;
                 </FormControl.Static>
                 <FormGroup>
@@ -121,6 +121,16 @@ class ImportForm extends React.Component {
         );
     }
 }
+
+const Utilities = props => {
+    return (
+        <Panel header="Utilities" id="utils">
+            <ImportForm loadFile={props.loadFile} {...props} />
+            <ExportForm {...props} />
+            <ReleaseForm {...props} />
+        </Panel>
+    );
+};
 
 const InfoDialog = chassFormat =>
     <Popover id="help" placement="right" title="CHASS JSON format">
