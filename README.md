@@ -3,13 +3,35 @@
 
 TA assignment and matching application.
 
-## Deployment instructions (for Lloyd)
+## Structure
+The Dockerfile serves instructions to set up the image of the container (linux, yarn, npm etc)
+The docker-compose files serves to setup the services that your container will be using (postgres, apache, nginx, apps)
+The [prod|dev].env.default files are served to the Dockerfile and the docker-compose files.
+
+## Deployment instructions
 
 ```
 git clone git@github.com:uoft-tapp/tapp.git #this repo
+
+To deploy to production (Lloyd)
+cp prod.env.default .env
+
+To work in development
 cp dev.env.default .env
+
 docker-compose run rails-app rake db:migrate db:seed db:seed:chass[mock_chass]    #only for today, August 1
 docker-compose up
+
+
+If you don't specify the environment variable that the docker-compose file should reference, you might end
+up with an error from postgres ("role "tapp" does not exist"). In that case stop/remove the containers and its volumes,
+docker-compose down -v
+
+Copy over the appropriate environment variables, then start the build from stratch
+docker-compose build rails-app
+
+& finally docker-compose up.
+
 ```
 
 ## Starting application
