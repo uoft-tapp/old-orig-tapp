@@ -13,7 +13,6 @@ import {
     OverlayTrigger,
     Popover,
 } from 'react-bootstrap';
-import * as fetch from '../fetch.js';
 
 class Summary extends React.Component {
     render() {
@@ -70,7 +69,7 @@ class ImportForm extends React.Component {
                 'Are you sure you want to import "' + files[0].name + '" into the database?';
             if (files[0].type == 'application/json') {
                 if (confirm(message)) {
-                    this.uploadFile(files[0]);
+                    this.uploadFile(files[0], this.props.func.importChass);
                 }
             } else {
                 alert('Error: The file you uploaded is not a JSON.');
@@ -80,13 +79,13 @@ class ImportForm extends React.Component {
         }
     }
 
-    uploadFile(file) {
+    uploadFile(file, func) {
         let reader = new FileReader();
         reader.onload = function(event) {
             let data = JSON.parse(event.target.result);
             if (data['courses'] !== undefined && data['applicants'] !== undefined) {
                 data = { chass_json: data };
-                fetch.importChass(data, fetch.showMessage, fetch.showMessage);
+                func(data);
             } else {
                 alert('Error: This is not a CHASS JSON.');
             }

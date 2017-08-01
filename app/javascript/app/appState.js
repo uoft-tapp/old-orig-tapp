@@ -780,6 +780,10 @@ class AppState {
         return this.idEntries(applicants);
     }
 
+    importChass(data) {
+        fetch.importChass(data, fetch.showMessage, fetch.showMessage);
+    }
+
     isApplicantsListNull() {
         return this.getApplicantsList() == null;
     }
