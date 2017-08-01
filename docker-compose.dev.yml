@@ -1,0 +1,18 @@
+version: '2'
+services:
+  rails-app:
+    command: >
+      ./bin/rails-server-entrypoint -b 0.0.0.0 -p 3000 -P /dev/null
+    volumes: # ths is to mount code to srv/app
+      - .:/srv/app
+
+  webpack-dev-server:
+    build: .
+    volumes:
+      - .:/srv/app
+    networks:
+      - internal
+    ports:
+      - "8080:8080"
+    command: >
+      ./bin/webpack-dev-server-entrypoint --host 0.0.0.0

@@ -1,0 +1,5 @@
+version: '2'
+services:
+  rails-app:
+    environment:
+      RAILS_SERVE_STATIC_FILES: 1
