@@ -55,7 +55,9 @@ class Summary extends React.Component {
             let message =
                 'Are you sure you want to import "' + files[0].name + '" into the database?';
             if (files[0].type == 'application/json') {
-                if (confirm(message)) this.uploadFile(files[0]);
+                if (confirm(message)) {
+                    this.uploadFile(files[0]);
+                }
             } else {
                 alert('Error: The file you uploaded is not a JSON.');
             }
