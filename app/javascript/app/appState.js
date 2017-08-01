@@ -69,9 +69,9 @@ class AppState {
         var _data = fromJS(initialState);
 
         // list of change listeners
-        var _listeners = [];
+        this._listeners = [];
         // notify listeners of change
-        var notifyListeners = () => _listeners.forEach(listener => listener());
+        var notifyListeners = () => this._listeners.forEach(listener => listener());
         
         // parses a property path (keys and indices) into a list, as expected by Immutable
         var parsePath = path => path.split(/\[|\]|[.'"]/) // split on brackets, dots, and quotes
@@ -90,7 +90,7 @@ class AppState {
             if (arguments.length == 1) {
                 _data = _data.withMutations(map => {
                     Object.entries(property).reduce(
-                        (res, ([prop, val])) => res.setIn(parsePath(prop), val),
+                        (res, [prop, val]) => res.setIn(parsePath(prop), val),
                     map);
                 });
                 
@@ -116,11 +116,11 @@ class AppState {
             // notify listener(s) of change
             notifyListeners();
         };
+    }
 
-        // subscribe listener to change events on this model
-        this.subscribe = function(listener) {
-            _listeners.push(listener);
-        };
+    // subscribe listener to change events on this model
+    subscribe(listener) {
+        this._listeners.push(listener);
     }
 
     /************************************
@@ -986,13 +986,13 @@ class AppState {
 let appStateInst = new AppState(), appState = {};
 
 // wrap all AppState functions in functions in appState that parse Immutable results as JS
-Object.entries(Object.getPrototypeOf(appStateInst)).forEach(
-    ([name, func]) => {
+Object.getOwnPropertyNames(Object.getPrototypeOf(appStateInst)).forEach(
+    name => {
         // do not create a wrapper for the AppState constructor
         if (name != 'constructor') {
             appState[[name]] = (...args) => {
                 // pass arguments to the function
-                let result = func(...args);
+                let result = appStateInst[[name]](...args);
                 
                 // if the result of the function is an Immutable object, convert it to a JS object
                 if (result instanceof Collection) {
