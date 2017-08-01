@@ -412,7 +412,9 @@ function updateCourse(courseId, data, val, attr) {
 }
 
 function importChass(data, success, failure) {
-    return postHelper('/import/chass', data, success, failure);
+    return postHelper('/import/chass', data, success, failure).then(() => {
+        fetchAll();
+    });
 }
 
 function showMessage(resp) {
