@@ -48,35 +48,6 @@ class Summary extends React.Component {
     componentWillUpdate() {
         this.selectThisTab();
     }
-
-    loadFile() {
-        let files = document.getElementById('import').files;
-        if (files.length > 0) {
-            let message =
-                'Are you sure you want to import "' + files[0].name + '" into the database?';
-            if (files[0].type == 'application/json') {
-                if (confirm(message)) this.uploadFile(files[0]);
-            } else {
-                alert('Error: The file you uploaded is not a JSON.');
-            }
-        } else {
-            alert('Error: No file chosen.');
-        }
-    }
-
-    uploadFile(file) {
-        let reader = new FileReader();
-        reader.onload = function(event) {
-            let data = JSON.parse(event.target.result);
-            if (data['courses'] !== undefined && data['applicants'] !== undefined) {
-                data = { chass_json: data };
-                fetch.importChass(data, console.log, console.log);
-            } else {
-                alert('Error: This is not a CHASS JSON.');
-            }
-        };
-        reader.readAsText(file);
-    }
 }
 
 const Utilities = props => {
