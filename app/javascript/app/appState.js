@@ -1,6 +1,5 @@
-import Backbone from 'backbone';
 import React from 'react';
-import NestedModel from 'backbone-nested';
+import { Collection, fromJS } from 'immutable';
 
 import * as fetch from './fetch.js';
 import { routeConfig } from './routeConfig.js';
@@ -67,45 +66,61 @@ const initialState = {
 class AppState {
     constructor() {
         // container for application state
-        var _data = new Backbone.NestedModel(initialState);
+        var _data = fromJS(initialState);
 
+        // list of change listeners
+        var _listeners = [];
+        // notify listeners of change
+        var notifyListeners = () => _listeners.forEach(listener => listener());
+        
+        // parses a property path (keys and indices) into a list, as expected by Immutable
+        var parsePath = path => path.split(/\[|\]|[.'"]/) // split on brackets, dots, and quotes
+            .filter(key => key.length); // remove empty elements
+        
         // getter for appState object
         this.get = function(property) {
-            return _data.get(property);
+            return _data.getIn(parsePath(property));
         };
 
         // setters for appState object
 
         this.set = function(property, value) {
+            // as per the Backbone Model set() syntax, we accept a property and value pair, or
+            // an object with property and value pairs as keys
             if (arguments.length == 1) {
-                _data.set(property);
+                _data = _data.withMutations(map => {
+                    Object.entries(property).reduce(
+                        (res, ([prop, val])) => res.setIn(parsePath(prop), val),
+                    map);
+                });
+                
             } else {
-                _data.set(property, value);
+                _data = _data.setIn(parsePath(property), value);
             }
+
+            // notify listener(s) of change
+            notifyListeners();
         };
 
         this.add = function(property, value) {
-            _data.add(property, value);
+            _data = _data.updateIn(parsePath(property), array => array.push(fromJS(value)));
+
+            // notify listener(s) of change
+            notifyListeners();
         };
 
         this.remove = function(property) {
-            _data.remove(property);
-        };
+            let path = parsePath(property); // index should be the last element in the path array
+            _data = _data.updateIn(path.slice(0,-1), array => array.delete(path.slice(-1)));
 
-        // wrapper for Backbone's unset
-        this.unset = function(property, params) {
-            _data.unset(property, params);
+            // notify listener(s) of change
+            notifyListeners();
         };
 
         // subscribe listener to change events on this model
         this.subscribe = function(listener) {
-            _data.on('change', listener);
+            _listeners.push(listener);
         };
-    }
-
-    // transform object into an array of [key, value] pairs found directly upon object, where key is numerical
-    idEntries(object) {
-        return Object.entries(object).map(([key, val]) => [Number(key), val]);
     }
 
     /************************************
@@ -968,5 +983,26 @@ class AppState {
     }
 }
 
-let appState = new AppState();
+let appStateInst = new AppState(), appState = {};
+
+// wrap all AppState functions in functions in appState that parse Immutable results as JS
+Object.entries(Object.getPrototypeOf(appStateInst)).forEach(
+    ([name, func]) => {
+        // do not create a wrapper for the AppState constructor
+        if (name != 'constructor') {
+            appState[[name]] = (...args) => {
+                // pass arguments to the function
+                let result = func(...args);
+                
+                // if the result of the function is an Immutable object, convert it to a JS object
+                if (result instanceof Collection) {
+                    result = result.toJS();
+                }
+                
+                return result;
+            }
+        }
+    }
+);
+
 export { appState };
