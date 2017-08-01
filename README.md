@@ -3,13 +3,12 @@
 
 TA assignment and matching application.
 
-## Deployment instructions (for Alan)
+## Deployment instructions (for Lloyd)
 
 ```
 git clone git@github.com:uoft-tapp/tapp.git #this repo
-cp .env file # or something
-docker-compose run rails-app #database migrate? import ? What?
-..
+cp dev.env.default .env
+docker-compose run rails-app rake db:migrate db:seed db:seed:chass[mock_chass]    #only for today, August 1
 docker-compose up
 ```
 
