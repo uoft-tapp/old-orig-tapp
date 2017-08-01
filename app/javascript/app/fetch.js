@@ -418,7 +418,11 @@ function importChass(data, success, failure) {
 }
 
 function showMessage(resp) {
-    alert(resp.message);
+    appState.alert(
+        <span>
+            {resp.message}
+        </span>
+    );
 }
 
 export {
