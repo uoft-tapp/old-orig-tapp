@@ -13,7 +13,6 @@ import {
     OverlayTrigger,
     Popover,
 } from 'react-bootstrap';
-import * as fetch from '../fetch.js';
 
 class Summary extends React.Component {
     render() {
