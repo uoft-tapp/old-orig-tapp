@@ -11,7 +11,6 @@ import {
     Well,
     Table,
     OverlayTrigger,
-    Overlay,
     Popover,
 } from 'react-bootstrap';
 import * as fetch from '../fetch.js';
@@ -94,7 +93,7 @@ const Utilities = props => {
 class ImportForm extends React.Component {
     render() {
         return (
-            <Form inline id="import">
+            <Form inline>
                 <FormControl.Static style={{ verticalAlign: 'middle' }}>
                     <i
                         className="fa fa-upload"
@@ -111,9 +110,7 @@ class ImportForm extends React.Component {
                             placement="right"
                             overlay={InfoDialog(chassFormat)}
                         >
-                            <button className="info-button" type="button">
-                                <i className="fa fa-info-circle" style={{ color: 'blue' }} />
-                            </button>
+                            <i className="fa fa-info-circle" style={{ color: 'blue' }} />
                         </OverlayTrigger>
                     </ControlLabel>
                     <FormControl id="import" type="file" accept="application/json" />
