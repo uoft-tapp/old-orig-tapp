@@ -222,10 +222,6 @@ class AppState {
         return this.get('assignmentForm');
     }
 
-    getCoursePanelFields() {
-        return this.get('abcView.panelFields');
-    }
-
     getCoursePanelFiltersByCourse(course) {
         return this.get('abcView.panelFields[' + course + '].selectedFilters');
     }
@@ -511,17 +507,10 @@ class AppState {
 
     // check whether a panelFields object exists for each of the currently selected courses
     // if not, create the appropriate panelFields
-    updateCoursePanelFields(selected, panelFields) {
-        let newPanelFields = panelFields,
-            missingCourses = [],
-            extraCourses = [];
-
-        for (var course in panelFields.keySeq()) {
-            // if a tracker is extra, remove it (the course was just unselected)
-            if (!selected.includes(course)) {
-                extraCourses.push(course);
-            }
-        }
+    updateCoursePanelFields(selected) {
+        let panelFields = this.get('abcView.panelFields'),
+            newPanelFields = panelFields,
+            missingCourses = [];
 
         for (var course in selected.values()) {
             // if a tracker is missing, create it (the course was just selected)
@@ -529,10 +518,6 @@ class AppState {
                 missingCourses.push(course);
             }
         }
-
-        newPanelFields = newPanelFields.withMutations(map => {
-            extraCourses.reduce((result, course) => result.delete(course), map);
-        });
 
         newPanelFields = newPanelFields.withMutations(map => {
             missingCourses.reduce(
@@ -548,7 +533,7 @@ class AppState {
             );
         });
 
-        if (missingCourses.length > 0 || extraCourses.length > 0) {
+        if (missingCourses.length > 0) {
             this.set('abcView.panelFields', newPanelFields);
         }
     }
