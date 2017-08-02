@@ -2,17 +2,19 @@ class ChassImporter
   attr_reader :course_data, :applicant_data, :round_id
 
   def initialize(data)
-    @done = false
     @course_data = data["courses"]
     @applicant_data = data["applicants"]
     @round_id = get_round_id
-    insert_data
+    if @round_id[:found]
+      @round_id = @round_id[:round_id]
+      insert_data
+    else
+      @import_status = {success: false, message: @round_id[:message]}
+    end
   end
 
-  def done
-    if @done
-      return "CHASS import completed."
-    end
+  def get_status
+    @import_status
   end
 
   private
@@ -20,18 +22,22 @@ class ChassImporter
     insert_positions
     insert_applicant
     insert_application
-    @done = true
+    @import_status = {success: true, message: "CHASS import completed."}
   end
 
   def get_round_id
     round_ids = @course_data.map { |course_entry| course_entry["round_id"] }.uniq
     case round_ids.length
     when 0
-      raise StandardError.new("no round_id found in the file")
+      return {found: false, message: "Import Failure: no round_id found in the file"}
     when 1
-      return round_ids.first
+      if round_ids[0]
+        return {found: true, round_id: round_ids.first}
+      else
+        return {found: false, message: "Import Failure: no round_id found in the file"}
+      end
     else
-      raise StandardError.new("too many round_ids found in the file")
+      return {found: false, message: "Import Failure: too many round_ids found in the file"}
     end
   end
 
