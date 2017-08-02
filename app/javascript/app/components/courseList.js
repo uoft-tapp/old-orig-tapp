@@ -11,7 +11,7 @@ class CourseList extends React.Component {
     }
 
     render() {
-        let courses = this.props.func.getCoursesList();
+        let courses = this.props.getCoursesList();
 
         return (
             <Panel className="course-list-panel" header="Courses">

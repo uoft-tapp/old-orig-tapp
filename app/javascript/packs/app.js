@@ -41,7 +41,7 @@ class App extends React.Component {
     }
 
     render() {
-        return <RouterInst func={appState} />;
+        return <RouterInst {...appState} />;
     }
 }
 
@@ -53,7 +53,7 @@ const Bye = props =>
     </div>;
 
 const RouterInst = props => {
-    let selectedApplicant = props.func.getSelectedApplicant();
+    let selectedApplicant = props.getSelectedApplicant();
 
     return (
         <Router basename="index.html">
@@ -88,14 +88,14 @@ const RouterInst = props => {
                 {selectedApplicant && <ApplicantModal applicantId={selectedApplicant} {...props} />}
 
                 <div className="container-fluid" id="alert-container">
-                    {props.func
+                    {props
                         .getAlerts()
                         .map(alert =>
                             <div
                                 key={'alert-' + alert.id}
                                 className="alert alert-danger"
-                                onClick={() => props.func.dismissAlert(alert.id)}
-                                onAnimationEnd={() => props.func.dismissAlert(alert.id)}
+                                onClick={() => props.dismissAlert(alert.id)}
+                                onAnimationEnd={() => props.dismissAlert(alert.id)}
                                 dangerouslySetInnerHTML={{ __html: alert.text }}
                             />
                         )}

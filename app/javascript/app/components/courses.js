@@ -6,13 +6,12 @@ import { CourseForm } from './courseForm.js';
 
 class Courses extends React.Component {
     render() {
-        let nullCheck =
-            this.props.func.isCoursesListNull() || this.props.func.isInstructorsListNull();
+        let nullCheck = this.props.isCoursesListNull() || this.props.isInstructorsListNull();
         if (nullCheck) {
             return <div id="loader" />;
         }
 
-        let fetchCheck = this.props.func.fetchingCourses() || this.props.func.fetchingInstructors();
+        let fetchCheck = this.props.fetchingCourses() || this.props.fetchingInstructors();
         let cursorStyle = { cursor: fetchCheck ? 'progress' : 'auto' };
 
         return (
@@ -24,8 +23,8 @@ class Courses extends React.Component {
     }
 
     selectThisTab() {
-        if (this.props.func.getSelectedNavTab() != this.props.navKey) {
-            this.props.func.selectNavTab(this.props.navKey);
+        if (this.props.getSelectedNavTab() != this.props.navKey) {
+            this.props.selectNavTab(this.props.navKey);
         }
     }
 
