@@ -637,17 +637,18 @@ class AppState {
         return this.get('applicants.list').filter((_, id) => applications.has(id)).entrySeq();
     }
 
-    /*** NEEDS VERIFICATION ***/
     // get applicants to course who are not assigned to it; returns a list of [applicantID, applicantData]
     getApplicantsToCourseUnassigned(course) {
-        let applicants = this.getApplicantsToCourse(course);
-        let assignments = this.get('assignments.list');
+        let assignments = this.get('assignments.list'),
+            applicants = this.get('applicants.list');
 
-        return applicants.filterNot(
-            applicant =>
-                assignments.has(applicant.get(0)) &&
-                assignments.get(applicant.get(0)).some(ass => ass.get('positionId') == course)
-        );
+        return applicants
+            .filterNot(
+                (_, app) =>
+                    assignments.has(app) &&
+                    assignments.get(app).some(ass => ass.get('positionId') == course)
+            )
+            .entrySeq();
     }
 
     /*** NEEDS UPDATING WITH ROUNDS ***/
