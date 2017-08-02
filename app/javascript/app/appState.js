@@ -344,7 +344,7 @@ class AppState {
 
     // clear the list of unread notifications
     readNotifications() {
-        this.set('nav.notifications', []);
+        this.set('nav.notifications', fromJS([]));
     }
 
     // remove a sort from the applicant table in a course panel
@@ -578,35 +578,6 @@ class AppState {
         fetch.updateCourse(courseId, { instructors: val }, 'instructors');
     }
 
-    /***** NEEDS VERIFICATION *****/
-    // accepts an (optional) courses list and an (optional) list of assignment counts in an object, and returns the
-    // courses list with assignment counts updated
-    addAssignmentCountsToCourses(args) {
-        let assignmentCounts = args.assignmentCounts,
-            courses = args.courses ? args.courses : this.get('courses.list').toJS();
-
-        // if assignment counts are not given, compute them
-        if (!assignmentCounts) {
-            let assignments = this.get('assignments.list').toJS(),
-                assignmentCounts = {};
-
-            let count;
-            for (var ass in assignments) {
-                count = assignmentCounts[ass.position_id];
-                assignmentCounts[ass.position_id] = count ? count + 1 : 1;
-            }
-        }
-
-        // add assignment counts to courses
-        for (var course in courses) {
-            courses[course].assignmentCount = assignmentCounts[course]
-                ? assignmentCounts[course]
-                : 0;
-        }
-
-        return courses;
-    }
-
     /****** NEEDS UPDATING ******/
     // accepts a list of applications and a (optional) list of courses, and returns the applications list with
     // rounds updated
@@ -769,6 +740,13 @@ class AppState {
 
     getAssignmentsList() {
         return this.get('assignments.list');
+    }
+
+    // get the current number of assignments to course
+    getCourseAssignmentCount(course) {
+        return this.get('assignments.list').count(applicant =>
+            applicant.some(ass => ass.get('positionId') == course)
+        );
     }
 
     getCoursesList() {
