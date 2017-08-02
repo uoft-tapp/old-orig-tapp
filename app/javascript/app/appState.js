@@ -170,7 +170,7 @@ class AppState {
         this.add(
             'alerts',
             fromJS({
-                id: alerts.size > 0 ? alerts.last().id + 1 : 0,
+                id: alerts.size > 0 ? alerts.last().get('id') + 1 : 0,
                 text: text,
             })
         );
