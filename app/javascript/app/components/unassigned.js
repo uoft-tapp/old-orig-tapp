@@ -7,12 +7,12 @@ import { routeConfig } from '../routeConfig.js';
 
 class Unassigned extends React.Component {
     render() {
-        let nullCheck = this.props.func.anyNull();
+        let nullCheck = this.props.anyNull();
         if (nullCheck) {
             return <div id="loader" />;
         }
 
-        let fetchCheck = this.props.func.anyFetching();
+        let fetchCheck = this.props.anyFetching();
         let cursorStyle = { cursor: fetchCheck ? 'progress' : 'auto' };
 
         // table/menu configuration
@@ -22,7 +22,7 @@ class Unassigned extends React.Component {
                 data: p =>
                     <span
                         className="highlightOnHover"
-                        onClick={() => this.props.func.selectApplicant(p.applicantId)}>
+                        onClick={() => this.props.selectApplicant(p.applicantId)}>
                         {p.applicant.lastName}
                     </span>,
                 sortData: p => p.applicant.lastName,
@@ -84,7 +84,7 @@ class Unassigned extends React.Component {
                 header: 'Course Preferences',
                 data: p =>
                     <ButtonToolbar>
-                        {this.props.func.getApplicationById(p.applicantId).prefs.map(pref =>
+                        {this.props.getApplicationById(p.applicantId).prefs.map(pref =>
                             <Link
                                 to={
                                     routeConfig.abc.route +
@@ -99,18 +99,18 @@ class Unassigned extends React.Component {
                                     bsSize="xsmall"
                                     style={{ borderColor: '#555' }}
                                     onClick={() =>
-                                        this.props.func.setSelectedCourses([pref.positionId])}>
-                                    {this.props.func.getCourseCodeById(pref.positionId)}
+                                        this.props.setSelectedCourses([pref.positionId])}>
+                                    {this.props.getCourseCodeById(pref.positionId)}
                                 </Button>
                             </Link>
                         )}
                     </ButtonToolbar>,
 
                 filterLabel: 'Course',
-                filterCategories: this.props.func.getCourseCodes(),
+                filterCategories: this.props.getCourseCodes(),
                 // for each course, filter out applicants who did not apply to that course
-                filterFuncs: Object.keys(this.props.func.getCoursesList()).map(key => p =>
-                    this.props.func
+                filterFuncs: Object.keys(this.props.getCoursesList()).map(key => p =>
+                    this.props
                         .getApplicationById(p.applicantId)
                         .prefs.some(pref => pref.positionId == key)
                 ),
@@ -121,32 +121,31 @@ class Unassigned extends React.Component {
             <Grid fluid id="unassigned-grid">
                 <ApplicantTableMenu
                     config={this.config}
-                    getSelectedSortFields={() => this.props.func.getSorts()}
-                    anyFilterSelected={field => this.props.func.anyFilterSelected(field)}
+                    getSelectedSortFields={() => this.props.getSorts()}
+                    anyFilterSelected={field => this.props.anyFilterSelected(field)}
                     isFilterSelected={(field, category) =>
-                        this.props.func.isFilterSelected(field, category)}
-                    toggleFilter={(field, category) =>
-                        this.props.func.toggleFilter(field, category)}
-                    clearFilters={() => this.props.func.clearFilters()}
-                    addSort={field => this.props.func.addSort(field)}
-                    removeSort={field => this.props.func.removeSort(field)}
-                    toggleSortDir={field => this.props.func.toggleSortDir(field)}
+                        this.props.isFilterSelected(field, category)}
+                    toggleFilter={(field, category) => this.props.toggleFilter(field, category)}
+                    clearFilters={() => this.props.clearFilters()}
+                    addSort={field => this.props.addSort(field)}
+                    removeSort={field => this.props.removeSort(field)}
+                    toggleSortDir={field => this.props.toggleSortDir(field)}
                 />
 
                 <ApplicantTable
                     config={this.config}
-                    getApplicants={() => this.props.func.getUnassignedApplicants()}
+                    getApplicants={() => this.props.getUnassignedApplicants()}
                     rowId={p => 'unassigned-' + p.applicantId}
-                    getSelectedSortFields={() => this.props.func.getSorts()}
-                    getSelectedFilters={() => this.props.func.getFilters()}
+                    getSelectedSortFields={() => this.props.getSorts()}
+                    getSelectedFilters={() => this.props.getFilters()}
                 />
             </Grid>
         );
     }
 
     selectThisTab() {
-        if (this.props.func.getSelectedNavTab() != this.props.navKey) {
-            this.props.func.selectNavTab(this.props.navKey);
+        if (this.props.getSelectedNavTab() != this.props.navKey) {
+            this.props.selectNavTab(this.props.navKey);
         }
     }
 

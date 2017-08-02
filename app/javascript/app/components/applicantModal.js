@@ -4,13 +4,10 @@ import { Applicant } from './applicant.js';
 
 class ApplicantModal extends React.Component {
     render() {
-        let applicant = this.props.func.getApplicantById(this.props.applicantId);
+        let applicant = this.props.getApplicantById(this.props.applicantId);
 
         return (
-            <Modal
-                id="applicant-modal"
-                show={true}
-                onHide={() => this.props.func.unselectApplicant()}>
+            <Modal id="applicant-modal" show={true} onHide={() => this.props.unselectApplicant()}>
                 <Modal.Header>
                     <Modal.Title>
                         {applicant.lastName},&nbsp;{applicant.firstName}
@@ -19,7 +16,7 @@ class ApplicantModal extends React.Component {
                             <i
                                 className="fa fa-times"
                                 style={{ fontSize: '18px' }}
-                                onClick={() => this.props.func.unselectApplicant()}
+                                onClick={() => this.props.unselectApplicant()}
                             />
                         </span>
                     </Modal.Title>

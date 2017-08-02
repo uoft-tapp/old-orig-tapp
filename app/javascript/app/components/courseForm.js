@@ -44,11 +44,7 @@ class CourseForm extends React.Component {
                                     }
                                     update={val => {
                                         if (val != course.estimatedPositions) {
-                                            this.props.func.updateCourse(
-                                                id,
-                                                val,
-                                                'estimatedPositions'
-                                            );
+                                            this.props.updateCourse(id, val, 'estimatedPositions');
                                         }
                                     }}
                                 />
@@ -56,7 +52,7 @@ class CourseForm extends React.Component {
                                     defaultVal={course.positionHours ? course.positionHours : ''}
                                     update={val => {
                                         if (val != course.positionHours) {
-                                            this.props.func.updateCourse(id, val, 'positionHours');
+                                            this.props.updateCourse(id, val, 'positionHours');
                                         }
                                     }}
                                 />
@@ -64,7 +60,7 @@ class CourseForm extends React.Component {
                                     defaultVal={course.estimatedEnrol ? course.estimatedEnrol : ''}
                                     update={val => {
                                         if (val != course.estimatedEnrol) {
-                                            this.props.func.updateCourse(id, val, 'estimatedEnrol');
+                                            this.props.updateCourse(id, val, 'estimatedEnrol');
                                         }
                                     }}
                                 />
@@ -78,7 +74,7 @@ class CourseForm extends React.Component {
                                     input={course.instructor_input}
                                     instructors={course.instructors}
                                     instructor_data={instructors}
-                                    state={this.props.func}
+                                    state={this.props}
                                     self={this}
                                     {...this.props}
                                 />
@@ -90,11 +86,7 @@ class CourseForm extends React.Component {
                                 <textarea
                                     onBlur={event => {
                                         if (event.target.value != course.qual) {
-                                            this.props.func.updateCourse(
-                                                id,
-                                                event.target.value,
-                                                'qual'
-                                            );
+                                            this.props.updateCourse(id, event.target.value, 'qual');
                                         }
                                     }}
                                     defaultValue={course.qual}
@@ -107,11 +99,7 @@ class CourseForm extends React.Component {
                                 <textarea
                                     onBlur={event => {
                                         if (event.target.value != course.resp) {
-                                            this.props.func.updateCourse(
-                                                id,
-                                                event.target.value,
-                                                'resp'
-                                            );
+                                            this.props.updateCourse(id, event.target.value, 'resp');
                                         }
                                     }}
                                     defaultValue={course.resp}
@@ -129,15 +117,15 @@ class CourseForm extends React.Component {
         for (let i in instructor_data) {
             if (instructor_data[i] == input) {
                 if (!this.alreadyAddedInstructor(i, instructors)) {
-                    this.props.func.addInstructor(course, i);
+                    this.props.addInstructor(course, i);
                 } else {
-                    this.props.func.alert("You've already added this instructor.");
+                    this.props.alert("You've already added this instructor.");
                 }
                 input = '';
                 span.innerHTML = '';
             }
         }
-        this.props.func.updateInstructorInput(course, input);
+        this.props.updateInstructorInput(course, input);
     }
 
     alreadyAddedInstructor(id, instructors) {
@@ -152,13 +140,13 @@ class CourseForm extends React.Component {
     updateInputField(courseId) {
         let visible_input = document.getElementById('input_' + courseId);
         let hidden_input = document.getElementById('hidden_input_' + courseId);
-        this.props.func.updateInstructorInput(courseId, visible_input.innerHTML);
+        this.props.updateInstructorInput(courseId, visible_input.innerHTML);
         hidden_input.focus();
     }
 
     render() {
-        let courses = this.props.func.getCoursesList();
-        let instructors = this.props.func.getInstructorsList();
+        let courses = this.props.getCoursesList();
+        let instructors = this.props.getInstructorsList();
 
         return (
             <Panel id="course-form">

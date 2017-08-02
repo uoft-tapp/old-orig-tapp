@@ -37,7 +37,7 @@ class Applicant extends React.Component {
     }
 
     addPanelContent(panel) {
-        let application = this.props.func.getApplicationById(this.props.applicantId);
+        let application = this.props.getApplicationById(this.props.applicantId);
 
         switch (panel) {
             case 'Personal Information':
@@ -89,7 +89,7 @@ class Applicant extends React.Component {
         // expansion state is overridden by this.props.config
         // this.props.config should be of the form { <label> : <expanded?> }
 
-        this.props.func.createAssignmentForm(
+        this.props.createAssignmentForm(
             this.defaultConfig.map(
                 panel =>
                     this.props.config && panel.label in this.props.config
@@ -100,12 +100,12 @@ class Applicant extends React.Component {
     }
 
     render() {
-        let fetchCheck = this.props.func.anyFetching();
+        let fetchCheck = this.props.anyFetching();
         let cursorStyle = { cursor: fetchCheck ? 'progress' : 'auto' };
 
         return (
             <div style={cursorStyle}>
-                {this.props.func.getAssignmentForm().panels.map((panel, index) =>
+                {this.props.getAssignmentForm().panels.map((panel, index) =>
                     <Panel
                         collapsible
                         expanded={panel.expanded}
@@ -117,7 +117,7 @@ class Applicant extends React.Component {
                                     margin: '0',
                                     cursor: 'pointer',
                                 }}
-                                onClick={() => this.props.func.togglePanelExpanded(index)}>
+                                onClick={() => this.props.togglePanelExpanded(index)}>
                                 {panel.label}
                             </div>
                         }
@@ -131,7 +131,7 @@ class Applicant extends React.Component {
 }
 
 const PersonalInfo = props => {
-    let applicant = props.func.getApplicantById(props.applicant);
+    let applicant = props.getApplicantById(props.applicant);
 
     return (
         <table className="panel_table">
@@ -185,7 +185,7 @@ const PersonalInfo = props => {
 };
 
 const Status = props => {
-    let application = props.func.getApplicationById(props.applicant);
+    let application = props.getApplicationById(props.applicant);
 
     return (
         <table className="panel_table">
@@ -206,7 +206,7 @@ const Status = props => {
 };
 
 const ProgramInfo = props => {
-    let applicant = props.func.getApplicantById(props.applicant);
+    let applicant = props.getApplicantById(props.applicant);
 
     return (
         <table className="panel_table">
@@ -231,8 +231,8 @@ const ProgramInfo = props => {
 };
 
 const Prefs = props => {
-    let prefs = props.func.getApplicationById(props.applicant).prefs;
-    let courses = props.func.getCoursesList();
+    let prefs = props.getApplicationById(props.applicant).prefs;
+    let courses = props.getCoursesList();
 
     let j = 0,
         columns = [],
@@ -269,13 +269,13 @@ const NotesForm = props =>
         <textarea
             id="applicant-notes"
             style={{ width: '100%' }}
-            defaultValue={props.func.getApplicantById(props.applicant).notes}
+            defaultValue={props.getApplicantById(props.applicant).notes}
         />
         <br />
         <Button
             bsSize="small"
             onClick={() =>
-                props.func.noteApplicant(
+                props.noteApplicant(
                     props.applicant,
                     document.getElementById('applicant-notes').value
                 )}>
