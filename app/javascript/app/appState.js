@@ -12,11 +12,11 @@ const initialState = {
 
         selectedTab: null,
 
-        // list of unread notifications (can be text or HTML/JSX)
+        // list of unread notifications (string can contain HTML, but be careful because it is not sanitized!)
         notifications: [],
     },
 
-    // list of UI alerts (can be text or HTML/JSX)
+    // list of UI alerts (string can contain HTML, but be careful because it is not sanitized!)
     alerts: [],
 
     // applicant to display in applicant view
@@ -72,11 +72,13 @@ class AppState {
         this._listeners = [];
         // notify listeners of change
         var notifyListeners = () => this._listeners.forEach(listener => listener());
-        
+
         // parses a property path (keys and indices) into a list, as expected by Immutable
-        var parsePath = path => path.split(/\[|\]|[.'"]/) // split on brackets, dots, and quotes
-            .filter(key => key.length); // remove empty elements
-        
+        var parsePath = path =>
+            path
+                .split(/\[|\]|[.'"]/) // split on brackets, dots, and quotes
+                .filter(key => key.length); // remove empty elements
+
         // getter for appState object
         this.get = function(property) {
             return _data.getIn(parsePath(property));
@@ -90,10 +92,10 @@ class AppState {
             if (arguments.length == 1) {
                 _data = _data.withMutations(map => {
                     Object.entries(property).reduce(
-                        (res, [prop, val]) => res.setIn(parsePath(prop), val),
-                    map);
+                        (result, [prop, val]) => result.setIn(parsePath(prop), val),
+                        map
+                    );
                 });
-                
             } else {
                 _data = _data.setIn(parsePath(property), value);
             }
@@ -103,15 +105,15 @@ class AppState {
         };
 
         this.add = function(property, value) {
-            _data = _data.updateIn(parsePath(property), array => array.push(fromJS(value)));
+            _data = _data.updateIn(parsePath(property), array => array.push(value));
 
             // notify listener(s) of change
             notifyListeners();
         };
 
-        this.remove = function(property) {
+        this.remove = function(property, index) {
             let path = parsePath(property); // index should be the last element in the path array
-            _data = _data.updateIn(path.slice(0,-1), array => array.delete(path.slice(-1)));
+            _data = _data.updateIn(path, array => array.delete(index));
 
             // notify listener(s) of change
             notifyListeners();
@@ -130,14 +132,14 @@ class AppState {
     // apply a sort to the applicant table in a course panel (sorted up initially)
     // note that we do not allow multiple sorts on the same field (incl. in different directions)
     addCoursePanelSort(course, field) {
-        if (!this.get('abcView.panelFields['+course+'].selectedFilters').some(([f, _]) => f == field)) {
-            this.add('abcView.panelFields[' + course + '].selectedSortFields', [field, 1]);
+        if (
+            !this.get('abcView.panelFields[' + course + '].selectedFilters').some(
+                ([f, _]) => f == field
+            )
+        ) {
+            this.add('abcView.panelFields[' + course + '].selectedSortFields', fromJS([field, 1]));
         } else {
-            this.alert(
-                <span>
-                    <b>Applicant Table</b>&ensp;Cannot apply the same sort more than once.
-                </span>
-            );
+            this.alert('<b>Applicant Table</b>&ensp;Cannot apply the same sort more than once.');
         }
     }
 
@@ -145,54 +147,56 @@ class AppState {
     // note that we do not allow multiple sorts on the same field (incl. in different directions)
     addSort(field) {
         let view = this.getSelectedViewStateComponent();
-        
+
         if (!this.get(view + '.selectedSortFields').some(([f, _]) => f == field)) {
-            this.add(view + '.selectedSortFields', [field, 1]);
+            this.add(view + '.selectedSortFields', fromJS([field, 1]));
         } else {
-            this.alert(
-                <span>
-                    <b>Applicant Table</b>&ensp;Cannot apply the same sort more than once.
-                </span>
-            );
+            this.alert('<b>Applicant Table</b>&ensp;Cannot apply the same sort more than once.');
         }
     }
 
     // add a temporary assignment through the assignment form of the applicant view
     addTempAssignment(positionId, hours) {
-        this.add('assignmentForm.tempAssignments', { positionId: positionId, hours: hours });
+        this.add(
+            'assignmentForm.tempAssignments',
+            fromJS({ positionId: positionId, hours: hours })
+        );
     }
 
     // add an alert to the list of active alerts
     alert(text) {
         let alerts = this.get('alerts');
         // give it an id that is 1 larger than the largest id in the array, or 0 if the array is empty
-        this.add('alerts', {
-            id: alerts.length > 0 ? alerts[alerts.length - 1].id + 1 : 0,
-            text: text,
-        });
+        this.add(
+            'alerts',
+            fromJS({
+                id: alerts.size > 0 ? alerts.last().id + 1 : 0,
+                text: text,
+            })
+        );
     }
 
     // check whether any of the given filters in the category are selected on the applicant table in a course panel
     anyCoursePanelFilterSelected(course, field) {
-        return this.get('abcView.panelFields['+course+'].selectedFilters['+field+']') != undefined;
+        return this.get('abcView.panelFields[' + course + '].selectedFilters').has(field);
     }
 
     // check whether any of the given filters in the category are selected on the applicant table in a
     // single-applicant-table view
     anyFilterSelected(field) {
         let view = this.getSelectedViewStateComponent();
-        return this.get(view + '.selectedFilters['+field+']') != undefined;
+        return this.get(view + '.selectedFilters').has(field);
     }
 
     // remove all selected filters on the applicant table in a course panel
     clearCoursePanelFilters(course) {
-        this.set('abcView.panelFields[' + course + '].selectedFilters', {});
+        this.set('abcView.panelFields[' + course + '].selectedFilters', fromJS({}));
     }
 
     // remove all selected filters on the applicant table in a single-applicant-table view
     clearFilters() {
         let view = this.getSelectedViewStateComponent();
-        this.set(view + '.selectedFilters', {});
+        this.set(view + '.selectedFilters', fromJS({}));
     }
 
     createAssignmentForm(panels) {
@@ -200,11 +204,11 @@ class AppState {
     }
 
     dismissAlert(id) {
-        let alerts = this.getAlerts();
-        let i = alerts.findIndex(alert => alert.id == id);
+        let alerts = this.get('alerts');
+        let i = alerts.findIndex(alert => alert.get('id') == id);
 
         if (i != -1) {
-            this.remove('alerts[' + i + ']');
+            this.remove('alerts', i);
         }
     }
 
@@ -221,11 +225,11 @@ class AppState {
     }
 
     getCoursePanelFieldsByCourse(course) {
-        return this.get('abcView.panelFields['+course+']');
+        return this.get('abcView.panelFields[' + course + ']');
     }
 
     getCoursePanelFiltersByCourse(course) {
-        return this.get('abcView.panelFields['+course+'].selectedFilters');
+        return this.get('abcView.panelFields[' + course + '].selectedFilters');
     }
 
     getCoursePanelLayout() {
@@ -233,7 +237,7 @@ class AppState {
     }
 
     getCoursePanelSortsByCourse(course) {
-        return this.get('abcView.panelFields['+course+'].selectedSortFields');
+        return this.get('abcView.panelFields[' + course + '].selectedSortFields');
     }
 
     getCurrentUserName() {
@@ -295,14 +299,16 @@ class AppState {
 
     // check whether a filter is selected on the applicant table in a course panel
     isCoursePanelFilterSelected(course, field, category) {
-        let filters = this.get('abcView.panelFields['+course+'].selectedFilters');
+        let filters = this.get('abcView.panelFields[' + course + '].selectedFilters');
 
-        return filters[field] != undefined && filters[field].includes(category);
+        return filters.has(field) && filters.get(field).includes(category);
     }
 
     // check whether a sort is selected on the applicant table in a course panel
     isCoursePanelSortSelected(course, field, dir) {
-        return this.get('abcView.panelFields['+course+'].selectedSortFields').some(([f, d]) => f == field && d == dir);
+        return this.get('abcView.panelFields[' + course + '].selectedSortFields').some(
+            f => f.get(0) == field && f.get(1) == dir
+        );
     }
 
     // check whether a course in the course menu is selected
@@ -315,7 +321,7 @@ class AppState {
         let view = this.getSelectedViewStateComponent();
         let filters = this.get(view + '.selectedFilters');
 
-        return filters[field] != undefined && filters[field].includes(category);
+        return filters.has(field) && filters.get(field).includes(category);
     }
 
     // check whether a panel is expanded in the applicant view
@@ -326,7 +332,9 @@ class AppState {
     // check whether a sort is selected on the applicant table in a single-applicant-table view
     isSortSelected(field, dir) {
         let view = this.getSelectedViewStateComponent();
-        return this.get(view + '.selectedSortFields').some(([f, d]) => f == field && d == dir);
+        return this.get(view + '.selectedSortFields').some(
+            f == f.get(0) == field && f.get(1) == dir
+        );
     }
 
     // add a notification to the list of unread notifications
@@ -341,22 +349,26 @@ class AppState {
 
     // remove a sort from the applicant table in a course panel
     removeCoursePanelSort(course, field) {
-        let i = this.get('abcView.panelFields['+course+'].selectedSortFields').findIndex(([f, _]) => f == field);
-        this.remove('abcView.panelFields[' + course + '].selectedSortFields[' + i + ']');
+        let i = this.get('abcView.panelFields[' + course + '].selectedSortFields').findIndex(
+            f => f.get(0) == field
+        );
+        this.remove('abcView.panelFields[' + course + '].selectedSortFields', i);
     }
 
     // remove a sort from the applicant table in a single-applicant-table view
     removeSort(field) {
         let view = this.getSelectedViewStateComponent();
 
-        let i = this.get(view + '.selectedSortFields').findIndex(([f, _]) => f == field);
-        this.remove(view + '.selectedSortFields[' + i + ']');
+        let i = this.get(view + '.selectedSortFields').findIndex(f => f.get(0) == field);
+        this.remove(view + '.selectedSortFields', i);
     }
 
     // remove a temporary assignment from the assignment form of the applicant view
     removeTempAssignment(course) {
-        let i = this.get('assignmentForm.tempAssignments').findIndex(ass => ass.positionId == course);
-        this.remove('assignmentForm.tempAssignments[' + i + ']');
+        let i = this.get('assignmentForm.tempAssignments').findIndex(
+            ass => ass.get('positionId') == course
+        );
+        this.remove('assignmentForm.tempAssignments', i);
     }
 
     // select an applicant to display in the applicant view
@@ -380,7 +392,9 @@ class AppState {
 
     // change the number of hours of a temporary assignment
     setTempAssignmentHours(id, hours) {
-        let i = this.get('assignmentForm.tempAssignments').findIndex(ass => ass.positionId == id);
+        let i = this.get('assignmentForm.tempAssignments').findIndex(
+            ass => ass.get('positionId') == id
+        );
         this.set('assignmentForm.tempAssignments[' + i + '].hours', hours);
     }
 
@@ -390,81 +404,86 @@ class AppState {
             i1,
             i2;
 
-        for (var i = 0; i < selected.length; i++) {
-            if (selected[i] == course1) {
+        for (var i = 0; i < selected.size; i++) {
+            if (selected.get(i) == course1) {
                 i1 = i;
-            } else if (selected[i] == course2) {
+            } else if (selected.get(i) == course2) {
                 i2 = i;
             }
         }
 
-        [selected[i1], selected[i2]] = [selected[i2], selected[i1]];
-        this.set('abcView.selectedCourses', selected);
+        this.set({
+            ['abcView.selectedCourses[' + i1 + ']']: selected[i2],
+            ['abcView.selectedCourses[' + i2 + ']']: selected[i1],
+        });
     }
 
     // toggle a filter on the applicant table in a course panel
     toggleCoursePanelFilter(course, field, category) {
-        let filters = this.get('abcView.panelFields['+course+'].selectedFilters');
+        let filters = this.get('abcView.panelFields[' + course + '].selectedFilters');
 
-        if (filters[field]) {
-            let i = filters[field].indexOf(category);
+        // filter is already applied
+        if (filters.has(field)) {
+            let i = filters.get(field).indexOf(category);
 
-            // filter is not already applied
             if (i == -1) {
-                filters[field].push(category);
-
-                // filter is already applied, along with other filters
-            } else if (filters[field].length > 1) {
-                filters[field].splice(i, 1);
-
-                // only this filter is already applied
+                // filter on this category is not already applied
+                this.add(
+                    'abcView.panelFields[' + course + '].selectedFilters[' + field + ']',
+                    category
+                );
+            } else if (filters.get(field).size > 1) {
+                // filter on this category is already applied, along with other categories
+                this.remove(
+                    'abcView.panelFields[' + course + '].selectedFilters[' + field + ']',
+                    i
+                );
             } else {
-                delete filters[field];
+                // filter is only applied on this category
+                this.remove('abcView.panelFields[' + course + '].selectedFilters', field);
             }
         } else {
-            filters[field] = [category];
+            this.set(
+                'abcView.panelFields[' + course + '].selectedFilters[' + field + ']',
+                fromJS([category])
+            );
         }
-
-        this.set('abcView.panelFields[' + course + '].selectedFilters', filters);
     }
 
     // toggle the sort direction of the sort currently applied to the applicant table in a course panel
     toggleCoursePanelSortDir(course, field) {
-        const sortFields = this.get('abcView.panelFields['+course+'].selectedSortFields');
-        let i = sortFields.findIndex(([f, _]) => f == field);
+        let sortFields = this.get('abcView.panelFields[' + course + '].selectedSortFields');
+        let i = sortFields.findIndex(f => f.get(0) == field);
 
         if (i != -1) {
-            sortFields[i][1] = -sortFields[i][1];
-            this.set('abcView.panelFields[' + course + '].selectedSortFields', sortFields);
+            this.set(
+                'abcView.panelFields[' + course + '].selectedSortFields[' + i + '][1]',
+                -sortFields.get(i).get(1)
+            );
         }
     }
 
     // toggle a filter on the applicant table in a single-applicant-table view
     toggleFilter(field, category) {
         let view = this.getSelectedViewStateComponent();
-
         let filters = this.get(view + '.selectedFilters');
 
-        if (filters[field]) {
-            let i = filters[field].indexOf(category);
+        if (filters.has(field)) {
+            let i = filters.get(field).indexOf(category);
 
-            // filter is not already applied
             if (i == -1) {
-                filters[field].push(category);
-
-                // filter is already applied, along with other filters
-            } else if (filters[field].length > 1) {
-                filters[field].splice(i, 1);
-
-                // only this filter is already applied
+                // filter on this category is not already applied
+                this.add(view + '.selectedFilters[' + field + ']', category);
+            } else if (filters.get(field).size > 1) {
+                // filter on this category is already applied, along with other categories
+                this.remove(view + '.selectedFilters[' + field + ']', i);
             } else {
-                delete filters[field];
+                // filter is only applied on this category
+                this.remove(view + '.selectedFilters', field);
             }
         } else {
-            filters[field] = [category];
+            this.set(view + '.selectedFilters[' + field + ']', fromJS([category]));
         }
-
-        this.set(view + '.selectedFilters', filters);
     }
 
     // toggle the expanded state of a panel in the applicant assignment form component
@@ -479,30 +498,24 @@ class AppState {
         let i = selected.indexOf(course);
 
         if (i == -1) {
-            if (selected.length < 4) {
+            if (selected.size < 4) {
                 this.add('abcView.selectedCourses', course);
             } else {
-                this.alert(
-                    <span>
-                        <b>Courses Menu</b>&ensp;Cannot select more than 4 courses.
-                    </span>
-                );
+                this.alert('<b>Courses Menu</b>&ensp;Cannot select more than 4 courses.');
             }
         } else {
-            this.remove('abcView.selectedCourses[' + i + ']');
+            this.remove('abcView.selectedCourses', i);
         }
     }
 
     // toggle the sort direction of the sort currently applied to the applicant table in a single-applicant-table view
     toggleSortDir(field) {
         let view = this.getSelectedViewStateComponent();
-
-        const sortFields = this.get(view + '.selectedSortFields');
-        let i = sortFields.findIndex(([f, _]) => f == field);
+        let sortFields = this.get(view + '.selectedSortFields');
+        let i = sortFields.findIndex(f => f.get(0) == field);
 
         if (i != -1) {
-            sortFields[i][1] = -sortFields[i][1];
-            this.set(view + '.selectedSortFields', sortFields);
+            this.set(view + '.selectedSortFields[' + i + '][1]', -sortFields.get(i).get(1));
         }
     }
 
@@ -514,29 +527,44 @@ class AppState {
     // check whether a panelFields object exists for each of the currently selected courses
     // if not, create the appropriate panelFields
     updateCoursePanelFields(selected, panelFields) {
-        let update = false;
+        let newPanelFields = panelFields,
+            missingCourses = [],
+            extraCourses = [];
 
-        for (var course in panelFields) {
+        for (var course in panelFields.keySeq()) {
             // if a tracker is extra, remove it (the course was just unselected)
-            if (!selected.includes(parseInt(course))) {
-                delete panelFields[course];
-                update = true;
+            if (!selected.includes(course)) {
+                extraCourses.push(course);
             }
         }
 
-        for (var course = 0; course < selected.length; course++) {
+        for (var course in selected.values()) {
             // if a tracker is missing, create it (the course was just selected)
-            if (!(selected[course] in panelFields)) {
-                panelFields[selected[course]] = {
-                    selectedSortFields: [],
-                    selectedFilters: {},
-                };
-                update = true;
+            if (!panelFields.has(course)) {
+                missingCourses.push(course);
             }
         }
 
-        if (update) {
-            this.set('abcView.panelFields', panelFields);
+        newPanelFields = newPanelFields.withMutations(map => {
+            extraCourses.reduce((result, course) => result.delete(course), map);
+        });
+
+        newPanelFields = newPanelFields.withMutations(map => {
+            missingCourses.reduce(
+                (result, course) =>
+                    result.set(
+                        course,
+                        fromJS({
+                            selectedSortFields: [],
+                            selectedFilters: {},
+                        })
+                    ),
+                map
+            );
+        });
+
+        if (missingCourses.length > 0 || extraCourses.length > 0) {
+            this.set('abcView.panelFields', newPanelFields);
         }
     }
 
@@ -545,20 +573,21 @@ class AppState {
      ******************************/
 
     addInstructor(courseId, instructorId) {
-        let val = this.get('courses.list[' + courseId + '].instructors');
+        let val = this.get('courses.list[' + courseId + '].instructors').toJS();
         val.push(parseInt(instructorId));
-        fetch.updateCourse(courseId, { instructors: val }, val, 'instructors');
+        fetch.updateCourse(courseId, { instructors: val }, 'instructors');
     }
 
+    /***** NEEDS VERIFICATION *****/
     // accepts an (optional) courses list and an (optional) list of assignment counts in an object, and returns the
     // courses list with assignment counts updated
     addAssignmentCountsToCourses(args) {
         let assignmentCounts = args.assignmentCounts,
-            courses = args.courses ? args.courses : this.get('courses.list');
+            courses = args.courses ? args.courses : this.get('courses.list').toJS();
 
         // if assignment counts are not given, compute them
         if (!assignmentCounts) {
-            let assignments = this.get('assignments.list'),
+            let assignments = this.get('assignments.list').toJS(),
                 assignmentCounts = {};
 
             let count;
@@ -578,13 +607,14 @@ class AppState {
         return courses;
     }
 
+    /****** NEEDS UPDATING ******/
     // accepts a list of applications and a (optional) list of courses, and returns the applications list with
     // rounds updated
     addRoundsToApplications(applications, courses = this.get('courses.list')) {
         // assumes that all courses in a single application will be part of the same round
         for (var applicant in applications) {
             applications[applicant].forEach((app, index) => {
-                if (app.prefs && app.prefs.length > 0) {
+                if (app.prefs && app.prefs.size > 0) {
                     applications[applicant][index].round = courses[app.prefs[0].positionId].round;
                 }
             });
@@ -653,20 +683,15 @@ class AppState {
     // get applicants who are assigned to course; returns a list of [applicantID, applicantData]
     getApplicantsAssignedToCourse(course) {
         let assignments = this.get('assignments.list'),
-            applicants = this.get('applicants.list'),
-            filteredApplicants = [];
+            applicants = this.get('applicants.list');
 
-        for (var applicant in assignments) {
-            if (assignments[applicant].some(ass => ass.positionId == course)) {
-                filteredApplicants.push([applicant, applicants[applicant]]);
-            }
-        }
-
-        return filteredApplicants;
+        return applicants
+            .filter((_, app) => assignments.get(app).some(ass => ass.get('positionId') == course))
+            .entrySeq();
     }
 
     getApplicantById(applicant) {
-        return this.get('applicants.list['+applicant+']');
+        return this.get('applicants.list[' + applicant + ']');
     }
 
     getApplicantsList() {
@@ -675,38 +700,39 @@ class AppState {
 
     // get applicants who have applied to course; returns a list of [applicantID, applicantData]
     getApplicantsToCourse(course) {
-        let applications = this.idEntries(this.get('applications.list')).filter(([key, val]) =>
-            val[0].prefs.some(pref => pref.positionId == course)
+        let applications = this.get('applications.list').filter(applicant =>
+            applicant.some(application =>
+                application.get('prefs').some(pref => pref.get('positionId') == course)
+            )
         );
 
-        let applicants = this.get('applicants.list'),
-            filteredApplicants = [];
-
-        applications.forEach(([key, val]) => filteredApplicants.push([key, applicants[key]]));
-
-        return filteredApplicants;
+        return this.get('applicants.list').filter((_, id) => applications.has(id)).entrySeq();
     }
 
+    /*** NEEDS VERIFICATION ***/
     // get applicants to course who are not assigned to it; returns a list of [applicantID, applicantData]
     getApplicantsToCourseUnassigned(course) {
         let applicants = this.getApplicantsToCourse(course);
         let assignments = this.get('assignments.list');
 
-        return applicants.filter(
-            ([key, val]) =>
-                !assignments[key] || !assignments[key].some(ass => ass.positionId == course)
+        return applicants.filterNot(
+            applicant =>
+                assignemnts.has(applicant.get(0)) &&
+                assignments.get(applicant.get(0)).some(ass => ass.get('positionId') == course)
         );
     }
 
+    /*** NEEDS UPDATING WITH ROUNDS ***/
     getApplicationById(applicant) {
-        return this.get('applications.list['+applicant+'][0]');
+        return this.get('applications.list[' + applicant + '][0]');
     }
 
+    /*** NEEDS UPDATING WITH ROUNDS ***/
     // check whether this course is a preference for this applicant
     getApplicationPreference(applicant, course) {
-        let prefs = this.get('applications.list['+applicant+'][0].prefs');
+        let prefs = this.get('applications.list[' + applicant + '][0].prefs');
 
-        return prefs.some(pref => pref.positionId == course && pref.preferred);
+        return prefs.some(pref => pref.get('positionId') == course && pref.get('preferred'));
     }
 
     getApplicationsList() {
@@ -716,33 +742,28 @@ class AppState {
     // get all applicants who have been assigned to a course; returns a list of [applicantID, applicantData]
     getAssignedApplicants() {
         let assignments = this.get('assignments.list'),
-            applicants = this.get('applicants.list'),
-            filteredApplicants = [];
+            applicants = this.get('applicants.list');
 
-        for (var applicant in assignments) {
-            filteredApplicants.push([applicant, applicants[applicant]]);
-        }
-
-        return filteredApplicants;
+        return assignments.map((_, applicant) => applicants.get(applicant)).entrySeq();
     }
 
     getAssignmentByApplicant(applicant, course) {
-        let assignments = this.get('assignments.list['+applicant+']');
+        let assignments = this.get('assignments.list[' + applicant + ']');
 
         if (assignments) {
-            return assignments.find(ass => ass.positionId == course);
+            return assignments.find(ass => ass.get('positionId') == course);
         } else {
             return null;
         }
     }
 
     getAssignmentsByApplicant(applicant) {
-        let assignments = this.get('assignments.list['+applicant+']');
+        let assignments = this.get('assignments.list[' + applicant + ']');
 
         if (assignments) {
             return assignments;
         } else {
-            return [];
+            return fromJS([]);
         }
     }
 
@@ -755,20 +776,16 @@ class AppState {
     }
 
     getCourseById(course) {
-        return this.get('courses.list['+course+']');
+        return this.get('courses.list[' + course + ']');
     }
 
     // return a sorted list of course codes
     getCourseCodes() {
-        let courses = Object.values(this.get('courses.list'));
-        courses = courses.map(course => course.code);
-        courses.sort();
-
-        return courses;
+        return this.get('courses.list').valueSeq().map(course => course.code).sort();
     }
 
     getCourseCodeById(course) {
-        return this.get('courses.list['+course+'].code');
+        return this.get('courses.list[' + course + '].code');
     }
 
     getInstructorsList() {
@@ -784,7 +801,7 @@ class AppState {
             delete applicants[applicant];
         }
 
-        return this.idEntries(applicants);
+        return applicants.entrySeq();
     }
 
     importChass(data) {
@@ -819,18 +836,20 @@ class AppState {
     // persist a temporary assignment to the database
     permAssignment(course) {
         let applicant = this.get('selectedApplicant');
-        let tempAssignment = this.get('assignmentForm.tempAssignments').find(ass => ass.positionId == course);
+        let tempAssignment = this.get('assignmentForm.tempAssignments').find(
+            ass => ass.get('positionId') == course
+        );
 
         // note that there are two 'set' calls here
-        this.createAssignment(applicant, course, tempAssignment.hours);
+        this.createAssignment(applicant, course, tempAssignment.get('hours'));
 
         this.removeTempAssignment(course);
     }
 
     removeInstructor(courseId, index) {
-        let val = this.get('courses.list[' + courseId + '].instructors');
+        let val = this.get('courses.list[' + courseId + '].instructors').toJS();
         val.splice(index, 1);
-        fetch.updateCourse(courseId, { instructors: val }, val, 'instructors');
+        fetch.updateCourse(courseId, { instructors: val }, 'instructors');
     }
 
     setApplicantsList(list) {
@@ -846,13 +865,13 @@ class AppState {
     }
 
     setCoursesList(list) {
-       this.set('courses.list', list);
+        this.set('courses.list', list);
     }
 
     setFetchingApplicantsList(fetching) {
         let init = this.get('applicants.fetching');
         if (fetching) {
-            this.add('nav.notifications', <i>Fetching applicants...</i>);
+            this.add('nav.notifications', '<i>Fetching applicants...</i>');
             this.set('applicants.fetching', init + 1);
         } else {
             this.set('applicants.fetching', init - 1);
@@ -862,7 +881,7 @@ class AppState {
     setFetchingApplicationsList(fetching) {
         let init = this.get('applications.fetching');
         if (fetching) {
-            this.add('nav.notifications', <i>Fetching applications...</i>);
+            this.add('nav.notifications', '<i>Fetching applications...</i>');
             this.set('applications.fetching', init + 1);
         } else {
             this.set('applications.fetching', init - 1);
@@ -872,7 +891,7 @@ class AppState {
     setFetchingAssignmentsList(fetching) {
         let init = this.get('assignments.fetching');
         if (fetching) {
-            this.add('nav.notifications', <i>Fetching assignments...</i>);
+            this.add('nav.notifications', '<i>Fetching assignments...</i>');
             this.set('assignments.fetching', init + 1);
         } else {
             this.set('assignments.fetching', init - 1);
@@ -882,7 +901,7 @@ class AppState {
     setFetchingCoursesList(fetching) {
         let init = this.get('courses.fetching');
         if (fetching) {
-            this.add('nav.notifications', <i>Fetching courses...</i>);
+            this.add('nav.notifications', '<i>Fetching courses...</i>');
             this.set('courses.fetching', init + 1);
         } else {
             this.set('courses.fetching', init - 1);
@@ -892,7 +911,7 @@ class AppState {
     setFetchingInstructorsList(fetching) {
         let init = this.get('instructors.fetching');
         if (fetching) {
-            this.add('nav.notifications', <i>Fetching instructors...</i>);
+            this.add('nav.notifications', '<i>Fetching instructors...</i>');
             this.set('instructors.fetching', init + 1);
         } else {
             this.set('instructors.fetching', init - 1);
@@ -951,39 +970,41 @@ class AppState {
                 data['duties'] = val;
                 break;
         }
-        fetch.updateCourse(courseId, data, val, props);
+        fetch.updateCourse(courseId, data, props);
     }
 
     updateInstructorInput(courseId, input) {
         if (input === undefined) {
             input = '';
         }
-        this.set('courses.list[' + courseId + '].instructor_input', input);
+        this.set('courses.list[' + courseId + '].instructor_input', fromJS(input));
         let visible_input = document.getElementById('input_' + courseId);
         visible_input.innerHTML = input;
     }
 }
 
-let appStateInst = new AppState(), appState = {};
+let appStateInst = new AppState(),
+    appState = {};
 
 // wrap all AppState functions in functions in appState that parse Immutable results as JS
-Object.getOwnPropertyNames(Object.getPrototypeOf(appStateInst)).forEach(
-    name => {
-        // do not create a wrapper for the AppState constructor
-        if (name != 'constructor') {
-            appState[[name]] = (...args) => {
-                // pass arguments to the function
-                let result = appStateInst[[name]](...args);
-                
-                // if the result of the function is an Immutable object, convert it to a JS object
-                if (result instanceof Collection) {
-                    result = result.toJS();
-                }
-                
-                return result;
+Object.getOwnPropertyNames(Object.getPrototypeOf(appStateInst)).forEach(name => {
+    // do not create a wrapper for the AppState constructor
+    if (name != 'constructor') {
+        appState[[name]] = (...args) => {
+            // convert any object arguments to Immutable objects
+            args = args.map(arg => (arg instanceof Object ? fromJS(arg) : arg));
+
+            // pass arguments to the function
+            let result = appStateInst[[name]](...args);
+
+            // if the result of the function is an Immutable object, convert it to a JS object
+            if (result instanceof Collection) {
+                result = result.toJS();
             }
-        }
+
+            return result;
+        };
     }
-);
+});
 
 export { appState };
