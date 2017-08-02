@@ -509,17 +509,16 @@ class AppState {
     // if not, create the appropriate panelFields
     updateCoursePanelFields(selected) {
         let panelFields = this.get('abcView.panelFields'),
-            newPanelFields = panelFields,
             missingCourses = [];
 
-        for (var course in selected.values()) {
+        for (var course of selected.values()) {
             // if a tracker is missing, create it (the course was just selected)
             if (!panelFields.has(course)) {
                 missingCourses.push(course);
             }
         }
 
-        newPanelFields = newPanelFields.withMutations(map => {
+        let newPanelFields = panelFields.withMutations(map => {
             missingCourses.reduce(
                 (result, course) =>
                     result.set(
@@ -611,7 +610,11 @@ class AppState {
             applicants = this.get('applicants.list');
 
         return applicants
-            .filter((_, app) => assignments.get(app).some(ass => ass.get('positionId') == course))
+            .filter(
+                (_, app) =>
+                    assignments.has(app) &&
+                    assignments.get(app).some(ass => ass.get('positionId') == course)
+            )
             .entrySeq();
     }
 
@@ -642,7 +645,7 @@ class AppState {
 
         return applicants.filterNot(
             applicant =>
-                assignemnts.has(applicant.get(0)) &&
+                assignments.has(applicant.get(0)) &&
                 assignments.get(applicant.get(0)).some(ass => ass.get('positionId') == course)
         );
     }
@@ -698,9 +701,9 @@ class AppState {
 
     // get the current number of assignments to course
     getCourseAssignmentCount(course) {
-        return this.get('assignments.list').count(applicant =>
+        return this.get('assignments.list').filter(applicant =>
             applicant.some(ass => ass.get('positionId') == course)
-        );
+        ).size;
     }
 
     getCoursesList() {
