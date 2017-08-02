@@ -141,7 +141,6 @@ function onFetchApplicationsSuccess(resp) {
         newApp = {
             taTraining: app.ta_training == 'Y',
             academicAccess: app.access_acad_history == 'Y',
-            round: null, // populated by positions fetch
             prefs: (function(prefs) {
                 return prefs.map(pref => ({
                     positionId: pref.position_id,
@@ -259,6 +258,14 @@ function fetchAll() {
         })
         .catch(() => appState.setFetchingApplicantsList(false));
 
+    // when applications are successfully fetched, update the applications list; set fetching flag to false either way
+    applicationsPromise
+        .then(applications => {
+            appState.setApplicationsList(applications);
+            appState.successFetchingApplicationsList();
+        })
+        .catch(() => appState.setFetchingApplicationsList(false));
+    
     // when assignments are successfully fetched, update the assignments list; set fetching flag to false either way
     assignmentsPromise
         .then(assignments => {
@@ -282,27 +289,6 @@ function fetchAll() {
             appState.successFetchingInstructorsList();
         })
         .catch(() => appState.setFetchingInstructorsList(false));
-
-    // if both applications and courses are successfully fetched, add rounds to applications, update the
-    // the applications list, and set fetching flag to false
-    Promise.all([applicationsPromise, coursesPromise])
-        .then(([applications, courses]) => {
-            applications = appState.addRoundsToApplications(applications, courses);
-
-            appState.setApplicationsList(applications);
-            appState.successFetchingApplicationsList();
-        })
-        .catch(() => {
-            // if courses are not successfully fetched but applications are, update the applications list and set
-            // fetching flag to false
-            applicationsPromise
-                .then(applications => {
-                    appState.setApplicationsList(applications);
-                    appState.successFetchingApplicationsList();
-                })
-                // if both fail to fetch, set the fetching flag to false regardless
-                .catch(() => appState.setFetchingApplicationsList(false));
-        });
 }
 
 /* Task-specific resource modifiers */
