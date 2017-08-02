@@ -399,7 +399,7 @@ function updateAssignmentHours(applicant, assignment, hours) {
         .catch(() => appState.setFetchingAssignmentsList(false));
 }
 
-function updateCourse(courseId, data, val, attr) {
+function updateCourse(courseId, data, attr) {
     appState.setFetchingCoursesList(true);
 
     return putHelper('/positions/' + courseId, data, getCourses)
