@@ -87,9 +87,8 @@ class ABC extends React.Component {
             this.props.func.setCoursePanelLayout(selected.length);
         }
 
-        let panelFields = this.props.func.getCoursePanelFields();
         // check whether the appropriate panel fields exist for the selected courses and update as necessary
-        this.props.func.updateCoursePanelFields(selected, panelFields);
+        this.props.func.updateCoursePanelFields(selected);
     }
 
     selectThisTab() {
