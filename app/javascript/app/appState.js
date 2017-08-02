@@ -1,6 +1,5 @@
-import Backbone from 'backbone';
+import { Collection, fromJS } from 'immutable';
 import React from 'react';
-import NestedModel from 'backbone-nested';
 
 import * as fetch from './fetch.js';
 import { routeConfig } from './routeConfig.js';
@@ -13,11 +12,11 @@ const initialState = {
 
         selectedTab: null,
 
-        // list of unread notifications (can be text or HTML/JSX)
+        // list of unread notifications (string can contain HTML, but be careful because it is not sanitized!)
         notifications: [],
     },
 
-    // list of UI alerts (can be text or HTML/JSX)
+    // list of UI alerts (string can contain HTML, but be careful because it is not sanitized!)
     alerts: [],
 
     // applicant to display in applicant view
@@ -67,39 +66,67 @@ const initialState = {
 class AppState {
     constructor() {
         // container for application state
-        var _data = new Backbone.NestedModel(initialState);
+        var _data = fromJS(initialState);
+
+        // list of change listeners
+        var _listeners = [];
+
+        var notifyListeners = () => _listeners.forEach(listener => listener());
+
+        // parses a property path (keys and indices) into a list, as expected by Immutable
+        var parsePath = path => path.split(/\[|\]|[.'"]/) // split on brackets, dots, and quotes
+            .filter(key => key.length); // remove empty elements
 
         // getter for appState object
-        this.get = function(property) {
-            return _data.get(property);
+        // accepts an optional filter function
+        this.get = function(property, filter) {
+            let value = _data.getIn(parsePath(property));
+
+            if (value instanceof Collection) {
+                if (filter) {
+                    value = value.filter(filter);
+                }
+                return value.toJS();
+            }
+            return value;
         };
 
         // setters for appState object
 
         this.set = function(property, value) {
+            // as per the Backbone Model set() syntax, we accept a property and value pair, or
+            // an object with property and value pairs as keys
             if (arguments.length == 1) {
-                _data.set(property);
+                for (var prop in property) {
+                    _data = _data.setIn(parsePath(prop), fromJS(property[prop]));
+                }
             } else {
-                _data.set(property, value);
+                _data = _data.setIn(parsePath(property), fromJS(value));
             }
+
+            // notify listener(s) of change
+            notifyListeners();
         };
 
+        // add an element to an array property
         this.add = function(property, value) {
-            _data.add(property, value);
+            _data = _data.updateIn(parsePath(property), list => list.push(fromJS(value)));
+
+            // notify listener(s) of change
+            notifyListeners();
         };
 
+        // remove an element from an array property
         this.remove = function(property) {
-            _data.remove(property);
-        };
+            _data = _data.deleteIn(parsePath(property));
 
-        // wrapper for Backbone's unset
-        this.unset = function(property, params) {
-            _data.unset(property, params);
+            // notify listener(s) of change
+            notifyListeners();
         };
 
         // subscribe listener to change events on this model
         this.subscribe = function(listener) {
-            _data.on('change', listener);
+            _listeners.push(listener);
         };
     }
 
@@ -118,11 +145,7 @@ class AppState {
         if (!this.getCoursePanelSortsByCourse(course).some(([f, _]) => f == field)) {
             this.add('abcView.panelFields[' + course + '].selectedSortFields', [field, 1]);
         } else {
-            this.alert(
-                <span>
-                    <b>Applicant Table</b>&ensp;Cannot apply the same sort more than once.
-                </span>
-            );
+            this.alert('<b>Applicant Table</b>&ensp;Cannot apply the same sort more than once.');
         }
     }
 
@@ -134,11 +157,7 @@ class AppState {
         if (!this.getSorts().some(([f, _]) => f == field)) {
             this.add(view + '.selectedSortFields', [field, 1]);
         } else {
-            this.alert(
-                <span>
-                    <b>Applicant Table</b>&ensp;Cannot apply the same sort more than once.
-                </span>
-            );
+            this.alert('<b>Applicant Table</b>&ensp;Cannot apply the same sort more than once.');
         }
     }
 
@@ -170,15 +189,12 @@ class AppState {
 
     // remove all selected filters on the applicant table in a course panel
     clearCoursePanelFilters(course) {
-        this.unset('abcView.panelFields[' + course + '].selectedFilters', { silent: true });
         this.set('abcView.panelFields[' + course + '].selectedFilters', {});
     }
 
     // remove all selected filters on the applicant table in a single-applicant-table view
     clearFilters() {
         let view = this.getSelectedViewStateComponent();
-
-        this.unset(view + '.selectedFilters', { silent: true });
         this.set(view + '.selectedFilters', {});
     }
 
@@ -358,7 +374,6 @@ class AppState {
     }
 
     setSelectedCourses(courses) {
-        this.unset('abcView.selectedCourses', { silent: true });
         this.set('abcView.selectedCourses', courses);
     }
 
@@ -389,7 +404,6 @@ class AppState {
     // toggle a filter on the applicant table in a course panel
     toggleCoursePanelFilter(course, field, category) {
         let filters = this.getCoursePanelFiltersByCourse(course);
-        this.unset('abcView.panelFields[' + course + '].selectedFilters', { silent: true });
 
         if (filters[field]) {
             let i = filters[field].indexOf(category);
@@ -419,10 +433,6 @@ class AppState {
         let i = sortFields.findIndex(([f, _]) => f == field);
 
         if (i != -1) {
-            this.unset('abcView.panelFields[' + course + '].selectedSortFields', {
-                silent: true,
-            });
-
             sortFields[i][1] = -sortFields[i][1];
             this.set('abcView.panelFields[' + course + '].selectedSortFields', sortFields);
         }
@@ -433,7 +443,6 @@ class AppState {
         let view = this.getSelectedViewStateComponent();
 
         let filters = this.getFilters();
-        this.unset(view + '.selectedFilters', { silent: true });
 
         if (filters[field]) {
             let i = filters[field].indexOf(category);
@@ -472,11 +481,7 @@ class AppState {
             if (selected.length < 4) {
                 this.add('abcView.selectedCourses', course);
             } else {
-                this.alert(
-                    <span>
-                        <b>Courses Menu</b>&ensp;Cannot select more than 4 courses.
-                    </span>
-                );
+                this.alert('<b>Courses Menu</b>&ensp;Cannot select more than 4 courses.');
             }
         } else {
             this.remove('abcView.selectedCourses[' + i + ']');
@@ -491,8 +496,6 @@ class AppState {
         let i = sortFields.findIndex(([f, _]) => f == field);
 
         if (i != -1) {
-            this.unset(view + '.selectedSortFields', { silent: true });
-
             sortFields[i][1] = -sortFields[i][1];
             this.set(view + '.selectedSortFields', sortFields);
         }
@@ -500,7 +503,7 @@ class AppState {
 
     // unselect the applicant displayed in the applicant view
     unselectApplicant() {
-        this.unset('selectedApplicant');
+        this.set('selectedApplicant', null);
     }
 
     // check whether a panelFields object exists for each of the currently selected courses
@@ -528,7 +531,6 @@ class AppState {
         }
 
         if (update) {
-            this.unset('abcView.panelFields', { silent: true });
             this.set('abcView.panelFields', panelFields);
         }
     }
@@ -823,29 +825,25 @@ class AppState {
     }
 
     setApplicantsList(list) {
-        this.unset('applicants.list', { silent: true });
         this.set('applicants.list', list);
     }
 
     setApplicationsList(list) {
-        this.unset('applications.list', { silent: true });
         this.set('applications.list', list);
     }
 
     setAssignmentsList(list) {
-        this.unset('assignments.list', { silent: true });
         this.set('assignments.list', list);
     }
 
     setCoursesList(list) {
-        this.unset('courses.list', { silent: true });
         this.set('courses.list', list);
     }
 
     setFetchingApplicantsList(fetching) {
         let init = this.get('applicants.fetching');
         if (fetching) {
-            this.notify(<i>Fetching applicants...</i>);
+            this.notify('<i>Fetching applicants...</i>');
             this.set('applicants.fetching', init + 1);
         } else {
             this.set('applicants.fetching', init - 1);
@@ -855,7 +853,7 @@ class AppState {
     setFetchingApplicationsList(fetching) {
         let init = this.get('applications.fetching');
         if (fetching) {
-            this.notify(<i>Fetching applications...</i>);
+            this.notify('<i>Fetching applications...</i>');
             this.set('applications.fetching', init + 1);
         } else {
             this.set('applications.fetching', init - 1);
@@ -865,7 +863,7 @@ class AppState {
     setFetchingAssignmentsList(fetching) {
         let init = this.get('assignments.fetching');
         if (fetching) {
-            this.notify(<i>Fetching assignments...</i>);
+            this.notify('<i>Fetching assignments...</i>');
             this.set('assignments.fetching', init + 1);
         } else {
             this.set('assignments.fetching', init - 1);
@@ -875,7 +873,7 @@ class AppState {
     setFetchingCoursesList(fetching) {
         let init = this.get('courses.fetching');
         if (fetching) {
-            this.notify(<i>Fetching courses...</i>);
+            this.notify('<i>Fetching courses...</i>');
             this.set('courses.fetching', init + 1);
         } else {
             this.set('courses.fetching', init - 1);
@@ -885,7 +883,7 @@ class AppState {
     setFetchingInstructorsList(fetching) {
         let init = this.get('instructors.fetching');
         if (fetching) {
-            this.notify(<i>Fetching instructors...</i>);
+            this.notify('<i>Fetching instructors...</i>');
             this.set('instructors.fetching', init + 1);
         } else {
             this.set('instructors.fetching', init - 1);
@@ -893,7 +891,6 @@ class AppState {
     }
 
     setInstructorsList(list) {
-        this.unset('instructors.list', { silent: true });
         this.set('instructors.list', list);
     }
 
