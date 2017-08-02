@@ -26,7 +26,7 @@ const ViewTab = props =>
     </li>;
 
 const ViewTabs = props => {
-    let activeKey = props.func.getSelectedNavTab();
+    let activeKey = props.getSelectedNavTab();
 
     return (
         <ul className="nav navbar-nav navbar-left">
@@ -40,14 +40,14 @@ const ViewTabs = props => {
 };
 
 const CoursePanelLayoutTabs = props => {
-    let layout = props.func.getCoursePanelLayout();
+    let layout = props.getCoursePanelLayout();
 
     if ([2, 2.1].includes(layout)) {
         return (
             <Nav
                 bsStyle="pills"
                 activeKey={layout}
-                onSelect={eventKey => props.func.setCoursePanelLayout(eventKey)}>
+                onSelect={eventKey => props.setCoursePanelLayout(eventKey)}>
                 <NavItem eventKey={2}>
                     <img src={img20} alt="layout-2.0" style={{ height: '16px' }} />
                 </NavItem>
@@ -63,7 +63,7 @@ const CoursePanelLayoutTabs = props => {
             <Nav
                 bsStyle="pills"
                 activeKey={layout}
-                onSelect={eventKey => props.func.setCoursePanelLayout(eventKey)}>
+                onSelect={eventKey => props.setCoursePanelLayout(eventKey)}>
                 <NavItem eventKey={3}>
                     <img src={img30} alt="layout-3.0" style={{ height: '16px' }} />
                 </NavItem>
@@ -90,7 +90,7 @@ const CoursePanelLayoutTabs = props => {
 };
 
 const Notifications = props => {
-    let notifications = props.func.getUnreadNotifications();
+    let notifications = props.getUnreadNotifications();
 
     return (
         <NavDropdown
@@ -104,7 +104,7 @@ const Notifications = props => {
             id="nav-notif-dropdown"
             onToggle={willOpen => {
                 if (!willOpen) {
-                    props.func.readNotifications();
+                    props.readNotifications();
                 }
             }}>
             {notifications.map((text, i) =>
@@ -118,7 +118,7 @@ const Auth = props => {
     return (
         <NavDropdown
             eventKey={routeConfig.logout.id}
-            title={props.func.getCurrentUserRole() + ':' + props.func.getCurrentUserName()}
+            title={props.getCurrentUserRole() + ':' + props.getCurrentUserName()}
             id="nav-auth-dropdown">
             <MenuItem eventKey={routeConfig.logout.id + '.1'} href={routeConfig.logout.route}>
                 Logout
@@ -139,7 +139,7 @@ const NavbarInst = props => {
             <ViewTabs {...props} />
 
             <Nav pullRight>
-                {props.func.getSelectedNavTab() == routeConfig.abc.id &&
+                {props.getSelectedNavTab() == routeConfig.abc.id &&
                     <CoursePanelLayoutTabs {...props} />}
                 <Notifications {...props} />
                 <Auth {...props} />

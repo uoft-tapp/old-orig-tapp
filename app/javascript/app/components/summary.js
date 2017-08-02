@@ -16,12 +16,12 @@ import {
 
 class Summary extends React.Component {
     render() {
-        let nullCheck = this.props.func.anyNull();
+        let nullCheck = this.props.anyNull();
         if (nullCheck) {
             return <div id="loader" />;
         }
 
-        let fetchCheck = this.props.func.anyFetching();
+        let fetchCheck = this.props.anyFetching();
         let cursorStyle = { cursor: fetchCheck ? 'progress' : 'auto' };
 
         return (
@@ -35,8 +35,8 @@ class Summary extends React.Component {
     }
 
     selectThisTab() {
-        if (this.props.func.getSelectedNavTab() != this.props.navKey) {
-            this.props.func.selectNavTab(this.props.navKey);
+        if (this.props.getSelectedNavTab() != this.props.navKey) {
+            this.props.selectNavTab(this.props.navKey);
         }
     }
 
@@ -144,7 +144,7 @@ class ExportForm extends React.Component {
             } else {
                 // export offers in JSON format
                 // this will be non-functional until round IDs are incorporated!
-                route = '/export/chass/' + props.func.getSelectedRound();
+                route = '/export/chass/' + props.getSelectedRound();
             }
 
             if (
@@ -159,7 +159,7 @@ class ExportForm extends React.Component {
             if (format == 'csv') {
                 window.open('/export/' + data);
             } else {
-                props.func.alert('<b>Export JSON</b> This functionality is not currently supported.');
+                props.alert('<b>Export JSON</b> This functionality is not currently supported.');
             }
         }
     }
@@ -215,28 +215,30 @@ const ReleaseForm = props =>
         <Button
             bsStyle="success"
             onClick={() =>
-                props.func.alert('<b>Release assignments</b> This functionality is not currently supported.')}>
+                props.alert(
+                    '<b>Release assignments</b> This functionality is not currently supported.'
+                )}>
             Release assignments
         </Button>
     </Form>;
 
 const Stats = props => {
-    let applicants = Object.entries(props.func.getApplicantsList());
+    let applicants = Object.entries(props.getApplicantsList());
     let gradApplicants = applicants.filter(([_, app]) =>
         ['MSc', 'MASc', 'MScAC', 'MEng', 'OG', 'PhD'].includes(app.program)
     );
     let dcsGradApplicants = gradApplicants.filter(([_, app]) => app.dept == 'Computer Science');
 
-    let assignments = props.func.getAssignmentsList();
+    let assignments = props.getAssignmentsList();
     let unassGradApplicants = gradApplicants.filter(([id, _]) => !assignments[id]);
     let unassDcsGradApplicants = dcsGradApplicants.filter(([id, _]) => !assignments[id]);
 
-    let courses = props.func.getCoursesList();
+    let courses = props.getCoursesList();
     let orderedCourses = Object.entries(courses);
     orderedCourses.sort(([A, valA], [B, valB]) => (valA.code < valB.code ? -1 : 1));
 
     let assignmentsList = Object.entries(assignments);
-    let applicationsList = Object.entries(props.func.getApplicationsList());
+    let applicationsList = Object.entries(props.getApplicationsList());
 
     return (
         <Panel header="Assignment Statistics" id="stats">
