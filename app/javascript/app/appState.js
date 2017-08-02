@@ -226,10 +226,6 @@ class AppState {
         return this.get('abcView.panelFields');
     }
 
-    getCoursePanelFieldsByCourse(course) {
-        return this.get('abcView.panelFields[' + course + ']');
-    }
-
     getCoursePanelFiltersByCourse(course) {
         return this.get('abcView.panelFields[' + course + '].selectedFilters');
     }
@@ -286,11 +282,6 @@ class AppState {
         return this.get(view + '.selectedSortFields');
     }
 
-    getTableFields() {
-        let view = this.getSelectedViewStateComponent();
-        return this.get(view);
-    }
-
     getTempAssignments() {
         return this.get('assignmentForm.tempAssignments');
     }
@@ -305,13 +296,6 @@ class AppState {
 
         field = new String(field);
         return filters.has(field) && filters.get(field).includes(category);
-    }
-
-    // check whether a sort is selected on the applicant table in a course panel
-    isCoursePanelSortSelected(course, field, dir) {
-        return this.get('abcView.panelFields[' + course + '].selectedSortFields').some(
-            f => f.get(0) == field && f.get(1) == dir
-        );
     }
 
     // check whether a course in the course menu is selected
@@ -331,14 +315,6 @@ class AppState {
     // check whether a panel is expanded in the applicant view
     isPanelExpanded(index) {
         return this.get('assignmentForm.panels[' + index + '].expanded');
-    }
-
-    // check whether a sort is selected on the applicant table in a single-applicant-table view
-    isSortSelected(field, dir) {
-        let view = this.getSelectedViewStateComponent();
-        return this.get(view + '.selectedSortFields').some(
-            f == f.get(0) == field && f.get(1) == dir
-        );
     }
 
     // add a notification to the list of unread notifications
