@@ -3,37 +3,6 @@
 
 TA assignment and matching application.
 
-## Structure
-The Dockerfile serves instructions to set up the image of the container (linux, yarn, npm etc)
-The docker-compose files serves to setup the services that your container will be using (postgres, apache, nginx, apps)
-The [prod|dev].env.default files are served to the Dockerfile and the docker-compose files.
-
-## Deployment instructions
-
-```
-git clone git@github.com:uoft-tapp/tapp.git #this repo
-
-To deploy to production (Lloyd)
-cp prod.env.default .env
-
-To work in development
-cp dev.env.default .env
-
-docker-compose run rails-app rake db:migrate db:seed db:seed:chass[mock_chass]    #only for today, August 1
-docker-compose up
-
-
-If you don't specify the environment variable that the docker-compose file should reference, you might end
-up with an error from postgres ("role "tapp" does not exist"). In that case stop/remove the containers and its volumes,
-docker-compose down -v
-
-Copy over the appropriate environment variables, then start the build from stratch
-docker-compose build rails-app
-
-& finally docker-compose up.
-
-```
-
 ## Starting application
 You should have a reasonably recent version of Docker
 [installed](https://docs.docker.com/engine/installation/). Also, check that
@@ -110,8 +79,46 @@ To add a system dependency, modify the Dockerfile.
 
 ## In case of container trouble
 
-Try `docker-compose down`, then `docker-compose up`. This should delete
-existing images for this project and rebuild them from scratch.
+Try `docker-compose down -v`, then `docker-compose up`. This should delete
+existing images & data for this project and rebuild them from scratch.
+
+## Deployment
+* The Dockerfile serves instructions to set up the image of the container (linux, yarn, npm etc)
+* The docker-compose files serves to setup the services that your container will be using (postgres, apache, nginx, apps)
+* The [prod|dev].env.default files are served to the Dockerfile and the docker-compose files.
+
+### Initial deployment
+1. Check out the code locally: `git clone git@github.com:uoft-tapp/tapp.git`
+2. Copy `prod.env.default` to `.env`, `cp prod.env.default .env`. Visually inspect `.env` to confirm all variables are assigned the right values for the environment!
+3. Run `docker-compose build rails-app`
+4. Run `docker-compose up -d` to launch all services and daemonize the control
+5. Run `docker-compose run rails-app rake db:migrate db:seed` to create application database schema and initial data
+
+If you don't specify the environment variable that the docker-compose file should reference, you might end
+up with an error from postgres ("role "tapp" does not exist"). In that case stop/remove the containers and its volumes,
+`docker-compose down -v`, and restart deployment from step 2.
+
+### Updating an existing deployment
+1. Fetch and apply changes: `git pull`
+2. Rebuild the app with the following command:
+    ```
+    docker-compose build rails-app
+    ```
+3. If necessary, perform database migrations:
+    ```
+    docker-compose run rails-app rake db:migrate
+    ```
+    You can check the status of migrations:
+    ```
+    docker-compose run rails-app rake db:migrate:status
+    ```
+4. Then, restart `rails-app` only:
+    ```
+    docker-compose up -d --no-deps rails-app
+    ```
+
+Note: number 2 will update the rails app but not touch the database.
 
 ## TODO
 - [] JavaScript testing
+- [] Build Docker images on CI
