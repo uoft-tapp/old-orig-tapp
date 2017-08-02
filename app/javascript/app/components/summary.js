@@ -27,7 +27,7 @@ class Summary extends React.Component {
         return (
             <Grid fluid id="summary-grid" style={cursorStyle}>
                 <PanelGroup>
-                    <Utilities loadFile={() => this.loadFile()} {...this.props} />
+                    <Utilities {...this.props} />
                     <Stats {...this.props} />
                 </PanelGroup>
             </Grid>
@@ -52,7 +52,7 @@ class Summary extends React.Component {
 const Utilities = props => {
     return (
         <Panel header="Utilities" id="utils">
-            <ImportForm loadFile={props.loadFile} {...props} />
+            <ImportForm {...props} />
             <ExportForm {...props} />
             <ReleaseForm {...props} />
         </Panel>
@@ -69,25 +69,29 @@ class ImportForm extends React.Component {
                 'Are you sure you want to import "' + files[0].name + '" into the database?';
             if (files[0].type == 'application/json') {
                 if (confirm(message)) {
-                    this.uploadFile(files[0], this.props.func.importChass);
+                    this.uploadFile(
+                        files[0],
+                        this.props.func.importChass,
+                        this.props.func.alert('Error: This is not a CHASS JSON.')
+                    );
                 }
             } else {
-                alert('Error: The file you uploaded is not a JSON.');
+                this.props.func.alert('Error: The file you uploaded is not a JSON.');
             }
         } else {
-            alert('Error: No file chosen.');
+            this.props.func.alert('Error: No file chosen.');
         }
     }
 
-    uploadFile(file, func) {
+    uploadFile(file, importChass, appAlert) {
         let reader = new FileReader();
         reader.onload = function(event) {
             let data = JSON.parse(event.target.result);
             if (data['courses'] !== undefined && data['applicants'] !== undefined) {
                 data = { chass_json: data };
-                func(data);
+                importChass(data);
             } else {
-                alert('Error: This is not a CHASS JSON.');
+                appAlert();
             }
         };
         reader.readAsText(file);
