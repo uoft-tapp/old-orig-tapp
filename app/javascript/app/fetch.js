@@ -4,11 +4,7 @@ import { appState } from './appState.js';
 /* General helpers */
 
 function defaultFailure(response) {
-    appState.notify(
-        <span>
-            <b>Action Failed:</b> {response.statusText}
-        </span>
-    );
+    appState.notify('<b>Action Failed:</b> {response.statusText}');
     return Promise.reject(response);
 }
 
@@ -27,11 +23,7 @@ function fetchHelper(URL, init, success, failure = defaultFailure) {
             return failure(response);
         })
         .catch(function(error) {
-            appState.notify(
-                <span>
-                    <b>Error:</b> {URL} {error.message}
-                </span>
-            );
+            appState.notify('<b>Error:</b> {URL} {error.message}');
             return Promise.reject(error);
         });
 }
