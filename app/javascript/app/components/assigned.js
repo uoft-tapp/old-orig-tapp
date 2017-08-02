@@ -138,7 +138,7 @@ class Assigned extends React.Component {
                 <ApplicantTable
                     config={this.config}
                     getApplicants={() => this.props.func.getAssignedApplicants()}
-                    rowId={p => 'unassigned-' + p.applicantId}
+                    rowId={p => 'assigned-' + p.applicantId}
                     getSelectedSortFields={() => this.props.func.getSorts()}
                     getSelectedFilters={() => this.props.func.getFilters()}
                 />
