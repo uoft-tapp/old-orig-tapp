@@ -108,9 +108,7 @@ const Notifications = props => {
                 }
             }}>
             {notifications.map((text, i) =>
-                <MenuItem key={'notification-' + i}>
-                    {text}
-                </MenuItem>
+                <MenuItem key={'notification-' + i} dangerouslySetInnerHTML={{ __html: text }} />
             )}
         </NavDropdown>
     );

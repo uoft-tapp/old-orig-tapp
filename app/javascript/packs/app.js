@@ -13,7 +13,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import { Alert } from 'react-bootstrap';
 
 import { appState } from '../app/appState.js';
 import { fetchAll } from '../app/fetch.js';
@@ -89,15 +88,17 @@ const RouterInst = props => {
                 {selectedApplicant && <ApplicantModal applicantId={selectedApplicant} {...props} />}
 
                 <div className="container-fluid" id="alert-container">
-                    {props.func.getAlerts().map(alert =>
-                        <Alert
-                            key={'alert-' + alert.id}
-                            bsStyle="danger"
-                            onClick={() => props.func.dismissAlert(alert.id)}
-                            onAnimationEnd={() => props.func.dismissAlert(alert.id)}>
-                            {alert.text}
-                        </Alert>
-                    )}
+                    {props.func
+                        .getAlerts()
+                        .map(alert =>
+                            <div
+                                key={'alert-' + alert.id}
+                                className="alert alert-danger"
+                                onClick={() => props.func.dismissAlert(alert.id)}
+                                onAnimationEnd={() => props.func.dismissAlert(alert.id)}
+                                dangerouslySetInnerHTML={{ __html: alert.text }}
+                            />
+                        )}
                 </div>
             </div>
         </Router>
