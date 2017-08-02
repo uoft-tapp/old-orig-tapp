@@ -642,13 +642,22 @@ class AppState {
         let assignments = this.get('assignments.list'),
             applicants = this.get('applicants.list');
 
-        return applicants
-            .filterNot(
-                (_, app) =>
-                    assignments.has(app) &&
-                    assignments.get(app).some(ass => ass.get('positionId') == course)
+        let applications = this.get('applications.list')
+            // get applications to course
+            .filter(
+                applicant =>
+                    applicant.some(application =>
+                        application.get('prefs').some(pref => pref.get('positionId') == course)
+                    )
             )
-            .entrySeq();
+            // get applications to course with no corresponding assignment
+            .filterNot(
+                (_, applicant) =>
+                    assignments.has(applicant) &&
+                    assignments.get(applicant).some(ass => ass.get('positionId') == course)
+            );
+
+        return applications.map((_, applicant) => applicants.get(applicant)).entrySeq();
     }
 
     /*** NEEDS UPDATING WITH ROUNDS ***/
