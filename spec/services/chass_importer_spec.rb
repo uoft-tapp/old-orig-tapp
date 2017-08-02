@@ -22,14 +22,14 @@ describe ChassImporter do
     context "with no round_id" do
       let(:mock_json) { '{ "courses": [],  "applicants": []}' }
       it "raises a descriptive error" do
-        expect { subject }.to raise_error(StandardError, /no round_id/)
+        expect { subject.get_status }.to raise_error(StandardError, /no round_id/)
       end
     end
 
     context "with more than one round_id" do
       let(:mock_json) { File.read("./spec/support/chass_data/too_many_rounds.json") }
       it "raises a descriptive error" do
-        expect { subject }.to raise_error(StandardError, /too many round_id/)
+        expect { subject.get_status }.to raise_error(StandardError, /too many round_id/)
       end
     end
 

@@ -411,18 +411,25 @@ function updateCourse(courseId, data, val, attr) {
         .catch(() => appState.setFetchingCoursesList(false));
 }
 
-function importChass(data, success, failure) {
-    return postHelper('/import/chass', data, success, failure).then(() => {
+function importChass(data) {
+    return postHelper(
+        '/import/chass',
+        data,
+        showMessageInJsonBody,
+        showMessageInJsonBody
+    ).then(() => {
         fetchAll();
     });
 }
 
-function showMessage(resp) {
-    appState.alert(
-        <span>
-            {resp.message}
-        </span>
-    );
+function showMessageInJsonBody(resp) {
+    if (resp.message != null) {
+        appState.notify(resp.message);
+    } else {
+        resp.json().then(res => {
+            appState.alert(res.message);
+        });
+    }
 }
 
 export {

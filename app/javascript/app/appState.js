@@ -781,7 +781,7 @@ class AppState {
     }
 
     importChass(data) {
-        fetch.importChass(data, fetch.showMessage, fetch.showMessage);
+        fetch.importChass(data);
     }
 
     isApplicantsListNull() {
