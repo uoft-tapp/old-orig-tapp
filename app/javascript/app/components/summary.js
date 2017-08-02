@@ -63,7 +63,10 @@ class ImportForm extends React.Component {
         return (
             <Form inline id="import">
                 <FormControl.Static style={{ verticalAlign: 'middle' }}>
-                    <i className="fa fa-upload" style={{ fontSize: '20px', color: 'blue' }} />&emsp;
+                    <i
+                        className="fa fa-upload"
+                        style={{ fontSize: '20px', color: 'blue', cursor: 'pointer' }}
+                    />&emsp;
                 </FormControl.Static>
                 <FormGroup id="import">
                     <ControlLabel>Import from file:</ControlLabel>
@@ -144,7 +147,7 @@ class ExportForm extends React.Component {
                 <FormControl.Static style={{ verticalAlign: 'middle' }}>
                     &emsp;<i
                         className="fa fa-download"
-                        style={{ fontSize: '20px', color: 'blue' }}
+                        style={{ fontSize: '20px', color: 'blue', cursor: 'pointer' }}
                         onClick={() => this.exportData(this.data.value, this.format.value)}
                     />
                 </FormControl.Static>
