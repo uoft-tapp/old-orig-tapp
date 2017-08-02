@@ -548,22 +548,6 @@ class AppState {
         fetch.updateCourse(courseId, { instructors: val }, 'instructors');
     }
 
-    /****** NEEDS UPDATING ******/
-    // accepts a list of applications and a (optional) list of courses, and returns the applications list with
-    // rounds updated
-    addRoundsToApplications(applications, courses = this.get('courses.list')) {
-        // assumes that all courses in a single application will be part of the same round
-        for (var applicant in applications) {
-            applications[applicant].forEach((app, index) => {
-                if (app.prefs && app.prefs.size > 0) {
-                    applications[applicant][index].round = courses[app.prefs[0].positionId].round;
-                }
-            });
-        }
-
-        return applications;
-    }
-
     // check if any data is being fetched
     anyFetching() {
         return [
