@@ -4,7 +4,7 @@ import { ListGroup, ListGroupItem, Panel } from 'react-bootstrap';
 class CourseMenu extends React.Component {
     // acquire and sort courses in order of course code
     sortCourses() {
-        this.courses = this.props.func.idEntries(this.props.func.getCoursesList());
+        this.courses = Object.entries(this.props.func.getCoursesList());
         this.courses.sort(([A, valA], [B, valB]) => (valA.code < valB.code ? -1 : 1));
     }
 
