@@ -69,11 +69,14 @@ class ImportForm extends React.Component {
                 'Are you sure you want to import "' + files[0].name + '" into the database?';
             if (files[0].type == 'application/json') {
                 if (confirm(message)) {
-                    this.uploadFile(
-                        files[0],
-                        this.props.func.importChass,
-                        this.props.func.alert('Error: This is not a CHASS JSON.')
-                    );
+                    let importChass = this.props.func.importChass;
+                    let waitAlert = () =>
+                        this.props.func.alert(
+                            'Import in Progress... You will see another message once the import is complete.'
+                        );
+                    let chassAlert = () =>
+                        this.props.func.alert('Error: This is not a CHASS JSON.');
+                    this.uploadFile(files[0], importChass, waitAlert, chassAlert);
                 }
             } else {
                 this.props.func.alert('Error: The file you uploaded is not a JSON.');
@@ -83,15 +86,16 @@ class ImportForm extends React.Component {
         }
     }
 
-    uploadFile(file, importChass, appAlert) {
+    uploadFile(file, importChass, waitAlert, chassAlert) {
         let reader = new FileReader();
         reader.onload = function(event) {
             let data = JSON.parse(event.target.result);
             if (data['courses'] !== undefined && data['applicants'] !== undefined) {
                 data = { chass_json: data };
+                waitAlert();
                 importChass(data);
             } else {
-                appAlert();
+                chassAlert();
             }
         };
         reader.readAsText(file);
