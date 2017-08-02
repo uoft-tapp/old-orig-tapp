@@ -389,8 +389,8 @@ class AppState {
         }
 
         this.set({
-            ['abcView.selectedCourses[' + i1 + ']']: selected[i2],
-            ['abcView.selectedCourses[' + i2 + ']']: selected[i1],
+            ['abcView.selectedCourses[' + i1 + ']']: selected.get(i2),
+            ['abcView.selectedCourses[' + i2 + ']']: selected.get(i1),
         });
     }
 
