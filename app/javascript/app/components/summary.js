@@ -127,16 +127,6 @@ class ImportForm extends React.Component {
     }
 }
 
-const Utilities = props => {
-    return (
-        <Panel header="Utilities" id="utils">
-            <ImportForm loadFile={props.loadFile} {...props} />
-            <ExportForm {...props} />
-            <ReleaseForm {...props} />
-        </Panel>
-    );
-};
-
 const InfoDialog = chassFormat =>
     <Popover id="help" placement="right" title="CHASS JSON format">
         <textarea value={chassFormat} disabled />
