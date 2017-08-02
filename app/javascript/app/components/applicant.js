@@ -26,6 +26,9 @@ class Applicant extends React.Component {
 
     // convert linefeed/carriage return characters to HTML line breaks
     format(text) {
+        if (!text) {
+            return null;
+        }
         return (
             <span style={{ whiteSpace: 'pre-wrap' }}>
                 {text.replace(/\\r*\\n/, <br />)}
