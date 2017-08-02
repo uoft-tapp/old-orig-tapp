@@ -1,5 +1,5 @@
 import React from 'react';
-import { Collection, fromJS } from 'immutable';
+import { fromJS, isImmutable } from 'immutable';
 
 import * as fetch from './fetch.js';
 import { routeConfig } from './routeConfig.js';
@@ -178,14 +178,16 @@ class AppState {
 
     // check whether any of the given filters in the category are selected on the applicant table in a course panel
     anyCoursePanelFilterSelected(course, field) {
-        return this.get('abcView.panelFields[' + course + '].selectedFilters').has(field);
+        return this.get('abcView.panelFields[' + course + '].selectedFilters').has(
+            new String(field)
+        );
     }
 
     // check whether any of the given filters in the category are selected on the applicant table in a
     // single-applicant-table view
     anyFilterSelected(field) {
         let view = this.getSelectedViewStateComponent();
-        return this.get(view + '.selectedFilters').has(field);
+        return this.get(view + '.selectedFilters').has(new String(field));
     }
 
     // remove all selected filters on the applicant table in a course panel
@@ -301,6 +303,7 @@ class AppState {
     isCoursePanelFilterSelected(course, field, category) {
         let filters = this.get('abcView.panelFields[' + course + '].selectedFilters');
 
+        field = new String(field);
         return filters.has(field) && filters.get(field).includes(category);
     }
 
@@ -321,6 +324,7 @@ class AppState {
         let view = this.getSelectedViewStateComponent();
         let filters = this.get(view + '.selectedFilters');
 
+        field = new String(field);
         return filters.has(field) && filters.get(field).includes(category);
     }
 
@@ -422,6 +426,8 @@ class AppState {
     toggleCoursePanelFilter(course, field, category) {
         let filters = this.get('abcView.panelFields[' + course + '].selectedFilters');
 
+        field = new String(field);
+
         // filter is already applied
         if (filters.has(field)) {
             let i = filters.get(field).indexOf(category);
@@ -443,6 +449,7 @@ class AppState {
                 this.remove('abcView.panelFields[' + course + '].selectedFilters', field);
             }
         } else {
+            // filter has not been applied
             this.set(
                 'abcView.panelFields[' + course + '].selectedFilters[' + field + ']',
                 fromJS([category])
@@ -467,6 +474,8 @@ class AppState {
     toggleFilter(field, category) {
         let view = this.getSelectedViewStateComponent();
         let filters = this.get(view + '.selectedFilters');
+
+        field = new String(field);
 
         if (filters.has(field)) {
             let i = filters.get(field).indexOf(category);
@@ -775,9 +784,9 @@ class AppState {
         let assignments = this.get('assignments.list'),
             applicants = this.get('applicants.list');
 
-        for (var applicant in assignments) {
-            delete applicants[applicant];
-        }
+        applicants = applicants.withMutations(map => {
+            assignments.reduce((result, _, app) => result.delete(app), map);
+        });
 
         return applicants.entrySeq();
     }
@@ -976,7 +985,7 @@ Object.getOwnPropertyNames(Object.getPrototypeOf(appStateInst)).forEach(name => 
             let result = appStateInst[[name]](...args);
 
             // if the result of the function is an Immutable object, convert it to a JS object
-            if (result instanceof Collection) {
+            if (isImmutable(result)) {
                 result = result.toJS();
             }
 
