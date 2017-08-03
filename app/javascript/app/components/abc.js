@@ -106,7 +106,7 @@ class ABC extends React.Component {
             this.props.selectedCourse &&
             !(selected.length == 1 && selected[0] == this.props.selectedCourse)
         ) {
-            this.props.setSelectedCourses([Number.parseInt(this.props.selectedCourse)]);
+            this.props.setSelectedCourses([this.props.selectedCourse]);
         }
 
         // generate a default layout for the selected courses if necessary
@@ -122,7 +122,7 @@ class ABC extends React.Component {
             this.props.selectedCourse &&
             !(selected.length == 1 && selected[0] == this.props.selectedCourse)
         ) {
-            this.props.setSelectedCourses([Number.parseInt(this.props.selectedCourse)]);
+            this.props.setSelectedCourses([this.props.selectedCourse]);
         }
 
         // generate a default layout for the selected courses if necessary
