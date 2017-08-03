@@ -205,6 +205,7 @@ function onFetchAssignmentsSuccess(resp) {
             id: ass.id,
             positionId: ass.position_id,
             hours: ass.hours,
+            locked: ass.export_date != null,
         };
 
         if (assignments[ass.applicant_id]) {
@@ -341,6 +342,7 @@ function updateAssignmentHours(applicant, assignment, hours) {
         .catch(() => appState.setFetchingAssignmentsList(false));
 }
 
+// update attribute(s) of a course
 function updateCourse(courseId, data, attr) {
     appState.setFetchingCoursesList(true);
 
@@ -352,6 +354,7 @@ function updateCourse(courseId, data, attr) {
         .catch(() => appState.setFetchingCoursesList(false));
 }
 
+// send CHASS data
 function importChass(data) {
     return postHelper(
         '/import/chass',
@@ -363,6 +366,7 @@ function importChass(data) {
     });
 }
 
+// extract and display a message which is sent in the (JSON) body of a response
 function showMessageInJsonBody(resp) {
     if (resp.message != null) {
         appState.notify(resp.message);
@@ -373,6 +377,23 @@ function showMessageInJsonBody(resp) {
     }
 }
 
+// unlock a single assignment
+function unlockAssignment(applicant, assignment) {
+    appState.setFetchingAssignmentsList(true);
+
+    return putHelper(
+        '/applicants/' + applicant + '/assignments/' + assignment,
+        { export_date: null },
+        getAssignments
+    )
+        .then(assignments => {
+            appState.setAssignmentsList(assignments);
+            appState.successFetchingAssignmentsList();
+        })
+        .catch(() => appState.setFetchingAssignmentsList(false));
+}
+
+
 export {
     fetchAll,
     postAssignment,
@@ -381,5 +402,5 @@ export {
     updateCourse,
     noteApplicant,
     importChass,
-    showMessage,
+    unlockAssignment
 };

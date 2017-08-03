@@ -11,27 +11,51 @@ class CoursePanel extends React.Component {
             {
                 header: '',
                 // checkbox that is checked if the applicant is currently assigned, unchecked if not
-                data: p =>
-                    <input
-                        type="checkbox"
-                        defaultChecked={p.assigned}
-                        onClick={() => {
-                            if (p.assigned) {
-                                props.deleteAssignment(
-                                    p.applicantId,
-                                    props.getAssignmentByApplicant(p.applicantId, p.course).id
-                                );
-                            } else {
-                                props.createAssignment(
-                                    p.applicantId,
-                                    p.course,
-                                    props.getCourseById(p.course).positionHours
-                                );
-                            }
-                        }}
-                    />,
+                data: p => {
+                    if (p.assigned) {
+                        let assignment = props.getAssignmentByApplicant(p.applicantId, p.course);
 
-                style: () => ({ width: '2%' }),
+                        if (assignment.locked) {
+                            return (
+                                <i
+                                    className="fa fa-lock"
+                                    onClick={() => {
+                                        if (
+                                            confirm(
+                                                'This will unlock an assignment that has already been exported.\nAre you sure?'
+                                            )
+                                        ) {
+                                            props.unlockAssignment(assignment.id);
+                                        }
+                                    }}
+                                />
+                            );
+                        }
+
+                        return (
+                            <input
+                                type="checkbox"
+                                defaultChecked={true}
+                                onClick={() => props.deleteAssignment(p.applicantId, assignment.id)}
+                            />
+                        );
+                    } else {
+                        return (
+                            <input
+                                type="checkbox"
+                                defaultChecked={false}
+                                onClick={() =>
+                                    props.createAssignment(
+                                        p.applicantId,
+                                        p.course,
+                                        props.getCourseById(p.course).positionHours
+                                    )}
+                            />
+                        );
+                    }
+                },
+
+                style: () => ({ width: '2%', textAlign: 'center' }),
             },
             {
                 header: 'Last Name',

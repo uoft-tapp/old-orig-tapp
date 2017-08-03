@@ -99,9 +99,24 @@ const AssignmentRow = props =>
                         }
                     }}
                     defaultValue={props.assignment.hours}
+                    disabled={props.assignment.locked}
                 />
                 &emsp;
-                <X click={() => props.deleteAssignment(props.applicant, props.assignment.id)} />
+                {props.assignment.locked
+                    ? <Lock
+                          click={() => {
+                              if (
+                                  confirm(
+                                      'This will unlock an assignment that has already been exported.\nAre you sure?'
+                                  )
+                              ) {
+                                  props.unlockAssignment(props.assignment.id);
+                              }
+                          }}
+                      />
+                    : <X
+                          click={() => props.deleteAssignment(props.applicant, props.assignment.id)}
+                      />}
             </form>
         </td>
     </tr>;
@@ -155,6 +170,14 @@ const X = props =>
     <i
         className="fa fa-times-circle-o"
         style={{ color: 'red', fontSize: '20px', verticalAlign: 'middle' }}
+        onClick={props.click}
+    />;
+
+// lock icon/button
+const Lock = props =>
+    <i
+        className="fa fa-lock"
+        style={{ fontSize: '20px', verticalAlign: 'middle' }}
         onClick={props.click}
     />;
 
