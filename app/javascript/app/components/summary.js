@@ -143,7 +143,7 @@ class ExportForm extends React.Component {
             } else {
                 // export offers in JSON format
                 // this will be non-functional until round IDs are incorporated!
-                route = '/export/chass/' + props.getSelectedRound();
+                route = '/export/chass/' + this.props.getSelectedRound();
             }
 
             if (
@@ -158,7 +158,7 @@ class ExportForm extends React.Component {
             if (format == 'csv') {
                 window.open('/export/' + data);
             } else {
-                props.alert('<b>Export JSON</b> This functionality is not currently supported.');
+                this.props.alert('<b>Export JSON</b> This functionality is not currently supported.');
             }
         }
     }
