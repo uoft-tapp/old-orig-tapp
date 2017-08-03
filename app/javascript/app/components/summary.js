@@ -69,17 +69,16 @@ class ImportForm extends React.Component {
                 'Are you sure you want to import "' + files[0].name + '" into the database?';
             if (files[0].type == 'application/json') {
                 if (confirm(message)) {
-                    let importChass = this.props.func.importChass;
-                    let waitAlert = () => this.props.func.alert('Import in Progress...');
-                    let chassAlert = () =>
-                        this.props.func.alert('Error: This is not a CHASS JSON.');
+                    let importChass = this.props.importChass;
+                    let waitAlert = () => this.props.alert('Import in Progress...');
+                    let chassAlert = () => this.props.alert('Error: This is not a CHASS JSON.');
                     this.uploadFile(files[0], importChass, waitAlert, chassAlert);
                 }
             } else {
-                this.props.func.alert('Error: The file you uploaded is not a JSON.');
+                this.props.alert('Error: The file you uploaded is not a JSON.');
             }
         } else {
-            this.props.func.alert('Error: No file chosen.');
+            this.props.alert('Error: No file chosen.');
         }
     }
 
@@ -115,8 +114,7 @@ class ImportForm extends React.Component {
                             trigger="click"
                             rootClose
                             placement="right"
-                            overlay={InfoDialog(chassFormat)}
-                        >
+                            overlay={InfoDialog(chassFormat)}>
                             <i className="fa fa-info-circle" style={{ color: 'blue' }} />
                         </OverlayTrigger>
                     </ControlLabel>
@@ -174,8 +172,7 @@ class ExportForm extends React.Component {
                         componentClass="select"
                         inputRef={ref => {
                             this.data = ref;
-                        }}
-                    >
+                        }}>
                         <option value="offers">Offers</option>
                         <option value="cdf-info">CDF info</option>
                         <option value="transcript-access">
@@ -191,8 +188,7 @@ class ExportForm extends React.Component {
                         componentClass="select"
                         inputRef={ref => {
                             this.format = ref;
-                        }}
-                    >
+                        }}>
                         <option value="csv">CSV</option>
                         <option value="json">JSON</option>
                     </FormControl>
