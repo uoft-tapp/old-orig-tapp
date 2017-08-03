@@ -220,6 +220,7 @@ footer div p {
 #abc-grid .course-panel .panel-heading {
     padding: 5px 15px !important;
     height: 30px;
+    cursor: move;
 }
 
 #abc-grid .course-panel .panel-body {
