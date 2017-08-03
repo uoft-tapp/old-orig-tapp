@@ -1,5 +1,4 @@
 import React from 'react';
-import { Panel } from 'react-bootstrap';
 import { ApplicantTableMenu } from './applicantTableMenu.js';
 import { ApplicantTable } from './applicantTable.js';
 
@@ -146,30 +145,10 @@ class CoursePanel extends React.Component {
     }
 
     render() {
-        let course = this.props.getCourseById(this.props.course);
-
         return (
-            <Panel
-                className="course-panel"
+            <div
+                className="panel panel-default course-panel"
                 style={this.props.panelStyle}
-                header={
-                    <span>
-                        {course.code}&emsp;{this.props.getCourseAssignmentCount(
-                            this.props.course
-                        )}&nbsp;/
-                        {course.estimatedPositions}
-                        <i
-                            className="fa fa-close"
-                            style={{ float: 'right' }}
-                            onClick={() => this.props.toggleSelectedCourse(this.props.course)}
-                        />
-                    </span>
-                }
-                draggable={true}
-                onDragStart={e => {
-                    // send this course ID to an element that this panel is dragged over
-                    e.dataTransfer.setData('text', this.props.course);
-                }}
                 onDragOver={e => {
                     if (e.preventDefault) {
                         e.preventDefault(); // Necessary. Allows us to drop.
@@ -186,47 +165,77 @@ class CoursePanel extends React.Component {
                         this.props.swapCoursesInLayout(swap, this.props.course);
                     }
                 }}>
-                <ApplicantTable
-                    config={this.config}
-                    assigned={true}
-                    course={parseInt(this.props.course)}
-                    getApplicants={() =>
-                        this.props.getApplicantsAssignedToCourse(this.props.course)}
-                    rowId={p => p.course + '-' + p.applicantId + '-1'}
-                />
-
-                <ApplicantTableMenu
-                    config={this.config}
-                    getSelectedSortFields={() =>
-                        this.props.getCoursePanelSortsByCourse(this.props.course)}
-                    anyFilterSelected={field =>
-                        this.props.anyCoursePanelFilterSelected(this.props.course, field)}
-                    isFilterSelected={(field, category) =>
-                        this.props.isCoursePanelFilterSelected(this.props.course, field, category)}
-                    toggleFilter={(field, category) =>
-                        this.props.toggleCoursePanelFilter(this.props.course, field, category)}
-                    clearFilters={() => this.props.clearCoursePanelFilters(this.props.course)}
-                    addSort={field => this.props.addCoursePanelSort(this.props.course, field)}
-                    removeSort={field => this.props.removeCoursePanelSort(this.props.course, field)}
-                    toggleSortDir={field =>
-                        this.props.toggleCoursePanelSortDir(this.props.course, field)}
-                />
-
-                <ApplicantTable
-                    config={this.config}
-                    assigned={false}
-                    course={parseInt(this.props.course)}
-                    getApplicants={() =>
-                        this.props.getApplicantsToCourseUnassigned(this.props.course)}
-                    getSelectedSortFields={() =>
-                        this.props.getCoursePanelSortsByCourse(this.props.course)}
-                    getSelectedFilters={() =>
-                        this.props.getCoursePanelFiltersByCourse(this.props.course)}
-                    rowId={p => p.course + '-' + p.applicantId + '-0'}
-                />
-            </Panel>
+                <DraggableHeader {...this.props} />
+                <div className="panel-body">
+                    <AssignedApplicantTable config={this.config} {...this.props} />
+                    <ApplicantTableMenu
+                        config={this.config}
+                        getSelectedSortFields={() =>
+                            this.props.getCoursePanelSortsByCourse(this.props.course)}
+                        anyFilterSelected={field =>
+                            this.props.anyCoursePanelFilterSelected(this.props.course, field)}
+                        isFilterSelected={(field, category) =>
+                            this.props.isCoursePanelFilterSelected(
+                                this.props.course,
+                                field,
+                                category
+                            )}
+                        toggleFilter={(field, category) =>
+                            this.props.toggleCoursePanelFilter(this.props.course, field, category)}
+                        clearFilters={() => this.props.clearCoursePanelFilters(this.props.course)}
+                        addSort={field => this.props.addCoursePanelSort(this.props.course, field)}
+                        removeSort={field =>
+                            this.props.removeCoursePanelSort(this.props.course, field)}
+                        toggleSortDir={field =>
+                            this.props.toggleCoursePanelSortDir(this.props.course, field)}
+                    />
+                    <UnassignedApplicantTable config={this.config} {...this.props} />
+                </div>
+            </div>
         );
     }
 }
+
+const DraggableHeader = props => {
+    let course = props.getCourseById(props.course);
+
+    return (
+        <div
+            className="panel-heading"
+            draggable={true}
+            onDragStart={e => {
+                // send this course ID to an element that this panel is dragged over
+                e.dataTransfer.setData('text', props.course);
+            }}>
+            {course.code}&emsp;{props.getCourseAssignmentCount(props.course)}&nbsp;/
+            {course.estimatedPositions}
+            <i
+                className="fa fa-close"
+                style={{ float: 'right' }}
+                onClick={() => props.toggleSelectedCourse(props.course)}
+            />
+        </div>
+    );
+};
+
+const AssignedApplicantTable = props =>
+    <ApplicantTable
+        config={props.config}
+        assigned={true}
+        course={parseInt(props.course)}
+        getApplicants={() => props.getApplicantsAssignedToCourse(props.course)}
+        rowId={p => p.course + '-' + p.applicantId + '-1'}
+    />;
+
+const UnassignedApplicantTable = props =>
+    <ApplicantTable
+        config={props.config}
+        assigned={false}
+        course={parseInt(props.course)}
+        getApplicants={() => props.getApplicantsToCourseUnassigned(props.course)}
+        getSelectedSortFields={() => props.getCoursePanelSortsByCourse(props.course)}
+        getSelectedFilters={() => props.getCoursePanelFiltersByCourse(props.course)}
+        rowId={p => p.course + '-' + p.applicantId + '-0'}
+    />;
 
 export { CoursePanel };
