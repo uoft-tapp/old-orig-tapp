@@ -2,17 +2,13 @@ require 'rails_helper'
 
 describe ChassImporter do
   let(:test_filename) { 'test/stub' }
-  subject { ChassImporter.new(test_filename) }
+  subject {
+    data = JSON.parse(File.read("#{Rails.root}/db/#{test_filename}.json"))
+    ChassImporter.new(data)
+  }
 
   before :each do
     allow(File).to receive(:read).with(/#{test_filename}/).and_return(mock_json)
-  end
-
-  context "when used on an empty file" do
-    let(:mock_json) { '' }
-    it "raises a descriptive error" do
-      expect { subject }.to raise_error(JSON::ParserError, /file is empty/)
-    end
   end
 
   context "when used on an invalid file" do
@@ -23,27 +19,6 @@ describe ChassImporter do
   end
 
   context "when parsing courses" do
-    context "from a file missing courses key" do
-      let(:mock_json) { '{ "applicants": [] }' }
-      it "raises a descriptive error" do
-        expect { subject }.to raise_error(KeyError, /key not found/)
-      end
-    end
-
-    context "with no round_id" do
-      let(:mock_json) { '{ "courses": [],  "applicants": []}' }
-      it "raises a descriptive error" do
-        expect { subject }.to raise_error(StandardError, /no round_id/)
-      end
-    end
-
-    context "with more than one round_id" do
-      let(:mock_json) { File.read("./spec/support/chass_data/too_many_rounds.json") }
-      it "raises a descriptive error" do
-        expect { subject }.to raise_error(StandardError, /too many round_id/)
-      end
-    end
-
     context "with a plain course" do
       let(:mock_json) { File.read("./spec/support/chass_data/plain_course.json") }
 
@@ -86,29 +61,21 @@ describe ChassImporter do
     let(:mock_json) { File.read("./spec/support/chass_data/plain_course.json") }
 
     it "keeps calm" do
-      ChassImporter.new(test_filename) # Run first time
+      subject # Run first time
       expect {
-        ChassImporter.new(test_filename) # Run the second time
+        subject # Run the second time
       }.to_not raise_error
     end
 
     it "doesn't modify Position records" do
-      ChassImporter.new(test_filename)
-
+      subject
       expect {
-        ChassImporter.new(test_filename)
+        subject
       }.to_not change { Position.all.to_a }
     end
   end
 
   context "when importing applicants" do
-    context "from a file missing applicants key" do
-      let (:mock_json) {'{"courses" : []}'}
-      it "raises a descriptive error" do
-        expect { subject }.to raise_error(KeyError, /key not found: "applicants"/)
-      end
-    end
-
     context "from a file with no applicants" do
       let (:mock_json) { File.read("./spec/support/chass_data/no_applicant.json") }
       it "does not raise any errors" do
@@ -279,4 +246,30 @@ describe ChassImporter do
     end
   end
 end
+  context "when checking status" do
+    context "file with no round_id" do
+      let(:mock_json) { File.read("./spec/support/chass_data/no_round.json") }
+      it "returns error json" do
+        error = {success: false, message: "Import Failure: no round_id found in the file"}
+        expect(subject.get_status).to eq(error)
+      end
+    end
+
+    context "file with more than one round_id" do
+      let(:mock_json) { File.read("./spec/support/chass_data/too_many_rounds.json") }
+      it "returns error json" do
+        error = {success: false, message: "Import Failure: too many round_ids found in the file"}
+        expect(subject.get_status).to eq(error)
+      end
+    end
+
+    context "expected file" do
+      let(:mock_json) { File.read("./spec/support/chass_data/applicant.json") }
+      it "returns sucess json" do
+        success = {success: true, message: "CHASS import completed."}
+        expect(subject.get_status).to eq(success)
+      end
+    end
+
+  end
 end

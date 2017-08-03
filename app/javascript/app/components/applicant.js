@@ -169,7 +169,7 @@ const PersonalInfo = props => {
                     </td>
                     <td>
                         {applicant.address != null &&
-                            applicant.address.split('\r\n').map((part, key) =>
+                            applicant.address.split(/\\r*\\n/).map((part, key) =>
                                 <p key={key}>
                                     {part}
                                 </p>

@@ -10,6 +10,8 @@ import {
     Button,
     Well,
     Table,
+    OverlayTrigger,
+    Popover,
 } from 'react-bootstrap';
 
 class Summary extends React.Component {
@@ -58,21 +60,77 @@ const Utilities = props => {
 };
 
 // form for importing data from a file and persisting it to the database
+
 class ImportForm extends React.Component {
+    loadFile() {
+        let files = document.getElementById('import').files;
+        if (files.length > 0) {
+            let message =
+                'Are you sure you want to import "' + files[0].name + '" into the database?';
+            if (files[0].type == 'application/json') {
+                if (confirm(message)) {
+                    let importChass = this.props.func.importChass;
+                    let waitAlert = () => this.props.func.alert('Import in Progress...');
+                    let chassAlert = () =>
+                        this.props.func.alert('Error: This is not a CHASS JSON.');
+                    this.uploadFile(files[0], importChass, waitAlert, chassAlert);
+                }
+            } else {
+                this.props.func.alert('Error: The file you uploaded is not a JSON.');
+            }
+        } else {
+            this.props.func.alert('Error: No file chosen.');
+        }
+    }
+
+    uploadFile(file, importChass, waitAlert, chassAlert) {
+        let reader = new FileReader();
+        reader.onload = function(event) {
+            let data = JSON.parse(event.target.result);
+            console.log(data);
+            if (data['courses'] !== undefined && data['applicants'] !== undefined) {
+                data = { chass_json: data };
+                waitAlert();
+                importChass(data);
+            } else {
+                chassAlert();
+            }
+        };
+        reader.readAsText(file);
+    }
     render() {
         return (
-            <Form inline id="import">
+            <Form inline>
                 <FormControl.Static style={{ verticalAlign: 'middle' }}>
-                    <i className="fa fa-upload" style={{ fontSize: '20px', color: 'blue' }} />&emsp;
+                    <i
+                        className="fa fa-upload"
+                        style={{ fontSize: '20px', color: 'blue' }}
+                        onClick={() => this.loadFile()}
+                    />&emsp;
                 </FormControl.Static>
-                <FormGroup id="import">
-                    <ControlLabel>Import from file:</ControlLabel>
+                <FormGroup>
+                    <ControlLabel>
+                        Import from file:&nbsp;
+                        <OverlayTrigger
+                            trigger="click"
+                            rootClose
+                            placement="right"
+                            overlay={InfoDialog(chassFormat)}
+                        >
+                            <i className="fa fa-info-circle" style={{ color: 'blue' }} />
+                        </OverlayTrigger>
+                    </ControlLabel>
                     <FormControl id="import" type="file" accept="application/json" />
                 </FormGroup>
             </Form>
         );
     }
 }
+
+const InfoDialog = chassFormat =>
+    <Popover id="help" placement="right" title="CHASS JSON format">
+        <textarea value={chassFormat} disabled />
+    </Popover>;
 
 // form for exporting app data to a file
 class ExportForm extends React.Component {
@@ -97,7 +155,7 @@ class ExportForm extends React.Component {
                 window.open(route);
             }
         } else {
-            // export other data in CSV format
+            // export other data in CS>>>>>>> set up upload buttonV format
             if (format == 'csv') {
                 window.open('/export/' + data);
             } else {
@@ -120,7 +178,8 @@ class ExportForm extends React.Component {
                         componentClass="select"
                         inputRef={ref => {
                             this.data = ref;
-                        }}>
+                        }}
+                    >
                         <option value="offers">Offers</option>
                         <option value="cdf-info">CDF info</option>
                         <option value="transcript-access">
@@ -136,7 +195,8 @@ class ExportForm extends React.Component {
                         componentClass="select"
                         inputRef={ref => {
                             this.format = ref;
-                        }}>
+                        }}
+                    >
                         <option value="csv">CSV</option>
                         <option value="json">JSON</option>
                     </FormControl>
@@ -144,7 +204,7 @@ class ExportForm extends React.Component {
                 <FormControl.Static style={{ verticalAlign: 'middle' }}>
                     &emsp;<i
                         className="fa fa-download"
-                        style={{ fontSize: '20px', color: 'blue' }}
+                        style={{ fontSize: '20px', color: 'blue', cursor: 'pointer' }}
                         onClick={() => this.exportData(this.data.value, this.format.value)}
                     />
                 </FormControl.Static>
@@ -163,7 +223,8 @@ const ReleaseForm = props =>
                     <span>
                         <b>Release assignments</b> This functionality is not currently supported.
                     </span>
-                )}>
+                )}
+        >
             Release assignments
         </Button>
     </Form>;
@@ -276,5 +337,52 @@ const PerCourseStats = props => {
         </tr>
     );
 };
+const chassFormat = `{
+    "courses": [
+      {
+        "instructor": [{},...],
+        "last_updated": datetime,
+        "end_nominations": string,
+        "status": integer,
+        "end_posting": datetime,
+        "start_posting": datetime,
+        "total_hours": integer,
+        "duties": string,
+        "qualifications": string,
+        "tutorials": string,
+        "dates": string,
+        "n_hours": string,
+        "n_positions": integer,
+        "enrollment": integer,
+        "round_id": ,
+        "course_name": string,
+        "course_id": string
+      },...],
+    "applicants": [
+      {
+        "app_id": string,
+        "utorid": string,
+        "first_name": string,
+        "last_name": string,
+        "email": string,
+        "phone": string,
+        "student_no": string,
+        "address": string,
+        "ta_training": (Y/N),
+        "access_acad_history": (Y/N),
+        "dept": string,
+        "program_id": string,
+        "yip": string,
+        "course_preferences": string,
+        "ta_experience": "string,
+        "academic_qualifications": string,
+        "technical_skills": string,
+        "availability": string,
+        "other_info": string,
+        "special_needs": string,
+        "last_updated": datetime,
+        "courses": [string, ...]
+      },...]
+  }`;
 
 export { Summary };

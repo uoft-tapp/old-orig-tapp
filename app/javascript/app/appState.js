@@ -23,11 +23,6 @@ const initialState = {
     // applicant to display in applicant view
     selectedApplicant: null,
 
-    // course list component used by courses view
-    courseList: {
-        selected: null,
-    },
-
     // ABC view
     abcView: {
         selectedCourses: [],
@@ -80,7 +75,7 @@ class AppState {
         };
 
         // setters for appState object
-        
+
         this.set = function(property, value) {
             if (arguments.length == 1) {
                 _data.set(property);
@@ -464,10 +459,7 @@ class AppState {
 
     // toggle the expanded state of a panel in the applicant assignment form component
     togglePanelExpanded(index) {
-        this.set(
-            'assignmentForm.panels[' + index + '].expanded',
-            !this.isPanelExpanded(index)
-        );
+        this.set('assignmentForm.panels[' + index + '].expanded', !this.isPanelExpanded(index));
     }
 
     // toggle the selected state of the course that is clicked
@@ -571,7 +563,9 @@ class AppState {
 
         // add assignment counts to courses
         for (var course in courses) {
-            courses[course].assignmentCount = assignmentCounts[course] ? assignmentCounts[course] : 0;
+            courses[course].assignmentCount = assignmentCounts[course]
+                ? assignmentCounts[course]
+                : 0;
         }
 
         return courses;
@@ -784,6 +778,10 @@ class AppState {
         }
 
         return this.idEntries(applicants);
+    }
+
+    importChass(data) {
+        fetch.importChass(data);
     }
 
     isApplicantsListNull() {

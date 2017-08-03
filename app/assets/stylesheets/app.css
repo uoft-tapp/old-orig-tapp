@@ -45,8 +45,12 @@ footer div p {
 }
 
 @keyframes fadeout {
-    0% {opacity: 1;}
-    100% {opacity: 0.5;}
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0.5;
+    }
 }
 
 #alert-container .alert {
@@ -63,7 +67,7 @@ footer div p {
     width: 100px !important;
     height: 100px !important;
     margin: 0 !important;
-    
+
     border: 8px solid #f3f3f3;
     border-top: 8px solid #3498db;
     border-radius: 50%;
@@ -72,13 +76,17 @@ footer div p {
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 /* applies to the first div after the navbar, which should be the main div container for the view, between the
  * navbar and the footer */
-#root nav+div {
+#root nav + div {
     top: 0;
     margin-top: var(--navbar-height);
     position: absolute;
@@ -149,13 +157,17 @@ footer div p {
 }
 
 /* for ApplicantTable in Assigned/Unassigned view */
-#unassigned-grid .table-container, #assigned-grid .table-container {
+#unassigned-grid .table-container,
+#assigned-grid .table-container {
     margin-top: 1vh;
 }
 
-#unassigned-grid .table-body, #assigned-grid .table-body {
+#unassigned-grid .table-body,
+#assigned-grid .table-body {
     /* note that this assumes that the header is at most one row high */
-    max-height: calc(var(--main-div-height) - var(--applicant-table-menu-height) - var(--min-row-height));
+    max-height: calc(
+        var(--main-div-height) - var(--applicant-table-menu-height) - var(--min-row-height)
+    );
     overflow: auto;
 }
 
@@ -165,7 +177,9 @@ footer div p {
 }
 
 #applicant-modal .modal-body {
-    max-height: calc(98vh - 55px - 60px); /* modal header is 55px high, modal has 30px top and bottom margin */
+    max-height: calc(
+        98vh - 55px - 60px
+    ); /* modal header is 55px high, modal has 30px top and bottom margin */
     overflow: auto;
 }
 
@@ -179,6 +193,14 @@ footer div p {
     padding-right: 50px;
     margin-top: 0;
     vertical-align: top;
+}
+
+#applicant-modal .panel_table td p {
+    margin-bottom: 0;
+}
+
+#applicant-modal .panel_table td p + p {
+    margin-top: 10px;
 }
 
 /* for course panel container in ABC view */
@@ -212,7 +234,8 @@ footer div p {
 }
 
 /* for ApplicantTables*/
-.unassigned-table table, .assigned-table table {
+.unassigned-table table,
+.assigned-table table {
     margin: 0;
 }
 
@@ -243,31 +266,36 @@ footer div p {
     --col-3-width: 70px; /* numerical fields */
     --col-4-width: 220px; /* instructor form */
     /* qualifications and responsibilities text areas */
-    --col-5-6-width: calc(calc(100vw -
-                               calc(var(--course-list-panel-width) + var(--col-1-width) + var(--col-2-width) +
-                               var(--col-3-width) + var(--col-4-width) + var(--sep-width)*5 + 170px))
-                          / 2);
+    --col-5-6-width: calc(
+        calc(
+                100vw -
+                    calc(
+                        var(--course-list-panel-width) + var(--col-1-width) + var(--col-2-width) +
+                            var(--col-3-width) + var(--col-4-width) + var(--sep-width)*5 + 170px
+                    )
+            ) / 2
+    );
 }
 
-.form_table{
+.form_table {
     width: 100%;
 }
-.form_table td{
+.form_table td {
     vertical-align: top;
 }
-.form_table .course{
+.form_table .course {
     font-weight: bold;
 }
 /* margin between text boxes in the first three columns */
-.form_table #col-1 p:first-child, .form_table #col-1 p:nth-child(2),
-.form_table #col-2 p:first-child, .form_table #col-2 p:nth-child(2),
-.form_table #col-3 form:first-child, .form_table #col-3 form:nth-child(2) {
-    margin-bottom: 5px;
+.form_table #col-1 p + p,
+.form_table #col-2 p + p,
+.form_table #col-3 form + form {
+    margin-top: 5px;
 }
 
-/* right padding for all but last column */
-.form_table td:not(#col-6) {
-    padding-right: var(--sep-width);
+/* left padding for all but the left column */
+.form_table td + td {
+    padding-left: var(--sep-width);
 }
 
 .form_table p {
@@ -299,12 +327,13 @@ footer div p {
 }
 
 /* numerical fields */
-.form_table #col-3{
+.form_table #col-3 {
     width: var(--col-3-width);
 }
 
 /* qualifications and responsibilities text areas */
-.form_table #col-5, .form_table #col-6 {
+.form_table #col-5,
+.form_table #col-6 {
     width: var(--col-5-6-width);
 }
 
@@ -321,20 +350,20 @@ footer div p {
     width: var(--col-4-width);
 }
 
-.instructor_form{
-    border: #CCC 1px solid;
+.instructor_form {
+    border: #ccc 1px solid;
     height: 80px;
     overflow-y: auto;
 }
-.instructor_form td{
+.instructor_form td {
     border: red 1px solid;
     float: left;
-    padding:0;
+    padding: 0;
     border-collapse: collapse;
     white-space: nowrap;
     width: auto !important;
 }
-.instructor_form input[type="text"]{
+.instructor_form input[type="text"] {
     border: none;
     float: left;
     margin: 0;
@@ -344,23 +373,23 @@ footer div p {
 }
 .instructor_form input[type="text"]:focus,
 .instructor_form span:focus,
-.instructor_form button:focus{
+.instructor_form button:focus {
     outline: 0;
 }
-.instructor_form div{
+.instructor_form div {
     width: 100% !important;
     min-height: calc(100% - 2px);
     float: left;
 }
-.instructor_form button{
+.instructor_form button {
     background: none;
     border: none;
 }
-.instructor_form datalist{
+.instructor_form datalist {
     display: block;
     position: fixed;
 }
-.instructor_form span{
+.instructor_form span {
     margin-left: 2px;
 }
 
@@ -429,4 +458,34 @@ footer div p {
 
 #summary-grid #per-course {
     margin-bottom: 0;
+}
+.info-button {
+    padding: 0;
+    border: none;
+    background: none;
+    outline: 0;
+}
+#help {
+    top: 76px !important;
+}
+#help .popover-content {
+    padding: 3 !important;
+    width: 300px;
+    height: 400px;
+}
+#help .popover-content textarea {
+    width: calc(100% - 17px);
+    height: 100%;
+    resize: none;
+    outline: 0;
+    border: none;
+    background: none;
+    overflow-y: auto;
+    cursor: default;
+}
+#help .arrow {
+    top: 20px !important;
+}
+#help .arrow::after {
+    border-right-color: #f7f7f7 !important;
 }
