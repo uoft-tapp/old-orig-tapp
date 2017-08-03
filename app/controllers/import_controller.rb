@@ -10,4 +10,5 @@ class ImportController < ApplicationController
       render status: 404, json: {message: status[:message]}.to_json
     end
   end
+
 end

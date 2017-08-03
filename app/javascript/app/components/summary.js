@@ -27,7 +27,7 @@ class Summary extends React.Component {
         return (
             <Grid fluid id="summary-grid" style={cursorStyle}>
                 <PanelGroup>
-                    <Utilities {...this.props} />
+                    <Utilities loadFile={() => this.loadFile()} {...this.props} />
                     <Stats {...this.props} />
                 </PanelGroup>
             </Grid>
@@ -52,7 +52,7 @@ class Summary extends React.Component {
 const Utilities = props => {
     return (
         <Panel header="Utilities" id="utils">
-            <ImportForm {...props} />
+            <ImportForm loadFile={props.loadFile} {...props} />
             <ExportForm {...props} />
             <ReleaseForm {...props} />
         </Panel>
@@ -60,7 +60,6 @@ const Utilities = props => {
 };
 
 // form for importing data from a file and persisting it to the database
-
 class ImportForm extends React.Component {
     loadFile() {
         let files = document.getElementById('import').files;
@@ -87,7 +86,6 @@ class ImportForm extends React.Component {
         let reader = new FileReader();
         reader.onload = function(event) {
             let data = JSON.parse(event.target.result);
-            console.log(data);
             if (data['courses'] !== undefined && data['applicants'] !== undefined) {
                 data = { chass_json: data };
                 waitAlert();
