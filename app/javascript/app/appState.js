@@ -893,6 +893,10 @@ class AppState {
         fetch.updateAssignmentHours(applicant, assignment, hours);
     }
 
+    unlockAssignment(assignment) {
+        fetch.unlockAssignment(assignment);
+    }
+
     updateCourse(courseId, val, props) {
         let data = {};
         switch (props) {
