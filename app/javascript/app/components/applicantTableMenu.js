@@ -3,15 +3,6 @@ import PropTypes from 'prop-types';
 import { ButtonGroup, Button, DropdownButton, MenuItem, Glyphicon } from 'react-bootstrap';
 
 class ApplicantTableMenu extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.icon = {
-            '1': <Glyphicon style={{ fontSize: '7pt' }} glyph={'menu-up'} />,
-            '-1': <Glyphicon style={{ fontSize: '7pt' }} glyph={'menu-down'} />,
-        };
-    }
-
     render() {
         return (
             <div className="applicant-table-menu">
@@ -50,14 +41,14 @@ class ApplicantTableMenu extends React.Component {
                             <DropdownButton
                                 title={
                                     <span>
-                                        {name} {this.icon[dir]}
+                                        {name} {icon[dir]}
                                     </span>
                                 }
                                 key={'sort-' + sortField}
                                 id={'sort-' + sortField}
                                 noCaret>
                                 <MenuItem onSelect={() => this.props.toggleSortDir(sortField)}>
-                                    {name} {this.icon[-dir]}
+                                    {name} {icon[-dir]}
                                 </MenuItem>
 
                                 <MenuItem onSelect={() => this.props.removeSort(sortField)}>
@@ -87,6 +78,11 @@ class ApplicantTableMenu extends React.Component {
         );
     }
 }
+
+const icon = {
+    '1': <Glyphicon style={{ fontSize: '7pt' }} glyph={'menu-up'} />,
+    '-1': <Glyphicon style={{ fontSize: '7pt' }} glyph={'menu-down'} />,
+};
 
 ApplicantTableMenu.propTypes = {
     config: PropTypes.arrayOf(
