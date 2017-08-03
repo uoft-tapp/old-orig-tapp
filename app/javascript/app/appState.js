@@ -73,11 +73,18 @@ class AppState {
         // notify listeners of change
         var notifyListeners = () => this._listeners.forEach(listener => listener());
 
-        // parses a property path (keys and indices) into a list, as expected by Immutable
+        // parses a property path into a list, as expected by Immutable
         var parsePath = path =>
             path
-                .split(/\[|\]|[.'"]/) // split on brackets, dots, and quotes
-                .filter(key => key.length); // remove empty elements
+                .split(/(\[.*?\])|\./) // split on brackets and dots
+                .filter(key => key) // removed undefined elements
+                .map(key => {
+                    let ind = key.match(/\[(.*)\]/); // check whether the element is in brackets
+                    if (ind) {
+                        return eval(ind[1]);
+                    }
+                    return key;
+                });
 
         // getter for appState object
         this.get = function(property) {
@@ -133,11 +140,11 @@ class AppState {
     // note that we do not allow multiple sorts on the same field (incl. in different directions)
     addCoursePanelSort(course, field) {
         if (
-            !this.get('abcView.panelFields[' + course + '].selectedFilters').some(
+            !this.get('abcView.panelFields.' + course + '.selectedFilters').some(
                 ([f, _]) => f == field
             )
         ) {
-            this.add('abcView.panelFields[' + course + '].selectedSortFields', fromJS([field, 1]));
+            this.add('abcView.panelFields.' + course + '.selectedSortFields', fromJS([field, 1]));
         } else {
             this.alert('<b>Applicant Table</b>&ensp;Cannot apply the same sort more than once.');
         }
@@ -178,21 +185,19 @@ class AppState {
 
     // check whether any of the given filters in the category are selected on the applicant table in a course panel
     anyCoursePanelFilterSelected(course, field) {
-        return this.get('abcView.panelFields[' + course + '].selectedFilters').has(
-            new String(field)
-        );
+        return this.get('abcView.panelFields.' + course + '.selectedFilters').has(field);
     }
 
     // check whether any of the given filters in the category are selected on the applicant table in a
     // single-applicant-table view
     anyFilterSelected(field) {
         let view = this.getSelectedViewStateComponent();
-        return this.get(view + '.selectedFilters').has(new String(field));
+        return this.get(view + '.selectedFilters').has(field);
     }
 
     // remove all selected filters on the applicant table in a course panel
     clearCoursePanelFilters(course) {
-        this.set('abcView.panelFields[' + course + '].selectedFilters', fromJS({}));
+        this.set('abcView.panelFields.' + course + '.selectedFilters', fromJS({}));
     }
 
     // remove all selected filters on the applicant table in a single-applicant-table view
@@ -223,7 +228,7 @@ class AppState {
     }
 
     getCoursePanelFiltersByCourse(course) {
-        return this.get('abcView.panelFields[' + course + '].selectedFilters');
+        return this.get('abcView.panelFields.' + course + '.selectedFilters');
     }
 
     getCoursePanelLayout() {
@@ -231,7 +236,7 @@ class AppState {
     }
 
     getCoursePanelSortsByCourse(course) {
-        return this.get('abcView.panelFields[' + course + '].selectedSortFields');
+        return this.get('abcView.panelFields.' + course + '.selectedSortFields');
     }
 
     getCurrentUserName() {
@@ -288,9 +293,8 @@ class AppState {
 
     // check whether a filter is selected on the applicant table in a course panel
     isCoursePanelFilterSelected(course, field, category) {
-        let filters = this.get('abcView.panelFields[' + course + '].selectedFilters');
+        let filters = this.get('abcView.panelFields.' + course + '.selectedFilters');
 
-        field = new String(field);
         return filters.has(field) && filters.get(field).includes(category);
     }
 
@@ -304,7 +308,6 @@ class AppState {
         let view = this.getSelectedViewStateComponent();
         let filters = this.get(view + '.selectedFilters');
 
-        field = new String(field);
         return filters.has(field) && filters.get(field).includes(category);
     }
 
@@ -325,10 +328,10 @@ class AppState {
 
     // remove a sort from the applicant table in a course panel
     removeCoursePanelSort(course, field) {
-        let i = this.get('abcView.panelFields[' + course + '].selectedSortFields').findIndex(
+        let i = this.get('abcView.panelFields.' + course + '.selectedSortFields').findIndex(
             f => f.get(0) == field
         );
-        this.remove('abcView.panelFields[' + course + '].selectedSortFields', i);
+        this.remove('abcView.panelFields.' + course + '.selectedSortFields', i);
     }
 
     // remove a sort from the applicant table in a single-applicant-table view
@@ -362,8 +365,10 @@ class AppState {
         this.set('abcView.panelLayout', layout);
     }
 
-    setSelectedCourses(courses) {
-        this.set('abcView.selectedCourses', courses);
+    selectSingleCourse(course) {
+        // Note: toString() is a hack because our components think that course IDs are numbers but Immutable
+        // thinks they are strings
+        this.set('abcView.selectedCourses', fromJS([course.toString()]));
     }
 
     // change the number of hours of a temporary assignment
@@ -396,9 +401,7 @@ class AppState {
 
     // toggle a filter on the applicant table in a course panel
     toggleCoursePanelFilter(course, field, category) {
-        let filters = this.get('abcView.panelFields[' + course + '].selectedFilters');
-
-        field = new String(field);
+        let filters = this.get('abcView.panelFields.' + course + '.selectedFilters');
 
         // filter is already applied
         if (filters.has(field)) {
@@ -407,23 +410,20 @@ class AppState {
             if (i == -1) {
                 // filter on this category is not already applied
                 this.add(
-                    'abcView.panelFields[' + course + '].selectedFilters[' + field + ']',
+                    'abcView.panelFields.' + course + '.selectedFilters[' + field + ']',
                     category
                 );
             } else if (filters.get(field).size > 1) {
                 // filter on this category is already applied, along with other categories
-                this.remove(
-                    'abcView.panelFields[' + course + '].selectedFilters[' + field + ']',
-                    i
-                );
+                this.remove('abcView.panelFields.' + course + '.selectedFilters[' + field + ']', i);
             } else {
                 // filter is only applied on this category
-                this.remove('abcView.panelFields[' + course + '].selectedFilters', field);
+                this.remove('abcView.panelFields.' + course + '.selectedFilters', field);
             }
         } else {
             // filter has not been applied
             this.set(
-                'abcView.panelFields[' + course + '].selectedFilters[' + field + ']',
+                'abcView.panelFields.' + course + '.selectedFilters[' + field + ']',
                 fromJS([category])
             );
         }
@@ -431,12 +431,12 @@ class AppState {
 
     // toggle the sort direction of the sort currently applied to the applicant table in a course panel
     toggleCoursePanelSortDir(course, field) {
-        let sortFields = this.get('abcView.panelFields[' + course + '].selectedSortFields');
+        let sortFields = this.get('abcView.panelFields.' + course + '.selectedSortFields');
         let i = sortFields.findIndex(f => f.get(0) == field);
 
         if (i != -1) {
             this.set(
-                'abcView.panelFields[' + course + '].selectedSortFields[' + i + '][1]',
+                'abcView.panelFields.' + course + '.selectedSortFields[' + i + '][1]',
                 -sortFields.get(i).get(1)
             );
         }
@@ -446,8 +446,6 @@ class AppState {
     toggleFilter(field, category) {
         let view = this.getSelectedViewStateComponent();
         let filters = this.get(view + '.selectedFilters');
-
-        field = new String(field);
 
         if (filters.has(field)) {
             let i = filters.get(field).indexOf(category);
@@ -542,7 +540,7 @@ class AppState {
      ******************************/
 
     addInstructor(courseId, instructorId) {
-        let val = this.get('courses.list[' + courseId + '].instructors').toJS();
+        let val = this.get('courses.list.' + courseId + '.instructors').toJS();
         val.push(parseInt(instructorId));
         fetch.updateCourse(courseId, { instructors: val }, 'instructors');
     }
@@ -619,7 +617,7 @@ class AppState {
     }
 
     getApplicantById(applicant) {
-        return this.get('applicants.list[' + applicant + ']');
+        return this.get('applicants.list.' + applicant);
     }
 
     getApplicantsList() {
@@ -644,11 +642,10 @@ class AppState {
 
         let applications = this.get('applications.list')
             // get applications to course
-            .filter(
-                applicant =>
-                    applicant.some(application =>
-                        application.get('prefs').some(pref => pref.get('positionId') == course)
-                    )
+            .filter(applicant =>
+                applicant.some(application =>
+                    application.get('prefs').some(pref => pref.get('positionId') == course)
+                )
             )
             // get applications to course with no corresponding assignment
             .filterNot(
@@ -662,13 +659,13 @@ class AppState {
 
     /*** NEEDS UPDATING WITH ROUNDS ***/
     getApplicationById(applicant) {
-        return this.get('applications.list[' + applicant + '][0]');
+        return this.get('applications.list.' + applicant + '[0]');
     }
 
     /*** NEEDS UPDATING WITH ROUNDS ***/
     // check whether this course is a preference for this applicant
     getApplicationPreference(applicant, course) {
-        let prefs = this.get('applications.list[' + applicant + '][0].prefs');
+        let prefs = this.get('applications.list.' + applicant + '[0].prefs');
 
         return prefs.some(pref => pref.get('positionId') == course && pref.get('preferred'));
     }
@@ -686,7 +683,7 @@ class AppState {
     }
 
     getAssignmentByApplicant(applicant, course) {
-        let assignments = this.get('assignments.list[' + applicant + ']');
+        let assignments = this.get('assignments.list.' + applicant);
 
         if (assignments) {
             return assignments.find(ass => ass.get('positionId') == course);
@@ -696,7 +693,7 @@ class AppState {
     }
 
     getAssignmentsByApplicant(applicant) {
-        let assignments = this.get('assignments.list[' + applicant + ']');
+        let assignments = this.get('assignments.list.' + applicant);
 
         if (assignments) {
             return assignments;
@@ -721,7 +718,7 @@ class AppState {
     }
 
     getCourseById(course) {
-        return this.get('courses.list[' + course + ']');
+        return this.get('courses.list.' + course);
     }
 
     // return a sorted list of course codes
@@ -730,7 +727,7 @@ class AppState {
     }
 
     getCourseCodeById(course) {
-        return this.get('courses.list[' + course + '].code');
+        return this.get('courses.list.' + course + '.code');
     }
 
     getInstructorsList() {
@@ -792,7 +789,7 @@ class AppState {
     }
 
     removeInstructor(courseId, index) {
-        let val = this.get('courses.list[' + courseId + '].instructors').toJS();
+        let val = this.get('courses.list.' + courseId + '.instructors').toJS();
         val.splice(index, 1);
         fetch.updateCourse(courseId, { instructors: val }, 'instructors');
     }
@@ -922,7 +919,7 @@ class AppState {
         if (input === undefined) {
             input = '';
         }
-        this.set('courses.list[' + courseId + '].instructor_input', fromJS(input));
+        this.set('courses.list.' + courseId + '.instructor_input', fromJS(input));
         let visible_input = document.getElementById('input_' + courseId);
         visible_input.innerHTML = input;
     }

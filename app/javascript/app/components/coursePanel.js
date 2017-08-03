@@ -222,7 +222,7 @@ const AssignedApplicantTable = props =>
     <ApplicantTable
         config={props.config}
         assigned={true}
-        course={parseInt(props.course)}
+        course={props.course}
         getApplicants={() => props.getApplicantsAssignedToCourse(props.course)}
         rowId={p => p.course + '-' + p.applicantId + '-1'}
     />;
@@ -231,7 +231,7 @@ const UnassignedApplicantTable = props =>
     <ApplicantTable
         config={props.config}
         assigned={false}
-        course={parseInt(props.course)}
+        course={props.course}
         getApplicants={() => props.getApplicantsToCourseUnassigned(props.course)}
         getSelectedSortFields={() => props.getCoursePanelSortsByCourse(props.course)}
         getSelectedFilters={() => props.getCoursePanelFiltersByCourse(props.course)}

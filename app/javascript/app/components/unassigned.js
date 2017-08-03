@@ -99,7 +99,7 @@ class Unassigned extends React.Component {
                                     bsSize="xsmall"
                                     style={{ borderColor: '#555' }}
                                     onClick={() =>
-                                        this.props.setSelectedCourses([pref.positionId])}>
+                                        this.props.selectSingleCourse(pref.positionId)}>
                                     {this.props.getCourseCodeById(pref.positionId)}
                                 </Button>
                             </Link>

@@ -98,7 +98,7 @@ class Assigned extends React.Component {
                                 <Button
                                     bsSize="xsmall"
                                     style={{ borderColor: '#555' }}
-                                    onClick={() => this.props.setSelectedCourses([ass.positionId])}>
+                                    onClick={() => this.props.selectSingleCourse(ass.positionId)}>
                                     {this.props.getCourseCodeById(
                                         ass.positionId
                                     )}&nbsp;&middot;&nbsp;{ass.hours}
