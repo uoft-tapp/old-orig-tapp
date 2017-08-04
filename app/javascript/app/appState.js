@@ -635,7 +635,9 @@ class AppState {
     }
 
     getApplicantById(applicant) {
-        return this.getApplicantsList().get(applicant);
+        // Note: toString() is a hack because our components think that course IDs are numbers but Immutable
+        // thinks they are strings
+        return this.getApplicantsList().get(applicant.toString());
     }
 
     getApplicantsInSelectedRound() {
@@ -691,14 +693,18 @@ class AppState {
     getApplicationById(applicant) {
         // applications should already be filtered by round, so the applicant should only have
         // one application
-        return this.getApplicationsList().get(applicant).first();
+        // Note: toString() is a hack because our components think that course IDs are numbers but Immutable
+        // thinks they are strings
+        return this.getApplicationsList().get(applicant.toString()).first();
     }
 
     // check whether this course is a preference for this applicant
     getApplicationPreference(applicant, course) {
         // applications should already be filtered by round, so the applicant should only have
         // one application
-        let prefs = this.getApplicationsList().get(applicant).first().get('prefs');
+        // Note: toString() is a hack because our components think that course IDs are numbers but Immutable
+        // thinks they are strings
+        let prefs = this.getApplicationsList().get(applicant.toString()).first().get('prefs');
 
         return prefs.some(pref => pref.get('positionId') == course && pref.get('preferred'));
     }
@@ -745,7 +751,9 @@ class AppState {
     }
 
     getAssignmentByApplicant(applicant, course) {
-        let assignments = this.getAssignmentsList().get(applicant);
+        // Note: toString() is a hack because our components think that course IDs are numbers but Immutable
+        // thinks they are strings
+        let assignments = this.getAssignmentsList().get(applicant.toString());
 
         if (assignments) {
             return assignments.find(ass => ass.get('positionId') == course);
@@ -755,7 +763,9 @@ class AppState {
     }
 
     getAssignmentsByApplicant(applicant) {
-        let assignments = this.getAssignmentsList().get(applicant);
+        // Note: toString() is a hack because our components think that course IDs are numbers but Immutable
+        // thinks they are strings
+        let assignments = this.getAssignmentsList().get(applicant.toString());
 
         if (assignments) {
             return assignments;
@@ -774,6 +784,8 @@ class AppState {
                 assignments
                     .map(
                         // filter out assignments where the course is in the selected round
+                        // Note: toString() is a hack because our components think that course IDs are
+                        // numbers but Immutable thinks they are strings
                         applicant =>
                             applicant.filter(assignment =>
                                 courses.has(assignment.get('positionId').toString())
@@ -800,7 +812,9 @@ class AppState {
     }
 
     getCourseById(course) {
-        return this.getCoursesList().get(course);
+        // Note: toString() is a hack because our components think that course IDs are numbers but Immutable
+        // thinks they are strings
+        return this.getCoursesList().get(course.toString());
     }
 
     // get a sorted list of course codes
@@ -809,7 +823,9 @@ class AppState {
     }
 
     getCourseCodeById(course) {
-        return this.getCoursesList().get(course + '.code');
+        // Note: toString() is a hack because our components think that course IDs are numbers but Immutable
+        // thinks they are strings
+        return this.getCoursesList().get(course.toString()).get('code');
     }
 
     getCoursesInSelectedRound() {
@@ -892,7 +908,9 @@ class AppState {
     }
 
     removeInstructor(courseId, index) {
-        let val = this.getCoursesList().get(courseId + '.instructors').toJS();
+        // Note: toString() is a hack because our components think that course IDs are numbers but Immutable
+        // thinks they are strings
+        let val = this.getCoursesList().get(courseId.toString()).get('instructors').toJS();
         val.splice(index, 1);
         fetch.updateCourse(courseId, { instructors: val }, 'instructors');
     }

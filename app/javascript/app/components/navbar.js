@@ -90,7 +90,7 @@ const CoursePanelLayoutTabs = props => {
 };
 
 const Round = props => {
-    if (props.isCoursesListNull() || props.fetchingCourses()) {
+    if (props.isCoursesListNull()) {
         return null;
     }
 
