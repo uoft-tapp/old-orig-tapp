@@ -91,24 +91,7 @@ class AppState {
 
         // getter for appState object
         this.get = function(property) {
-            let result = _data.getIn(parsePath(property));
-
-            // apply round-based filters
-            switch (property) {
-                case 'applicants.list':
-                    return this.getApplicantsInSelectedRound(result);
-
-                case 'applications.list':
-                    return this.getApplicationsInSelectedRound(result);
-
-                case 'assignments.list':
-                    return this.getAssignmentsInSelectedRound(result);
-
-                case 'courses.list':
-                    return this.getCoursesInSelectedRound(result);
-            }
-
-            return result;
+            return _data.getIn(parsePath(property));
         };
 
         // setters for appState object
@@ -569,7 +552,7 @@ class AppState {
      ******************************/
 
     addInstructor(courseId, instructorId) {
-        let val = this.get('courses.list.' + courseId + '.instructors').toJS();
+        let val = this.getCoursesList().get(courseId + '.instructors').toJS();
         val.push(parseInt(instructorId));
         fetch.updateCourse(courseId, { instructors: val }, 'instructors');
     }
@@ -594,81 +577,6 @@ class AppState {
             this.get('applications.list'),
             this.get('assignments.list'),
         ].some(val => val == null);
-    }
-
-    getApplicantsInSelectedRound(applicants) {
-        let round = this.get('selectedRound'),
-            applications = this.get('applications.list');
-
-        if (round && applicants) {
-            // list of applications should already be filtered by round
-            return applicants.filter((_, id) => applications.has(id));
-        } else {
-            // all rounds displayed and/or no applicants exist
-            return applicants;
-        }
-    }
-
-    getApplicationsInSelectedRound(applications) {
-        let round = this.get('selectedRound'),
-            courses = this.get('courses.list'); // list of courses should already be filtered by round
-
-        if (round && applications) {
-            return (
-                applications
-                    .map(applicant =>
-                        applicant.filter(
-                            // filter out applications where at least one course was applied for, and the first course
-                            // applied to is in the selected round
-                            // note: this assumes that, if all courses in the application are in the same round
-                            application =>
-                                application.get('prefs').size == 0 ||
-                                courses.has(
-                                    application.get('prefs').first().get('positionId').toString()
-                                )
-                        )
-                    )
-                    // filter out applicants who have no applications in the selected round
-                    .filter(applicant => applicant.size > 0)
-            );
-        } else {
-            // all rounds displayed and/or no applications exist
-            return applications;
-        }
-    }
-
-    getAssignmentsInSelectedRound(assignments) {
-        let round = this.get('selectedRound'),
-            courses = this.get('courses.list'); // list of courses should already be filtered by round
-
-        if (round && assignments) {
-            return (
-                assignments
-                    .map(
-                        // filter out assignments where the course is in the selected round
-                        applicant =>
-                            applicant.filter(assignment =>
-                                courses.has(assignment.get('positionId').toString())
-                            )
-                    )
-                    // filter out applicants who have no assignments to course(s) in the selected round
-                    .filter(applicant => applicant.size > 0)
-            );
-        } else {
-            // all rounds displayed and/or no assignments exist
-            return assignments;
-        }
-    }
-
-    getCoursesInSelectedRound(courses) {
-        let round = this.get('selectedRound');
-
-        if (round && courses) {
-            return courses.filter(course => course.get('round') == round);
-        } else {
-            // all rounds displayed and/or no courses exist
-            return courses;
-        }
     }
 
     // create a new assignment
@@ -712,22 +620,10 @@ class AppState {
         return this.get('instructors.fetching') > 0;
     }
 
-    filterApplicantsByRound() {
-        let round = this.get('selectedRound'),
-            applicants = this.get('applicants.list'),
-            applications = this.get('applications.list');
-
-        if (round) {
-        } else {
-            // all rounds displayed, so return the entire list
-            return this.get('applicants.list');
-        }
-    }
-
     // get applicants who are assigned to course; returns a list of [applicantID, applicantData]
     getApplicantsAssignedToCourse(course) {
-        let assignments = this.get('assignments.list'),
-            applicants = this.get('applicants.list');
+        let assignments = this.getAssignmentsList(),
+            applicants = this.getApplicantsList();
 
         return applicants
             .filter(
@@ -739,30 +635,43 @@ class AppState {
     }
 
     getApplicantById(applicant) {
-        return this.get('applicants.list.' + applicant);
+        return this.getApplicantsList().get(applicant);
+    }
+
+    getApplicantsInSelectedRound() {
+        let round = this.get('selectedRound'),
+            applicants = this.get('applicants.list'),
+            applications = this.getApplicationsInSelectedRound();
+
+        if (round && applicants) {
+            return applicants.filter((_, id) => applications.has(id));
+        } else {
+            // all rounds displayed and/or no applicants exist
+            return applicants;
+        }
     }
 
     getApplicantsList() {
-        return this.get('applicants.list');
+        return this.getApplicantsInSelectedRound();
     }
 
     // get applicants who have applied to course; returns a list of [applicantID, applicantData]
     getApplicantsToCourse(course) {
-        let applications = this.get('applications.list').filter(applicant =>
+        let applications = this.getApplicationsList().filter(applicant =>
             applicant.some(application =>
                 application.get('prefs').some(pref => pref.get('positionId') == course)
             )
         );
 
-        return this.get('applicants.list').filter((_, id) => applications.has(id)).entrySeq();
+        return this.getApplicantsList().filter((_, id) => applications.has(id)).entrySeq();
     }
 
     // get applicants to course who are not assigned to it; returns a list of [applicantID, applicantData]
     getApplicantsToCourseUnassigned(course) {
-        let assignments = this.get('assignments.list'),
-            applicants = this.get('applicants.list');
+        let assignments = this.getAssignmentsList(),
+            applicants = this.getApplicantsList();
 
-        let applications = this.get('applications.list')
+        let applications = this.getApplicationsList()
             // get applications to course
             .filter(applicant =>
                 applicant.some(application =>
@@ -782,32 +691,61 @@ class AppState {
     getApplicationById(applicant) {
         // applications should already be filtered by round, so the applicant should only have
         // one application
-        return this.get('applications.list').get(applicant).first();
+        return this.getApplicationsList().get(applicant).first();
     }
 
     // check whether this course is a preference for this applicant
     getApplicationPreference(applicant, course) {
         // applications should already be filtered by round, so the applicant should only have
         // one application
-        let prefs = this.get('applications.list').get(applicant).first().get('prefs');
+        let prefs = this.getApplicationsList().get(applicant).first().get('prefs');
 
         return prefs.some(pref => pref.get('positionId') == course && pref.get('preferred'));
     }
 
+    getApplicationsInSelectedRound() {
+        let round = this.get('selectedRound'),
+            applications = this.get('applications.list'),
+            courses = this.getCoursesInSelectedRound();
+
+        if (round && applications) {
+            return (
+                applications
+                    .map(applicant =>
+                        applicant.filter(
+                            // filter out applications where at least one course was applied for, and the first course
+                            // applied to is in the selected round
+                            // note: this assumes that, if all courses in the application are in the same round
+                            application =>
+                                application.get('prefs').size == 0 ||
+                                courses.has(
+                                    application.get('prefs').first().get('positionId').toString()
+                                )
+                        )
+                    )
+                    // filter out applicants who have no applications in the selected round
+                    .filter(applicant => applicant.size > 0)
+            );
+        } else {
+            // all rounds displayed and/or no applications exist
+            return applications;
+        }
+    }
+
     getApplicationsList() {
-        return this.get('applications.list');
+        return this.getApplicationsInSelectedRound();
     }
 
     // get all applicants who have been assigned to a course; returns a list of [applicantID, applicantData]
     getAssignedApplicants() {
-        let assignments = this.get('assignments.list'),
-            applicants = this.get('applicants.list');
+        let assignments = this.getAssignmentsList(),
+            applicants = this.getApplicantsList();
 
         return assignments.map((_, applicant) => applicants.get(applicant)).entrySeq();
     }
 
     getAssignmentByApplicant(applicant, course) {
-        let assignments = this.get('assignments.list.' + applicant);
+        let assignments = this.getAssignmentsList().get(applicant);
 
         if (assignments) {
             return assignments.find(ass => ass.get('positionId') == course);
@@ -817,7 +755,7 @@ class AppState {
     }
 
     getAssignmentsByApplicant(applicant) {
-        let assignments = this.get('assignments.list.' + applicant);
+        let assignments = this.getAssignmentsList().get(applicant);
 
         if (assignments) {
             return assignments;
@@ -826,32 +764,68 @@ class AppState {
         }
     }
 
+    getAssignmentsInSelectedRound() {
+        let round = this.get('selectedRound'),
+            assignments = this.get('assignments.list'),
+            courses = this.getCoursesInSelectedRound();
+
+        if (round && assignments) {
+            return (
+                assignments
+                    .map(
+                        // filter out assignments where the course is in the selected round
+                        applicant =>
+                            applicant.filter(assignment =>
+                                courses.has(assignment.get('positionId').toString())
+                            )
+                    )
+                    // filter out applicants who have no assignments to course(s) in the selected round
+                    .filter(applicant => applicant.size > 0)
+            );
+        } else {
+            // all rounds displayed and/or no assignments exist
+            return assignments;
+        }
+    }
+
     getAssignmentsList() {
-        return this.get('assignments.list');
+        return this.getAssignmentsInSelectedRound();
     }
 
     // get the current number of assignments to course
     getCourseAssignmentCount(course) {
-        return this.get('assignments.list').filter(applicant =>
+        return this.getAssignmentsList().filter(applicant =>
             applicant.some(ass => ass.get('positionId') == course)
         ).size;
     }
 
-    getCoursesList() {
-        return this.get('courses.list');
-    }
-
     getCourseById(course) {
-        return this.get('courses.list.' + course);
+        return this.getCoursesList().get(course);
     }
 
     // get a sorted list of course codes
     getCourseCodes() {
-        return this.get('courses.list').valueSeq().map(course => course.get('code')).sort();
+        return this.getCoursesList().valueSeq().map(course => course.get('code')).sort();
     }
 
     getCourseCodeById(course) {
-        return this.get('courses.list.' + course + '.code');
+        return this.getCoursesList().get(course + '.code');
+    }
+
+    getCoursesInSelectedRound() {
+        let round = this.get('selectedRound'),
+            courses = this.get('courses.list');
+
+        if (round && courses) {
+            return courses.filter(course => course.get('round') == round);
+        } else {
+            // all rounds displayed and/or no courses exist
+            return courses;
+        }
+    }
+
+    getCoursesList() {
+        return this.getCoursesInSelectedRound();
     }
 
     getInstructorsList() {
@@ -860,13 +834,13 @@ class AppState {
 
     // get a list of all rounds for all courses
     getRounds() {
-        return this.get('courses').get('list').map(course => course.get('round')).flip().keySeq();
+        return this.get('courses.list').map(course => course.get('round')).flip().keySeq();
     }
 
     // get all applicants who have not been assigned to a course; returns a list of [applicantID, applicantData]
     getUnassignedApplicants() {
-        let assignments = this.get('assignments.list'),
-            applicants = this.get('applicants.list');
+        let assignments = this.getAssignmentsList(),
+            applicants = this.getApplicantsList();
 
         applicants = applicants.withMutations(map => {
             assignments.reduce((result, _, app) => result.delete(app), map);
@@ -918,7 +892,7 @@ class AppState {
     }
 
     removeInstructor(courseId, index) {
-        let val = this.get('courses.list.' + courseId + '.instructors').toJS();
+        let val = this.getCoursesList().get(courseId + '.instructors').toJS();
         val.splice(index, 1);
         fetch.updateCourse(courseId, { instructors: val }, 'instructors');
     }
