@@ -60,7 +60,6 @@ const Utilities = props => {
 };
 
 // form for importing data from a file and persisting it to the database
-
 class ImportForm extends React.Component {
     loadFile() {
         let files = document.getElementById('import').files;
@@ -97,7 +96,7 @@ class ImportForm extends React.Component {
         };
         reader.readAsText(file);
     }
-    
+
     render() {
         return (
             <Form inline>
@@ -139,26 +138,23 @@ class ExportForm extends React.Component {
             let route;
             if (format == 'csv') {
                 // export offers in CSV format
-                route = '/export/' + data;
-            } else {
-                // export offers in JSON format
-                /*** Note: this will need to be changed when round IDs are incorporated! ***/
-                route = '/export/chass/110';// + this.props.getSelectedRound();
-            }
-
-            if (
+                window.open('/export/offers');
+            } else if (
                 confirm(
                     'This will lock all exported assignments.\nAre you sure you want to proceed?'
                 )
             ) {
-                window.open(route);
+                // export offers in JSON format
+                this.props.exportOffers();
             }
         } else {
             // export other data in CS
             if (format == 'csv') {
                 window.open('/export/' + data);
             } else {
-                this.props.alert('<b>Export JSON</b> This functionality is not currently supported.');
+                this.props.alert(
+                    '<b>Export JSON</b> This functionality is not currently supported.'
+                );
             }
         }
     }
@@ -327,6 +323,7 @@ const PerCourseStats = props => {
         </tr>
     );
 };
+
 const chassFormat = `{
     "courses": [
       {
