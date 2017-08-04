@@ -388,6 +388,18 @@ function unlockAssignment(applicant, assignment) {
         .catch(() => appState.setFetchingAssignmentsList(false));
 }
 
+// export offers from CHASS (locking the corresponding assignments)
+function exportOffers(round) {
+    appState.setFetchingAssignmentsList(true);
+
+    return getHelper('/export/chass/' + (round ? round : ''), getAssignments)
+        .then(assignments => {
+            appState.setAssignmentsList(assignments);
+            appState.successFetchingAssignmentsList();
+        })
+        .catch(() => appState.setFetchingAssignmentsList(false));
+}
+
 export {
     fetchAll,
     postAssignment,
@@ -396,5 +408,6 @@ export {
     updateCourse,
     noteApplicant,
     importChass,
-    unlockAssignment
+    unlockAssignment,
+    exportOffers,
 };

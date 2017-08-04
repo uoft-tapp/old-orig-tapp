@@ -577,6 +577,12 @@ class AppState {
         fetch.deleteAssignment(applicant, assignment);
     }
 
+    /*** NEEDS UPDATING WITH ROUNDS ***/
+    // export current assignments
+    exportOffers() {
+        fetch.exportOffers(110);
+    }
+
     // check if applicants are being fetched
     fetchingApplicants() {
         return this.get('applicants.fetching') > 0;
