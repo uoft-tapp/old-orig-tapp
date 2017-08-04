@@ -70,7 +70,7 @@ class ImportForm extends React.Component {
             if (files[0].type == 'application/json') {
                 if (confirm(message)) {
                     let importChass = this.props.importChass;
-                    let waitAlert = () => this.props.notify('<i>Import in Progress...</i>');
+                    let waitAlert = () => this.props.notify('<i>Import in progress...</i>');
                     let chassAlert = () => this.props.alert('Error: This is not a CHASS JSON.');
                     this.uploadFile(files[0], importChass, waitAlert, chassAlert);
                 }
@@ -142,8 +142,8 @@ class ExportForm extends React.Component {
                 route = '/export/' + data;
             } else {
                 // export offers in JSON format
-                // this will be non-functional until round IDs are incorporated!
-                route = '/export/chass/' + this.props.getSelectedRound();
+                /*** Note: this will need to be changed when round IDs are incorporated! ***/
+                route = '/export/chass/110';// + this.props.getSelectedRound();
             }
 
             if (
