@@ -779,15 +779,17 @@ class AppState {
         return applications.map((_, applicant) => applicants.get(applicant)).entrySeq();
     }
 
-    /*** NEEDS UPDATING WITH ROUNDS ***/
     getApplicationById(applicant) {
-        return this.get('applications.list.' + applicant + '[0]');
+        // applications should already be filtered by round, so the applicant should only have
+        // one application
+        return this.get('applications.list').get(applicant).first();
     }
 
-    /*** NEEDS UPDATING WITH ROUNDS ***/
     // check whether this course is a preference for this applicant
     getApplicationPreference(applicant, course) {
-        let prefs = this.get('applications.list.' + applicant + '[0].prefs');
+        // applications should already be filtered by round, so the applicant should only have
+        // one application
+        let prefs = this.get('applications.list').get(applicant).first().get('prefs');
 
         return prefs.some(pref => pref.get('positionId') == course && pref.get('preferred'));
     }
