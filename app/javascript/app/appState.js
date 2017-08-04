@@ -91,7 +91,24 @@ class AppState {
 
         // getter for appState object
         this.get = function(property) {
-            return _data.getIn(parsePath(property));
+            let result = _data.getIn(parsePath(property));
+
+            // apply round-based filters
+            switch (property) {
+                case 'applicants.list':
+                    return this.getApplicantsInSelectedRound(result);
+
+                case 'applications.list':
+                    return this.getApplicationsInSelectedRound(result);
+
+                case 'assignments.list':
+                    return this.getAssignmentsInSelectedRound(result);
+
+                case 'courses.list':
+                    return this.getCoursesInSelectedRound(result);
+            }
+
+            return result;
         };
 
         // setters for appState object
@@ -579,6 +596,81 @@ class AppState {
         ].some(val => val == null);
     }
 
+    getApplicantsInSelectedRound(applicants) {
+        let round = this.get('selectedRound'),
+            applications = this.get('applications.list');
+
+        if (round && applicants) {
+            // list of applications should already be filtered by round
+            return applicants.filter((_, id) => applications.has(id));
+        } else {
+            // all rounds displayed and/or no applicants exist
+            return applicants;
+        }
+    }
+
+    getApplicationsInSelectedRound(applications) {
+        let round = this.get('selectedRound'),
+            courses = this.get('courses.list'); // list of courses should already be filtered by round
+
+        if (round && applications) {
+            return (
+                applications
+                    .map(applicant =>
+                        applicant.filter(
+                            // filter out applications where at least one course was applied for, and the first course
+                            // applied to is in the selected round
+                            // note: this assumes that, if all courses in the application are in the same round
+                            application =>
+                                application.get('prefs').size == 0 ||
+                                courses.has(
+                                    application.get('prefs').first().get('positionId').toString()
+                                )
+                        )
+                    )
+                    // filter out applicants who have no applications in the selected round
+                    .filter(applicant => applicant.size > 0)
+            );
+        } else {
+            // all rounds displayed and/or no applications exist
+            return applications;
+        }
+    }
+
+    getAssignmentsInSelectedRound(assignments) {
+        let round = this.get('selectedRound'),
+            courses = this.get('courses.list'); // list of courses should already be filtered by round
+
+        if (round && assignments) {
+            return (
+                assignments
+                    .map(
+                        // filter out assignments where the course is in the selected round
+                        applicant =>
+                            applicant.filter(assignment =>
+                                courses.has(assignment.get('positionId').toString())
+                            )
+                    )
+                    // filter out applicants who have no assignments to course(s) in the selected round
+                    .filter(applicant => applicant.size > 0)
+            );
+        } else {
+            // all rounds displayed and/or no assignments exist
+            return assignments;
+        }
+    }
+
+    getCoursesInSelectedRound(courses) {
+        let round = this.get('selectedRound');
+
+        if (round && courses) {
+            return courses.filter(course => course.get('round') == round);
+        } else {
+            // all rounds displayed and/or no courses exist
+            return courses;
+        }
+    }
+
     // create a new assignment
     createAssignment(applicant, course, hours) {
         fetch.postAssignment(applicant, course, hours);
@@ -612,6 +704,18 @@ class AppState {
     // check if instructors are being fetched
     fetchingInstructors() {
         return this.get('instructors.fetching') > 0;
+    }
+
+    filterApplicantsByRound() {
+        let round = this.get('selectedRound'),
+            applicants = this.get('applicants.list'),
+            applications = this.get('applications.list');
+
+        if (round) {
+        } else {
+            // all rounds displayed, so return the entire list
+            return this.get('applicants.list');
+        }
     }
 
     // get applicants who are assigned to course; returns a list of [applicantID, applicantData]
