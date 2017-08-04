@@ -860,7 +860,7 @@ class AppState {
 
     // get a list of all rounds for all courses
     getRounds() {
-        return this.get('courses.list').map(course => course.get('round')).flip().keySeq();
+        return this.get('courses').get('list').map(course => course.get('round')).flip().keySeq();
     }
 
     // get all applicants who have not been assigned to a course; returns a list of [applicantID, applicantData]
