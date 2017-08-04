@@ -22,6 +22,9 @@ const initialState = {
     // applicant to display in applicant view
     selectedApplicant: null,
 
+    // application round to display
+    selectedRound: null,
+
     // ABC view
     abcView: {
         selectedCourses: [],
@@ -264,6 +267,10 @@ class AppState {
         return this.get('nav.selectedTab');
     }
 
+    getSelectedRound() {
+        return this.get('selectedRound');
+    }
+
     // return the name of the appState component that corresponds to the currently selected view
     getSelectedViewStateComponent() {
         switch (this.get('nav.selectedTab')) {
@@ -358,6 +365,11 @@ class AppState {
     // select a navbar tab
     selectNavTab(eventKey) {
         this.set('nav.selectedTab', eventKey);
+    }
+
+    // select a round to display
+    selectRound(round) {
+        this.set('selectedRound', round);
     }
 
     // set the course panel layout in the ABC view
@@ -721,7 +733,7 @@ class AppState {
         return this.get('courses.list.' + course);
     }
 
-    // return a sorted list of course codes
+    // get a sorted list of course codes
     getCourseCodes() {
         return this.get('courses.list').valueSeq().map(course => course.get('code')).sort();
     }
@@ -732,6 +744,11 @@ class AppState {
 
     getInstructorsList() {
         return this.get('instructors.list');
+    }
+
+    // get a list of all rounds for all courses
+    getRounds() {
+        return this.get('courses.list').map(course => course.get('round')).flip().keySeq();
     }
 
     // get all applicants who have not been assigned to a course; returns a list of [applicantID, applicantData]

@@ -89,6 +89,44 @@ const CoursePanelLayoutTabs = props => {
     return null;
 };
 
+const Round = props => {
+    if (props.isCoursesListNull() || props.fetchingCourses()) {
+        return null;
+    }
+
+    let selectedRound = props.getSelectedRound();
+
+    return (
+        <NavDropdown
+            title={
+                <span
+                    style={{
+                        color: '#fff',
+                        backgroundColor: '#5bc0de',
+                        padding: '6px 12px',
+                        borderRadius: '4px',
+                    }}>
+                    {selectedRound ? 'Round ' + selectedRound : 'All Rounds'}
+                </span>
+            }
+            noCaret
+            id="nav-round-dropdown"
+            onSelect={eventKey => props.selectRound(eventKey)}>
+            {selectedRound &&
+                <MenuItem eventKey={null} key="all">
+                    All Rounds
+                </MenuItem>}
+            {props.getRounds().map(
+                round =>
+                    round != selectedRound &&
+                    <MenuItem eventKey={round} key={round}>
+                        Round {round}
+                    </MenuItem>
+            )}
+        </NavDropdown>
+    );
+};
+
 const Notifications = props => {
     let notifications = props.getUnreadNotifications();
 
@@ -114,38 +152,33 @@ const Notifications = props => {
     );
 };
 
-const Auth = props => {
-    return (
-        <NavDropdown
-            eventKey={routeConfig.logout.id}
-            title={props.getCurrentUserRole() + ':' + props.getCurrentUserName()}
-            id="nav-auth-dropdown">
-            <MenuItem eventKey={routeConfig.logout.id + '.1'} href={routeConfig.logout.route}>
-                Logout
-            </MenuItem>
-        </NavDropdown>
-    );
-};
+const Auth = props =>
+    <NavDropdown
+        eventKey={routeConfig.logout.id}
+        title={props.getCurrentUserRole() + ':' + props.getCurrentUserName()}
+        id="nav-auth-dropdown">
+        <MenuItem eventKey={routeConfig.logout.id + '.1'} href={routeConfig.logout.route}>
+            Logout
+        </MenuItem>
+    </NavDropdown>;
 
 /*** Navbar ***/
 
-const NavbarInst = props => {
-    return (
-        <Navbar fixedTop fluid>
-            <Navbar.Header>
-                <Navbar.Brand>TAPP</Navbar.Brand>
-            </Navbar.Header>
+const NavbarInst = props =>
+    <Navbar fixedTop fluid>
+        <Navbar.Header>
+            <Navbar.Brand>TAPP</Navbar.Brand>
+        </Navbar.Header>
 
-            <ViewTabs {...props} />
+        <ViewTabs {...props} />
 
-            <Nav pullRight>
-                {props.getSelectedNavTab() == routeConfig.abc.id &&
-                    <CoursePanelLayoutTabs {...props} />}
-                <Notifications {...props} />
-                <Auth {...props} />
-            </Nav>
-        </Navbar>
-    );
-};
+        <Nav pullRight>
+            {props.getSelectedNavTab() == routeConfig.abc.id &&
+                <CoursePanelLayoutTabs {...props} />}
+            <Round {...props} />
+            <Notifications {...props} />
+            <Auth {...props} />
+        </Nav>
+    </Navbar>;
 
 export { NavbarInst as Navbar };
