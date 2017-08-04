@@ -392,7 +392,7 @@ function unlockAssignment(applicant, assignment) {
 function exportOffers(round) {
     appState.setFetchingAssignmentsList(true);
 
-    return getHelper('/export/chass/' + (round ? round : ''), getAssignments)
+    return getHelper('/export/chass/' + round, getAssignments)
         .then(assignments => {
             appState.setAssignmentsList(assignments);
             appState.successFetchingAssignmentsList();
