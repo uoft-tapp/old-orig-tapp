@@ -94,6 +94,12 @@ const Round = props => {
         return null;
     }
 
+    // colours which will be mapped to rounds
+    // (approx. one colour selected from each colour group on https://www.w3schools.com/colors/colors_groups.asp)
+    let palette = ['#C71585','#4B0082','#8B0000','#FF4500','#006400','#008080','000080','#0000FF',
+                   '#8B4513','#2F4F4F'];
+    
+    let rounds = props.getRounds();
     let selectedRound = props.getSelectedRound();
 
     return (
@@ -102,7 +108,7 @@ const Round = props => {
                 <span
                     style={{
                         color: '#fff',
-                        backgroundColor: '#5bc0de',
+                        backgroundColor: selectedRound ? palette[rounds.indexOf(selectedRound)] : '#5BC0DE',
                         padding: '6px 12px',
                         borderRadius: '4px',
                     }}>
@@ -116,7 +122,7 @@ const Round = props => {
                 <MenuItem eventKey={null} key="all">
                     All Rounds
                 </MenuItem>}
-            {props.getRounds().map(
+            {rounds.map(
                 round =>
                     round != selectedRound &&
                     <MenuItem eventKey={round} key={round}>
