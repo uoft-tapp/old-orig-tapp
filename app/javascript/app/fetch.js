@@ -258,7 +258,7 @@ function fetchAll() {
             appState.successFetchingApplicationsList();
         })
         .catch(() => appState.setFetchingApplicationsList(false));
-    
+
     // when assignments are successfully fetched, update the assignments list; set fetching flag to false either way
     assignmentsPromise
         .then(assignments => {
@@ -266,7 +266,7 @@ function fetchAll() {
             appState.successFetchingAssignmentsList();
         })
         .catch(() => appState.setFetchingAssignmentsList(false));
-    
+
     // when courses are successfully fetched, update the courses list; set fetching flag to false either way
     coursesPromise
         .then(courses => {
@@ -356,14 +356,9 @@ function updateCourse(courseId, data, attr) {
 
 // send CHASS data
 function importChass(data) {
-    return postHelper(
-        '/import/chass',
-        data,
-        showMessageInJsonBody,
-        showMessageInJsonBody
-    ).then(() => {
-        fetchAll();
-    });
+    return postHelper('/import/chass', data, showMessageInJsonBody, showMessageInJsonBody).then(
+        fetchAll
+    );
 }
 
 // extract and display a message which is sent in the (JSON) body of a response
@@ -392,7 +387,6 @@ function unlockAssignment(applicant, assignment) {
         })
         .catch(() => appState.setFetchingAssignmentsList(false));
 }
-
 
 export {
     fetchAll,

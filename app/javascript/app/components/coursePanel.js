@@ -25,7 +25,7 @@ class CoursePanel extends React.Component {
                                                 'This will unlock an assignment that has already been exported.\nAre you sure?'
                                             )
                                         ) {
-                                            props.unlockAssignment(assignment.id);
+                                            props.unlockAssignment(p.applicantId, assignment.id);
                                         }
                                     }}
                                 />

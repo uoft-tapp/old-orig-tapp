@@ -110,7 +110,7 @@ const AssignmentRow = props =>
                                       'This will unlock an assignment that has already been exported.\nAre you sure?'
                                   )
                               ) {
-                                  props.unlockAssignment(props.assignment.id);
+                                  props.unlockAssignment(props.applicant, props.assignment.id);
                               }
                           }}
                       />

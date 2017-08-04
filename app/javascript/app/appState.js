@@ -893,8 +893,8 @@ class AppState {
         fetch.updateAssignmentHours(applicant, assignment, hours);
     }
 
-    unlockAssignment(assignment) {
-        fetch.unlockAssignment(assignment);
+    unlockAssignment(applicant, assignment) {
+        fetch.unlockAssignment(applicant, assignment);
     }
 
     updateCourse(courseId, val, props) {
