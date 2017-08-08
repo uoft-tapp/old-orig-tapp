@@ -294,7 +294,7 @@ RSpec.describe AssignmentsController, type: :controller do
     end
 
     context "when hours is a non integer parameter" do
-        it "hours is a non integer parameter returns a 422 status" do
+        it "returns a 422 status" do
         patch :update, params: { applicant_id: @applicant.id, id: @assignment.id, hours: "poops"}
         expect(response.status).to eq(422)
       end
