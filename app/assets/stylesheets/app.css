@@ -189,8 +189,12 @@ footer div p {
     width: 100%;
 }
 
-#applicant-modal .panel_table td {
-    padding-right: 50px;
+#applicant-modal .panel-heading {
+    padding: 5px 15px;
+}
+
+#applicant-modal .panel_table td + td {
+    padding-left: 40px;
     margin-top: 0;
     vertical-align: top;
 }
@@ -199,8 +203,8 @@ footer div p {
     margin-bottom: 0;
 }
 
-#applicant-modal .panel_table td p + p {
-    margin-top: 10px;
+#applicant-modal .panel_table tr + tr > td {
+    padding-top: 5px;
 }
 
 /* for course panel container in ABC view */

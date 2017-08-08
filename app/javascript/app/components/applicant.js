@@ -8,9 +8,8 @@ class Applicant extends React.Component {
 
         // applicant panels and their default expansion state
         this.defaultConfig = [
+            { label: 'Notes', expanded: true },
             { label: 'Personal Information', expanded: true },
-            { label: 'Current Status', expanded: true },
-            { label: 'Current Program Information', expanded: true },
             { label: 'Current Assignment Status', expanded: true },
             { label: 'Course Preferences', expanded: true },
             { label: 'Course Preferences (Raw Text)', expanded: false },
@@ -20,7 +19,6 @@ class Applicant extends React.Component {
             { label: 'Availability', expanded: true },
             { label: 'Other Information', expanded: true },
             { label: 'Special Needs Issues', expanded: true },
-            { label: 'Notes', expanded: true },
         ];
     }
 
@@ -42,12 +40,6 @@ class Applicant extends React.Component {
         switch (panel) {
             case 'Personal Information':
                 return <PersonalInfo applicant={this.props.applicantId} {...this.props} />;
-
-            case 'Current Status':
-                return <Status applicant={this.props.applicantId} {...this.props} />;
-
-            case 'Current Program Information':
-                return <ProgramInfo applicant={this.props.applicantId} {...this.props} />;
 
             case 'Current Assignment Status':
                 return <AssignmentForm {...this.props} />;
@@ -131,97 +123,68 @@ class Applicant extends React.Component {
 }
 
 const PersonalInfo = props => {
-    let applicant = props.getApplicantById(props.applicant);
+    let applicant = props.getApplicantById(props.applicant),
+        application = props.getApplicationById(props.applicant);
 
     return (
         <table className="panel_table">
             <tbody>
                 <tr>
                     <td>
-                        <p>
-                            <b>Last Name: </b>
-                            {applicant.lastName}
-                        </p>
-                        <p>
-                            <b>UTORid: </b>
-                            {applicant.utorid}
-                        </p>
-                        <p>
-                            <b>Email Address: </b>
-                            {applicant.email}
-                        </p>
-                        <p>
-                            <b>Phone Number: </b>
-                            {applicant.phone}
-                        </p>
+                        <b>Last Name:&ensp;</b>
+                        {applicant.lastName}
                     </td>
                     <td>
-                        <p>
-                            <b>First Name: </b>
-                            {applicant.firstName}
-                        </p>
-                        <p>
-                            <b>Student ID: </b>
-                            {applicant.studentNumber}
-                        </p>
+                        <b>First Name:&ensp;</b>
+                        {applicant.firstName}
                     </td>
                     <td>
-                        <p>
-                            <b>Address: </b>
-                        </p>
-                    </td>
-                    <td>
-                        {applicant.address != null &&
-                            applicant.address.split(/\\r*\\n/).map((part, key) =>
-                                <p key={key}>
-                                    {part}
-                                </p>
-                            )}
+                        <b>UTORid:&ensp;</b>
+                        {applicant.utorid}
                     </td>
                 </tr>
-            </tbody>
-        </table>
-    );
-};
-
-const Status = props => {
-    let application = props.getApplicationById(props.applicant);
-
-    return (
-        <table className="panel_table">
-            <tbody>
                 <tr>
                     <td>
-                        <b>Enrolled as a U of T graduate student for the TA session?&nbsp;</b>
-                        {application.academicAccess ? 'Yes' : 'No'}
+                        <b>Student ID:&ensp;</b>
+                        {applicant.studentNumber}
                     </td>
                     <td>
-                        <b>Completed a U of T TA training session?&nbsp;</b>
+                        <b>Email Address:&ensp;</b>
+                        {applicant.email}
+                    </td>
+                    <td>
+                        <b>Phone Number:&ensp;</b>
+                        {applicant.phone}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Enrolled as a U of T graduate student for the TA session?&ensp;</b>
+                        {true ? 'Yes' : 'No'}
+                    </td>
+                    <td>
+                        <b>Completed a U of T TA training session?&ensp;</b>
                         {application.taTraining ? 'Yes' : 'No'}
                     </td>
+                    <td>
+                        <b>
+                            Grant permission for the TA coordinator to access academic
+                            history?&ensp;
+                        </b>
+                        {application.academicAccess ? 'Yes' : 'No'}
+                    </td>
                 </tr>
-            </tbody>
-        </table>
-    );
-};
-
-const ProgramInfo = props => {
-    let applicant = props.getApplicantById(props.applicant);
-
-    return (
-        <table className="panel_table">
-            <tbody>
                 <tr>
                     <td>
-                        <b>Department: </b>
+                        <b>Department:&ensp;</b>
                         {applicant.dept}
                     </td>
                     <td>
-                        <b>Program: </b>
+                        <b>Program:&ensp;</b>
                         {applicant.program}
                     </td>
                     <td>
-                        <b>Year: </b>
+                        <b>Year:&ensp;</b>
                         {applicant.year}
                     </td>
                 </tr>
