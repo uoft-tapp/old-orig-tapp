@@ -86,9 +86,6 @@ class ABC extends React.Component {
         if (Math.floor(currLayout) != selected.length) {
             this.props.setCoursePanelLayout(selected.length);
         }
-
-        // check whether the appropriate panel fields exist for the selected courses and update as necessary
-        this.props.updateCoursePanelFields(selected);
     }
 
     selectThisTab() {
@@ -100,15 +97,27 @@ class ABC extends React.Component {
     componentWillMount() {
         this.selectThisTab();
 
+        // remove selected courses that are not part of the selected round if necessary
+        this.props.filterSelectedCourses();
+
         // generate a default layout for the selected courses if necessary
         this.generateDefaultLayout();
+
+        // check whether the appropriate panel fields exist for the selected courses and update if necessary
+        this.props.updateCoursePanelFields();
     }
 
     componentWillUpdate() {
         this.selectThisTab();
 
+        // remove selected courses that are not part of the selected round if necessary
+        this.props.filterSelectedCourses();
+
         // generate a default layout for the selected courses if necessary
         this.generateDefaultLayout();
+
+        // check whether the appropriate panel fields exist for the selected courses and update if necessary
+        this.props.updateCoursePanelFields();
     }
 
     render() {

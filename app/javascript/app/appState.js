@@ -222,6 +222,18 @@ class AppState {
         }
     }
 
+    // remove currently-selected courses that are not part of the currently-selected round
+    filterSelectedCourses() {
+        let selected = this.get('abcView.selectedCourses'),
+            courses = this.getCoursesList();
+
+        let newSelected = selected.filter(course => courses.has(course));
+
+        if (selected.size != newSelected.size) {
+            this.set('abcView.selectedCourses', newSelected);
+        }
+    }
+
     getAlerts() {
         return this.get('alerts');
     }
@@ -517,8 +529,9 @@ class AppState {
 
     // check whether a panelFields object exists for each of the currently selected courses
     // if not, create the appropriate panelFields
-    updateCoursePanelFields(selected) {
-        let panelFields = this.get('abcView.panelFields'),
+    updateCoursePanelFields() {
+        let selected = this.get('abcView.selectedCourses'),
+            panelFields = this.get('abcView.panelFields'),
             missingCourses = [];
 
         for (var course of selected.values()) {
