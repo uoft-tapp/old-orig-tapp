@@ -9,4 +9,14 @@ class SessionsController < ApplicationController
     session = Session.find(params[:id])
     render json: session.to_json
   end
+
+  def update
+    session = Session.find(params[:id])
+    session.update_attributes!(update_session)
+  end
+
+  private
+  def update_session
+    params.permit(:pay)
+  end
 end

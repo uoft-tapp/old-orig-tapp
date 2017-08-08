@@ -117,8 +117,7 @@ ActiveRecord::Schema.define(version: 20170728235659) do
     t.datetime "start_date"
     t.datetime "end_date"
     t.string "semester"
-    t.float "ug_pay"
-    t.float "sgs_pay"
+    t.float "pay", default: 0.0
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

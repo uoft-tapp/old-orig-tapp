@@ -36,4 +36,29 @@ RSpec.describe SessionsController, type: :controller do
     end
   end
 
+  describe "PATCH /sessions/:id" do
+    before(:each) do
+      expect(session[:pay]).to eq(0.0)
+    end
+
+    context "when a number" do
+      it "updates the session" do
+        patch :update, params: {id: session[:id], pay: 100}
+        session.reload
+        expect(response.status).to eq(204)
+        expect(session[:pay]).to eq(100)
+      end
+    end
+
+    context "when not a number" do
+      it "does not update the session" do
+        patch :update, params: {id: session[:id], pay: "poop"}
+        session.reload
+        expect(response.status).to eq(204)
+        expect(session[:pay]).to eq(0.0)
+      end
+    end
+  end
+
+
 end
