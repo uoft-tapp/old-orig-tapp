@@ -100,30 +100,12 @@ class ABC extends React.Component {
     componentWillMount() {
         this.selectThisTab();
 
-        // render this view with a specific course panel pre-selected
-        let selected = this.props.getSelectedCourses();
-        if (
-            this.props.selectedCourse &&
-            !(selected.length == 1 && selected[0] == this.props.selectedCourse)
-        ) {
-            this.props.setSelectedCourses([this.props.selectedCourse]);
-        }
-
         // generate a default layout for the selected courses if necessary
         this.generateDefaultLayout();
     }
 
     componentWillUpdate() {
         this.selectThisTab();
-
-        // render this view with a specific course panel pre-selected
-        let selected = this.props.getSelectedCourses();
-        if (
-            this.props.selectedCourse &&
-            !(selected.length == 1 && selected[0] == this.props.selectedCourse)
-        ) {
-            this.props.setSelectedCourses([this.props.selectedCourse]);
-        }
 
         // generate a default layout for the selected courses if necessary
         this.generateDefaultLayout();

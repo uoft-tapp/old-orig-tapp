@@ -372,15 +372,15 @@ class AppState {
         this.set('selectedRound', round);
     }
 
-    // set the course panel layout in the ABC view
-    setCoursePanelLayout(layout) {
-        this.set('abcView.panelLayout', layout);
-    }
-
     selectSingleCourse(course) {
         // Note: toString() is a hack because our components think that course IDs are numbers but Immutable
         // thinks they are strings
         this.set('abcView.selectedCourses', fromJS([course.toString()]));
+    }
+
+    // set the course panel layout in the ABC view
+    setCoursePanelLayout(layout) {
+        this.set('abcView.panelLayout', layout);
     }
 
     // change the number of hours of a temporary assignment
