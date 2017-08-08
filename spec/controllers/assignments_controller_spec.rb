@@ -283,17 +283,39 @@ RSpec.describe AssignmentsController, type: :controller do
         )
     end
 
-    it "hours is an integer parameter, update the assignment" do
-      patch :update, params: { applicant_id: @applicant.id, id: @assignment.id, hours: 90}
-      expect(response.status).to eq(200)
-      expect(parsed_body["applicant_id"]).to eq(@applicant.id)
-      expect(parsed_body["id"]).to eq(@assignment.id)
-      expect(parsed_body["hours"]).to eq(90)
+    context "when hours is an integer parameter" do
+      it "update the assignment" do
+        patch :update, params: { applicant_id: @applicant.id, id: @assignment.id, hours: 90}
+        expect(response.status).to eq(200)
+        expect(parsed_body["applicant_id"]).to eq(@applicant.id)
+        expect(parsed_body["id"]).to eq(@assignment.id)
+        expect(parsed_body["hours"]).to eq(90)
+      end
     end
 
-    it "hours is a non integer parameter returns a 422 status" do
-      patch :update, params: { applicant_id: @applicant.id, id: @assignment.id, hours: "poops"}
-      expect(response.status).to eq(422)
+    context "when hours is a non integer parameter" do
+        it "hours is a non integer parameter returns a 422 status" do
+        patch :update, params: { applicant_id: @applicant.id, id: @assignment.id, hours: "poops"}
+        expect(response.status).to eq(422)
+      end
+    end
+
+    context "when export_date is valid" do
+      it "updates the assignment" do
+        patch :update, params: { applicant_id: @applicant.id, id: @assignment.id, export_date: "2017-08-08T15:25:03.000Z"}
+        expect(response.status).to eq(200)
+        expect(parsed_body["applicant_id"]).to eq(@applicant.id)
+        expect(parsed_body["id"]).to eq(@assignment.id)
+        expect(parsed_body["export_date"]).to eq("2017-08-08T15:25:03.000Z")
+      end
+    end
+
+    context "when export_date is not valid" do
+      it "it does not update the assignment" do
+        patch :update, params: { applicant_id: @applicant.id, id: @assignment.id, export_date: "poops"}
+        expect(parsed_body["export_date"]).to eq(nil)
+        expect(response.status).to eq(200)
+      end
     end
 
   end
