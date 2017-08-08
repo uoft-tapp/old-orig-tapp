@@ -5,8 +5,7 @@ class CreateSessions < ActiveRecord::Migration[5.1]
       t.datetime :start_date
       t.datetime :end_date
       t.string :semester
-      t.float :ug_pay
-      t.float :sgs_pay
+      t.float :pay, default: 0.0
 
       t.timestamps
     end
