@@ -59,12 +59,14 @@ class CoursePanel extends React.Component {
             },
             {
                 header: 'Last Name',
-                // last name generates a modal of the applicant's individual page
+                // clicking last name generates a modal of the applicant's individual page
+                // icon is displayed beside last name if applicant has associated notes
                 data: p =>
                     <span
                         className="highlightOnHover"
                         onClick={() => props.selectApplicant(p.applicantId)}>
-                        {p.applicant.lastName}
+                        {p.applicant.lastName}&nbsp;
+                        {p.applicant.notes && <i className="fa fa-paperclip" />}
                     </span>,
                 sortData: p => p.applicant.lastName,
 
