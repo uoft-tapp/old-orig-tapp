@@ -23,7 +23,8 @@ class Assigned extends React.Component {
                     <span
                         className="highlightOnHover"
                         onClick={() => this.props.selectApplicant(p.applicantId)}>
-                        {p.applicant.lastName}
+                        {p.applicant.lastName}&nbsp;
+                        {p.applicant.notes && <i className="fa fa-paperclip" />}
                     </span>,
                 sortData: p => p.applicant.lastName,
 
