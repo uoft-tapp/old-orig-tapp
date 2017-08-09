@@ -5,7 +5,7 @@ class CourseForm extends React.Component {
     setForms(courses, instructors) {
         return Object.entries(courses).map(([id, course]) =>
             <ListGroupItem key={id}>
-                <a name={id} />
+                <a name={course.code} />
                 <table className="form_table">
                     <tbody>
                         <tr>
