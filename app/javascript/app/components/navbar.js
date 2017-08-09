@@ -94,21 +94,38 @@ const Round = props => {
         return null;
     }
 
+    let rounds = props.getRounds();
+    let selectedRound = props.getSelectedRound();
+
+    // add round-based rules to a new stylesheet
+    let style = document.createElement('style');
+
+    // if we previously created a stylesheet for these rules, replace it
+    let oldStyle = document.getElementsByTagName('style');
+    if (oldStyle.length > 0) {
+        document.head.replaceChild(style, oldStyle[0]);
+    } else {
+        document.head.appendChild(style);
+    }
+
     // colours which will be mapped to rounds
     // (approx. one colour selected from each colour group on https://www.w3schools.com/colors/colors_groups.asp)
     let palette = ['#C71585','#4B0082','#8B0000','#FF4500','#006400','#008080','000080','#0000FF',
                    '#8B4513','#2F4F4F'];
+
+    style.sheet.insertRule('.round-all {background-color: #5BC0DE}', 0);
     
-    let rounds = props.getRounds();
-    let selectedRound = props.getSelectedRound();
+    for (var i = 0; i < rounds.length; i++) {
+        style.sheet.insertRule('.round-' + rounds[i] + ' {background-color: ' + palette[i] + '}', 0);
+    }
 
     return (
         <NavDropdown
             title={
                 <span
+                    className={'round-' + (selectedRound ? selectedRound : 'all')}
                     style={{
                         color: '#fff',
-                        backgroundColor: selectedRound ? palette[rounds.indexOf(selectedRound)] : '#5BC0DE',
                         padding: '6px 12px',
                         borderRadius: '4px',
                     }}>
