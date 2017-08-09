@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Row, Col, ButtonToolbar, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { ApplicantTableMenu } from './applicantTableMenu.js';
-import { ApplicantTable } from './applicantTable.js';
+import { ApplicantTable } from './fixedApplicantTable.js';
 import { routeConfig } from '../routeConfig.js';
 
 class Assigned extends React.Component {
@@ -27,14 +27,14 @@ class Assigned extends React.Component {
                     </span>,
                 sortData: p => p.applicant.lastName,
 
-                style: () => ({ width: '10%' }),
+                width: 0.10,
             },
             {
                 header: 'First Name',
                 data: p => p.applicant.firstName,
                 sortData: p => p.applicant.firstName,
 
-                style: () => ({ width: '10%' }),
+                width: 0.10,
             },
             {
                 header: 'Dept.',
@@ -48,7 +48,7 @@ class Assigned extends React.Component {
                     p => p.applicant.dept != 'Computer Science',
                 ],
 
-                style: () => ({ width: '13%' }),
+                width: 0.13,
             },
             {
                 header: 'Prog.',
@@ -64,21 +64,21 @@ class Assigned extends React.Component {
                     p => p.applicant.program == 'UG',
                 ],
 
-                style: () => ({ width: '5%' }),
+                width: 0.05,
             },
             {
                 header: 'Year',
                 data: p => p.applicant.year,
                 sortData: p => p.applicant.year,
 
-                style: () => ({ width: '2%' }),
+                width: 0.02,
             },
             {
                 header: 'Email',
                 data: p => p.applicant.email,
                 sortData: p => p.applicant.email,
 
-                style: () => ({ width: '20%' }),
+                width: 0.20,
             },
             {
                 header: 'Course(s)',
@@ -115,6 +115,8 @@ class Assigned extends React.Component {
                         .getAssignmentsByApplicant(p.applicantId)
                         .some(pref => pref.positionId == key)
                 ),
+
+                width: 0.40,
             },
         ];
 

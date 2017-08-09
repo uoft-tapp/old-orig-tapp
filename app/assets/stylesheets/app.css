@@ -157,9 +157,9 @@ footer div p {
 }
 
 /* for ApplicantTable in Assigned/Unassigned view */
-#unassigned-grid .table-container,
-#assigned-grid .table-container {
-    margin-top: 1vh;
+#unassigned-grid .applicant-table-menu,
+#assigned-grid .applicant-table-menu {
+    margin-bottom: 1vh;
 }
 
 #unassigned-grid .table-body,
@@ -235,6 +235,12 @@ footer div p {
 }
 
 /* for ApplicantTables*/
+#unassigned-grid .public_fixedDataTableCell_cellContent,
+#assigned-grid .public_fixedDataTableCell_cellContent {
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+    
 .unassigned-table table,
 .assigned-table table {
     margin: 0;
