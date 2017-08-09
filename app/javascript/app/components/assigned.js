@@ -48,7 +48,7 @@ class Assigned extends React.Component {
                     p => p.applicant.dept != 'Computer Science',
                 ],
 
-                width: 0.13,
+                width: 0.10,
             },
             {
                 header: 'Prog.',
@@ -71,7 +71,7 @@ class Assigned extends React.Component {
                 data: p => p.applicant.year,
                 sortData: p => p.applicant.year,
 
-                width: 0.02,
+                width: 0.03,
             },
             {
                 header: 'Email',
@@ -116,7 +116,7 @@ class Assigned extends React.Component {
                         .some(pref => pref.positionId == key)
                 ),
 
-                width: 0.40,
+                width: 0.42,
             },
         ];
 

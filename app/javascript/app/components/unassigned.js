@@ -48,7 +48,7 @@ class Unassigned extends React.Component {
                     p => p.applicant.dept != 'Computer Science',
                 ],
 
-                width: 0.13,
+                width: 0.10,
             },
             {
                 header: 'Prog.',
@@ -71,7 +71,7 @@ class Unassigned extends React.Component {
                 data: p => p.applicant.year,
                 sortData: p => p.applicant.year,
 
-                width: 0.02,
+                width: 0.03,
             },
             {
                 header: 'Email',
@@ -115,12 +115,12 @@ class Unassigned extends React.Component {
                         .prefs.some(pref => pref.positionId == key)
                 ),
 
-                width: 0.40,
+                width: 0.42,
             },
         ];
 
         return (
-            <Grid fluid id="unassigned-grid">
+            <Grid id="unassigned-grid">
                 <ApplicantTableMenu
                     config={this.config}
                     getSelectedSortFields={() => this.props.getSorts()}

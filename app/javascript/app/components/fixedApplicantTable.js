@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Table, Column, Cell } from 'fixed-data-table';
+import { AutoSizer } from 'react-virtualized';
 
 class ApplicantTable extends React.Component {
     // acquire and process list of applicants
@@ -72,27 +73,36 @@ class ApplicantTable extends React.Component {
 
     render() {
         return (
-            <Table
-                rowHeight={28}
-                rowsCount={this.applicants.length}
-                width={0.98 * document.documentElement.clientWidth}
-                maxHeight={0.8 * document.documentElement.clientHeight}
-                headerHeight={28}>
-                {this.props.config.map((field, i) =>
-                    <Column
-                        key={'col-' + i}
-                        header={field.header}
-                        cell={({ rowIndex }) =>
-                            <Cell>
-                                {field.data({
-                                    applicantId: this.applicants[rowIndex][0],
-                                    applicant: this.applicants[rowIndex][1],
-                                })}
-                            </Cell>}
-                        width={field.width * 0.98 * document.documentElement.clientWidth}
-                    />
-                )}
-            </Table>
+            <div
+                className={
+                    'table-container ' +
+                    (this.props.assigned ? 'assigned-table' : 'unassigned-table')
+                }>
+                <AutoSizer>
+                    {({ height, width }) =>
+                        <Table
+                            rowHeight={28}
+                            rowsCount={this.applicants.length}
+                            width={width}
+                            maxHeight={height}
+                            headerHeight={28}>
+                            {this.props.config.map((field, i) =>
+                                <Column
+                                    key={'col-' + i}
+                                    header={field.header}
+                                    cell={({ rowIndex }) =>
+                                        <Cell>
+                                            {field.data({
+                                                applicantId: this.applicants[rowIndex][0],
+                                                applicant: this.applicants[rowIndex][1],
+                                            })}
+                                        </Cell>}
+                                    width={field.width * width}
+                                />
+                            )}
+                        </Table>}
+                </AutoSizer>
+            </div>
         );
     }
 }

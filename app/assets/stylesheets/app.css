@@ -94,11 +94,6 @@ footer div p {
     width: 100%;
 }
 
-/* for ApplicantTableMenu */
-.applicant-table-menu {
-    margin: 0;
-}
-
 /* for CourseMenu and CourseList */
 .course-list-panel {
     width: 15em;
@@ -157,18 +152,15 @@ footer div p {
 }
 
 /* for ApplicantTable in Assigned/Unassigned view */
-#unassigned-grid .applicant-table-menu,
-#assigned-grid .applicant-table-menu {
-    margin-bottom: 1vh;
+.applicant-table-menu {
+    margin: 0 0 1vh 0;
 }
 
-#unassigned-grid .table-body,
-#assigned-grid .table-body {
-    /* note that this assumes that the header is at most one row high */
-    max-height: calc(
-        var(--main-div-height) - var(--applicant-table-menu-height) - var(--min-row-height)
+#unassigned-grid .table-container,
+#assigned-grid .table-container {
+    height: calc(
+        var(--main-div-height) - var(--applicant-table-menu-height)
     );
-    overflow: auto;
 }
 
 /* for Applicant modal */
@@ -234,16 +226,11 @@ footer div p {
     color: #555;
 }
 
-/* for ApplicantTables*/
+/* for ApplicantTables */
 #unassigned-grid .public_fixedDataTableCell_cellContent,
 #assigned-grid .public_fixedDataTableCell_cellContent {
     padding-top: 4px;
     padding-bottom: 4px;
-}
-    
-.unassigned-table table,
-.assigned-table table {
-    margin: 0;
 }
 
 .highlightOnHover:hover {
@@ -257,11 +244,6 @@ footer div p {
     max-height: calc(var(--min-row-height) * 10);
     overflow: auto;
     margin-bottom: 1vh;
-}
-
-/* for container of ApplicantTable of unassigned applicants in ABC view */
-#abc-grid .unassigned-table.table-container {
-    margin-top: 1vh;
 }
 
 /* for CourseForm */
