@@ -20,7 +20,6 @@ class ChassExporter
 
     private
     def write_file(data, round_id)
-      puts "wr"
       File.open("#{Rails.root}/db/exports/offers_#{round_id}.json", "w+") do |f|
         puts data
         f.write(JSON.pretty_generate(data))
