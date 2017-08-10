@@ -11,7 +11,7 @@ class ChassExporter
           return {generated: false, msg: "Warning: You have not made any assignments. Operation aborted."}
         else
           write_file(create_data(round_id), round_id)
-          return {generated: true, msg: "Offers for #{round_id} has been generated.", round_id: round_id}
+          return {generated: true, msg: "Offers for #{round_id} has been generated."}
         end
       else
         return {generated: false, msg: "Error: Invalid round_id"}
