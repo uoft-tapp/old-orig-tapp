@@ -119,7 +119,7 @@ function onFetchApplicantsSuccess(resp) {
             })(app.program_id),
             year: app.yip,
             notes: app.commentary,
-            fullTime: app.full_time,
+            fullTime: app.full_time == 'Y',
         };
     });
 
