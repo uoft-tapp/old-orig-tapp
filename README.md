@@ -1,8 +1,8 @@
 # tapp
 [![Build Status](https://travis-ci.org/uoft-tapp/tapp.svg?branch=master)](https://travis-ci.org/uoft-tapp/tapp)
 
-[deployment](#deployment)
-[backup/restore](#backuprestore)
+- [deployment](#deployment)
+- [backup & restore](#backup-restore)
 
 TA assignment and matching application.
 
@@ -125,10 +125,34 @@ Note: number 2 will update the rails app but not touch the database.
 
 ## Backup/Restore of database <a id="backuprestore"></a>
 
-We should automatically backup postgress every few minutes. 
+We should automatically backup postgres every few minutes.
 The restore procedure is manual for emergencies when we need to step back to a backup
 
-### Backup
+### Backup <a id="backup"></a>
+While the application is running,
+1. Back up the database and it's content:
+    ```
+    docker exec -t tapp_postgres_1 pg_dumpall -U postgres > filename
+    ```
+2. Stop & remove all running containers and erase their volumes:
+    ```
+    docker-compose down -v
+    ```
+
+3. Start up docker:
+    ```
+    docker-compose up
+    ```
+
+4. Drop the database that was created on docker-compose up:
+    ```
+    docker-compose run rails-app rake db:drop
+    ```
+
+5. Restore backup:
+  ```
+  cat filename | docker exec -i tapp_postgres_1 psql -U postgres
+  ```
 
 
 ### Restore
