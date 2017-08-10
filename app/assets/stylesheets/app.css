@@ -94,11 +94,6 @@ footer div p {
     width: 100%;
 }
 
-/* for ApplicantTableMenu */
-.applicant-table-menu {
-    margin: 0;
-}
-
 /* for CourseMenu and CourseList */
 .course-list-panel {
     width: 15em;
@@ -159,16 +154,22 @@ footer div p {
 /* for ApplicantTable in Assigned/Unassigned view */
 #unassigned-grid .table-container,
 #assigned-grid .table-container {
+    height: calc(
+        var(--main-div-height) - var(--applicant-table-menu-height)
+    );
     margin-top: 1vh;
 }
 
-#unassigned-grid .table-body,
-#assigned-grid .table-body {
-    /* note that this assumes that the header is at most one row high */
-    max-height: calc(
-        var(--main-div-height) - var(--applicant-table-menu-height) - var(--min-row-height)
-    );
-    overflow: auto;
+.table-container .btn-toolbar {
+    margin: 0;
+}
+
+.table-container .ReactVirtualized__Table__row:nth-of-type(odd) {
+    background-color: #f9f9f9;
+}
+
+.table-container .ReactVirtualized__Table__row:hover {
+    background-color: #f9f9f9;
 }
 
 /* for Applicant modal */
@@ -234,12 +235,12 @@ footer div p {
     color: #555;
 }
 
-/* for ApplicantTables*/
-.unassigned-table table,
-.assigned-table table {
+/* for ApplicantTableMenu */
+.applicant-table-menu {
     margin: 0;
 }
 
+/* for ApplicantTables*/
 .highlightOnHover:hover {
     font-weight: bold;
     cursor: pointer;
