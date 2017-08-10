@@ -4,7 +4,11 @@ class ExportController < ApplicationController
   def create_chass
     exporter = ChassExporter.new
     response = exporter.export(params[:round_id])
-    render json: response
+    if response[:generated]
+      render status: 200, json: {message: response[:msg]}
+    else
+      render status: 404, json: {message: response[:msg]}
+    end
   end
 
   def download_chass
