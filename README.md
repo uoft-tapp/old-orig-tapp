@@ -84,7 +84,8 @@ To add a system dependency, modify the Dockerfile.
 Try `docker-compose down -v`, then `docker-compose up`. This should delete
 existing images & data for this project and rebuild them from scratch.
 
-## Deployment (#deployment)
+## Deployment <a id="deployment"></a>
+
 * The Dockerfile serves instructions to set up the image of the container (linux, yarn, npm etc)
 * The docker-compose files serves to setup the services that your container will be using (postgres, apache, nginx, apps)
 * The [prod|dev].env.default files are served to the Dockerfile and the docker-compose files.
