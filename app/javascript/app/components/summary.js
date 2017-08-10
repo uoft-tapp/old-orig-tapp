@@ -187,7 +187,7 @@ class ExportForm extends React.Component {
                             this.format = ref;
                         }}>
                         <option value="csv">CSV</option>
-                        <option value="json">JSON</option>
+                        {this.props.getSelectedRound() && <option value="json">JSON</option>}
                     </FormControl>
                 </FormGroup>
                 <FormControl.Static style={{ verticalAlign: 'middle' }}>
