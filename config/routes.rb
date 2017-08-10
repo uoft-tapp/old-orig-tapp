@@ -13,8 +13,8 @@ Rails.application.routes.draw do
 
   get "/index.html/(*z)", to: "app#main"
 
-  post "/export/chass/:round_id", to: "export#create_chass"
-  get "/download/chass/:round_id", to: "export#download_chass"
+  post "/export/chass/:round_id", to: "export#chass"
+  get "/download/chass/:round_id", to: "download#chass"
   get "/export/cdf-info", to: "export#cdf"
   get "/export/transcript-access", to: "export#transcript_access"
   get "/export/offers", to: "export#offers"
