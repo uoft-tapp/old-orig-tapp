@@ -29,7 +29,7 @@ class Applicant extends React.Component {
         }
         return (
             <span style={{ whiteSpace: 'pre-wrap' }}>
-                {text.replace(/\\r*\\n/, <br />)}
+                {text.replace(/\\r*\\n/g, <br />)}
             </span>
         );
     }
@@ -126,6 +126,35 @@ const PersonalInfo = props => {
     let applicant = props.getApplicantById(props.applicant),
         application = props.getApplicationById(props.applicant);
 
+    // format the address and truncate it at 3 lines with an ellipsis if necessary
+    let address;
+    if (!applicant.address) {
+        address = null;
+    } else {
+        address = applicant.address.split(/\\r*\\n/);
+        if (address.length > 3) {
+            address.splice(3);
+            address[2] = address[2] + ' [...]';
+        }
+        address = [
+            <tr key="address-0">
+                <td>
+                    <b>Address:</b>
+                </td>
+                <td>
+                    {address[0]}
+                </td>
+            </tr>,
+            ...address.slice(1).map((line, i) =>
+                <tr key={'address-' + i}>
+                    <td>
+                        {line}
+                    </td>
+                </tr>
+            ),
+        ];
+    }
+
     return (
         <table className="panel_table">
             <tbody>
@@ -138,16 +167,25 @@ const PersonalInfo = props => {
                         <b>First Name:&ensp;</b>
                         {applicant.firstName}
                     </td>
-                    <td>
-                        <b>UTORid:&ensp;</b>
-                        {applicant.utorid}
+                    <td rowSpan="3">
+                        <table>
+                            <tbody>
+                                {address}
+                            </tbody>
+                        </table>
                     </td>
                 </tr>
                 <tr>
                     <td>
+                        <b>UTORid:&ensp;</b>
+                        {applicant.utorid}
+                    </td>
+                    <td>
                         <b>Student ID:&ensp;</b>
                         {applicant.studentNumber}
                     </td>
+                </tr>
+                <tr>
                     <td>
                         <b>Email Address:&ensp;</b>
                         {applicant.email}
@@ -160,7 +198,7 @@ const PersonalInfo = props => {
                 <tr>
                     <td>
                         <b>Enrolled as a U of T graduate student for the TA session?&ensp;</b>
-                        {true ? 'Yes' : 'No'}
+                        {applicant.fullTime ? 'Yes' : 'No'}
                     </td>
                     <td>
                         <b>Completed a U of T TA training session?&ensp;</b>
