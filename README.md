@@ -2,6 +2,7 @@
 [![Build Status](https://travis-ci.org/uoft-tapp/tapp.svg?branch=master)](https://travis-ci.org/uoft-tapp/tapp)
 
 [deployment](#deployment)
+[backup/restore](#backuprestore)
 
 TA assignment and matching application.
 
@@ -121,6 +122,16 @@ up with an error from postgres ("role "tapp" does not exist"). In that case stop
     ```
 
 Note: number 2 will update the rails app but not touch the database.
+
+## Backup/Restore of database <a id="backuprestore"></a>
+
+We should automatically backup postgress every few minutes. 
+The restore procedure is manual for emergencies when we need to step back to a backup
+
+### Backup
+
+
+### Restore
 
 ## TODO
 - [] JavaScript testing
