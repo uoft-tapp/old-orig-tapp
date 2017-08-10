@@ -131,6 +131,7 @@ describe ChassImporter do
           email: "luklorizur.mrokarczur@mail.utoronto.ca",
           phone: "6476879273",
           address: "478 Karczur St.",
+          full_time: "yes"
         })
 
       end

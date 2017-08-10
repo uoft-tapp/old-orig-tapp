@@ -75,7 +75,8 @@ class ChassImporter
           program_id: applicant_entry["program_id"],
           yip: applicant_entry["yip"],
           address:applicant_entry["address"],
-          commentary: ""
+          commentary: "",
+          full_time: applicant_entry["full_time"],
       }
       insertion_helper(Applicant, data, ident, exists)
     end
