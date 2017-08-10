@@ -128,7 +128,7 @@ Note: number 2 will update the rails app but not touch the database.
 We should automatically backup postgres every few minutes.
 The restore procedure is manual for emergencies when we need to step back to a backup
 
-### Backup <a id="backup-restore"></a>
+### Backup & Restore <a id="backup-restore"></a>
 While the application is running,
 1. Back up the database and it's content:
     ```
@@ -153,9 +153,6 @@ While the application is running,
   ```
   cat filename | docker exec -i tapp_postgres_1 psql -U postgres
   ```
-
-
-### Restore
 
 ## TODO
 - [] JavaScript testing
