@@ -4,14 +4,14 @@ class AssignmentForm extends React.Component {
     render() {
         let applicant = this.props.applicantId;
 
-        let assignments = this.props.func.getAssignmentsByApplicant(applicant);
-        let tempAssignments = this.props.func.getTempAssignments();
+        let assignments = this.props.getAssignmentsByApplicant(applicant);
+        let tempAssignments = this.props.getTempAssignments();
         // sort assignments and temp assignments by the course ID
         assignments.sort((a, b) => (a.positionId > b.positionId ? 1 : -1));
         tempAssignments.sort((a, b) => (a.positionId > b.positionId ? 1 : -1));
 
-        let assignmentForm = this.props.func.getAssignmentForm();
-        let courses = this.props.func.getCoursesList();
+        let assignmentForm = this.props.getAssignmentForm();
+        let courses = this.props.getCoursesList();
 
         return (
             <div>
@@ -81,7 +81,7 @@ const AssignmentRow = props =>
                 onSubmit={event => {
                     let value = event.target.elements[0].value;
                     if (value != props.assignment.hours) {
-                        props.func.updateAssignment(props.applicant, props.assignment.id, value);
+                        props.updateAssignment(props.applicant, props.assignment.id, value);
                     }
                     event.preventDefault();
                 }}>
@@ -91,7 +91,7 @@ const AssignmentRow = props =>
                     min="0"
                     onBlur={event => {
                         if (event.target.value != props.assignment.hours) {
-                            props.func.updateAssignment(
+                            props.updateAssignment(
                                 props.applicant,
                                 props.assignment.id,
                                 event.target.value
@@ -99,11 +99,24 @@ const AssignmentRow = props =>
                         }
                     }}
                     defaultValue={props.assignment.hours}
+                    disabled={props.assignment.locked}
                 />
                 &emsp;
-                <X
-                    click={() => props.func.deleteAssignment(props.applicant, props.assignment.id)}
-                />
+                {props.assignment.locked
+                    ? <Lock
+                          click={() => {
+                              if (
+                                  confirm(
+                                      'This will unlock an assignment that has already been exported.\nAre you sure?'
+                                  )
+                              ) {
+                                  props.unlockAssignment(props.applicant, props.assignment.id);
+                              }
+                          }}
+                      />
+                    : <X
+                          click={() => props.deleteAssignment(props.applicant, props.assignment.id)}
+                      />}
             </form>
         </td>
     </tr>;
@@ -118,7 +131,7 @@ const TempAssignmentRow = props =>
                 onSubmit={event => {
                     let value = event.target.elements[0].value;
                     if (value != props.assignment.hours) {
-                        props.func.setTempAssignmentHours(props.assignment.positionId, value);
+                        props.setTempAssignmentHours(props.assignment.positionId, value);
                     }
                     event.preventDefault();
                 }}>
@@ -128,7 +141,7 @@ const TempAssignmentRow = props =>
                     min="0"
                     onBlur={event => {
                         if (event.target.value != props.assignment.hours) {
-                            props.func.setTempAssignmentHours(
+                            props.setTempAssignmentHours(
                                 props.assignment.positionId,
                                 event.target.value
                             );
@@ -137,9 +150,9 @@ const TempAssignmentRow = props =>
                     defaultValue={props.assignment.hours}
                 />
                 &emsp;
-                <X click={() => props.func.removeTempAssignment(props.assignment.positionId)} />
+                <X click={() => props.removeTempAssignment(props.assignment.positionId)} />
                 &emsp;
-                <Check click={() => props.func.permAssignment(props.assignment.positionId)} />
+                <Check click={() => props.permAssignment(props.assignment.positionId)} />
             </form>
         </td>
     </tr>;
@@ -157,6 +170,14 @@ const X = props =>
     <i
         className="fa fa-times-circle-o"
         style={{ color: 'red', fontSize: '20px', verticalAlign: 'middle' }}
+        onClick={props.click}
+    />;
+
+// lock icon/button
+const Lock = props =>
+    <i
+        className="fa fa-lock"
+        style={{ fontSize: '20px', verticalAlign: 'middle' }}
         onClick={props.click}
     />;
 
@@ -202,11 +223,9 @@ class AssignmentInput extends React.Component {
                                 this.props.tempAssignments
                             )
                         ) {
-                            this.props.func.alert(
-                                'Assignment to ' + input.value + ' already exists.'
-                            );
+                            this.props.alert('Assignment to ' + input.value + ' already exists.');
                         } else {
-                            this.props.func.addTempAssignment(
+                            this.props.addTempAssignment(
                                 course,
                                 this.props.courses[course].positionHours
                             );
@@ -214,7 +233,7 @@ class AssignmentInput extends React.Component {
                         // clear the input field
                         input.value = '';
                     } else {
-                        this.props.func.alert('Course code ' + input.value + ' does not exist.');
+                        this.props.alert('Course code ' + input.value + ' does not exist.');
                     }
 
                     event.preventDefault();

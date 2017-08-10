@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170707190517) do
+ActiveRecord::Schema.define(version: 20170810154932) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -30,6 +30,7 @@ ActiveRecord::Schema.define(version: 20170707190517) do
     t.string "dept"
     t.integer "yip"
     t.string "program_id"
+    t.string "full_time"
     t.index ["utorid"], name: "index_applicants_on_utorid", unique: true
   end
 
@@ -95,9 +96,11 @@ ActiveRecord::Schema.define(version: 20170707190517) do
     t.integer "estimated_total_hours"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "session_id"
     t.index ["campus_code"], name: "index_positions_on_campus_code"
     t.index ["open"], name: "index_positions_on_open"
     t.index ["position", "round_id"], name: "index_positions_on_position_and_round_id", unique: true
+    t.index ["session_id"], name: "index_positions_on_session_id"
   end
 
   create_table "preferences", force: :cascade do |t|
@@ -110,9 +113,20 @@ ActiveRecord::Schema.define(version: 20170707190517) do
     t.index ["position_id"], name: "index_preferences_on_position_id"
   end
 
+  create_table "sessions", force: :cascade do |t|
+    t.integer "year"
+    t.datetime "start_date"
+    t.datetime "end_date"
+    t.string "semester"
+    t.float "pay", default: 0.0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   add_foreign_key "applications", "applicants"
   add_foreign_key "assignments", "applicants"
   add_foreign_key "assignments", "positions"
+  add_foreign_key "positions", "sessions"
   add_foreign_key "preferences", "applications"
   add_foreign_key "preferences", "positions"
 end

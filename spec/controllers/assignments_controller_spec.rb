@@ -2,6 +2,14 @@ require 'rails_helper'
 
 RSpec.describe AssignmentsController, type: :controller do
   let (:parsed_body) { JSON.parse(response.body) }
+  let(:session) do
+    Session.create!(
+      semester: "Fall",
+      year: 2017,
+      start_date: "2017-09-01 00:00:00 UTC",
+      end_date: "2017-12-31 00:00:00 UTC",
+    )
+  end
 
   describe "GET #index" do
     before(:each) do
@@ -16,7 +24,8 @@ RSpec.describe AssignmentsController, type: :controller do
         qualifications: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget dignissim sem. Curabitur at semper eros. Aenean nec sem lobortis, scelerisque mi at, aliquam diam. Mauris malesuada elit nibh, sed hendrerit nulla mattis sed. Mauris laoreet imperdiet dictum. Pellentesque risus nulla, varius ut massa ut, venenatis fringilla sapien. Cras eget euismod augue, eget dignissim erat. Cras nec nibh ullamcorper ante rutrum dapibus sed nec tellus. In hac habitasse platea dictumst. Suspendisse semper tellus ac sem tincidunt auctor.",
         hours: 22,
         estimated_count: 15,
-        estimated_total_hours: 330
+        estimated_total_hours: 330,
+        session_id: session.id
         )
 
       @applicant = Applicant.create!(
@@ -84,7 +93,8 @@ RSpec.describe AssignmentsController, type: :controller do
         qualifications: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget dignissim sem. Curabitur at semper eros. Aenean nec sem lobortis, scelerisque mi at, aliquam diam. Mauris malesuada elit nibh, sed hendrerit nulla mattis sed. Mauris laoreet imperdiet dictum. Pellentesque risus nulla, varius ut massa ut, venenatis fringilla sapien. Cras eget euismod augue, eget dignissim erat. Cras nec nibh ullamcorper ante rutrum dapibus sed nec tellus. In hac habitasse platea dictumst. Suspendisse semper tellus ac sem tincidunt auctor.",
         hours: 22,
         estimated_count: 15,
-        estimated_total_hours: 330
+        estimated_total_hours: 330,
+        session_id: session.id
         )
 
       @applicant = Applicant.create!(
@@ -158,7 +168,8 @@ RSpec.describe AssignmentsController, type: :controller do
         qualifications: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget dignissim sem. Curabitur at semper eros. Aenean nec sem lobortis, scelerisque mi at, aliquam diam. Mauris malesuada elit nibh, sed hendrerit nulla mattis sed. Mauris laoreet imperdiet dictum. Pellentesque risus nulla, varius ut massa ut, venenatis fringilla sapien. Cras eget euismod augue, eget dignissim erat. Cras nec nibh ullamcorper ante rutrum dapibus sed nec tellus. In hac habitasse platea dictumst. Suspendisse semper tellus ac sem tincidunt auctor.",
         hours: 22,
         estimated_count: 15,
-        estimated_total_hours: 330
+        estimated_total_hours: 330,
+        session_id: session.id
         )
 
       @position = Position.create!(
@@ -172,7 +183,8 @@ RSpec.describe AssignmentsController, type: :controller do
         qualifications: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget dignissim sem. Curabitur at semper eros. Aenean nec sem lobortis, scelerisque mi at, aliquam diam. Mauris malesuada elit nibh, sed hendrerit nulla mattis sed. Mauris laoreet imperdiet dictum. Pellentesque risus nulla, varius ut massa ut, venenatis fringilla sapien. Cras eget euismod augue, eget dignissim erat. Cras nec nibh ullamcorper ante rutrum dapibus sed nec tellus. In hac habitasse platea dictumst. Suspendisse semper tellus ac sem tincidunt auctor.",
         hours: 22,
         estimated_count: 15,
-        estimated_total_hours: 330
+        estimated_total_hours: 330,
+        session_id: session.id
         )
 
       @applicant = Applicant.create!(
@@ -248,7 +260,8 @@ RSpec.describe AssignmentsController, type: :controller do
         qualifications: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget dignissim sem. Curabitur at semper eros. Aenean nec sem lobortis, scelerisque mi at, aliquam diam. Mauris malesuada elit nibh, sed hendrerit nulla mattis sed. Mauris laoreet imperdiet dictum. Pellentesque risus nulla, varius ut massa ut, venenatis fringilla sapien. Cras eget euismod augue, eget dignissim erat. Cras nec nibh ullamcorper ante rutrum dapibus sed nec tellus. In hac habitasse platea dictumst. Suspendisse semper tellus ac sem tincidunt auctor.",
         hours: 22,
         estimated_count: 15,
-        estimated_total_hours: 330
+        estimated_total_hours: 330,
+        session_id: session.id
         )
 
       @applicant = Applicant.create!(
@@ -283,17 +296,39 @@ RSpec.describe AssignmentsController, type: :controller do
         )
     end
 
-    it "hours is an integer parameter, update the assignment" do
-      patch :update, params: { applicant_id: @applicant.id, id: @assignment.id, hours: 90}
-      expect(response.status).to eq(200)
-      expect(parsed_body["applicant_id"]).to eq(@applicant.id)
-      expect(parsed_body["id"]).to eq(@assignment.id)
-      expect(parsed_body["hours"]).to eq(90)
+    context "when hours is an integer parameter" do
+      it "update the assignment" do
+        patch :update, params: { applicant_id: @applicant.id, id: @assignment.id, hours: 90}
+        expect(response.status).to eq(200)
+        expect(parsed_body["applicant_id"]).to eq(@applicant.id)
+        expect(parsed_body["id"]).to eq(@assignment.id)
+        expect(parsed_body["hours"]).to eq(90)
+      end
     end
 
-    it "hours is a non integer parameter returns a 422 status" do
-      patch :update, params: { applicant_id: @applicant.id, id: @assignment.id, hours: "poops"}
-      expect(response.status).to eq(422)
+    context "when hours is a non integer parameter" do
+        it "returns a 422 status" do
+        patch :update, params: { applicant_id: @applicant.id, id: @assignment.id, hours: "poops"}
+        expect(response.status).to eq(422)
+      end
+    end
+
+    context "when export_date is valid" do
+      it "updates the assignment" do
+        patch :update, params: { applicant_id: @applicant.id, id: @assignment.id, export_date: "2017-08-08T15:25:03.000Z"}
+        expect(response.status).to eq(200)
+        expect(parsed_body["applicant_id"]).to eq(@applicant.id)
+        expect(parsed_body["id"]).to eq(@assignment.id)
+        expect(parsed_body["export_date"]).to eq("2017-08-08T15:25:03.000Z")
+      end
+    end
+
+    context "when export_date is not valid" do
+      it "it does not update the assignment" do
+        patch :update, params: { applicant_id: @applicant.id, id: @assignment.id, export_date: "poops"}
+        expect(parsed_body["export_date"]).to eq(nil)
+        expect(response.status).to eq(200)
+      end
     end
 
   end
@@ -312,7 +347,8 @@ RSpec.describe AssignmentsController, type: :controller do
         qualifications: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget dignissim sem. Curabitur at semper eros. Aenean nec sem lobortis, scelerisque mi at, aliquam diam. Mauris malesuada elit nibh, sed hendrerit nulla mattis sed. Mauris laoreet imperdiet dictum. Pellentesque risus nulla, varius ut massa ut, venenatis fringilla sapien. Cras eget euismod augue, eget dignissim erat. Cras nec nibh ullamcorper ante rutrum dapibus sed nec tellus. In hac habitasse platea dictumst. Suspendisse semper tellus ac sem tincidunt auctor.",
         hours: 22,
         estimated_count: 15,
-        estimated_total_hours: 330
+        estimated_total_hours: 330,
+        session_id: session.id
         )
 
       @applicant = Applicant.create!(

@@ -160,7 +160,7 @@ ApplicantTable.propTypes = {
     getSelectedFilters: PropTypes.func,
 
     // course id of the course to which these applicants have applied (for the ABC view)
-    course: PropTypes.number,
+    course: PropTypes.string,
     // whether the applicants in this table have been assigned to this course (for the ABC view)
     assigned: PropTypes.bool,
 

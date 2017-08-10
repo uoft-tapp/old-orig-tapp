@@ -4,11 +4,7 @@ import { appState } from './appState.js';
 /* General helpers */
 
 function defaultFailure(response) {
-    appState.notify(
-        <span>
-            <b>Action Failed:</b> {response.statusText}
-        </span>
-    );
+    appState.notify('<b>Action Failed:</b> {response.statusText}');
     return Promise.reject(response);
 }
 
@@ -27,11 +23,7 @@ function fetchHelper(URL, init, success, failure = defaultFailure) {
             return failure(response);
         })
         .catch(function(error) {
-            appState.notify(
-                <span>
-                    <b>Error:</b> {URL} {error.message}
-                </span>
-            );
+            appState.notify('<b>Error:</b> {URL} {error.message}');
             return Promise.reject(error);
         });
 }
@@ -127,6 +119,7 @@ function onFetchApplicantsSuccess(resp) {
             })(app.program_id),
             year: app.yip,
             notes: app.commentary,
+            fullTime: app.full_time == 'Y',
         };
     });
 
@@ -141,7 +134,6 @@ function onFetchApplicationsSuccess(resp) {
         newApp = {
             taTraining: app.ta_training == 'Y',
             academicAccess: app.access_acad_history == 'Y',
-            round: null, // populated by positions fetch
             prefs: (function(prefs) {
                 return prefs.map(pref => ({
                     positionId: pref.position_id,
@@ -192,7 +184,6 @@ function onFetchCoursesSuccess(resp) {
             estimatedPositions: course.estimated_count,
             estimatedEnrol: course.estimated_enrolment,
             positionHours: course.hours,
-            assignmentCount: null, // populated by assignment fetch
             qual: course.qualifications,
             resp: course.duties,
             instructor_input: '',
@@ -215,6 +206,7 @@ function onFetchAssignmentsSuccess(resp) {
             id: ass.id,
             positionId: ass.position_id,
             hours: ass.hours,
+            locked: ass.export_date != null,
         };
 
         if (assignments[ass.applicant_id]) {
@@ -222,14 +214,9 @@ function onFetchAssignmentsSuccess(resp) {
         } else {
             assignments[ass.applicant_id] = [newAss];
         }
-
-        // increment the assignment count for this course
-        count = assignmentCounts[ass.position_id];
-        assignmentCounts[ass.position_id] = count ? count + 1 : 1;
     });
 
-    // also return assignmentCounts, to be used to populate the corresponding courses field
-    return [assignments, assignmentCounts];
+    return assignments;
 }
 
 function onFetchInstructorsSuccess(resp) {
@@ -251,27 +238,43 @@ function fetchAll() {
     appState.setFetchingAssignmentsList(true);
     appState.setFetchingInstructorsList(true);
 
-    let applicantPromise = getApplicants();
-    let applicationPromise = getApplications();
-    let coursePromise = getCourses();
-    let assignmentPromise = getAssignments();
+    let applicantsPromise = getApplicants();
+    let applicationsPromise = getApplications();
+    let coursesPromise = getCourses();
+    let assignmentsPromise = getAssignments();
     let instructorsPromise = getInstructors();
 
     // when applicants are successfully fetched, update the applicants list; set fetching flag to false either way
-    applicantPromise
+    applicantsPromise
         .then(applicants => {
             appState.setApplicantsList(applicants);
             appState.successFetchingApplicantsList();
         })
         .catch(() => appState.setFetchingApplicantsList(false));
 
+    // when applications are successfully fetched, update the applications list; set fetching flag to false either way
+    applicationsPromise
+        .then(applications => {
+            appState.setApplicationsList(applications);
+            appState.successFetchingApplicationsList();
+        })
+        .catch(() => appState.setFetchingApplicationsList(false));
+
     // when assignments are successfully fetched, update the assignments list; set fetching flag to false either way
-    assignmentPromise
-        .then(([assignments, _]) => {
+    assignmentsPromise
+        .then(assignments => {
             appState.setAssignmentsList(assignments);
             appState.successFetchingAssignmentsList();
         })
         .catch(() => appState.setFetchingAssignmentsList(false));
+
+    // when courses are successfully fetched, update the courses list; set fetching flag to false either way
+    coursesPromise
+        .then(courses => {
+            appState.setCoursesList(courses);
+            appState.successFetchingCoursesList();
+        })
+        .catch(() => appState.setFetchingCoursesList(false));
 
     // when instructors are successfully fetched, update the instructors list; set fetching flag to false either way
     instructorsPromise
@@ -280,50 +283,6 @@ function fetchAll() {
             appState.successFetchingInstructorsList();
         })
         .catch(() => appState.setFetchingInstructorsList(false));
-
-    // if both applications and courses are successfully fetched, add rounds to applications, update the
-    // the applications list, and set fetching flag to false
-    Promise.all([applicationPromise, coursePromise])
-        .then(([applications, courses]) => {
-            applications = appState.addRoundsToApplications(applications, courses);
-
-            appState.setApplicationsList(applications);
-            appState.successFetchingApplicationsList();
-        })
-        .catch(() => {
-            // if courses are not successfully fetched but applications are, update the applications list and set
-            // fetching flag to false
-            applicationPromise
-                .then(applications => {
-                    appState.setApplicationsList(applications);
-                    appState.successFetchingApplicationsList();
-                })
-                // if both fail to fetch, set the fetching flag to false regardless
-                .catch(() => appState.setFetchingApplicationsList(false));
-        });
-
-    // if both courses and assignments are successfully fetched, add assignment counts to courses, update the
-    // courses list, and set both fetching flags to false
-    Promise.all([coursePromise, assignmentPromise])
-        .then(([courses, [_, assignmentCounts]]) => {
-            courses = appState.addAssignmentCountsToCourses({
-                assignmentCounts: assignmentCounts,
-                courses: courses,
-            });
-            appState.setCoursesList(courses);
-            appState.successFetchingCoursesList();
-        })
-        .catch(() => {
-            // if assignments are not successfully fetched but courses are, update the courses list and set fetching
-            // flag to false
-            coursePromise
-                .then(courses => {
-                    appState.setCoursesList(courses);
-                    appState.successFetchingCoursesList();
-                })
-                // if both fail to fetch, set the fetching flag to false regardless
-                .catch(() => appState.setFetchingCoursesList(false));
-        });
 }
 
 /* Task-specific resource modifiers */
@@ -337,12 +296,7 @@ function postAssignment(applicant, course, hours) {
         { position_id: course, hours: hours },
         getAssignments
     )
-        .then(([assignments, assignmentCounts]) => {
-            let courses = appState.addAssignmentCountsToCourses({
-                assignmentCounts: assignmentCounts,
-            });
-            appState.setCoursesList(courses);
-
+        .then(assignments => {
             appState.setAssignmentsList(assignments);
             appState.successFetchingAssignmentsList();
         })
@@ -354,12 +308,7 @@ function deleteAssignment(applicant, assignment) {
     appState.setFetchingAssignmentsList(true);
 
     return deleteHelper('/applicants/' + applicant + '/assignments/' + assignment, getAssignments)
-        .then(([assignments, assignmentCounts]) => {
-            let courses = appState.addAssignmentCountsToCourses({
-                assignmentCounts: assignmentCounts,
-            });
-            appState.setCoursesList(courses);
-
+        .then(assignments => {
             appState.setAssignmentsList(assignments);
             appState.successFetchingAssignmentsList();
         })
@@ -387,41 +336,33 @@ function updateAssignmentHours(applicant, assignment, hours) {
         { hours: hours },
         getAssignments
     )
-        .then(([assignments, assignmentCounts]) => {
-            let courses = appState.addAssignmentCountsToCourses({
-                assignmentCounts: assignmentCounts,
-            });
-            appState.setCoursesList(courses);
-
+        .then(assignments => {
             appState.setAssignmentsList(assignments);
             appState.successFetchingAssignmentsList();
         })
         .catch(() => appState.setFetchingAssignmentsList(false));
 }
 
-function updateCourse(courseId, data, val, attr) {
+// update attribute(s) of a course
+function updateCourse(courseId, data, attr) {
     appState.setFetchingCoursesList(true);
 
     return putHelper('/positions/' + courseId, data, getCourses)
         .then(courses => {
-            courses = appState.addAssignmentCountsToCourses({ courses: courses });
             appState.setCoursesList(courses);
             appState.successFetchingCoursesList();
         })
         .catch(() => appState.setFetchingCoursesList(false));
 }
 
+// send CHASS data
 function importChass(data) {
-    return postHelper(
-        '/import/chass',
-        data,
-        showMessageInJsonBody,
-        showMessageInJsonBody
-    ).then(() => {
-        fetchAll();
-    });
+    return postHelper('/import/chass', data, showMessageInJsonBody, showMessageInJsonBody).then(
+        fetchAll
+    );
 }
 
+// extract and display a message which is sent in the (JSON) body of a response
 function showMessageInJsonBody(resp) {
     if (resp.message != null) {
         appState.notify(resp.message);
@@ -432,6 +373,34 @@ function showMessageInJsonBody(resp) {
     }
 }
 
+// unlock a single assignment
+function unlockAssignment(applicant, assignment) {
+    appState.setFetchingAssignmentsList(true);
+
+    return putHelper(
+        '/applicants/' + applicant + '/assignments/' + assignment,
+        { export_date: null },
+        getAssignments
+    )
+        .then(assignments => {
+            appState.setAssignmentsList(assignments);
+            appState.successFetchingAssignmentsList();
+        })
+        .catch(() => appState.setFetchingAssignmentsList(false));
+}
+
+// export offers from CHASS (locking the corresponding assignments)
+function exportOffers(round) {
+    appState.setFetchingAssignmentsList(true);
+
+    return getHelper('/export/chass/' + round, getAssignments)
+        .then(assignments => {
+            appState.setAssignmentsList(assignments);
+            appState.successFetchingAssignmentsList();
+        })
+        .catch(() => appState.setFetchingAssignmentsList(false));
+}
+
 export {
     fetchAll,
     postAssignment,
@@ -440,5 +409,6 @@ export {
     updateCourse,
     noteApplicant,
     importChass,
-    showMessage,
+    unlockAssignment,
+    exportOffers,
 };

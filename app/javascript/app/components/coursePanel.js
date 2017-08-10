@@ -1,5 +1,4 @@
 import React from 'react';
-import { Panel } from 'react-bootstrap';
 import { ApplicantTableMenu } from './applicantTableMenu.js';
 import { ApplicantTable } from './applicantTable.js';
 
@@ -12,36 +11,62 @@ class CoursePanel extends React.Component {
             {
                 header: '',
                 // checkbox that is checked if the applicant is currently assigned, unchecked if not
-                data: p =>
-                    <input
-                        type="checkbox"
-                        defaultChecked={p.assigned}
-                        onClick={() => {
-                            if (p.assigned) {
-                                props.func.deleteAssignment(
-                                    p.applicantId,
-                                    props.func.getAssignmentByApplicant(p.applicantId, p.course).id
-                                );
-                            } else {
-                                props.func.createAssignment(
-                                    p.applicantId,
-                                    p.course,
-                                    props.func.getCourseById(p.course).positionHours
-                                );
-                            }
-                        }}
-                    />,
+                data: p => {
+                    if (p.assigned) {
+                        let assignment = props.getAssignmentByApplicant(p.applicantId, p.course);
 
-                style: () => ({ width: '2%' }),
+                        if (assignment.locked) {
+                            return (
+                                <i
+                                    className="fa fa-lock"
+                                    onClick={() => {
+                                        if (
+                                            confirm(
+                                                'This will unlock an assignment that has already been exported.\nAre you sure?'
+                                            )
+                                        ) {
+                                            props.unlockAssignment(p.applicantId, assignment.id);
+                                        }
+                                    }}
+                                />
+                            );
+                        }
+
+                        return (
+                            <input
+                                type="checkbox"
+                                defaultChecked={true}
+                                onClick={() => props.deleteAssignment(p.applicantId, assignment.id)}
+                            />
+                        );
+                    } else {
+                        return (
+                            <input
+                                type="checkbox"
+                                defaultChecked={false}
+                                onClick={() =>
+                                    props.createAssignment(
+                                        p.applicantId,
+                                        p.course,
+                                        props.getCourseById(p.course).positionHours
+                                    )}
+                            />
+                        );
+                    }
+                },
+
+                style: () => ({ width: '2%', textAlign: 'center' }),
             },
             {
                 header: 'Last Name',
-                // last name generates a modal of the applicant's individual page
+                // clicking last name generates a modal of the applicant's individual page
+                // icon is displayed beside last name if applicant has associated notes
                 data: p =>
                     <span
                         className="highlightOnHover"
-                        onClick={() => props.func.selectApplicant(p.applicantId)}>
-                        {p.applicant.lastName}
+                        onClick={() => props.selectApplicant(p.applicantId)}>
+                        {p.applicant.lastName}&nbsp;
+                        {p.applicant.notes && <i className="fa fa-paperclip" />}
                     </span>,
                 sortData: p => p.applicant.lastName,
 
@@ -96,11 +121,11 @@ class CoursePanel extends React.Component {
                 header: 'Pref.',
                 // checkmark if the applicant has a special preference for this course, nothing otherwise
                 data: p =>
-                    props.func.getApplicationPreference(p.applicantId, p.course)
+                    props.getApplicationPreference(p.applicantId, p.course)
                         ? <i className="fa fa-check" />
                         : '',
 
-                sortData: p => props.func.getApplicationPreference(p.applicantId, p.course),
+                sortData: p => props.getApplicationPreference(p.applicantId, p.course),
 
                 style: () => ({ width: '5%' }),
             },
@@ -108,25 +133,25 @@ class CoursePanel extends React.Component {
                 header: 'Other',
                 // comma-separated list of the codes for the (other) courses to which this applicant is assigned
                 data: p =>
-                    props.func
+                    props
                         .getAssignmentsByApplicant(p.applicantId)
                         .reduce(
                             (str, ass) =>
                                 ass.positionId == p.course
                                     ? str
-                                    : str + props.func.getCourseCodeById(ass.positionId) + ', ',
+                                    : str + props.getCourseCodeById(ass.positionId) + ', ',
                             ''
                         ),
 
                 // unseparated string of the codes for the (other) courses to which this applicant is assigned
                 sortData: p =>
-                    props.func
+                    props
                         .getAssignmentsByApplicant(p.applicantId)
                         .reduce(
                             (str, ass) =>
                                 ass.positionId == p.course
                                     ? str
-                                    : str + props.func.getCourseCodeById(ass.positionId),
+                                    : str + props.getCourseCodeById(ass.positionId),
                             ''
                         ),
 
@@ -134,10 +159,10 @@ class CoursePanel extends React.Component {
                 filterCategories: ['Assigned elsewhere', 'Unassigned'],
                 filterFuncs: [
                     // filter corresponding to 'assigned elsewhere'
-                    p => props.func.getAssignmentsByApplicant(p.applicantId).length > 0,
+                    p => props.getAssignmentsByApplicant(p.applicantId).length > 0,
 
                     // filter corresponding to 'unassigned'
-                    p => props.func.getAssignmentsByApplicant(p.applicantId).length == 0,
+                    p => props.getAssignmentsByApplicant(p.applicantId).length == 0,
                 ],
 
                 style: () => ({}),
@@ -146,27 +171,10 @@ class CoursePanel extends React.Component {
     }
 
     render() {
-        let course = this.props.func.getCourseById(this.props.course);
-
         return (
-            <Panel
-                className="course-panel"
+            <div
+                className="panel panel-default course-panel"
                 style={this.props.panelStyle}
-                header={
-                    <span>
-                        {course.code}&emsp;{course.assignmentCount}&nbsp;/{course.estimatedPositions}
-                        <i
-                            className="fa fa-close"
-                            style={{ float: 'right' }}
-                            onClick={() => this.props.func.toggleSelectedCourse(this.props.course)}
-                        />
-                    </span>
-                }
-                draggable={true}
-                onDragStart={e => {
-                    // send this course ID to an element that this panel is dragged over
-                    e.dataTransfer.setData('text', this.props.course);
-                }}
                 onDragOver={e => {
                     if (e.preventDefault) {
                         e.preventDefault(); // Necessary. Allows us to drop.
@@ -180,55 +188,80 @@ class CoursePanel extends React.Component {
                     // swap this course with the course that was dragged over it
                     let swap = parseInt(e.dataTransfer.getData('text'));
                     if (swap != this.props.course) {
-                        this.props.func.swapCoursesInLayout(swap, this.props.course);
+                        this.props.swapCoursesInLayout(swap, this.props.course);
                     }
                 }}>
-                <ApplicantTable
-                    config={this.config}
-                    assigned={true}
-                    course={this.props.course}
-                    getApplicants={() =>
-                        this.props.func.getApplicantsAssignedToCourse(this.props.course)}
-                    rowId={p => p.course + '-' + p.applicantId + '-1'}
-                />
-
-                <ApplicantTableMenu
-                    config={this.config}
-                    getSelectedSortFields={() =>
-                        this.props.func.getCoursePanelSortsByCourse(this.props.course)}
-                    anyFilterSelected={field =>
-                        this.props.func.anyCoursePanelFilterSelected(this.props.course, field)}
-                    isFilterSelected={(field, category) =>
-                        this.props.func.isCoursePanelFilterSelected(
-                            this.props.course,
-                            field,
-                            category
-                        )}
-                    toggleFilter={(field, category) =>
-                        this.props.func.toggleCoursePanelFilter(this.props.course, field, category)}
-                    clearFilters={() => this.props.func.clearCoursePanelFilters(this.props.course)}
-                    addSort={field => this.props.func.addCoursePanelSort(this.props.course, field)}
-                    removeSort={field =>
-                        this.props.func.removeCoursePanelSort(this.props.course, field)}
-                    toggleSortDir={field =>
-                        this.props.func.toggleCoursePanelSortDir(this.props.course, field)}
-                />
-
-                <ApplicantTable
-                    config={this.config}
-                    assigned={false}
-                    course={this.props.course}
-                    getApplicants={() =>
-                        this.props.func.getApplicantsToCourseUnassigned(this.props.course)}
-                    getSelectedSortFields={() =>
-                        this.props.func.getCoursePanelSortsByCourse(this.props.course)}
-                    getSelectedFilters={() =>
-                        this.props.func.getCoursePanelFiltersByCourse(this.props.course)}
-                    rowId={p => p.course + '-' + p.applicantId + '-0'}
-                />
-            </Panel>
+                <DraggableHeader {...this.props} />
+                <div className="panel-body">
+                    <AssignedApplicantTable config={this.config} {...this.props} />
+                    <ApplicantTableMenu
+                        config={this.config}
+                        getSelectedSortFields={() =>
+                            this.props.getCoursePanelSortsByCourse(this.props.course)}
+                        anyFilterSelected={field =>
+                            this.props.anyCoursePanelFilterSelected(this.props.course, field)}
+                        isFilterSelected={(field, category) =>
+                            this.props.isCoursePanelFilterSelected(
+                                this.props.course,
+                                field,
+                                category
+                            )}
+                        toggleFilter={(field, category) =>
+                            this.props.toggleCoursePanelFilter(this.props.course, field, category)}
+                        clearFilters={() => this.props.clearCoursePanelFilters(this.props.course)}
+                        addSort={field => this.props.addCoursePanelSort(this.props.course, field)}
+                        removeSort={field =>
+                            this.props.removeCoursePanelSort(this.props.course, field)}
+                        toggleSortDir={field =>
+                            this.props.toggleCoursePanelSortDir(this.props.course, field)}
+                    />
+                    <UnassignedApplicantTable config={this.config} {...this.props} />
+                </div>
+            </div>
         );
     }
 }
+
+const DraggableHeader = props => {
+    let course = props.getCourseById(props.course);
+
+    return (
+        <div
+            className="panel-heading"
+            draggable={true}
+            onDragStart={e => {
+                // send this course ID to an element that this panel is dragged over
+                e.dataTransfer.setData('text', props.course);
+            }}>
+            {course.code}&emsp;{props.getCourseAssignmentCount(props.course)}&nbsp;/
+            {course.estimatedPositions}
+            <i
+                className="fa fa-close"
+                style={{ float: 'right' }}
+                onClick={() => props.toggleSelectedCourse(props.course)}
+            />
+        </div>
+    );
+};
+
+const AssignedApplicantTable = props =>
+    <ApplicantTable
+        config={props.config}
+        assigned={true}
+        course={props.course}
+        getApplicants={() => props.getApplicantsAssignedToCourse(props.course)}
+        rowId={p => p.course + '-' + p.applicantId + '-1'}
+    />;
+
+const UnassignedApplicantTable = props =>
+    <ApplicantTable
+        config={props.config}
+        assigned={false}
+        course={props.course}
+        getApplicants={() => props.getApplicantsToCourseUnassigned(props.course)}
+        getSelectedSortFields={() => props.getCoursePanelSortsByCourse(props.course)}
+        getSelectedFilters={() => props.getCoursePanelFiltersByCourse(props.course)}
+        rowId={p => p.course + '-' + p.applicantId + '-0'}
+    />;
 
 export { CoursePanel };

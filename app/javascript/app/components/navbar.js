@@ -26,7 +26,7 @@ const ViewTab = props =>
     </li>;
 
 const ViewTabs = props => {
-    let activeKey = props.func.getSelectedNavTab();
+    let activeKey = props.getSelectedNavTab();
 
     return (
         <ul className="nav navbar-nav navbar-left">
@@ -40,14 +40,14 @@ const ViewTabs = props => {
 };
 
 const CoursePanelLayoutTabs = props => {
-    let layout = props.func.getCoursePanelLayout();
+    let layout = props.getCoursePanelLayout();
 
     if ([2, 2.1].includes(layout)) {
         return (
             <Nav
                 bsStyle="pills"
                 activeKey={layout}
-                onSelect={eventKey => props.func.setCoursePanelLayout(eventKey)}>
+                onSelect={eventKey => props.setCoursePanelLayout(eventKey)}>
                 <NavItem eventKey={2}>
                     <img src={img20} alt="layout-2.0" style={{ height: '16px' }} />
                 </NavItem>
@@ -63,7 +63,7 @@ const CoursePanelLayoutTabs = props => {
             <Nav
                 bsStyle="pills"
                 activeKey={layout}
-                onSelect={eventKey => props.func.setCoursePanelLayout(eventKey)}>
+                onSelect={eventKey => props.setCoursePanelLayout(eventKey)}>
                 <NavItem eventKey={3}>
                     <img src={img30} alt="layout-3.0" style={{ height: '16px' }} />
                 </NavItem>
@@ -89,8 +89,69 @@ const CoursePanelLayoutTabs = props => {
     return null;
 };
 
+const Round = props => {
+    if (props.isCoursesListNull()) {
+        return null;
+    }
+
+    let rounds = props.getRounds();
+    let selectedRound = props.getSelectedRound();
+
+    // add round-based rules to a new stylesheet
+    let style = document.createElement('style');
+
+    // if we previously created a stylesheet for these rules, replace it
+    let oldStyle = document.getElementsByTagName('style');
+    if (oldStyle.length > 0) {
+        document.head.replaceChild(style, oldStyle[0]);
+    } else {
+        document.head.appendChild(style);
+    }
+
+    // colours which will be mapped to rounds
+    // (approx. one colour selected from each colour group on https://www.w3schools.com/colors/colors_groups.asp)
+    let palette = ['#C71585','#4B0082','#8B0000','#FF4500','#006400','#008080','000080','#0000FF',
+                   '#8B4513','#2F4F4F'];
+
+    style.sheet.insertRule('.round-all {background-color: #5BC0DE}', 0);
+    
+    for (var i = 0; i < rounds.length; i++) {
+        style.sheet.insertRule('.round-' + rounds[i] + ' {background-color: ' + palette[i] + '}', 0);
+    }
+
+    return (
+        <NavDropdown
+            title={
+                <span
+                    className={'round-' + (selectedRound ? selectedRound : 'all')}
+                    style={{
+                        color: '#fff',
+                        padding: '6px 12px',
+                        borderRadius: '4px',
+                    }}>
+                    {selectedRound ? 'Round ' + selectedRound : 'All Rounds'}
+                </span>
+            }
+            noCaret
+            id="nav-round-dropdown"
+            onSelect={eventKey => props.selectRound(eventKey)}>
+            {selectedRound &&
+                <MenuItem eventKey={null} key="all">
+                    All Rounds
+                </MenuItem>}
+            {rounds.map(
+                round =>
+                    round != selectedRound &&
+                    <MenuItem eventKey={round} key={round}>
+                        Round {round}
+                    </MenuItem>
+            )}
+        </NavDropdown>
+    );
+};
+
 const Notifications = props => {
-    let notifications = props.func.getUnreadNotifications();
+    let notifications = props.getUnreadNotifications();
 
     return (
         <NavDropdown
@@ -104,50 +165,43 @@ const Notifications = props => {
             id="nav-notif-dropdown"
             onToggle={willOpen => {
                 if (!willOpen) {
-                    props.func.readNotifications();
+                    props.readNotifications();
                 }
             }}>
             {notifications.map((text, i) =>
-                <MenuItem key={'notification-' + i}>
-                    {text}
-                </MenuItem>
+                <MenuItem key={'notification-' + i} dangerouslySetInnerHTML={{ __html: text }} />
             )}
         </NavDropdown>
     );
 };
 
-const Auth = props => {
-    return (
-        <NavDropdown
-            eventKey={routeConfig.logout.id}
-            title={props.func.getCurrentUserRole() + ':' + props.func.getCurrentUserName()}
-            id="nav-auth-dropdown">
-            <MenuItem eventKey={routeConfig.logout.id + '.1'} href={routeConfig.logout.route}>
-                Logout
-            </MenuItem>
-        </NavDropdown>
-    );
-};
+const Auth = props =>
+    <NavDropdown
+        eventKey={routeConfig.logout.id}
+        title={props.getCurrentUserRole() + ':' + props.getCurrentUserName()}
+        id="nav-auth-dropdown">
+        <MenuItem eventKey={routeConfig.logout.id + '.1'} href={routeConfig.logout.route}>
+            Logout
+        </MenuItem>
+    </NavDropdown>;
 
 /*** Navbar ***/
 
-const NavbarInst = props => {
-    return (
-        <Navbar fixedTop fluid>
-            <Navbar.Header>
-                <Navbar.Brand>TAPP</Navbar.Brand>
-            </Navbar.Header>
+const NavbarInst = props =>
+    <Navbar fixedTop fluid>
+        <Navbar.Header>
+            <Navbar.Brand>TAPP</Navbar.Brand>
+        </Navbar.Header>
 
-            <ViewTabs {...props} />
+        <ViewTabs {...props} />
 
-            <Nav pullRight>
-                {props.func.getSelectedNavTab() == routeConfig.abc.id &&
-                    <CoursePanelLayoutTabs {...props} />}
-                <Notifications {...props} />
-                <Auth {...props} />
-            </Nav>
-        </Navbar>
-    );
-};
+        <Nav pullRight>
+            {props.getSelectedNavTab() == routeConfig.abc.id &&
+                <CoursePanelLayoutTabs {...props} />}
+            <Round {...props} />
+            <Notifications {...props} />
+            <Auth {...props} />
+        </Nav>
+    </Navbar>;
 
 export { NavbarInst as Navbar };

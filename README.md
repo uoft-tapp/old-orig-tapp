@@ -1,6 +1,9 @@
 # tapp
 [![Build Status](https://travis-ci.org/uoft-tapp/tapp.svg?branch=master)](https://travis-ci.org/uoft-tapp/tapp)
 
+- [deployment](#deployment)
+- [backup & restore](#backup-restore)
+
 TA assignment and matching application.
 
 ## Starting application
@@ -82,7 +85,8 @@ To add a system dependency, modify the Dockerfile.
 Try `docker-compose down -v`, then `docker-compose up`. This should delete
 existing images & data for this project and rebuild them from scratch.
 
-## Deployment
+## Deployment <a id="deployment"></a>
+
 * The Dockerfile serves instructions to set up the image of the container (linux, yarn, npm etc)
 * The docker-compose files serves to setup the services that your container will be using (postgres, apache, nginx, apps)
 * The [prod|dev].env.default files are served to the Dockerfile and the docker-compose files.
@@ -118,6 +122,37 @@ up with an error from postgres ("role "tapp" does not exist"). In that case stop
     ```
 
 Note: number 2 will update the rails app but not touch the database.
+
+## Backup/Restore of database <a id="backuprestore"></a>
+
+We should automatically backup postgres every few minutes.
+The restore procedure is manual for emergencies when we need to step back to a backup
+
+### Backup & Restore <a id="backup-restore"></a>
+While the application is running,
+1. Back up the database and it's content:
+    ```
+    docker exec -t tapp_postgres_1 pg_dumpall -U postgres > filename
+    ```
+2. Stop & remove all running containers and erase their volumes:
+    ```
+    docker-compose down -v
+    ```
+
+3. Start up docker:
+    ```
+    docker-compose up
+    ```
+
+4. Drop the database that was created on docker-compose up:
+    ```
+    docker-compose run rails-app rake db:drop
+    ```
+
+5. Restore backup:
+  ```
+  cat filename | docker exec -i tapp_postgres_1 psql -U postgres
+  ```
 
 ## TODO
 - [] JavaScript testing

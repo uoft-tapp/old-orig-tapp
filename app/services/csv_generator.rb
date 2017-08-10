@@ -122,6 +122,12 @@ class CSVGenerator
       return 'MASc'
     when '8UG'
       return 'UG'
+    when '3MScAC'
+        return 'MScAC'
+    when '5MEng'
+        return 'MEng'
+    when '6Other'
+        return 'OG'
     else
       return 'Other'
     end

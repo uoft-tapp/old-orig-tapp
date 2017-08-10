@@ -80,67 +80,57 @@ class ABC extends React.Component {
     generateDefaultLayout() {
         // check whether the current layout contains the correct number of courses
         // if not, generate a default layout for the currently selected courses
-        let selected = this.props.func.getSelectedCourses();
-        let currLayout = this.props.func.getCoursePanelLayout();
+        let selected = this.props.getSelectedCourses();
+        let currLayout = this.props.getCoursePanelLayout();
 
         if (Math.floor(currLayout) != selected.length) {
-            this.props.func.setCoursePanelLayout(selected.length);
+            this.props.setCoursePanelLayout(selected.length);
         }
-
-        let panelFields = this.props.func.getCoursePanelFields();
-        // check whether the appropriate panel fields exist for the selected courses and update as necessary
-        this.props.func.updateCoursePanelFields(selected, panelFields);
     }
 
     selectThisTab() {
-        if (this.props.func.getSelectedNavTab() != this.props.navKey) {
-            this.props.func.selectNavTab(this.props.navKey);
+        if (this.props.getSelectedNavTab() != this.props.navKey) {
+            this.props.selectNavTab(this.props.navKey);
         }
     }
 
     componentWillMount() {
         this.selectThisTab();
 
-        // render this view with a specific course panel pre-selected
-        let selected = this.props.func.getSelectedCourses();
-        if (
-            this.props.selectedCourse &&
-            !(selected.length == 1 && selected[0] == this.props.selectedCourse)
-        ) {
-            this.props.func.setSelectedCourses([Number.parseInt(this.props.selectedCourse)]);
-        }
+        // remove selected courses that are not part of the selected round if necessary
+        this.props.filterSelectedCourses();
 
         // generate a default layout for the selected courses if necessary
         this.generateDefaultLayout();
+
+        // check whether the appropriate panel fields exist for the selected courses and update if necessary
+        this.props.updateCoursePanelFields();
     }
 
     componentWillUpdate() {
         this.selectThisTab();
 
-        // render this view with a specific course panel pre-selected
-        let selected = this.props.func.getSelectedCourses();
-        if (
-            this.props.selectedCourse &&
-            !(selected.length == 1 && selected[0] == this.props.selectedCourse)
-        ) {
-            this.props.func.setSelectedCourses([Number.parseInt(this.props.selectedCourse)]);
-        }
+        // remove selected courses that are not part of the selected round if necessary
+        this.props.filterSelectedCourses();
 
         // generate a default layout for the selected courses if necessary
         this.generateDefaultLayout();
+
+        // check whether the appropriate panel fields exist for the selected courses and update if necessary
+        this.props.updateCoursePanelFields();
     }
 
     render() {
-        let nullCheck = this.props.func.anyNull();
+        let nullCheck = this.props.anyNull();
         if (nullCheck) {
             return <div id="loader" />;
         }
 
-        let fetchCheck = this.props.func.anyFetching();
+        let fetchCheck = this.props.anyFetching();
         let cursorStyle = { cursor: fetchCheck ? 'progress' : 'auto' };
 
-        let selected = this.props.func.getSelectedCourses();
-        let layout = this.props.func.getCoursePanelLayout();
+        let selected = this.props.getSelectedCourses();
+        let layout = this.props.getCoursePanelLayout();
         let styles = this.mapLayoutToStyling(layout);
 
         return (

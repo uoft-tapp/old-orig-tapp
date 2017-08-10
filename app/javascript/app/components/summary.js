@@ -16,12 +16,12 @@ import {
 
 class Summary extends React.Component {
     render() {
-        let nullCheck = this.props.func.anyNull();
+        let nullCheck = this.props.anyNull();
         if (nullCheck) {
             return <div id="loader" />;
         }
 
-        let fetchCheck = this.props.func.anyFetching();
+        let fetchCheck = this.props.anyFetching();
         let cursorStyle = { cursor: fetchCheck ? 'progress' : 'auto' };
 
         return (
@@ -35,8 +35,8 @@ class Summary extends React.Component {
     }
 
     selectThisTab() {
-        if (this.props.func.getSelectedNavTab() != this.props.navKey) {
-            this.props.func.selectNavTab(this.props.navKey);
+        if (this.props.getSelectedNavTab() != this.props.navKey) {
+            this.props.selectNavTab(this.props.navKey);
         }
     }
 
@@ -60,7 +60,6 @@ const Utilities = props => {
 };
 
 // form for importing data from a file and persisting it to the database
-
 class ImportForm extends React.Component {
     loadFile() {
         let files = document.getElementById('import').files;
@@ -69,42 +68,47 @@ class ImportForm extends React.Component {
                 'Are you sure you want to import "' + files[0].name + '" into the database?';
             if (files[0].type == 'application/json') {
                 if (confirm(message)) {
-                    let importChass = this.props.func.importChass;
-                    let waitAlert = () => this.props.func.alert('Import in Progress...');
-                    let chassAlert = () =>
-                        this.props.func.alert('Error: This is not a CHASS JSON.');
-                    this.uploadFile(files[0], importChass, waitAlert, chassAlert);
+                    let importChass = this.props.importChass;
+                    let waitAlert = () => this.props.notify('<i>Import in progress...</i>');
+                    let chassAlert = () => this.props.alert('Error: This is not a CHASS JSON.');
+                    let malformedAlert = () => this.props.alert('Error: This JSON is malformed.');
+                    this.uploadFile(files[0], importChass, waitAlert, chassAlert, malformedAlert);
                 }
             } else {
-                this.props.func.alert('Error: The file you uploaded is not a JSON.');
+                this.props.alert('Error: The file you uploaded is not a JSON.');
             }
         } else {
-            this.props.func.alert('Error: No file chosen.');
+            this.props.alert('Error: No file chosen.');
         }
     }
 
-    uploadFile(file, importChass, waitAlert, chassAlert) {
+    uploadFile(file, importChass, waitAlert, chassAlert, malformedAlert) {
         let reader = new FileReader();
         reader.onload = function(event) {
-            let data = JSON.parse(event.target.result);
-            console.log(data);
-            if (data['courses'] !== undefined && data['applicants'] !== undefined) {
-                data = { chass_json: data };
-                waitAlert();
-                importChass(data);
-            } else {
-                chassAlert();
+            try {
+                let data = JSON.parse(event.target.result);
+
+                if (data['courses'] !== undefined && data['applicants'] !== undefined) {
+                    data = { chass_json: data };
+                    waitAlert();
+                    importChass(data);
+                } else {
+                    chassAlert();
+                }
+            } catch (err) {
+                malformedAlert();
             }
         };
         reader.readAsText(file);
     }
+
     render() {
         return (
             <Form inline>
                 <FormControl.Static style={{ verticalAlign: 'middle' }}>
                     <i
                         className="fa fa-upload"
-                        style={{ fontSize: '20px', color: 'blue' }}
+                        style={{ fontSize: '20px', color: 'blue', cursor: 'pointer' }}
                         onClick={() => this.loadFile()}
                     />&emsp;
                 </FormControl.Static>
@@ -140,29 +144,22 @@ class ExportForm extends React.Component {
             let route;
             if (format == 'csv') {
                 // export offers in CSV format
-                route = '/export/' + data;
-            } else {
-                // export offers in JSON format
-                // this will be non-functional until round IDs are incorporated!
-                route = '/export/chass/' + props.func.getSelectedRound();
-            }
-
-            if (
+                window.open('/export/offers');
+            } else if (
                 confirm(
                     'This will lock all exported assignments.\nAre you sure you want to proceed?'
                 )
             ) {
-                window.open(route);
+                // export offers in JSON format
+                this.props.exportOffers();
             }
         } else {
-            // export other data in CS>>>>>>> set up upload buttonV format
+            // export other data in CS
             if (format == 'csv') {
                 window.open('/export/' + data);
             } else {
-                props.func.alert(
-                    <span>
-                        <b>Export JSON</b> This functionality is not currently supported.
-                    </span>
+                this.props.alert(
+                    '<b>Export JSON</b> This functionality is not currently supported.'
                 );
             }
         }
@@ -198,7 +195,7 @@ class ExportForm extends React.Component {
                         }}
                     >
                         <option value="csv">CSV</option>
-                        <option value="json">JSON</option>
+                        {this.props.getSelectedRound() && <option value="json">JSON</option>}
                     </FormControl>
                 </FormGroup>
                 <FormControl.Static style={{ verticalAlign: 'middle' }}>
@@ -219,10 +216,8 @@ const ReleaseForm = props =>
         <Button
             bsStyle="success"
             onClick={() =>
-                props.func.alert(
-                    <span>
-                        <b>Release assignments</b> This functionality is not currently supported.
-                    </span>
+                props.alert(
+                    '<b>Release assignments</b> This functionality is not currently supported.'
                 )}
         >
             Release assignments
@@ -230,22 +225,22 @@ const ReleaseForm = props =>
     </Form>;
 
 const Stats = props => {
-    let applicants = props.func.idEntries(props.func.getApplicantsList());
+    let applicants = Object.entries(props.getApplicantsList());
     let gradApplicants = applicants.filter(([_, app]) =>
         ['MSc', 'MASc', 'MScAC', 'MEng', 'OG', 'PhD'].includes(app.program)
     );
     let dcsGradApplicants = gradApplicants.filter(([_, app]) => app.dept == 'Computer Science');
 
-    let assignments = props.func.getAssignmentsList();
+    let assignments = props.getAssignmentsList();
     let unassGradApplicants = gradApplicants.filter(([id, _]) => !assignments[id]);
     let unassDcsGradApplicants = dcsGradApplicants.filter(([id, _]) => !assignments[id]);
 
-    let courses = props.func.getCoursesList();
-    let orderedCourses = props.func.idEntries(courses);
+    let courses = props.getCoursesList();
+    let orderedCourses = Object.entries(courses);
     orderedCourses.sort(([A, valA], [B, valB]) => (valA.code < valB.code ? -1 : 1));
 
-    let assignmentsList = props.func.idEntries(assignments);
-    let applicationsList = props.func.idEntries(props.func.getApplicationsList());
+    let assignmentsList = Object.entries(assignments);
+    let applicationsList = Object.entries(props.getApplicationsList());
 
     return (
         <Panel header="Assignment Statistics" id="stats">
@@ -337,6 +332,7 @@ const PerCourseStats = props => {
         </tr>
     );
 };
+
 const chassFormat = `{
     "courses": [
       {

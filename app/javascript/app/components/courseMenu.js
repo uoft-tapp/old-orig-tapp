@@ -4,7 +4,7 @@ import { ListGroup, ListGroupItem, Panel } from 'react-bootstrap';
 class CourseMenu extends React.Component {
     // acquire and sort courses in order of course code
     sortCourses() {
-        this.courses = this.props.func.idEntries(this.props.func.getCoursesList());
+        this.courses = Object.entries(this.props.getCoursesList());
         this.courses.sort(([A, valA], [B, valB]) => (valA.code < valB.code ? -1 : 1));
     }
 
@@ -21,13 +21,13 @@ class CourseMenu extends React.Component {
             return (
                 <ListGroupItem
                     key={'course-' + key}
-                    onClick={() => this.props.func.toggleSelectedCourse(key)}
-                    active={this.props.func.isCourseSelected(key)}>
-                    <span className="course-code" title={val.code}>
+                    onClick={() => this.props.toggleSelectedCourse(key)}
+                    active={this.props.isCourseSelected(key)}>
+                    <span className="course-code">
                         {val.code}
                     </span>
-                    <span className="counts" title={val.assignmentCount+' /'+val.estimatedPositions}>
-                        {val.assignmentCount}&nbsp;/{val.estimatedPositions}
+                    <span className="counts">
+                        {this.props.getCourseAssignmentCount(key)}&nbsp;/{val.estimatedPositions}
                     </span>
                 </ListGroupItem>
             );

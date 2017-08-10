@@ -8,9 +8,8 @@ class Applicant extends React.Component {
 
         // applicant panels and their default expansion state
         this.defaultConfig = [
+            { label: 'Notes', expanded: true },
             { label: 'Personal Information', expanded: true },
-            { label: 'Current Status', expanded: true },
-            { label: 'Current Program Information', expanded: true },
             { label: 'Current Assignment Status', expanded: true },
             { label: 'Course Preferences', expanded: true },
             { label: 'Course Preferences (Raw Text)', expanded: false },
@@ -20,31 +19,27 @@ class Applicant extends React.Component {
             { label: 'Availability', expanded: true },
             { label: 'Other Information', expanded: true },
             { label: 'Special Needs Issues', expanded: true },
-            { label: 'Notes', expanded: true },
         ];
     }
 
     // convert linefeed/carriage return characters to HTML line breaks
     format(text) {
+        if (!text) {
+            return null;
+        }
         return (
             <span style={{ whiteSpace: 'pre-wrap' }}>
-                {text.replace(/\\r*\\n/, <br />)}
+                {text.replace(/\\r*\\n/g, <br />)}
             </span>
         );
     }
 
     addPanelContent(panel) {
-        let application = this.props.func.getApplicationById(this.props.applicantId);
+        let application = this.props.getApplicationById(this.props.applicantId);
 
         switch (panel) {
             case 'Personal Information':
                 return <PersonalInfo applicant={this.props.applicantId} {...this.props} />;
-
-            case 'Current Status':
-                return <Status applicant={this.props.applicantId} {...this.props} />;
-
-            case 'Current Program Information':
-                return <ProgramInfo applicant={this.props.applicantId} {...this.props} />;
 
             case 'Current Assignment Status':
                 return <AssignmentForm {...this.props} />;
@@ -86,7 +81,7 @@ class Applicant extends React.Component {
         // expansion state is overridden by this.props.config
         // this.props.config should be of the form { <label> : <expanded?> }
 
-        this.props.func.createAssignmentForm(
+        this.props.createAssignmentForm(
             this.defaultConfig.map(
                 panel =>
                     this.props.config && panel.label in this.props.config
@@ -97,12 +92,12 @@ class Applicant extends React.Component {
     }
 
     render() {
-        let fetchCheck = this.props.func.anyFetching();
+        let fetchCheck = this.props.anyFetching();
         let cursorStyle = { cursor: fetchCheck ? 'progress' : 'auto' };
 
         return (
             <div style={cursorStyle}>
-                {this.props.func.getAssignmentForm().panels.map((panel, index) =>
+                {this.props.getAssignmentForm().panels.map((panel, index) =>
                     <Panel
                         collapsible
                         expanded={panel.expanded}
@@ -114,7 +109,7 @@ class Applicant extends React.Component {
                                     margin: '0',
                                     cursor: 'pointer',
                                 }}
-                                onClick={() => this.props.func.togglePanelExpanded(index)}>
+                                onClick={() => this.props.togglePanelExpanded(index)}>
                                 {panel.label}
                             </div>
                         }
@@ -128,97 +123,106 @@ class Applicant extends React.Component {
 }
 
 const PersonalInfo = props => {
-    let applicant = props.func.getApplicantById(props.applicant);
+    let applicant = props.getApplicantById(props.applicant),
+        application = props.getApplicationById(props.applicant);
 
-    return (
-        <table className="panel_table">
-            <tbody>
-                <tr>
+    // format the address and truncate it at 3 lines with an ellipsis if necessary
+    let address;
+    if (!applicant.address) {
+        address = null;
+    } else {
+        address = applicant.address.split(/\\r*\\n/);
+        if (address.length > 3) {
+            address.splice(3);
+            address[2] = address[2] + ' [...]';
+        }
+        address = [
+            <tr key="address-0">
+                <td>
+                    <b>Address:</b>
+                </td>
+                <td>
+                    {address[0]}
+                </td>
+            </tr>,
+            ...address.slice(1).map((line, i) =>
+                <tr key={'address-' + i}>
                     <td>
-                        <p>
-                            <b>Last Name: </b>
-                            {applicant.lastName}
-                        </p>
-                        <p>
-                            <b>UTORid: </b>
-                            {applicant.utorid}
-                        </p>
-                        <p>
-                            <b>Email Address: </b>
-                            {applicant.email}
-                        </p>
-                        <p>
-                            <b>Phone Number: </b>
-                            {applicant.phone}
-                        </p>
-                    </td>
-                    <td>
-                        <p>
-                            <b>First Name: </b>
-                            {applicant.firstName}
-                        </p>
-                        <p>
-                            <b>Student ID: </b>
-                            {applicant.studentNumber}
-                        </p>
-                    </td>
-                    <td>
-                        <p>
-                            <b>Address: </b>
-                        </p>
-                    </td>
-                    <td>
-                        {applicant.address != null &&
-                            applicant.address.split(/\\r*\\n/).map((part, key) =>
-                                <p key={key}>
-                                    {part}
-                                </p>
-                            )}
+                        {line}
                     </td>
                 </tr>
-            </tbody>
-        </table>
-    );
-};
-
-const Status = props => {
-    let application = props.func.getApplicationById(props.applicant);
+            ),
+        ];
+    }
 
     return (
         <table className="panel_table">
             <tbody>
                 <tr>
                     <td>
-                        <b>Enrolled as a U of T graduate student for the TA session?&nbsp;</b>
-                        {application.academicAccess ? 'Yes' : 'No'}
+                        <b>Last Name:&ensp;</b>
+                        {applicant.lastName}
                     </td>
                     <td>
-                        <b>Completed a U of T TA training session?&nbsp;</b>
+                        <b>First Name:&ensp;</b>
+                        {applicant.firstName}
+                    </td>
+                    <td rowSpan="3">
+                        <table>
+                            <tbody>
+                                {address}
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>UTORid:&ensp;</b>
+                        {applicant.utorid}
+                    </td>
+                    <td>
+                        <b>Student ID:&ensp;</b>
+                        {applicant.studentNumber}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Email Address:&ensp;</b>
+                        {applicant.email}
+                    </td>
+                    <td>
+                        <b>Phone Number:&ensp;</b>
+                        {applicant.phone}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Enrolled as a U of T graduate student for the TA session?&ensp;</b>
+                        {applicant.fullTime ? 'Yes' : 'No'}
+                    </td>
+                    <td>
+                        <b>Completed a U of T TA training session?&ensp;</b>
                         {application.taTraining ? 'Yes' : 'No'}
                     </td>
+                    <td>
+                        <b>
+                            Grant permission for the TA coordinator to access academic
+                            history?&ensp;
+                        </b>
+                        {application.academicAccess ? 'Yes' : 'No'}
+                    </td>
                 </tr>
-            </tbody>
-        </table>
-    );
-};
-
-const ProgramInfo = props => {
-    let applicant = props.func.getApplicantById(props.applicant);
-
-    return (
-        <table className="panel_table">
-            <tbody>
                 <tr>
                     <td>
-                        <b>Department: </b>
+                        <b>Department:&ensp;</b>
                         {applicant.dept}
                     </td>
                     <td>
-                        <b>Program: </b>
+                        <b>Program:&ensp;</b>
                         {applicant.program}
                     </td>
                     <td>
-                        <b>Year: </b>
+                        <b>Year:&ensp;</b>
                         {applicant.year}
                     </td>
                 </tr>
@@ -228,8 +232,8 @@ const ProgramInfo = props => {
 };
 
 const Prefs = props => {
-    let prefs = props.func.getApplicationById(props.applicant).prefs;
-    let courses = props.func.getCoursesList();
+    let prefs = props.getApplicationById(props.applicant).prefs;
+    let courses = props.getCoursesList();
 
     let j = 0,
         columns = [],
@@ -266,13 +270,13 @@ const NotesForm = props =>
         <textarea
             id="applicant-notes"
             style={{ width: '100%' }}
-            defaultValue={props.func.getApplicantById(props.applicant).notes}
+            defaultValue={props.getApplicantById(props.applicant).notes}
         />
         <br />
         <Button
             bsSize="small"
             onClick={() =>
-                props.func.noteApplicant(
+                props.noteApplicant(
                     props.applicant,
                     document.getElementById('applicant-notes').value
                 )}>
