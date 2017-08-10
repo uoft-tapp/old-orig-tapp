@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170728235659) do
+ActiveRecord::Schema.define(version: 20170810154932) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -30,6 +30,7 @@ ActiveRecord::Schema.define(version: 20170728235659) do
     t.string "dept"
     t.integer "yip"
     t.string "program_id"
+    t.string "full_time"
     t.index ["utorid"], name: "index_applicants_on_utorid", unique: true
   end
 
