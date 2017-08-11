@@ -4,7 +4,7 @@ import { appState } from './appState.js';
 /* General helpers */
 
 function defaultFailure(response) {
-    appState.notify('<b>Action Failed:</b> {response.statusText}');
+    appState.notify('<b>Action Failed:</b> ' + response.statusText);
     return Promise.reject(response);
 }
 
@@ -23,7 +23,7 @@ function fetchHelper(URL, init, success, failure = defaultFailure) {
             return failure(response);
         })
         .catch(function(error) {
-            appState.notify('<b>Error:</b> {URL} {error.message}');
+            appState.notify('<b>Error:</b> ' + URL + ' ' + error.message);
             return Promise.reject(error);
         });
 }
@@ -393,12 +393,32 @@ function unlockAssignment(applicant, assignment) {
 function exportOffers(round) {
     appState.setFetchingAssignmentsList(true);
 
-    return getHelper('/export/chass/' + round, getAssignments)
-        .then(assignments => {
-            appState.setAssignmentsList(assignments);
-            appState.successFetchingAssignmentsList();
+    let filename;
+    return (
+        fetchHelper('/export/chass/' + round, {}, response => {
+            // extract the filename from the response headers
+            filename = response.headers.get('Content-Disposition').match(/filename="(.*)"/)[1];
+            // parse the response body as a blob
+            return response.blob();
         })
-        .catch(() => appState.setFetchingAssignmentsList(false));
+            // create a URL for the object body of the response
+            .then(blob => URL.createObjectURL(blob))
+            .then(url => {
+                // associate the download with an anchor tag
+                var a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                // trigger a click -> download
+                a.click();
+                URL.revokeObjectURL(url);
+            })
+            .then(getAssignments)
+            .then(assignments => {
+                appState.setAssignmentsList(assignments);
+                appState.successFetchingAssignmentsList();
+            })
+            .catch(() => appState.setFetchingAssignmentsList(false))
+    );
 }
 
 export {
