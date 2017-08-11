@@ -28,14 +28,14 @@ class Assigned extends React.Component {
                     </span>,
                 sortData: p => p.applicant.lastName,
 
-                style: () => ({ width: '10%' }),
+                style: { width: 0.10 },
             },
             {
                 header: 'First Name',
                 data: p => p.applicant.firstName,
                 sortData: p => p.applicant.firstName,
 
-                style: () => ({ width: '10%' }),
+                style: { width: 0.10 },
             },
             {
                 header: 'Dept.',
@@ -49,7 +49,7 @@ class Assigned extends React.Component {
                     p => p.applicant.dept != 'Computer Science',
                 ],
 
-                style: () => ({ width: '13%' }),
+                style: { width: 0.08 },
             },
             {
                 header: 'Prog.',
@@ -65,21 +65,21 @@ class Assigned extends React.Component {
                     p => p.applicant.program == 'UG',
                 ],
 
-                style: () => ({ width: '5%' }),
+                style: { width: 0.05 },
             },
             {
                 header: 'Year',
                 data: p => p.applicant.year,
                 sortData: p => p.applicant.year,
 
-                style: () => ({ width: '2%' }),
+                style: { width: 0.03 },
             },
             {
                 header: 'Email',
                 data: p => p.applicant.email,
                 sortData: p => p.applicant.email,
 
-                style: () => ({ width: '20%' }),
+                style: { width: 0.20 },
             },
             {
                 header: 'Course(s)',

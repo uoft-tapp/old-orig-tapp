@@ -6,7 +6,15 @@ const THeader = props =>
     <thead>
         <tr>
             {props.config.map((field, i) =>
-                <th key={'header-' + i} style={field.style ? field.style() : {}}>
+                <th
+                    key={'header-' + i}
+                    style={
+                        field.style
+                            ? Object.assign({}, field.style, {
+                                  width: 'calc(' + field.style.width + '*100vw)',
+                              })
+                            : {}
+                    }>
                     {field.header}
                 </th>
             )}
@@ -18,7 +26,13 @@ const ApplicantRow = props =>
         {props.config.map((field, i) =>
             <td
                 key={'applicant-' + props.applicantId + '-row-' + i}
-                style={field.style ? field.style() : {}}>
+                style={
+                    field.style
+                        ? Object.assign({}, field.style, {
+                              width: 'calc(' + field.style.width + '*100vw)',
+                          })
+                        : {}
+                }>
                 {field.data(props)}
             </td>
         )}
@@ -148,7 +162,10 @@ ApplicantTable.propTypes = {
             filterFuncs: PropTypes.arrayOf(PropTypes.func),
 
             // style applied to cells in table column
-            style: PropTypes.func,
+            style: PropTypes.shape({
+                // column width - this should be a number between 0 and 1
+                width: PropTypes.number,
+            }),
         })
     ).isRequired,
 
