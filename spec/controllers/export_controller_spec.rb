@@ -138,9 +138,8 @@ RSpec.describe ExportController, type: :controller do
           it "returns status 200 and downloads offers_(round_id).json" do
             get :chass, params: {round_id: position[:round_id]}
             expect(response.status).to eq(200)
-            expect(response.content_type).to eq("application/json")
-            expect(response.header["Content-Disposition"]).to eq(
-              "attachment; filename=\"offers_110.json\"")
+            message = {message: "Offers for #{position[:round_id]} has been generated."}
+            expect(response.body).to eq(message.to_json)
           end
 
         end

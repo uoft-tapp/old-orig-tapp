@@ -4,7 +4,11 @@ class ExportController < ApplicationController
   def chass
     exporter = ChassExporter.new
     response = exporter.export(params[:round_id])
-    render_helper(response)
+    if response[:generated]
+      render status: 200, json: {message: response[:msg]}
+    else
+      render status: 404, json: {message: response[:msg]}
+    end
   end
 
   def cdf
@@ -28,7 +32,7 @@ class ExportController < ApplicationController
   private
   def render_helper(response)
     if response[:generated]
-      send_data response[:data], :filename => response[:file],
+      send_data response[:data], filename: response[:file],
       content_type: response[:type]
     else
       render status: 404, json: {
