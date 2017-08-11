@@ -244,6 +244,11 @@ footer div p {
     margin: 0;
 }
 
+.table-container td,
+.table-container th {
+    word-break: break-all;
+}
+
 .highlightOnHover:hover {
     font-weight: bold;
     cursor: pointer;
