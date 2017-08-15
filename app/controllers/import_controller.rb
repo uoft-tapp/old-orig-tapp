@@ -7,7 +7,7 @@ class ImportController < ApplicationController
     if status[:success]
       render json: {message: status[:message]}
     else
-      render status: 404, json: {message: status[:message]}.to_json
+      render status: 404, json: {message: status[:message]}
     end
   end
 end
