@@ -13,5 +13,11 @@ class ImportController < ApplicationController
 
   def enrollment
     updater = EnrollmentUpdater.new(params[:enrollment_data])
+    status = updater.get_status
+    if status[:updated]==true
+      render json: {message: status[:message]}
+    else
+      render status: 404, json: {message: status[:message]}
+    end
   end
 end
