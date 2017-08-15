@@ -50,7 +50,7 @@ class CourseForm extends React.Component {
                                                 <b>Hours/Position: </b>
                                             </p>
                                             <p>
-                                                <b>Estimated Enrollment: </b>
+                                                <b>Est./Curr. Enrolment: </b>
                                             </p>
                                         </td>
                                         <td id="col-3">

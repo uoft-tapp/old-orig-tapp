@@ -160,8 +160,7 @@ function onFetchApplicationsSuccess(resp) {
 }
 
 function onFetchCoursesSuccess(resp) {
-    let courses = {},
-        rounds = {};
+    let courses = {};
 
     resp.forEach(course => {
         courses[course.id] = {
@@ -182,13 +181,13 @@ function onFetchCoursesSuccess(resp) {
             })(course.campus_code),
             instructors: course.instructors.map(instr => instr.id),
             estimatedPositions: course.estimated_count,
-            estimatedEnrol: course.estimated_enrolment,
+            estimatedEnrol: course.current_enrollment,
             positionHours: course.hours,
+            cap: course.cap_enrollment,
+            waitlist: course.num_waitlisted,
             qual: course.qualifications,
             resp: course.duties,
         };
-
-        rounds[course.id] = course.round_id;
     });
 
     return courses;

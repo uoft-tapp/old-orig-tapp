@@ -270,7 +270,9 @@ const Stats = props => {
                 <thead>
                     <tr>
                         <th>Course</th>
-                        <th>Est. enrolment</th>
+                        <th>Cap</th>
+                        <th>Enrolment</th>
+                        <th>Waitlist</th>
                         <th>Applicants</th>
                         <th>Assignments</th>
                         <th>Assigned hours</th>
@@ -313,7 +315,13 @@ const PerCourseStats = props => {
                 {props.courses[props.course].code}
             </td>
             <td>
+                {props.courses[props.course].cap}
+            </td>
+            <td>
                 {props.courses[props.course].estimatedEnrol}
+            </td>
+            <td>
+                {props.courses[props.course].waitlist}
             </td>
             <td>
                 {applications.length}
@@ -350,9 +358,10 @@ const chassFormat = `{
         "n_hours": string,
         "n_positions": integer,
         "enrollment": integer,
-        "round_id": ,
+        "round_id": integer,
         "course_name": string,
-        "course_id": string
+        "course_id": string,
+        "dates": string
       },...],
     "applicants": [
       {
