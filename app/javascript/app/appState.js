@@ -565,7 +565,7 @@ class AppState {
      ******************************/
 
     addInstructor(courseId, instructorId) {
-        let val = this.getCoursesList().get(courseId + '.instructors').toJS();
+        let val = this.getCoursesList().get(courseId.toString()).get('instructors').toJS();
         val.push(parseInt(instructorId));
         fetch.updateCourse(courseId, { instructors: val }, 'instructors');
     }
