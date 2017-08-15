@@ -18,7 +18,7 @@ RSpec.describe PositionsController, type: :controller do
       open: true,
       campus_code: 1,
       course_name: "Computational Thinking",
-      estimated_enrolment: nil,
+      current_enrollment: nil,
       duties: "TA duties may include marking, leading skills development tutorials, Q&A/Exam/Assignment/Test Review sessions, and laboratories where noted.",
       qualifications: "Must be enrolled in, or have completed, an undergraduate program in computer science or education (or equivalent). Demonstrated excellent English communication skills. Patience teaching technical concepts to students with a wide variety of non-technical backgrounds. Must have completed or be in the process of completing a course involving functional programming. Must be able to write code in the Intermediate Student Language of Racket, and trace it in the same manner as the Intermediate Student Language Stepper of the DrRacket development environment.",
       hours: 54,
@@ -72,14 +72,16 @@ RSpec.describe PositionsController, type: :controller do
           open: true,
           campus_code: 1,
           course_name: "Computational Thinking",
-          estimated_enrolment: nil,
+          current_enrollment: nil,
           duties: "simplified duties",
           qualifications: "qualifications",
           hours: 20,
           estimated_count: 15,
           estimated_total_hours: 300,
           instructors: [instructor.id],
-          session_id: session.id
+          session_id: session.id,
+          cap_enrollment: nil,
+          num_waitlisted: nil,
         }
         expect(position.instructor_ids).to eq([])
         put :update, params: @params
@@ -108,7 +110,10 @@ RSpec.describe PositionsController, type: :controller do
           qualifications: "qualifications",
           hours: 20,
           estimated_count: 15,
-          estimated_total_hours: 300}
+          estimated_total_hours: 300,
+          cap_enrollment: nil,
+          num_waitlisted: nil,
+        }
         put :update, params: @params
       end
 

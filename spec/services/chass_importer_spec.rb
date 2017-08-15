@@ -55,8 +55,8 @@ describe ChassImporter do
         expect(Position.first.course_name).to eq("First Year Office Hour TA")
       end
 
-      it "sets the estimated enrolment correctly" do
-        expect(Position.first.estimated_enrolment).to eq(100)
+      it "sets the current enrolment correctly" do
+        expect(Position.first.current_enrollment).to eq(100)
       end
 
       it "sets the position attributes correctly" do
