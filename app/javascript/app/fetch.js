@@ -186,7 +186,6 @@ function onFetchCoursesSuccess(resp) {
             positionHours: course.hours,
             qual: course.qualifications,
             resp: course.duties,
-            instructor_input: '',
         };
 
         rounds[course.id] = course.round_id;
