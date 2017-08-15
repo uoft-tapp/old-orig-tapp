@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170810154932) do
+ActiveRecord::Schema.define(version: 20170815162149) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -88,7 +88,7 @@ ActiveRecord::Schema.define(version: 20170810154932) do
     t.boolean "open", null: false
     t.integer "campus_code", null: false
     t.text "course_name"
-    t.integer "estimated_enrolment"
+    t.integer "current_enrollment"
     t.text "duties"
     t.text "qualifications"
     t.integer "hours"
@@ -97,6 +97,8 @@ ActiveRecord::Schema.define(version: 20170810154932) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "session_id"
+    t.integer "cap_enrollment"
+    t.integer "num_waitlisted"
     t.index ["campus_code"], name: "index_positions_on_campus_code"
     t.index ["open"], name: "index_positions_on_open"
     t.index ["position", "round_id"], name: "index_positions_on_position_and_round_id", unique: true
