@@ -1,0 +1,43 @@
+{
+    "courses": [
+        {
+            "instructor": [],
+            "last_updated": "2017-07-06 10:47:43",
+            "end_nominations": null,
+            "status": "1",
+            "end_posting": null,
+            "start_posting": null,
+            "total_hours": "0",
+            "duties": "Hold office hours on a weekly basis to assist students taking 100-level CSC courses. ",
+            "qualifications": "Must be enrolled in or have completed a computer science degree, or equivalent. Must meet the qualifications to TA *ALL* of CSC 108, 148, and 165 (see CSC108H1F-B, CSC148H1F, CSC165H1F qualifications). Enthusiasm and patience for face-to-face teaching of beginners is required. Experience with CSC 104 or Racket preferred.",
+            "tutorials": "",
+            "dates": "September 7 - December 31",
+            "n_hours": "60",
+            "n_positions": "6",
+            "enrollment": "N/A",
+            "round_id": "110",
+            "course_name": "Help Centre for First Year courses",
+            "course_id": "HLP101H-First"
+        },
+        {
+            "instructor": [],
+            "last_updated": "2017-07-06 10:47:43",
+            "end_nominations": null,
+            "status": "1",
+            "end_posting": null,
+            "start_posting": null,
+            "total_hours": "0",
+            "duties": "Staff a Help Centre for undergraduate students, providing help to students on a drop-in basis. Maintain some familiarity with the current assignments in key courses. Each Help Centre TA will focus on one of the following areas: first-year (csc108, 148, and 165), theory courses (primarily 373), programming courses (primarily 209). Other related duties as required. ",
+            "qualifications": "TA experience in CS courses at UofT, evidence of excellent teaching skills, enthusiasm for teaching beginners, strong background in the relevant focus area (see Responsibilities), excellent communication skills in English (verbal and in writing), excellent interpersonal skills. As well as filling in the online application, applicants must submit additional information by email.  Work in the Help Centre will take place in the late afternoon to early evening, Mondays to Thursdays. There will be flexibility for picking times within that range, but applicants should generally be available at that time of day/week. \r\n\r\nApplication process: In addition to filling out the regular application form, email helpcentreta@cs.toronto.edu to arrange an interview with the Associate Chair, Francois Pitt. Include the following information in your email: evidence of satisfying each of the requirements above, and the name of at least one reference who can comment on your teaching ability.",
+            "tutorials": "",
+            "dates": "September 7 - December 31",
+            "n_hours": "60",
+            "n_positions": "6",
+            "enrollment": "N/A",
+            "round_id": "110",
+            "course_name": "Help Centre TA",
+            "course_id": "HLP101H1"
+        }
+    ],
+    "applicants": []
+}
