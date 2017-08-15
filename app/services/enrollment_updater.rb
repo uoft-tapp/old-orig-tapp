@@ -96,10 +96,8 @@ class EnrollmentUpdater
         cap_enrollment: parsed[:cap_enrollment],
         current_enrollment: parsed[:current_enrollment],
         num_waitlisted: parsed[:num_waitlisted],
-        #sections: [parsed[:section]],
       }
     else
-      #data[term][:courses][course_code][:sections].push(parsed[:section])
       data[term][:courses][course_code][:current_enrollment]+=parsed[:current_enrollment]
       data[term][:courses][course_code][:cap_enrollment]+=parsed[:cap_enrollment]
       data[term][:courses][course_code][:num_waitlisted]+=parsed[:num_waitlisted]
