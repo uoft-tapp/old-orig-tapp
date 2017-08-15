@@ -1051,15 +1051,6 @@ class AppState {
         }
         fetch.updateCourse(courseId, data, props);
     }
-
-    updateInstructorInput(courseId, input) {
-        if (input === undefined) {
-            input = '';
-        }
-        this.set('courses.list.' + courseId + '.instructor_input', fromJS(input));
-        let visible_input = document.getElementById('input_' + courseId);
-        visible_input.innerHTML = input;
-    }
 }
 
 let appStateInst = new AppState(),

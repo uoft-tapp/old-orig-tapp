@@ -371,14 +371,10 @@ footer div p {
 .instructor_form input[type="text"] {
     border: none;
     float: left;
-    margin: 0;
-    height: 0px;
+    padding: 0 2px;
     vertical-align: text-bottom;
-    opacity: 0;
 }
-.instructor_form input[type="text"]:focus,
-.instructor_form span:focus,
-.instructor_form button:focus {
+.instructor_form input[type="text"]:focus {
     outline: 0;
 }
 .instructor_form div {
@@ -389,13 +385,6 @@ footer div p {
 .instructor_form button {
     background: none;
     border: none;
-}
-.instructor_form datalist {
-    display: block;
-    position: fixed;
-}
-.instructor_form span {
-    margin-left: 2px;
 }
 
 /* for summary view */
