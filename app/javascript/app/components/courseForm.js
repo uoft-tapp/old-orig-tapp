@@ -2,10 +2,24 @@ import React from 'react';
 import { Panel, ListGroup, ListGroupItem, Badge } from 'react-bootstrap';
 
 class CourseForm extends React.Component {
-    setForms(courses, instructors) {
-        return Object.entries(courses).map(([id, course]) =>
+    // acquire and sort courses in order of course code
+    sortCourses() {
+        this.courses = Object.entries(this.props.getCoursesList());
+        this.courses.sort(([A, valA], [B, valB]) => (valA.code < valB.code ? -1 : 1));
+    }
+
+    componentWillMount() {
+        this.sortCourses();
+    }
+
+    componentWillUpdate() {
+        this.sortCourses();
+    }
+
+    setForms(instructors) {
+        return this.courses.map(([id, course]) =>
             <ListGroupItem key={id}>
-                <a name={course.code} />
+                <a name={id} />
                 <table className="form_table">
                     <tbody>
                         <tr>
@@ -142,13 +156,12 @@ class CourseForm extends React.Component {
     }
 
     render() {
-        let courses = this.props.getCoursesList();
         let instructors = this.props.getInstructorsList();
 
         return (
             <Panel id="course-form">
                 <ListGroup fill>
-                    {this.setForms(courses, instructors)}
+                    {this.setForms(instructors)}
                 </ListGroup>
             </Panel>
         );
