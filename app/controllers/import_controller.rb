@@ -10,4 +10,8 @@ class ImportController < ApplicationController
       render status: 404, json: {message: status[:message]}
     end
   end
+
+  def enrollment
+    updater = EnrollmentUpdater.new(params[:enrollment_data])
+  end
 end
