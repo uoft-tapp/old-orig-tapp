@@ -1,10 +1,53 @@
 class EnrollmentUpdater
   def initialize(data)
     lines = data.split("\n")
-    update_position(parse_lines(lines))
+    if is_valid(lines)
+      parse_lines(lines)
+      @status = {updated: true, message: "Enrollment update success."}
+    else
+      @status = {updated: false, message: "Error: This file is not formatted correctly."}
+    end
+  end
+
+  def get_status
+    @status
   end
 
   private
+  def is_valid(lines)
+    lines.each do |line|
+      if line.length != 84
+        return false
+      else
+        numbers = [line[0..5].strip, line[64..67], line[68..71], line[74..line.length-1]]
+        lengths = [3, 9, 7]
+        strings = [line[6..10].strip, line[11..20].strip, line[51..59].strip]
+        if !are_numbers(numbers) || !right_string_len(strings, lengths)
+          return false
+        end
+      end
+    end
+    return true
+  end
+
+  def right_string_len(strings, len)
+    strings.each_with_index do |string, index|
+      if string.length != len[index]
+        return false
+      end
+    end
+    return true
+  end
+
+  def are_numbers(numbers)
+    numbers.each do |number|
+      if !number.match(/^(\d)+$/)
+        return false
+      end
+    end
+    return true
+  end
+
   def update_position(data)
     data.keys.each do |semester|
       semester = data[semester]
@@ -43,7 +86,7 @@ class EnrollmentUpdater
         parse_courses(data, term.to_sym, course_code, parsed)
       end
     end
-    return data
+    update_position(data)
   end
 
   def parse_courses(data, term, course_code, parsed)
