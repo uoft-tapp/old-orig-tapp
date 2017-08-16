@@ -3,9 +3,19 @@ import { appState } from './appState.js';
 
 /* General helpers */
 
-function defaultFailure(response) {
-    appState.notify('<b>Action Failed:</b> ' + response.statusText);
-    return Promise.reject(response);
+function defaultFailure(resp) {
+    appState.notify('<b>Action Failed:</b> ' + resp.statusText);
+    return Promise.reject(resp);
+
+// extract and display a message which is sent in the (JSON) body of a response
+function showMessageInJsonBody(resp) {
+    if (resp.message != null) {
+        appState.notify(resp.message);
+    } else {
+        resp.json().then(res => {
+            appState.alert(res.message);
+        });
+    }
 }
 
 function fetchHelper(URL, init, success, failure = defaultFailure) {
@@ -360,15 +370,15 @@ function importChass(data) {
     );
 }
 
-// extract and display a message which is sent in the (JSON) body of a response
-function showMessageInJsonBody(resp) {
-    if (resp.message != null) {
-        appState.notify(resp.message);
-    } else {
-        resp.json().then(res => {
-            appState.alert(res.message);
-        });
-    }
+// send enrollment data
+function importEnrollment(data) {
+    return postHelper('/import/enrollment', data, showMessageInJsonBody, showMessageInJsonBody)
+        .then(getCourses)
+        .then(courses => {
+            appState.setCoursesList(courses);
+            appState.successFetchingCoursesList();
+        })
+        .catch(() => appState.setFetchingCoursesList(false));
 }
 
 // unlock a single assignment

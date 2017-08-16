@@ -409,7 +409,7 @@ footer div p {
 }
 
 #summary-grid #utils #import {
-    flex: 0.8;
+    flex: 1;
 }
 
 #summary-grid #utils #export {
@@ -420,14 +420,18 @@ footer div p {
     flex: 0;
 }
 
+#summary-grid #import #file {
+    margin-top: 5px;
+}
+
 /* for statistics panel in summary view */
 #summary-grid #stats .panel-heading {
     height: 40px;
 }
 
 #summary-grid #stats .panel-body {
-    /* we subtract the height of the utilities panel and stats panel header */
-    max-height: calc(var(--main-div-height) - 77px - 40px - 10px);
+    /* we subtract the height of the utilities panel, the margin below it, and the stats panel header */
+    max-height: calc(var(--main-div-height) - 91px - 10px - 40px);
     overflow: auto;
 }
 
@@ -463,11 +467,11 @@ footer div p {
     top: 76px !important;
 }
 #help .popover-content {
-    padding: 3 !important;
+    padding: 2px 12px 2px 2px !important;
     width: 300px;
     height: 400px;
 }
-#help .popover-content textarea {
+#help .popover-content pre {
     width: calc(100% - 17px);
     height: 100%;
     resize: none;

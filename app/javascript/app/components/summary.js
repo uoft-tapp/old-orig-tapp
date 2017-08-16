@@ -51,7 +51,7 @@ const ReleaseForm = props =>
                 props.alert(
                     '<b>Release assignments</b> This functionality is not currently supported.'
                 )}>
-            Release assignments
+            Release<br />assignments
         </Button>
     </Form>;
 
