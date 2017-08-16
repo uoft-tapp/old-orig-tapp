@@ -1,22 +1,33 @@
 import React from 'react';
-import { Panel, ListGroup, ListGroupItem } from 'react-bootstrap';
+import { Panel, ListGroup, ListGroupItem, Badge } from 'react-bootstrap';
 
 class CourseList extends React.Component {
-    setCourseList(courses) {
-        return Object.entries(courses).map((course, key) =>
-            <ListGroupItem key={key} href={'#' + course[0]} title={course[1].code}>
-                {course[1].code}
-            </ListGroupItem>
-        );
+    // acquire and sort courses in order of course code
+    sortCourses() {
+        this.courses = Object.entries(this.props.getCoursesList());
+        this.courses.sort(([A, valA], [B, valB]) => (valA.code < valB.code ? -1 : 1));
+    }
+
+    componentWillMount() {
+        this.sortCourses();
+    }
+
+    componentWillUpdate() {
+        this.sortCourses();
     }
 
     render() {
-        let courses = this.props.getCoursesList();
-
         return (
             <Panel className="course-list-panel" header="Courses">
                 <ListGroup className="course-list-group" fill>
-                    {this.setCourseList(courses)}
+                    {this.courses.map(([key, course]) =>
+                        <ListGroupItem key={key} href={'#' + key}>
+                            {course.code}
+                            <Badge className={'round-' + course.round}>
+                                {course.round}
+                            </Badge>
+                        </ListGroupItem>
+                    )}
                 </ListGroup>
             </Panel>
         );
