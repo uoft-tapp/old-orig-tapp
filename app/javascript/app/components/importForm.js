@@ -10,45 +10,56 @@ import {
 
 // form for importing data from a file and persisting it to the database
 class ImportForm extends React.Component {
-    loadFile() {
-        let files = this.files.files;
+    uploadFile() {
+        let importFunc,
+            files = this.files.files;
+
         if (files.length > 0) {
-            let message =
-                'Are you sure you want to import "' + files[0].name + '" into the database?';
-            if (files[0].type == 'application/json') {
-                if (confirm(message)) {
-                    let importChass = this.props.importChass;
-                    let waitAlert = () => this.props.notify('<i>Import in progress...</i>');
-                    let chassAlert = () => this.props.alert('Error: This is not a CHASS JSON.');
-                    let malformedAlert = () => this.props.alert('Error: This JSON is malformed.');
-                    this.uploadFile(files[0], importChass, waitAlert, chassAlert, malformedAlert);
+            if (this.data.value == 'chass') {
+                // uploading a CHASS file
+                if (files[0].type != 'application/json') {
+                    this.props.alert('<b>Error:</b> The file you uploaded is not a JSON.');
+                    return;
                 }
+
+                importFunc = data => {
+                    try {
+                        data = JSON.parse(data);
+
+                        if (data['courses'] !== undefined && data['applicants'] !== undefined) {
+                            this.props.importChass(data);
+                        } else {
+                            this.props.alert('<b>Error:</b> This is not a CHASS JSON.');
+                        }
+                    } catch (err) {
+                        this.props.alert('<b>Error:</b> ' + err);
+                    }
+                };
             } else {
-                this.props.alert('Error: The file you uploaded is not a JSON.');
+                // uploading an enrollment data file
+                importFunc = data => {
+                    try {
+                        this.props.importEnrolment(data);
+                    } catch (err) {
+                        this.props.alert('<b>Error:</b> ' + err);
+                    }
+                };
+            }
+
+            if (
+                confirm(
+                    'Are you sure you want to import "' + files[0].name + '" into the database?'
+                )
+            ) {
+                this.props.notify('<i>Import in progress...</i>');
+
+                let reader = new FileReader();
+                reader.onload = event => importFunc(event.target.result);
+                reader.readAsText(files[0]);
             }
         } else {
-            this.props.alert('Error: No file chosen.');
+            this.props.alert('<b>Error:</b> No file chosen.');
         }
-    }
-
-    uploadFile(file, importChass, waitAlert, chassAlert, malformedAlert) {
-        let reader = new FileReader();
-        reader.onload = function(event) {
-            try {
-                let data = JSON.parse(event.target.result);
-
-                if (data['courses'] !== undefined && data['applicants'] !== undefined) {
-                    data = { chass_json: data };
-                    waitAlert();
-                    importChass(data);
-                } else {
-                    chassAlert();
-                }
-            } catch (err) {
-                malformedAlert();
-            }
-        };
-        reader.readAsText(file);
     }
 
     render() {
@@ -58,7 +69,7 @@ class ImportForm extends React.Component {
                     <i
                         className="fa fa-upload"
                         style={{ fontSize: '20px', color: 'blue', cursor: 'pointer' }}
-                        onClick={() => this.loadFile()}
+                        onClick={() => this.uploadFile()}
                     />&emsp;
                 </FormControl.Static>
                 <FormGroup>

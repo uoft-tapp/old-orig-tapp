@@ -881,6 +881,10 @@ class AppState {
         fetch.importChass(data);
     }
 
+    importEnrollment(data) {
+        fetch.importEnrollment(data);
+    }
+
     isApplicantsListNull() {
         return this.get('applicants.list') == null;
     }

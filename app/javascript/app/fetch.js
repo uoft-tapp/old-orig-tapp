@@ -6,6 +6,7 @@ import { appState } from './appState.js';
 function defaultFailure(resp) {
     appState.notify('<b>Action Failed:</b> ' + resp.statusText);
     return Promise.reject(resp);
+}
 
 // extract and display a message which is sent in the (JSON) body of a response
 function showMessageInJsonBody(resp) {
@@ -365,14 +366,22 @@ function updateCourse(courseId, data, attr) {
 
 // send CHASS data
 function importChass(data) {
-    return postHelper('/import/chass', data, showMessageInJsonBody, showMessageInJsonBody).then(
-        fetchAll
-    );
+    return postHelper(
+        '/import/chass',
+        { chass_json: data },
+        showMessageInJsonBody,
+        showMessageInJsonBody
+    ).then(fetchAll);
 }
 
 // send enrollment data
 function importEnrollment(data) {
-    return postHelper('/import/enrollment', data, showMessageInJsonBody, showMessageInJsonBody)
+    return postHelper(
+        '/import/enrollment',
+        { enrollment_data: data },
+        showMessageInJsonBody,
+        showMessageInJsonBody
+    )
         .then(getCourses)
         .then(courses => {
             appState.setCoursesList(courses);
@@ -437,6 +446,7 @@ export {
     updateCourse,
     noteApplicant,
     importChass,
+    importEnrollment,
     unlockAssignment,
     exportOffers,
 };
