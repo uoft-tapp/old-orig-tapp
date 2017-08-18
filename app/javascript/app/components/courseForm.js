@@ -1,158 +1,153 @@
 import React from 'react';
-import { Panel, ListGroup, ListGroupItem, Badge } from 'react-bootstrap';
+import { ListGroupItem, Badge } from 'react-bootstrap';
 
 class CourseForm extends React.Component {
     render() {
-        let courses = this.props.getCoursesList();
         let instructors = this.props.getInstructorsList();
 
         return (
-            <Panel id="course-form">
-                <ListGroup fill>
-                    {Object.entries(courses).map(([id, course]) =>
-                        <ListGroupItem key={id}>
-                            <a name={id} />
-                            <table className="form_table">
-                                <tbody>
-                                    <tr>
-                                        <td id="col-1">
-                                            <p>
-                                                <input
-                                                    type="text"
-                                                    value={course.code}
-                                                    className="course"
-                                                    readOnly
-                                                    disabled
-                                                />
-                                            </p>
-                                            <p>
-                                                <input
-                                                    type="text"
-                                                    value={course.name}
-                                                    readOnly
-                                                    disabled
-                                                />
-                                            </p>
-                                            <p>
-                                                <input
-                                                    type="text"
-                                                    value={course.campus}
-                                                    readOnly
-                                                    disabled
-                                                />
-                                            </p>
-                                        </td>
-                                        <td id="col-2">
-                                            <p>
-                                                <b>Positions: </b>
-                                            </p>
-                                            <p>
-                                                <b>Hours/Position: </b>
-                                            </p>
-                                            <p>
-                                                <b>Est./Curr. Enrolment: </b>
-                                            </p>
-                                        </td>
-                                        <td id="col-3">
-                                            <NumForm
-                                                defaultVal={
-                                                    course.estimatedPositions
-                                                        ? course.estimatedPositions
-                                                        : ''
-                                                }
-                                                update={val => {
-                                                    if (val != course.estimatedPositions) {
-                                                        this.props.updateCourse(
-                                                            id,
-                                                            val,
-                                                            'estimatedPositions'
-                                                        );
-                                                    }
-                                                }}
-                                            />
-                                            <NumForm
-                                                defaultVal={
-                                                    course.positionHours ? course.positionHours : ''
-                                                }
-                                                update={val => {
-                                                    if (val != course.positionHours) {
-                                                        this.props.updateCourse(
-                                                            id,
-                                                            val,
-                                                            'positionHours'
-                                                        );
-                                                    }
-                                                }}
-                                            />
-                                            <NumForm
-                                                defaultVal={
-                                                    course.estimatedEnrol
-                                                        ? course.estimatedEnrol
-                                                        : ''
-                                                }
-                                                update={val => {
-                                                    if (val != course.estimatedEnrol) {
-                                                        this.props.updateCourse(
-                                                            id,
-                                                            val,
-                                                            'estimatedEnrol'
-                                                        );
-                                                    }
-                                                }}
-                                            />
-                                        </td>
-                                        <td id="col-4">
-                                            <p>
-                                                <b>Instructors: </b>
-                                            </p>
-                                            <InstructorForm
-                                                course={id}
-                                                instructors={course.instructors}
-                                                instructor_data={instructors}
-                                                {...this.props}
-                                            />
-                                        </td>
-                                        <td id="col-5">
-                                            <p>
-                                                <b>Qualifications: </b>
-                                            </p>
-                                            <textarea
-                                                onBlur={event => {
-                                                    if (event.target.value != course.qual) {
-                                                        this.props.updateCourse(
-                                                            id,
-                                                            event.target.value,
-                                                            'qual'
-                                                        );
-                                                    }
-                                                }}
-                                                defaultValue={course.qual}
-                                            />
-                                        </td>
-                                        <td id="col-6">
-                                            <p>
-                                                <b>Responsibilities: </b>
-                                            </p>
-                                            <textarea
-                                                onBlur={event => {
-                                                    if (event.target.value != course.resp) {
-                                                        this.props.updateCourse(
-                                                            id,
-                                                            event.target.value,
-                                                            'resp'
-                                                        );
-                                                    }
-                                                }}
-                                                defaultValue={course.resp}
-                                            />
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </ListGroupItem>
-                    )}
-                </ListGroup>
-            </Panel>
+            <ListGroupItem key={this.props.courseId}>
+                <a name={this.props.courseId} />
+                <table className="form_table">
+                    <tbody>
+                        <tr>
+                            <td className="col-1">
+                                <p>
+                                    <input
+                                        type="text"
+                                        value={this.props.course.code}
+                                        className="course"
+                                        readOnly
+                                        disabled
+                                    />
+                                </p>
+                                <p>
+                                    <input
+                                        type="text"
+                                        value={this.props.course.name}
+                                        readOnly
+                                        disabled
+                                    />
+                                </p>
+                                <p>
+                                    <input
+                                        type="text"
+                                        value={this.props.course.campus}
+                                        readOnly
+                                        disabled
+                                    />
+                                </p>
+                            </td>
+                            <td className="col-2">
+                                <p>
+                                    <b>Positions: </b>
+                                </p>
+                                <p>
+                                    <b>Hours/Position: </b>
+                                </p>
+                                <p>
+                                    <b>Est./Curr. Enrolment: </b>
+                                </p>
+                            </td>
+                            <td className="col-3">
+                                <NumForm
+                                    defaultVal={
+                                        this.props.course.estimatedPositions
+                                            ? this.props.course.estimatedPositions
+                                            : ''
+                                    }
+                                    update={val => {
+                                        if (val != this.props.course.estimatedPositions) {
+                                            this.props.updateCourse(
+                                                this.props.courseId,
+                                                val,
+                                                'estimatedPositions'
+                                            );
+                                        }
+                                    }}
+                                />
+                                <NumForm
+                                    defaultVal={
+                                        this.props.course.positionHours
+                                            ? this.props.course.positionHours
+                                            : ''
+                                    }
+                                    update={val => {
+                                        if (val != this.props.course.positionHours) {
+                                            this.props.updateCourse(
+                                                this.props.courseId,
+                                                val,
+                                                'positionHours'
+                                            );
+                                        }
+                                    }}
+                                />
+                                <NumForm
+                                    defaultVal={
+                                        this.props.course.estimatedEnrol
+                                            ? this.props.course.estimatedEnrol
+                                            : ''
+                                    }
+                                    update={val => {
+                                        if (val != this.props.course.estimatedEnrol) {
+                                            this.props.updateCourse(
+                                                this.props.courseId,
+                                                val,
+                                                'estimatedEnrol'
+                                            );
+                                        }
+                                    }}
+                                />
+                            </td>
+                            <td className="col-4">
+                                <p>
+                                    <b>Instructors: </b>
+                                </p>
+                                <InstructorForm
+                                    course={this.props.courseId}
+                                    instructors={this.props.course.instructors}
+                                    instructor_data={instructors}
+                                    {...this.props}
+                                />
+                            </td>
+                            <td className="col-5">
+                                <p>
+                                    <b>Qualifications: </b>
+                                </p>
+                                <textarea
+                                    onBlur={event => {
+                                        if (event.target.value != this.props.course.qual) {
+                                            this.props.updateCourse(
+                                                this.props.courseId,
+                                                event.target.value,
+                                                'qual'
+                                            );
+                                        }
+                                    }}
+                                    defaultValue={this.props.course.qual}
+                                />
+                            </td>
+                            <td className="col-6">
+                                <p>
+                                    <b>Responsibilities: </b>
+                                </p>
+                                <textarea
+                                    onBlur={event => {
+                                        if (event.target.value != this.props.course.resp) {
+                                            this.props.updateCourse(
+                                                this.props.courseId,
+                                                event.target.value,
+                                                'resp'
+                                            );
+                                        }
+                                    }}
+                                    defaultValue={this.props.course.resp}
+                                />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </ListGroupItem>
         );
     }
 }
