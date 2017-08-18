@@ -413,7 +413,7 @@ footer div p {
 }
 
 #summary-grid #utils #export {
-    flex: 2;
+    flex: 1.5;
 }
 
 #summary-grid #utils #release {

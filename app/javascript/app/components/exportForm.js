@@ -43,9 +43,7 @@ class ExportForm extends React.Component {
                         }}>
                         <option value="offers">Offers</option>
                         <option value="cdf-info">CDF info</option>
-                        <option value="transcript-access">
-                            Undergraduate applicants granting access to academic history
-                        </option>
+                        <option value="transcript-access">UG academic history access</option>
                     </FormControl>
                 </FormGroup>
 
