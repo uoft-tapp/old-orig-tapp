@@ -213,12 +213,10 @@ class ChassImporter
 
   def insert_positions
     @course_data.each do |course_entry|
-      puts course_entry["course_id"]
       posting_id  = course_entry["course_id"]
       course_id = posting_id.split("-")[0].strip
       round_id = course_entry["round_id"]
       session_id = get_session_id(course_entry["dates"])
-      puts "hello: #{session_id}"
       if session_id
         exists = "Position #{posting_id} already exists"
         ident = {position: posting_id, round_id: round_id}
@@ -236,7 +234,6 @@ class ChassImporter
           estimated_total_hours: course_entry["total_hours"],
           session_id: session_id,
         }
-        puts data
         position = insertion_helper(Position, data, ident, exists)
 
         teaching_instructors = []
@@ -282,19 +279,7 @@ class ChassImporter
         session = insertion_helper(Session, data, ident, exists)
         return session.id
       else
-        dates = dates[0].split(" - ")
-        start_date = DateTime.parse(dates[0])
-        end_date =  DateTime.parse(dates[1])
-        data ={
-          start_date: start_date,
-          end_date: end_date,
-          year: start_date.strftime("%Y"),
-          semester: get_semester(start_date),
-        }
-        exists = "Session #{data[:semester]}, #{data[:year]} already exists"
-        ident = {year: data[:year], semester: data[:semester]}
-        session = insertion_helper(Session, data, ident, exists)
-        return session.id
+        return nil
       end
     else
       return nil
