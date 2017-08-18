@@ -61,18 +61,35 @@ const Utilities = props => {
 
 // form for importing data from a file and persisting it to the database
 class ImportForm extends React.Component {
-    loadFile() {
+    uploadFile() {
         let files = document.getElementById('import').files;
+
         if (files.length > 0) {
-            let message =
-                'Are you sure you want to import "' + files[0].name + '" into the database?';
             if (files[0].type == 'application/json') {
-                if (confirm(message)) {
-                    let importChass = this.props.importChass;
-                    let waitAlert = () => this.props.notify('<i>Import in progress...</i>');
-                    let chassAlert = () => this.props.alert('Error: This is not a CHASS JSON.');
-                    let malformedAlert = () => this.props.alert('Error: This JSON is malformed.');
-                    this.uploadFile(files[0], importChass, waitAlert, chassAlert, malformedAlert);
+                if (
+                    confirm(
+                        'Are you sure you want to import "' + files[0].name + '" into the database?'
+                    )
+                ) {
+                    let importFunc = data => {
+                        if (data['courses'] !== undefined && data['applicants'] !== undefined) {
+                            data = { chass_json: data };
+                            this.props.setImporting(true);
+                            this.props.importChass(data);
+                        } else {
+                            this.props.alert('Error: This is not a CHASS JSON.');
+                        }
+                    };
+
+                    let reader = new FileReader();
+                    reader.onload = function(event) {
+                        try {
+                            importFunc(JSON.parse(event.target.result));
+                        } catch (err) {
+                            console.log('Error: ' + err);
+                        }
+                    };
+                    reader.readAsText(files[0]);
                 }
             } else {
                 this.props.alert('Error: The file you uploaded is not a JSON.');
@@ -82,35 +99,20 @@ class ImportForm extends React.Component {
         }
     }
 
-    uploadFile(file, importChass, waitAlert, chassAlert, malformedAlert) {
-        let reader = new FileReader();
-        reader.onload = function(event) {
-            try {
-                let data = JSON.parse(event.target.result);
-
-                if (data['courses'] !== undefined && data['applicants'] !== undefined) {
-                    data = { chass_json: data };
-                    waitAlert();
-                    importChass(data);
-                } else {
-                    chassAlert();
-                }
-            } catch (err) {
-                malformedAlert();
-            }
-        };
-        reader.readAsText(file);
-    }
-
     render() {
         return (
             <Form inline>
                 <FormControl.Static style={{ verticalAlign: 'middle' }}>
-                    <i
-                        className="fa fa-upload"
-                        style={{ fontSize: '20px', color: 'blue', cursor: 'pointer' }}
-                        onClick={() => this.loadFile()}
-                    />&emsp;
+                    {this.props.importing()
+                        ? <i
+                              className="fa fa-spinner fa-spin"
+                              style={{ fontSize: '20px', color: 'blue' }}
+                          />
+                        : <i
+                              className="fa fa-upload"
+                              style={{ fontSize: '20px', color: 'blue', cursor: 'pointer' }}
+                              onClick={() => this.uploadFile()}
+                          />}&emsp;
                 </FormControl.Static>
                 <FormGroup>
                     <ControlLabel>
@@ -119,8 +121,7 @@ class ImportForm extends React.Component {
                             trigger="click"
                             rootClose
                             placement="right"
-                            overlay={InfoDialog(chassFormat)}
-                        >
+                            overlay={InfoDialog(chassFormat)}>
                             <i className="fa fa-info-circle" style={{ color: 'blue' }} />
                         </OverlayTrigger>
                     </ControlLabel>
@@ -175,8 +176,7 @@ class ExportForm extends React.Component {
                         componentClass="select"
                         inputRef={ref => {
                             this.data = ref;
-                        }}
-                    >
+                        }}>
                         <option value="offers">Offers</option>
                         <option value="cdf-info">CDF info</option>
                         <option value="transcript-access">
@@ -192,8 +192,7 @@ class ExportForm extends React.Component {
                         componentClass="select"
                         inputRef={ref => {
                             this.format = ref;
-                        }}
-                    >
+                        }}>
                         <option value="csv">CSV</option>
                         {this.props.getSelectedRound() && <option value="json">JSON</option>}
                     </FormControl>
@@ -218,8 +217,7 @@ const ReleaseForm = props =>
             onClick={() =>
                 props.alert(
                     '<b>Release assignments</b> This functionality is not currently supported.'
-                )}
-        >
+                )}>
             Release assignments
         </Button>
     </Form>;
