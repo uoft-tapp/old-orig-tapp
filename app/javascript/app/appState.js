@@ -1052,6 +1052,12 @@ class AppState {
             case 'resp':
                 data['duties'] = val;
                 break;
+            case 'cap':
+                data['cap_enrollment'] = val;
+                break;
+            case 'waitlist':
+                data['num_waitlisted'] = val;
+                break;
         }
         fetch.updateCourse(courseId, data, props);
     }

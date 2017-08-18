@@ -40,16 +40,68 @@ class CourseForm extends React.Component {
                             </td>
                             <td className="col-2">
                                 <p>
-                                    <b>Positions: </b>
+                                    <b>Est./Curr. Enrol.: </b>
                                 </p>
                                 <p>
-                                    <b>Hours/Position: </b>
+                                    <b>Enrol. Cap: </b>
                                 </p>
                                 <p>
-                                    <b>Est./Curr. Enrolment: </b>
+                                    <b>Waitlist: </b>
                                 </p>
                             </td>
                             <td className="col-3">
+                                <NumForm
+                                    defaultVal={
+                                        this.props.course.estimatedEnrol
+                                            ? this.props.course.estimatedEnrol
+                                            : ''
+                                    }
+                                    update={val => {
+                                        if (val != this.props.course.estimatedEnrol) {
+                                            this.props.updateCourse(
+                                                this.props.courseId,
+                                                val,
+                                                'estimatedEnrol'
+                                            );
+                                        }
+                                    }}
+                                />
+                                <NumForm
+                                    defaultVal={this.props.course.cap ? this.props.course.cap : ''}
+                                    update={val => {
+                                        if (val != this.props.course.cap) {
+                                            this.props.updateCourse(
+                                                this.props.courseId,
+                                                val,
+                                                'cap'
+                                            );
+                                        }
+                                    }}
+                                />
+                                <NumForm
+                                    defaultVal={
+                                        this.props.course.waitlist ? this.props.course.waitlist : ''
+                                    }
+                                    update={val => {
+                                        if (val != this.props.course.waitlist) {
+                                            this.props.updateCourse(
+                                                this.props.courseId,
+                                                val,
+                                                'waitlist'
+                                            );
+                                        }
+                                    }}
+                                />
+                            </td>
+                            <td className="col-4">
+                                <p>
+                                    <b>Positions: </b>
+                                </p>
+                                <p>
+                                    <b>Hours/Pos.: </b>
+                                </p>
+                            </td>
+                            <td className="col-5">
                                 <NumForm
                                     defaultVal={
                                         this.props.course.estimatedPositions
@@ -82,24 +134,8 @@ class CourseForm extends React.Component {
                                         }
                                     }}
                                 />
-                                <NumForm
-                                    defaultVal={
-                                        this.props.course.estimatedEnrol
-                                            ? this.props.course.estimatedEnrol
-                                            : ''
-                                    }
-                                    update={val => {
-                                        if (val != this.props.course.estimatedEnrol) {
-                                            this.props.updateCourse(
-                                                this.props.courseId,
-                                                val,
-                                                'estimatedEnrol'
-                                            );
-                                        }
-                                    }}
-                                />
                             </td>
-                            <td className="col-4">
+                            <td className="col-6">
                                 <p>
                                     <b>Instructors: </b>
                                 </p>
@@ -110,7 +146,7 @@ class CourseForm extends React.Component {
                                     {...this.props}
                                 />
                             </td>
-                            <td className="col-5">
+                            <td className="col-7">
                                 <p>
                                     <b>Qualifications: </b>
                                 </p>
@@ -127,7 +163,7 @@ class CourseForm extends React.Component {
                                     defaultValue={this.props.course.qual}
                                 />
                             </td>
-                            <td className="col-6">
+                            <td className="col-8">
                                 <p>
                                     <b>Responsibilities: </b>
                                 </p>
@@ -197,7 +233,8 @@ class InstructorForm extends React.Component {
                 {this.props.instructors.map((instructor, key) =>
                     <Badge key={key}>
                         {this.props.instructor_data[instructor]}
-                        <button onClick={() => this.props.removeInstructor(this.props.courseId, key)}>
+                        <button
+                            onClick={() => this.props.removeInstructor(this.props.courseId, key)}>
                             <i className="fa fa-close" />
                         </button>
                     </Badge>
