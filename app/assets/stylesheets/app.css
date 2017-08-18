@@ -292,9 +292,9 @@ footer div p {
     font-weight: bold;
 }
 /* margin between text boxes in the first three columns */
-.form_table #col-1 p + p,
-.form_table #col-2 p + p,
-.form_table #col-3 form + form {
+.form_table .col-1 p + p,
+.form_table .col-2 p + p,
+.form_table .col-3 form + form {
     margin-top: 5px;
 }
 

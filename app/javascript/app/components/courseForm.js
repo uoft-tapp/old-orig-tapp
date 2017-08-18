@@ -104,7 +104,7 @@ class CourseForm extends React.Component {
                                     <b>Instructors: </b>
                                 </p>
                                 <InstructorForm
-                                    course={this.props.courseId}
+                                    courseId={this.props.courseId}
                                     instructors={this.props.course.instructors}
                                     instructor_data={instructors}
                                     {...this.props}
@@ -197,7 +197,7 @@ class InstructorForm extends React.Component {
                 {this.props.instructors.map((instructor, key) =>
                     <Badge key={key}>
                         {this.props.instructor_data[instructor]}
-                        <button onClick={() => this.props.removeInstructor(this.props.course, key)}>
+                        <button onClick={() => this.props.removeInstructor(this.props.courseId, key)}>
                             <i className="fa fa-close" />
                         </button>
                     </Badge>
@@ -212,7 +212,7 @@ class InstructorForm extends React.Component {
                     onInput={event =>
                         this.isInstructor(
                             event.target.value,
-                            this.props.course,
+                            this.props.courseId,
                             this.props.instructors,
                             this.props.instructor_data
                         )}
