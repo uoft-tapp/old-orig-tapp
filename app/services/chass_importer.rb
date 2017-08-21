@@ -226,7 +226,7 @@ class ChassImporter
           open: true,
           campus_code: course_id[course_id[/[A-Za-z0-9]{3}\d{3,4}/].size+1].to_i,
           course_name: course_entry["course_name"].strip,
-          estimated_enrolment: course_entry["enrollment"],
+          current_enrollment: course_entry["enrollment"],
           duties: course_entry["duties"],
           qualifications: course_entry["qualifications"],
           hours: course_entry["n_hours"],
