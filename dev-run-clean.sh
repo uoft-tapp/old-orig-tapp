@@ -7,6 +7,8 @@ die(){
 
 # start up tapp for development 
 
+docker-compose ps
+
 echo 'have you shut down containers already with docker down?'
 echo 'you should consider down -v to remove the postgres volume. hit enter to continue'
 read -p 'hit enter to continue: [interrupt to quit]: '
