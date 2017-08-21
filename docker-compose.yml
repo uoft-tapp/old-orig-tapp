@@ -14,7 +14,7 @@ services:
       SECRET_KEY_BASE: ${SECRET_KEY_BASE}
     networks:
       - default
-      - front_end
+      - frontend
     ports:
       - "3000:3000"
     links:
@@ -30,6 +30,6 @@ services:
       - /var/lib/postgresql/data
 
 networks:
-  # "front_end" network will be attached to CP app so it can use the endpoints
-  front_end:
+  # "frontend" network will be attached to CP app so it can use the endpoints
+  frontend:
     driver: bridge
