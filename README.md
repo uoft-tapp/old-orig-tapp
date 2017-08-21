@@ -1,12 +1,16 @@
 # tapp
 [![Build Status](https://travis-ci.org/uoft-tapp/tapp.svg?branch=master)](https://travis-ci.org/uoft-tapp/tapp)
 
-- [deployment](#deployment)
-- [backup & restore](#backup-restore)
+- [Getting Started](#getting-started)
+- [Testing](#testing)
+- [Dependencies](#dependencies)
+- [Deployment](#deployment)
+- [Backup & Restore](#backup-restore)
+- [Hotfix](#hotfix)
 
 TA assignment and matching application.
 
-## Starting application
+## Starting application <a id="getting-started"></a>
 You should have a reasonably recent version of Docker
 [installed](https://docs.docker.com/engine/installation/). Also, check that
 you have docker-compose installed.
@@ -54,7 +58,7 @@ Hence, to do `rails generate controller Welcome` you need to do
 docker-compose run rails-app rails generate controller Welcome
 ```
 
-## Testing
+## Testing <a id="testing"></a>
 This app comes pre-loaded with a testing framework for the Ruby parts,
 [rspec-rails](https://github.com/rspec/rspec-rails). You can run all tests
 like so:
@@ -70,7 +74,7 @@ it with
 docker-compose run rails-app guard
 ```
 
-## Dependencies
+## Dependencies<a id="dependencies"></a>
 Ruby/Rails and JavaScript dependencies are checked on container start. Any
 unmet dependencies will be installed automatically for the current container.
 
@@ -196,6 +200,17 @@ While the application is running,
   ```
   cat filename | docker exec -i tapp_postgres_1 psql -U postgres
   ```
+## Hotfix <a id="hotfix"></a>
+  1. Create a hotfix branch of master `hotfix-NAME-OF-BUG`
+
+  2. After fixing the bug, push branch, and create a PR targeting master
+
+  3. Once PR has been code reviewed and approved, merge (admin has to trigger the merge)
+
+  4. Create another PR from `hotfix-NAME-OF-BUG` targeted for development
+
+  5. Fix whatever conflicts, and merge
+
 
 #### peeking at backups
 
