@@ -64,6 +64,8 @@ const initialState = {
     assignments: { fetching: 0, list: null },
     courses: { fetching: 0, list: null },
     instructors: { fetching: 0, list: null },
+
+    importing: 0,
 };
 
 class AppState {
@@ -881,6 +883,10 @@ class AppState {
         fetch.importChass(data);
     }
 
+    importing() {
+        return this.get('importing') > 0;
+    }
+
     isApplicantsListNull() {
         return this.get('applicants.list') == null;
     }
@@ -990,6 +996,16 @@ class AppState {
             this.set('instructors.fetching', init + 1);
         } else {
             this.set('instructors.fetching', init - 1);
+        }
+    }
+
+    setImporting(importing) {
+        let init = this.get('importing');
+        if (importing) {
+            this.add('nav.notifications', '<i>Import in progress...</i>');
+            this.set('importing', init + 1);
+        } else {
+            this.set('importing', init - 1);
         }
     }
 
