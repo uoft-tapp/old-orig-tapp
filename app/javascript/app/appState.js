@@ -1044,7 +1044,7 @@ class AppState {
                 data['hours'] = val;
                 break;
             case 'estimatedEnrol':
-                data['estimated_enrollment'] = val;
+                data['current_enrollment'] = val;
                 break;
             case 'qual':
                 data['qualifications'] = val;
