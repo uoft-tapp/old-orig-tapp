@@ -36,7 +36,7 @@ class ImportForm extends React.Component {
                     }
                 };
             } else {
-                // uploading an enrollment data file
+                // uploading an enrolment data file
                 importFunc = data => {
                     try {
                         this.props.importEnrolment(data);
@@ -154,7 +154,7 @@ const chassFormat = `{
       "dates": string,
       "n_hours": string,
       "n_positions": integer,
-      "enrollment": integer,
+      "enrolment": integer,
       "round_id": integer,
       "course_name": string,
       "course_id": string,

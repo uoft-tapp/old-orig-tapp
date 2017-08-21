@@ -881,8 +881,8 @@ class AppState {
         fetch.importChass(data);
     }
 
-    importEnrollment(data) {
-        fetch.importEnrollment(data);
+    importEnrolment(data) {
+        fetch.importEnrolment(data);
     }
 
     isApplicantsListNull() {
@@ -1053,7 +1053,7 @@ class AppState {
                 data['duties'] = val;
                 break;
             case 'cap':
-                data['cap_enrollment'] = val;
+                data['cap_enrolment'] = val;
                 break;
             case 'waitlist':
                 data['num_waitlisted'] = val;

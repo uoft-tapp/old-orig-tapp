@@ -374,8 +374,10 @@ function importChass(data) {
     ).then(fetchAll);
 }
 
-// send enrollment data
-function importEnrollment(data) {
+// send enrolment data
+function importEnrolment(data) {
+    appState.setFetchingCoursesList(true);
+
     return postHelper(
         '/import/enrollment',
         { enrollment_data: data },
@@ -446,7 +448,7 @@ export {
     updateCourse,
     noteApplicant,
     importChass,
-    importEnrollment,
+    importEnrolment,
     unlockAssignment,
     exportOffers,
 };
