@@ -68,7 +68,10 @@ class ImportForm extends React.Component {
                 'Are you sure you want to import "' + files[0].name + '" into the database?';
             if (files[0].type == 'application/json') {
                 if (confirm(message)) {
-                    let importChass = this.props.importChass;
+                    let importChass = data => {
+                        this.props.setImporting(true);
+                        this.props.importChass(data);
+                    };
                     let waitAlert = () => this.props.notify('<i>Import in progress...</i>');
                     let chassAlert = () => this.props.alert('Error: This is not a CHASS JSON.');
                     let malformedAlert = () => this.props.alert('Error: This JSON is malformed.');
@@ -106,11 +109,16 @@ class ImportForm extends React.Component {
         return (
             <Form inline>
                 <FormControl.Static style={{ verticalAlign: 'middle' }}>
-                    <i
-                        className="fa fa-upload"
-                        style={{ fontSize: '20px', color: 'blue', cursor: 'pointer' }}
-                        onClick={() => this.loadFile()}
-                    />&emsp;
+                    {this.props.importing()
+                        ? <i
+                              className="fa fa-spinner fa-spin"
+                              style={{ fontSize: '20px', color: 'blue' }}
+                          />
+                        : <i
+                              className="fa fa-upload"
+                              style={{ fontSize: '20px', color: 'blue', cursor: 'pointer' }}
+                              onClick={() => this.loadFile()}
+                          />}&emsp;
                 </FormControl.Static>
                 <FormGroup>
                     <ControlLabel>

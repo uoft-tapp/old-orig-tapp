@@ -356,9 +356,12 @@ function updateCourse(courseId, data, attr) {
 
 // send CHASS data
 function importChass(data) {
-    return postHelper('/import/chass', data, showMessageInJsonBody, showMessageInJsonBody).then(
-        fetchAll
-    );
+    return postHelper('/import/chass', data, showMessageInJsonBody, showMessageInJsonBody)
+        .then(() => {
+            appState.setImporting(false);
+            fetchAll();
+        })
+        .catch(() => appState.setImporting(false));
 }
 
 // extract and display a message which is sent in the (JSON) body of a response
