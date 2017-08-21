@@ -30,3 +30,8 @@
 
 /public/packs
 /node_modules
+
+/vendor/bundle
+
+# ignore emacs backup files
+*.~*~
