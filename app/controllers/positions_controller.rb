@@ -22,7 +22,7 @@ class PositionsController < ApplicationController
   private
   def position_params
     params.permit(:duties, :qualifications, :hours, :estimated_count,
-      :estimated_total_hours, :open, :estimated_enrolment)
+      :estimated_total_hours, :open, :current_enrollment, :cap_enrollment, :num_waitlisted)
   end
 
 end
