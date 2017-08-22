@@ -1,4 +1,6 @@
 class AppController < ActionController::Base
+  include Authorizer
+  around_action :is_admin
   protect_from_forgery with: :exception
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 

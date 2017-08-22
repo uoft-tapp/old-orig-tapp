@@ -1,13 +1,8 @@
 module Authorizer
-  def is_admin(json=nil, status=200)
-    if json
-      data = get_render_json(json, status)
-    end
+  def is_admin
     if logged_in
       if session[:role]=="Admin"
-        if data
-          render status: data[:status], json: data[:json]
-        end
+        yield
       else
         render status: 403, json: {message: "You are not authorized to access this route."}
       end
@@ -19,9 +14,5 @@ module Authorizer
   private
   def logged_in
     return session[:role] && session[:utorid]
-  end
-
-  def get_render_json(json, status)
-    {json: json, status: status}
   end
 end
