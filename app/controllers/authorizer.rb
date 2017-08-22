@@ -1,30 +1,27 @@
 module Authorizer
-
-  def set_role(utorid)
-    admins = ENV["ADMINS"].split(",")
-    if admins.include?utorid
-      session[:role] = "Admin"
-      session[:utorid] = utorid
+  def is_admin(json=nil, status=200)
+    if json
+      data = get_render_json(json, status)
     end
-  end
-
-  def delete_role
-    session= session.except(:role, :utorid)
-  end
-
-  def is_admin(func, params)
-    if logged_in && session[:role]=="Admin"
-      func(params)
-    else
-      render status: 403, json: {message: "You are not authorized to access this route."}
-    end
-  end
-
-  def logged_in
-    if session[:role] && session[:utorid]
-      return true
+    if logged_in
+      if session[:role]=="Admin"
+        if data
+          render status: data[:status], json: data[:json]
+        end
+      else
+        render status: 403, json: {message: "You are not authorized to access this route."}
+      end
     else
       render status: 401, json: {message: "You are not logged in."}
     end
+  end
+
+  private
+  def logged_in
+    return session[:role] && session[:utorid]
+  end
+
+  def get_render_json(json, status)
+    {json: json, status: status}
   end
 end
