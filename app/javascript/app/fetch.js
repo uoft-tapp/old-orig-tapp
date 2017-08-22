@@ -247,7 +247,7 @@ function fetchAll() {
     applicantsPromise
         .then(applicants => {
             appState.setApplicantsList(applicants);
-            appState.successFetchingApplicantsList();
+            appState.setFetchingApplicantsList(false, true);
         })
         .catch(() => appState.setFetchingApplicantsList(false));
 
@@ -255,7 +255,7 @@ function fetchAll() {
     applicationsPromise
         .then(applications => {
             appState.setApplicationsList(applications);
-            appState.successFetchingApplicationsList();
+            appState.setFetchingApplicationsList(false, true);
         })
         .catch(() => appState.setFetchingApplicationsList(false));
 
@@ -263,7 +263,7 @@ function fetchAll() {
     assignmentsPromise
         .then(assignments => {
             appState.setAssignmentsList(assignments);
-            appState.successFetchingAssignmentsList();
+            appState.setFetchingAssignmentsList(false, true);
         })
         .catch(() => appState.setFetchingAssignmentsList(false));
 
@@ -271,7 +271,7 @@ function fetchAll() {
     coursesPromise
         .then(courses => {
             appState.setCoursesList(courses);
-            appState.successFetchingCoursesList();
+            appState.setFetchingCoursesList(false, true);
         })
         .catch(() => appState.setFetchingCoursesList(false));
 
@@ -279,7 +279,7 @@ function fetchAll() {
     instructorsPromise
         .then(instructors => {
             appState.setInstructorsList(instructors);
-            appState.successFetchingInstructorsList();
+            appState.setFetchingInstructorsList(false, true);
         })
         .catch(() => appState.setFetchingInstructorsList(false));
 }
@@ -297,7 +297,7 @@ function postAssignment(applicant, course, hours) {
     )
         .then(assignments => {
             appState.setAssignmentsList(assignments);
-            appState.successFetchingAssignmentsList();
+            appState.setFetchingAssignmentsList(false, true);
         })
         .catch(() => appState.setFetchingAssignmentsList(false));
 }
@@ -309,7 +309,7 @@ function deleteAssignment(applicant, assignment) {
     return deleteHelper('/applicants/' + applicant + '/assignments/' + assignment, getAssignments)
         .then(assignments => {
             appState.setAssignmentsList(assignments);
-            appState.successFetchingAssignmentsList();
+            appState.setFetchingAssignmentsList(false, true);
         })
         .catch(() => appState.setFetchingAssignmentsList(false));
 }
@@ -321,7 +321,7 @@ function noteApplicant(applicant, notes) {
     return putHelper('/applicants/' + applicant, { commentary: notes }, getApplicants)
         .then(applicants => {
             appState.setApplicantsList(applicants);
-            appState.successFetchingApplicantsList();
+            appState.setFetchingApplicantsList(false, true);
         })
         .catch(() => appState.setFetchingApplicantsList(false));
 }
@@ -337,7 +337,7 @@ function updateAssignmentHours(applicant, assignment, hours) {
     )
         .then(assignments => {
             appState.setAssignmentsList(assignments);
-            appState.successFetchingAssignmentsList();
+            appState.setFetchingAssignmentsList(false, true);
         })
         .catch(() => appState.setFetchingAssignmentsList(false));
 }
@@ -349,19 +349,22 @@ function updateCourse(courseId, data, attr) {
     return putHelper('/positions/' + courseId, data, getCourses)
         .then(courses => {
             appState.setCoursesList(courses);
-            appState.successFetchingCoursesList();
+            appState.setFetchingCoursesList(false, true);
         })
         .catch(() => appState.setFetchingCoursesList(false));
 }
 
 // send CHASS data
 function importChass(data) {
-    return postHelper('/import/chass', data, showMessageInJsonBody, showMessageInJsonBody)
-        .then(() => {
-            appState.setImporting(false);
+    return postHelper(
+        '/import/chass',
+        data,
+        () => {
+            appState.setImporting(false, true);
             fetchAll();
-        })
-        .catch(() => appState.setImporting(false));
+        },
+        showMessageInJsonBody
+    ).catch(() => appState.setImporting(false));
 }
 
 // extract and display a message which is sent in the (JSON) body of a response
@@ -386,7 +389,7 @@ function unlockAssignment(applicant, assignment) {
     )
         .then(assignments => {
             appState.setAssignmentsList(assignments);
-            appState.successFetchingAssignmentsList();
+            appState.setFetchingAssignmentsList(false, true);
         })
         .catch(() => appState.setFetchingAssignmentsList(false));
 }
@@ -417,7 +420,7 @@ function exportOffers(round) {
             .then(getAssignments)
             .then(assignments => {
                 appState.setAssignmentsList(assignments);
-                appState.successFetchingAssignmentsList();
+                appState.setFetchingAssignmentsList(false, true);
             })
             .catch(() => appState.setFetchingAssignmentsList(false))
     );

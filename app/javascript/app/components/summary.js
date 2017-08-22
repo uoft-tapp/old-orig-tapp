@@ -72,10 +72,9 @@ class ImportForm extends React.Component {
                         this.props.setImporting(true);
                         this.props.importChass(data);
                     };
-                    let waitAlert = () => this.props.notify('<i>Import in progress...</i>');
                     let chassAlert = () => this.props.alert('Error: This is not a CHASS JSON.');
                     let malformedAlert = () => this.props.alert('Error: This JSON is malformed.');
-                    this.uploadFile(files[0], importChass, waitAlert, chassAlert, malformedAlert);
+                    this.uploadFile(files[0], importChass, chassAlert, malformedAlert);
                 }
             } else {
                 this.props.alert('Error: The file you uploaded is not a JSON.');
@@ -85,7 +84,7 @@ class ImportForm extends React.Component {
         }
     }
 
-    uploadFile(file, importChass, waitAlert, chassAlert, malformedAlert) {
+    uploadFile(file, importChass, chassAlert, malformedAlert) {
         let reader = new FileReader();
         reader.onload = function(event) {
             try {
@@ -93,7 +92,6 @@ class ImportForm extends React.Component {
 
                 if (data['courses'] !== undefined && data['applicants'] !== undefined) {
                     data = { chass_json: data };
-                    waitAlert();
                     importChass(data);
                 } else {
                     chassAlert();
@@ -127,8 +125,7 @@ class ImportForm extends React.Component {
                             trigger="click"
                             rootClose
                             placement="right"
-                            overlay={InfoDialog(chassFormat)}
-                        >
+                            overlay={InfoDialog(chassFormat)}>
                             <i className="fa fa-info-circle" style={{ color: 'blue' }} />
                         </OverlayTrigger>
                     </ControlLabel>
@@ -183,8 +180,7 @@ class ExportForm extends React.Component {
                         componentClass="select"
                         inputRef={ref => {
                             this.data = ref;
-                        }}
-                    >
+                        }}>
                         <option value="offers">Offers</option>
                         <option value="cdf-info">CDF info</option>
                         <option value="transcript-access">
@@ -200,8 +196,7 @@ class ExportForm extends React.Component {
                         componentClass="select"
                         inputRef={ref => {
                             this.format = ref;
-                        }}
-                    >
+                        }}>
                         <option value="csv">CSV</option>
                         {this.props.getSelectedRound() && <option value="json">JSON</option>}
                     </FormControl>
@@ -226,8 +221,7 @@ const ReleaseForm = props =>
             onClick={() =>
                 props.alert(
                     '<b>Release assignments</b> This functionality is not currently supported.'
-                )}
-        >
+                )}>
             Release assignments
         </Button>
     </Form>;
