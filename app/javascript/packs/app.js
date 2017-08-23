@@ -56,7 +56,7 @@ const RouterInst = props => {
     let selectedApplicant = props.getSelectedApplicant();
 
     return (
-        <Router basename="index.html">
+        <Router basename="tapp">
             <div>
                 <Navbar {...props} />
 
