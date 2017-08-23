@@ -8,20 +8,37 @@ die(){
 # start up tapp for production 
 
 echo 'have you shut down containers already with docker down?'
-echo 'you should consider down -v to remove the postgres volume. hit enter to continue'
+echo 'examine running containers, if any in table below'
+docker ps
+
+echo
+echo 'if there are any tapp containers listed above you should consider '
+echo 'docker-compose down, perhaps even down -v (to remove the postgres volume)'
+echo
+
 read -p 'hit enter to continue: [interrupt to quit]: '
 
 read -p 'enter to cp prod.env.devfault .env :' JUNK
+
+set -x
 cp prod.env.default .env
+set -
 
 read -p 'enter to `docker rm -f` your containers: ' JUNK
+
+set -x
 docker-compose rm -f  || die docker-compose rm -f failed
+set -
 
+read -p 'enter to `docker-compose up tapp containers: ' JUNK
+
+set -x
 docker-compose up -d --force-recreate || die docker-compose up --force-recreate failed
+set -
 
-#actually all that is needed here is a sleep.. but how long?
-read -p 'enter to `seed postgres db: ' JUNK
+read -p 'enter to `migrate postgres db: ' JUNK
 
-docker-compose run rails-app rake db:migrate db:seed  || die "rake db:migrate db:seed failed"
-
+set -x
+docker-compose run rails-app rake db:migrate  || die "rake db:migrate failed"
+set -
 
