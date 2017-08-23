@@ -11,7 +11,7 @@ Rails.application.routes.draw do
   resources :instructors
   resources :sessions
 
-  get "/index.html/(*z)", to: "app#main"
+  get "/tapp/(*z)", to: "app#main"
 
   get "/export/chass/:round_id", to: "export#chass"
   get "/export/cdf-info", to: "export#cdf"
