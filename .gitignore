@@ -4,7 +4,7 @@
 # or operating system, you probably want to add a global ignore instead:
 #   git config --global core.excludesfile '~/.gitignore_global'
 
-# Ignore local .env file
+# Ignore local .env file.
 .env
 
 # Ignore bundler config.
@@ -30,3 +30,13 @@
 
 /public/packs
 /node_modules
+
+/vendor/bundle
+
+# Ignore emacs backup files.
+*.~*~
+*~
+# Ignore emacs autosave files.
+#*#
+# Ignore emacs interlocking files.
+.#*
