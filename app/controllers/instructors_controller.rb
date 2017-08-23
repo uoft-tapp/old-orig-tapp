@@ -1,4 +1,6 @@
 class InstructorsController < ApplicationController
+  include Authorizer
+  around_action :is_admin
   protect_from_forgery with: :null_session
 
   def index

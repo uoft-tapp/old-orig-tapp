@@ -30,3 +30,5 @@
 
 /public/packs
 /node_modules
+
+/db/seeds/header.txt

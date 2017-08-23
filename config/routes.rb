@@ -10,6 +10,8 @@ Rails.application.routes.draw do
   resources :positions
   resources :instructors
   resources :sessions
+  post "/login", to: "roles#login"
+  post "/logout", to: "roles#logout"
 
   get "/tapp/(*z)", to: "app#main"
 
@@ -19,4 +21,6 @@ Rails.application.routes.draw do
   get "/export/offers", to: "export#offers"
   post "/import/chass", to: "import#chass"
   post "/import/enrollment", to: "import#enrollment"
+
+  get "/test", to: "roles#test"
 end
