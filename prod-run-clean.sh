@@ -30,12 +30,19 @@ read -p 'enter to `docker rm -f` your containers: ' JUNK
 docker-compose rm -f  || die docker-compose rm -f failed
 )
 
-read -p 'enter to `docker-compose up tapp containers: ' JUNK
+read -p 'enter to `docker-compose build --force-rm`  ' JUNK
+
+(set -x
+docker-compose build --force-rm || die docker-compose up --force-recreate failed
+)
+
+read -p 'enter to `docker-compose up tapp containers: (will want -d in production) ' JUNK
 
 (set -x
 docker-compose up -d --force-recreate || die docker-compose up --force-recreate failed
 )
 
+#there is probably a race condition here. migrate can't work until container is really up.
 read -p 'enter to `migrate postgres db: ' JUNK
 
 (set -x
