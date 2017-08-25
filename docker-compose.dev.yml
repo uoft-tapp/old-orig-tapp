@@ -10,8 +10,6 @@ services:
     build: .
     volumes:
       - .:/srv/app
-    networks:
-      - internal
     ports:
       - "8080:8080"
     command: >

@@ -55,7 +55,7 @@ class CoursePanel extends React.Component {
                     }
                 },
 
-                style: () => ({ width: '2%', textAlign: 'center' }),
+                style: { width: 0.02, textAlign: 'center' },
             },
             {
                 header: 'Last Name',
@@ -70,14 +70,14 @@ class CoursePanel extends React.Component {
                     </span>,
                 sortData: p => p.applicant.lastName,
 
-                style: () => ({ width: '15%' }),
+                style: { width: 0.15 },
             },
             {
                 header: 'First Name',
                 data: p => p.applicant.firstName,
                 sortData: p => p.applicant.firstName,
 
-                style: () => ({ width: '15%' }),
+                style: { width: 0.15 },
             },
             {
                 header: 'Dept.',
@@ -91,7 +91,7 @@ class CoursePanel extends React.Component {
                     p => p.applicant.dept != 'Computer Science',
                 ],
 
-                style: () => ({ width: '25%' }),
+                style: { width: 0.25 },
             },
             {
                 header: 'Prog.',
@@ -108,14 +108,14 @@ class CoursePanel extends React.Component {
                     p => p.applicant.program == 'UG',
                 ],
 
-                style: () => ({ width: '10%' }),
+                style: { width: 0.10 },
             },
             {
                 header: 'Year',
                 data: p => p.applicant.year,
                 sortData: p => p.applicant.year,
 
-                style: () => ({ width: '5%' }),
+                style: { width: 0.05 },
             },
             {
                 header: 'Pref.',
@@ -127,7 +127,7 @@ class CoursePanel extends React.Component {
 
                 sortData: p => props.getApplicationPreference(p.applicantId, p.course),
 
-                style: () => ({ width: '5%' }),
+                style: { width: 0.05 },
             },
             {
                 header: 'Other',
@@ -164,8 +164,6 @@ class CoursePanel extends React.Component {
                     // filter corresponding to 'unassigned'
                     p => props.getAssignmentsByApplicant(p.applicantId).length == 0,
                 ],
-
-                style: () => ({}),
             },
         ];
     }

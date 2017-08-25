@@ -13,8 +13,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       SECRET_KEY_BASE: ${SECRET_KEY_BASE}
     networks:
-      - internal
-      - external
+      - default
+      - frontend
     ports:
       - "3000:3000"
     links:
@@ -28,12 +28,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - /var/lib/postgresql/data
-    networks:
-      - internal
 
 networks:
-  # Names of the networks will be prefixed with project name by docker
-  internal:
-    driver: bridge
-  external:
+  # "frontend" network will be attached to CP app so it can use the endpoints
+  frontend:
     driver: bridge

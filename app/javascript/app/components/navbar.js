@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { Navbar, Nav, NavItem, NavDropdown, MenuItem } from 'react-bootstrap';
 
 import { routeConfig } from '../routeConfig.js';
+import { roundColourConfig } from '../roundColourConfig.js';
 
 /*** Navbar ABC view layout icons ***/
 import img20 from '../img/layout-20.png';
@@ -97,7 +98,7 @@ const Round = props => {
     let rounds = props.getRounds();
     let selectedRound = props.getSelectedRound();
 
-    // add round-based rules to a new stylesheet
+    // add round-based colour rules to a new stylesheet
     let style = document.createElement('style');
 
     // if we previously created a stylesheet for these rules, replace it
@@ -108,15 +109,11 @@ const Round = props => {
         document.head.appendChild(style);
     }
 
-    // colours which will be mapped to rounds
-    // (approx. one colour selected from each colour group on https://www.w3schools.com/colors/colors_groups.asp)
-    let palette = ['#C71585','#4B0082','#8B0000','#FF4500','#006400','#008080','000080','#0000FF',
-                   '#8B4513','#2F4F4F'];
-
-    style.sheet.insertRule('.round-all {background-color: #5BC0DE}', 0);
+    // colour associated with 'all rounds'
+    style.sheet.insertRule('.round-all {background-color: ' + roundColourConfig['all'] + '}', 0);
     
     for (var i = 0; i < rounds.length; i++) {
-        style.sheet.insertRule('.round-' + rounds[i] + ' {background-color: ' + palette[i] + '}', 0);
+        style.sheet.insertRule('.round-' + rounds[i] + ' {background-color: ' + roundColourConfig[i] + '}', 0);
     }
 
     return (
@@ -137,13 +134,14 @@ const Round = props => {
             onSelect={eventKey => props.selectRound(eventKey)}>
             {selectedRound &&
                 <MenuItem eventKey={null} key="all">
-                    All Rounds
+                    All&nbsp;Rounds
                 </MenuItem>}
             {rounds.map(
-                round =>
+                (round, i) =>
                     round != selectedRound &&
                     <MenuItem eventKey={round} key={round}>
-                        Round {round}
+                        Round&nbsp;{round}&ensp;
+                        <i className="fa fa-square" style={{ color: roundColourConfig[i] }} />
                     </MenuItem>
             )}
         </NavDropdown>

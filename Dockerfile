@@ -36,5 +36,4 @@ RUN if [ ${RAILS_ENV} = 'production' ]; then \
 bundle exec rake webpacker:compile; \
 fi
 
-EXPOSE 3000
 CMD ["rails", "server", "-b", "0.0.0.0", "-p", "3000"]
