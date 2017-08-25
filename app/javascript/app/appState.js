@@ -881,6 +881,10 @@ class AppState {
         fetch.importChass(data);
     }
 
+    importEnrolment(data) {
+        fetch.importEnrolment(data);
+    }
+
     isApplicantsListNull() {
         return this.get('applicants.list') == null;
     }
@@ -1040,13 +1044,19 @@ class AppState {
                 data['hours'] = val;
                 break;
             case 'estimatedEnrol':
-                data['estimated_enrolment'] = val;
+                data['current_enrollment'] = val;
                 break;
             case 'qual':
                 data['qualifications'] = val;
                 break;
             case 'resp':
                 data['duties'] = val;
+                break;
+            case 'cap':
+                data['cap_enrollment'] = val;
+                break;
+            case 'waitlist':
+                data['num_waitlisted'] = val;
                 break;
         }
         fetch.updateCourse(courseId, data, props);
